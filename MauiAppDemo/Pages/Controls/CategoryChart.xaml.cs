@@ -1,0 +1,10 @@
+namespace MauiAppDemo.Pages.Controls
+{
+    public partial class CategoryChart
+    {
+        public CategoryChart()
+        {
+            InitializeComponent();
+        }
+    }
+}
