@@ -15,43 +15,36 @@ NavajaSuiza_.NET10/
 │   ├── InvertedBoolConverter.cs
 │   └── StringNotEmptyToBoolConverter.cs
 │
+├── 📁 Extensions/
+│   ├── LocalizationResourceManager.cs
+│   └── TranslateExtension.cs
+│
 ├── 📁 Models/
-│   ├── ApiResponse.cs
-│   ├── CoreSecretData.cs
-│   ├── CoreUserIV.cs
-│   ├── SessionData.cs
-│   └── User.cs
+│   └── SupportedLanguages.cs
 │
 ├── 📁 Resources/
 │   └── Languages/
-│       ├── es.xaml
-│       ├── en.xaml
-│       └── sv.xaml
+│       ├── AppResources.resx
+│       ├── AppResources.en.resx
+│       └── AppResources.sv.resx
 │
 ├── 📁 Services/
 │   ├── Implementations/
-│   │   ├── LanguageService.cs
-│   │   ├── SecureStorageService.cs
-│   │   └── ThemeService.cs
+│   │   └── LanguageService.cs
 │   └── Interfaces/
-│       ├── ILanguageService.cs
-│       ├── ISecureStorageService.cs
-│       └── IThemeService.cs
+│       └── ILanguageService.cs
 │
 ├── 📁 ViewModels/
-│   ├── PasswordFormViewModel.cs
-│   ├── SettingsViewModel.cs
-│   └── TestingViewModel.cs
+│   ├── BaseViewModel.cs
+│   └── AboutViewModel.cs
 │
 ├── 📁 Views/
-│   ├── SettingsPage.xaml
-│   ├── SettingsPage.xaml
-│   └── SettingsPage.xaml
+│   ├── AboutPage.xaml/cs
+│   ├── ManualPage.xaml/cs
+│   └── AboutViewModel.xaml/cs
 │
-├── App.xaml
-├── App.xaml.cs
-├── AppShell.xaml
-├── AppShell.xaml.cs
+├── App.xaml/cs
+├── AppShell.xaml/cs
 ├── MauiProgram.cs
 │
 └── NavajaSuiza.Maui.csproj

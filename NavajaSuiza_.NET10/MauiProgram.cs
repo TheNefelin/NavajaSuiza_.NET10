@@ -2,6 +2,8 @@
 using Microsoft.Extensions.Logging;
 using NavajaSuiza_.NET10.Pages;
 using NavajaSuiza_.NET10.PagesViewModel;
+using NavajaSuiza_.NET10.Services.Implementations;
+using NavajaSuiza_.NET10.Services.Interfaces;
 using Syncfusion.Maui.Toolkit.Hosting;
 
 namespace NavajaSuiza_.NET10;
@@ -22,6 +24,8 @@ public static class MauiProgram
             })
             .ConfigureServices(); ;
 
+        ConfigureStatusBar();
+
 #if DEBUG
         builder.Logging.AddDebug();
         builder.Services.AddLogging(configure =>
@@ -35,12 +39,29 @@ public static class MauiProgram
     private static MauiAppBuilder ConfigureServices(this MauiAppBuilder builder)
     {
         builder.Services
-            .AddSingleton<AppShell>();
+            .AddSingleton<ILanguageService, LanguageService>();
 
         builder.Services
+            .AddSingleton<AppShell>()
             .AddSingleton<AboutPage>()
             .AddSingleton<AboutViewModel>();
 
         return builder;
+    }
+
+    private static void ConfigureStatusBar()
+    {
+        Microsoft.Maui.Handlers.WindowHandler.Mapper.AppendToMapping(nameof(IWindow), (handler, view) =>
+        {
+#if ANDROID
+            var color = Android.Graphics.Color.ParseColor("#E4E4E5");
+
+            handler.PlatformView.Window?.SetStatusBarColor(color);
+            handler.PlatformView.Window?.SetNavigationBarColor(color);
+#endif
+
+#if IOS
+#endif
+        });
     }
 }

@@ -120,10 +120,16 @@
   <data name="AboutText" xml:space="preserve">
     <value>Om</value>
   </data>
+  <data name="CancelText" xml:space="preserve">
+    <value>Avbryt</value>
+  </data>
   <data name="ManualText" xml:space="preserve">
     <value>Manual</value>
   </data>
   <data name="MenuText" xml:space="preserve">
     <value>Meny</value>
+  </data>
+  <data name="SelectLanguageText" xml:space="preserve">
+    <value>Välj språk</value>
   </data>
 </root>

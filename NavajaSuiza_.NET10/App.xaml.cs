@@ -1,15 +1,19 @@
-﻿namespace NavajaSuiza_.NET10;
+﻿using NavajaSuiza_.NET10.Services.Interfaces;
+
+namespace NavajaSuiza_.NET10;
 
 public partial class App : Application
 {
     private readonly IServiceProvider _serviceProvider;
+    private readonly ILanguageService _languageService;
 
     public App(
-        IServiceProvider serviceProvider)
+        IServiceProvider serviceProvider, ILanguageService languageService)
     {
         InitializeComponent();
 
         _serviceProvider = serviceProvider;
+        _languageService = languageService;
     }
 
     protected override Window CreateWindow(IActivationState? activationState)
@@ -20,6 +24,6 @@ public partial class App : Application
 
     protected override async void OnStart()
     {
-        // Initialize language when app starts
+        _languageService.InitializeLanguage();
     }
 }

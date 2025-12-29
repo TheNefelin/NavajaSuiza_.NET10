@@ -70,6 +70,15 @@ namespace NavajaSuiza_.NET10.Resources.Languages {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cancelar.
+        /// </summary>
+        internal static string CancelText {
+            get {
+                return ResourceManager.GetString("CancelText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Manual.
         /// </summary>
         internal static string ManualText {
@@ -84,6 +93,15 @@ namespace NavajaSuiza_.NET10.Resources.Languages {
         internal static string MenuText {
             get {
                 return ResourceManager.GetString("MenuText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Seleccionar idioma.
+        /// </summary>
+        internal static string SelectLanguageText {
+            get {
+                return ResourceManager.GetString("SelectLanguageText", resourceCulture);
             }
         }
     }
