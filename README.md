@@ -1,13 +1,13 @@
 ﻿# NavajaSuiza .NET10
 
-## Dependencies
+### Dependencies
 - CommunityToolkit.Maui
 - CommunityToolkit.Mvvm
 - Microsoft.Extensions.Logging.Debug
 - Microsoft.Maui.Controls
 - Syncfusion.Maui.Toolkit
 
-## Structure
+### Structure
 ```
 NavajaSuiza_.NET10/
 │
@@ -50,14 +50,72 @@ NavajaSuiza_.NET10/
 └── NavajaSuiza.Maui.csproj
 ```
 
-### Languages 
-- App.xaml
+## Languages 
+- Resoures/Languages
+    - AppResources.resx (Default)
+    - AppResources.sv.resx
+    - AppResources.en.resx
+- AppShell.xaml
 ```xaml
-<Application
+xmlns:extensions="clr-namespace:NavajaSuiza_.NET10.Extensions"
 
-    <Application.Resources>
-        <ResourceDictionary Source="Resources/Languages/es.xaml" />        
-    </Application.Resources>
-    
-</Application>
+Title="{extensions:Translate MenuText}"
 ```
+- C#
+```csharp
+var selectLanguage = LocalizationResourceManager.Instance["SelectLanguageText"].ToString();
+var cancelText = LocalizationResourceManager.Instance["CancelText"]?.ToString();
+```
+- Extensions
+```csharp
+public class LocalizationResourceManager : INotifyPropertyChanged
+{
+    private CultureInfo _culture;
+
+    private LocalizationResourceManager()
+    {
+        Culture = CultureInfo.CurrentCulture;
+    }
+
+    public CultureInfo Culture
+    {
+        get => _culture;
+        set
+        {
+            _culture = value;
+            CultureInfo.CurrentUICulture = CultureInfo.CurrentCulture = value;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(null));
+        }
+    }
+
+    public static LocalizationResourceManager Instance { get; } = new();
+
+    public object this[string resourceKey]
+        => AppResources.ResourceManager.GetObject(resourceKey, _culture) ?? Array.Empty<byte>();
+
+    public event PropertyChangedEventHandler PropertyChanged;
+}
+```
+```csharp
+[ContentProperty(nameof(Name))]
+public class TranslateExtension : IMarkupExtension<BindingBase>
+{
+    public string Name { get; set; } 
+
+    public BindingBase ProvideValue(IServiceProvider serviceProvider)
+    {
+        return new Binding
+        {
+            Mode = BindingMode.OneWay,
+            Path = $"[{Name}]",
+            Source = LocalizationResourceManager.Instance
+        };
+    }
+
+    object IMarkupExtension.ProvideValue(IServiceProvider serviceProvider)
+    {
+        return ProvideValue(serviceProvider);
+    }
+}
+```
+
