@@ -3,12 +3,33 @@
     x:Class="NavajaSuiza_.NET10.AppShell"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:local="clr-namespace:NavajaSuiza_.NET10"
-    Title="NavajaSuiza_.NET10">
+    xmlns:pages="clr-namespace:NavajaSuiza_.NET10.Pages"
+    xmlns:lang="clr-namespace:NavajaSuiza_.NET10.Resources.Languages"
+    Title="Navaja Suiza">
 
-    <ShellContent
-        Title="Home"
-        ContentTemplate="{DataTemplate local:MainPage}"
-        Route="MainPage" />
+    <Shell.ToolbarItems>
+        <ToolbarItem Text="🇨🇱 CL" Clicked="OnLanguageClicked" />
+    </Shell.ToolbarItems>
+
+    <TabBar>
+        <ShellContent
+            x:Name="MenuTxt"
+            Title="{Binding LocalizationResourceManager[MenuText], Mode=OneWay}"
+            ContentTemplate="{DataTemplate pages:MenuPage}"
+            Icon="icon_menu_512.png"
+            Route="MenuPage" />
+        <ShellContent
+            x:Name="ManualTxt"
+            Title="{Binding LocalizationResourceManager[ManualText], Mode=OneWay}"
+            ContentTemplate="{DataTemplate pages:ManualPage}"
+            Icon="icon_manual_512.png"
+            Route="ManualPage" />
+        <ShellContent
+            x:Name="AboutTxt"
+            Title="{Binding LocalizationResourceManager[AboutText], Mode=OneWay}"
+            ContentTemplate="{DataTemplate pages:AboutPage}"
+            Icon="icon_about_512.png"
+            Route="AboutPage" />
+    </TabBar>
 
 </Shell>

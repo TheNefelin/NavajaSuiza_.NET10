@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+	<!-- Home Page -->
+	<x:String x:Key="Key_AppTitle">Swiss Knife</x:String>
+	<x:String x:Key="Key_HomeTitle">Home</x:String>
+	<x:String x:Key="Key_AboutTitle">About</x:String>
+
+	<!-- Funcionalidades -->
+	<x:String x:Key="Key_Flashlight">Flashlight</x:String>
+	<x:String x:Key="Key_Instagram">Instagram Frame</x:String>
+	<x:String x:Key="Key_Converter">WebP Converter</x:String>
+	<x:String x:Key="Key_Weather">Weather</x:String>
+	<x:String x:Key="Key_Tuner">Tuner</x:String>
+	<x:String x:Key="Key_Currency">Currencies</x:String>
+
+	<!-- Botones -->
+	<x:String x:Key="Key_TurnOn">Turn On</x:String>
+	<x:String x:Key="Key_TurnOff">Turn Off</x:String>
+	<x:String x:Key="Key_Convert">Convert</x:String>
+	<x:String x:Key="Key_Close">Close</x:String>
+
+	<!-- Mensajes -->
+	<x:String x:Key="Key_Success">Operation successful!</x:String>
+	<x:String x:Key="Key_Error">Operation error</x:String>
+	<x:String x:Key="Key_Loading">Loading...</x:String>
+
+</ResourceDictionary>

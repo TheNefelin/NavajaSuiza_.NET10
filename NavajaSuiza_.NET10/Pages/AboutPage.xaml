@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="NavajaSuiza_.NET10.Pages.AboutPage"
+             Title="Acerca de">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="20">
+
+            <!-- Theme Selector -->
+            <Label Text="Theme" FontSize="18" FontAttributes="Bold" />
+
+            <Picker 
+                Title="Select theme"
+                ItemsSource="{Binding ThemeOptions}"
+                SelectedItem="{Binding SelectedTheme}"
+                SelectedIndexChanged="OnThemeChanged"
+                FontSize="16" />
+
+            <!-- Additional Content -->
+            <Label Text="Swiss Knife v1.0" FontSize="16" FontAttributes="Bold" HorizontalOptions="Center" Margin="0,20,0,0" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>
