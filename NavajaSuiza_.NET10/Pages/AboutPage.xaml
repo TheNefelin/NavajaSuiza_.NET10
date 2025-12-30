@@ -6,22 +6,35 @@
              Title="{extensions:Translate AboutText}">
 
     <ScrollView>
-        <VerticalStackLayout Padding="20" Spacing="20">
+        <VerticalStackLayout Padding="20" Spacing="10">
 
-            <!-- Theme Selector -->
-            <Label Text="Theme" FontSize="18" FontAttributes="Bold" />
+            <Border Padding="10" >
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                
+                <Grid ColumnDefinitions="*, Auto" RowDefinitions="auto, auto">
+                    <Label 
+                        Grid.Row="0" Grid.Column="0"
+                        Text="{extensions:Translate ThemeText}" 
+                        FontSize="18" 
+                        FontAttributes="Bold"/>
 
-            <Picker 
-                Title="Select theme"
-                ItemsSource="{Binding ThemeOptions}"
-                SelectedItem="{Binding SelectedTheme}"
-                SelectedIndexChanged="OnThemeChanged"
-                FontSize="16" />
+                    <Label 
+                        Grid.Row="1" Grid.Column="0"
+                        Text="{extensions:Translate ThemeContentText}" 
+                        VerticalOptions="Center"
+                        FontSize="12" />
 
-            <!-- Additional Content -->
-            <Label Text="Swiss Knife v1.0" FontSize="16" FontAttributes="Bold" HorizontalOptions="Center" Margin="0,20,0,0" />
+                    <Switch 
+                        Grid.Row="1" Grid.Column="1"
+                        IsToggled="{Binding IsDarkMode, Mode=TwoWay}"
+                        ThumbColor="red" />
+                </Grid>
+            </Border>
 
+            
         </VerticalStackLayout>
     </ScrollView>
-
+    
 </ContentPage>

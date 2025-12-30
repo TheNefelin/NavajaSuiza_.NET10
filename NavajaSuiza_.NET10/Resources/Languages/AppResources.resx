@@ -132,4 +132,19 @@
   <data name="SelectLanguageText" xml:space="preserve">
     <value>Seleccionar idioma</value>
   </data>
+  <data name="ThemeAuto" xml:space="preserve">
+    <value>Automático</value>
+  </data>
+  <data name="ThemeContentText" xml:space="preserve">
+    <value>Cambia entre tema claro y oscuro</value>
+  </data>
+  <data name="ThemeDark" xml:space="preserve">
+    <value>Oscuro</value>
+  </data>
+  <data name="ThemeLight" xml:space="preserve">
+    <value>Claro</value>
+  </data>
+  <data name="ThemeText" xml:space="preserve">
+    <value>Tema</value>
+  </data>
 </root>

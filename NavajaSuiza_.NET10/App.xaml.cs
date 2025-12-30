@@ -6,14 +6,18 @@ public partial class App : Application
 {
     private readonly IServiceProvider _serviceProvider;
     private readonly ILanguageService _languageService;
+    private readonly IThemeService _themeService;
 
     public App(
-        IServiceProvider serviceProvider, ILanguageService languageService)
+        IServiceProvider serviceProvider, 
+        ILanguageService languageService,
+        IThemeService themeService)
     {
         InitializeComponent();
 
         _serviceProvider = serviceProvider;
         _languageService = languageService;
+        _themeService = themeService;
     }
 
     protected override Window CreateWindow(IActivationState? activationState)
@@ -25,5 +29,6 @@ public partial class App : Application
     protected override async void OnStart()
     {
         _languageService.InitializeLanguage();
+        _themeService.ApplySavedTheme();
     }
 }

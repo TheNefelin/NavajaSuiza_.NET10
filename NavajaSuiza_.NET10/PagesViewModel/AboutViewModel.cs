@@ -1,17 +1,31 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using NavajaSuiza_.NET10.Services.Interfaces;
 
 namespace NavajaSuiza_.NET10.PagesViewModel;
 
 public partial class AboutViewModel : BaseViewModel
 {
-    [ObservableProperty]
-    private List<string> themeOptions = new() { "Auto", "Light", "Dark" };
+    private readonly IThemeService _themeService;
 
     [ObservableProperty]
-    private string selectedTheme = "Auto";
+    private bool _isDarkMode;
 
-    public AboutViewModel()
+    public AboutViewModel(
+        IThemeService themeService)
     {
-        Title = "About";
+        _themeService = themeService;
+
+        LoadThemePreference();
+    }
+
+    private void LoadThemePreference()
+    {
+        IsDarkMode = _themeService.ApplySavedTheme();
+    }
+
+    partial void OnIsDarkModeChanged(bool value)
+    {
+        _themeService.SaveThemePreference(value);
     }
 }

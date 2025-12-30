@@ -132,4 +132,19 @@
   <data name="SelectLanguageText" xml:space="preserve">
     <value>Välj språk</value>
   </data>
+  <data name="ThemeAuto" xml:space="preserve">
+    <value>Auto</value>
+  </data>
+  <data name="ThemeContentText" xml:space="preserve">
+    <value>Växla mellan ljusa och mörka teman</value>
+  </data>
+  <data name="ThemeDark" xml:space="preserve">
+    <value>Mörk</value>
+  </data>
+  <data name="ThemeLight" xml:space="preserve">
+    <value>Ljus</value>
+  </data>
+  <data name="ThemeText" xml:space="preserve">
+    <value>Utfärda</value>
+  </data>
 </root>

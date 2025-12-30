@@ -24,7 +24,7 @@ public static class MauiProgram
             })
             .ConfigureServices(); ;
 
-        ConfigureStatusBar();
+        //ConfigureStatusBar();
 
 #if DEBUG
         builder.Logging.AddDebug();
@@ -39,7 +39,8 @@ public static class MauiProgram
     private static MauiAppBuilder ConfigureServices(this MauiAppBuilder builder)
     {
         builder.Services
-            .AddSingleton<ILanguageService, LanguageService>();
+            .AddSingleton<ILanguageService, LanguageService>()
+            .AddSingleton<IThemeService, ThemeService>();
 
         builder.Services
             .AddSingleton<AppShell>()

@@ -104,5 +104,50 @@ namespace NavajaSuiza_.NET10.Resources.Languages {
                 return ResourceManager.GetString("SelectLanguageText", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Automático.
+        /// </summary>
+        internal static string ThemeAuto {
+            get {
+                return ResourceManager.GetString("ThemeAuto", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cambia entre tema claro y oscuro.
+        /// </summary>
+        internal static string ThemeContentText {
+            get {
+                return ResourceManager.GetString("ThemeContentText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Oscuro.
+        /// </summary>
+        internal static string ThemeDark {
+            get {
+                return ResourceManager.GetString("ThemeDark", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Claro.
+        /// </summary>
+        internal static string ThemeLight {
+            get {
+                return ResourceManager.GetString("ThemeLight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tema.
+        /// </summary>
+        internal static string ThemeText {
+            get {
+                return ResourceManager.GetString("ThemeText", resourceCulture);
+            }
+        }
     }
 }
