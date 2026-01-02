@@ -27,9 +27,10 @@ public static class MauiProgram
 #if DEBUG
         builder.Logging.AddDebug();
         builder.Services.AddLogging(configure =>
-            configure.AddDebug().SetMinimumLevel(LogLevel.Information));
+            configure
+                .AddDebug()
+                .SetMinimumLevel(LogLevel.Trace));
 #endif
-
 
         return builder.Build();
     }
@@ -46,21 +47,5 @@ public static class MauiProgram
             .AddSingleton<AboutViewModel>();
 
         return builder;
-    }
-
-    private static void ConfigureStatusBar()
-    {
-        Microsoft.Maui.Handlers.WindowHandler.Mapper.AppendToMapping(nameof(IWindow), (handler, view) =>
-        {
-#if ANDROID
-            var color = Android.Graphics.Color.ParseColor("#243042");
-
-            handler.PlatformView.Window?.SetStatusBarColor(color);
-            handler.PlatformView.Window?.SetNavigationBarColor(color);
-#endif
-
-#if IOS
-#endif
-        });
     }
 }

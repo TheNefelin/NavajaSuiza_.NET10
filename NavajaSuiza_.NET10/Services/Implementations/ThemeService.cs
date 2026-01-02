@@ -37,33 +37,51 @@ public class ThemeService : IThemeService
 
     private void UpdateStatusBarColors(bool isDarkMode)
     {
+
 #if ANDROID
         try
         {
-            var window = (Application.Current as App)?.MainPage?.Window?.Handler?.PlatformView as Android.App.Activity;
+            var color = Android.Graphics.Color.ParseColor("#243042");
+            var activity = (Application.Current?.MainPage?.Window?.Handler?.PlatformView as Android.App.Activity);
 
-            if (window != null)
+            if (activity != null)
             {
-                if (isDarkMode)
-                {
-                    var statusBarColor = Android.Graphics.Color.ParseColor("#243042");
-                    window.Window?.SetStatusBarColor(statusBarColor);
-                    window.Window?.SetNavigationBarColor(statusBarColor);
-                }
-                else
-                {
-                    var statusBarColor = Android.Graphics.Color.ParseColor("#F7F5F0");
-                    window.Window?.SetStatusBarColor(statusBarColor);
-                    window.Window?.SetNavigationBarColor(statusBarColor);
-                }
-
-                //_logger.LogInformation("[ThemeService] - Status bar colors updated: {Mode}", isDarkMode ? "Dark" : "Light");
+                activity.Window?.SetStatusBarColor(color);
+                activity.Window?.SetNavigationBarColor(color);
             }
         }
         catch (Exception ex)
         {
-            //_logger.LogError(ex, "[ThemeService] - Error updating status bar colors");
+            //_logger.LogError(ex, "[ThemeService] - Error updating status bar");
         }
 #endif
+
+//#if ANDROID
+//        try
+//        {
+//            var activity = (Application.Current?.MainPage?.Window?.Handler?.PlatformView as Android.App.Activity);
+//            if (activity != null)
+//            {
+//                if (isDarkMode)
+//                {
+//                    // Dark mode
+//                    activity.Window?.SetStatusBarColor(Android.Graphics.Color.ParseColor("#243042"));
+//                    activity.Window?.SetNavigationBarColor(Android.Graphics.Color.ParseColor("#243042"));
+//                }
+//                else
+//                {
+//                    // Light mode
+//                    activity.Window?.SetStatusBarColor(Android.Graphics.Color.ParseColor("#F7F5F0"));
+//                    activity.Window?.SetNavigationBarColor(Android.Graphics.Color.ParseColor("#F7F5F0"));
+//                }
+
+//                //activity.Recreate();
+//            }
+//        }
+//        catch (Exception ex)
+//        {
+//            //_logger.LogError(ex, "[ThemeService] - Error updating status bar");
+//        }
+//#endif
     }
 }

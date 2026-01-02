@@ -123,11 +123,20 @@
   <data name="CancelText" xml:space="preserve">
     <value>Cancelar</value>
   </data>
+  <data name="FlashlightText" xml:space="preserve">
+    <value>Linterna</value>
+  </data>
+  <data name="FramingText" xml:space="preserve">
+    <value>Encuadre</value>
+  </data>
   <data name="ManualText" xml:space="preserve">
     <value>Manual</value>
   </data>
   <data name="MenuText" xml:space="preserve">
     <value>Menú</value>
+  </data>
+  <data name="NotesText" xml:space="preserve">
+    <value>Notas</value>
   </data>
   <data name="SelectLanguageText" xml:space="preserve">
     <value>Seleccionar idioma</value>
@@ -146,5 +155,11 @@
   </data>
   <data name="ThemeText" xml:space="preserve">
     <value>Tema</value>
+  </data>
+  <data name="TunerText" xml:space="preserve">
+    <value>Afinador</value>
+  </data>
+  <data name="WeatherText" xml:space="preserve">
+    <value>Clima</value>
   </data>
 </root>

@@ -123,11 +123,20 @@
   <data name="CancelText" xml:space="preserve">
     <value>Avbryt</value>
   </data>
+  <data name="FlashlightText" xml:space="preserve">
+    <value>Ficklampa</value>
+  </data>
+  <data name="FramingText" xml:space="preserve">
+    <value>Inramning</value>
+  </data>
   <data name="ManualText" xml:space="preserve">
     <value>Manual</value>
   </data>
   <data name="MenuText" xml:space="preserve">
     <value>Meny</value>
+  </data>
+  <data name="NotesText" xml:space="preserve">
+    <value>Anteckningar</value>
   </data>
   <data name="SelectLanguageText" xml:space="preserve">
     <value>Välj språk</value>
@@ -146,5 +155,11 @@
   </data>
   <data name="ThemeText" xml:space="preserve">
     <value>Utfärda</value>
+  </data>
+  <data name="TunerText" xml:space="preserve">
+    <value>Tuner</value>
+  </data>
+  <data name="WeatherText" xml:space="preserve">
+    <value>Väder</value>
   </data>
 </root>

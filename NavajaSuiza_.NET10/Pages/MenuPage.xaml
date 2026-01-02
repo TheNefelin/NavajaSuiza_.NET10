@@ -6,7 +6,7 @@
              Title="{extensions:Translate MenuText}">
 
     <ScrollView>
-        <VerticalStackLayout HorizontalOptions="Center" Padding="10,20">
+        <VerticalStackLayout HorizontalOptions="Center" Padding="0,20">
             <Label Text="¿Que Nececitas Hoy?" FontAttributes="Bold" FontSize="20" Padding="10"/>
 
             <FlexLayout
@@ -15,55 +15,55 @@
 
                 <Button
                     ImageSource="icon_flashlight_512.png"
-                    Text="Linterna"
+                    Text="{extensions:Translate FlashlightText}"
                     FontAttributes="Bold"
                     ContentLayout="Top, 0" 
                     Margin="8,0,8,16"
-                    Padding="30,20,30,10"
+                    Padding="25,15,25,10"
                     WidthRequest="120" 
                     HeightRequest="120" 
                 />
 
                 <Button
                     ImageSource="icon_tuner_512.png"
-                    Text="Afinador"
+                    Text="{extensions:Translate TunerText}"
                     FontAttributes="Bold"
                     ContentLayout="Top, 0" 
                     Margin="8,0,8,16"
-                    Padding="30,20,30,10"
+                    Padding="25,15,25,10"
                     WidthRequest="120" 
                     HeightRequest="120" 
                 />
 
                 <Button
                     ImageSource="icon_insta_512.png"
-                    Text="Encuadre"
+                    Text="{extensions:Translate FramingText}"
                     FontAttributes="Bold"
                     ContentLayout="Top, 0" 
                     Margin="8,0,8,16"
-                    Padding="30,20,30,10"
+                    Padding="25,15,25,10"
                     WidthRequest="120" 
                     HeightRequest="120"
                 />
 
                 <Button
                     ImageSource="icon_notebook_512.png"
-                    Text="Libreta"
+                    Text="{extensions:Translate NotesText}"
                     FontAttributes="Bold"
                     ContentLayout="Top, 0" 
                     Margin="8,0,8,16"
-                    Padding="30,20,30,10"
+                    Padding="25,15,25,10"
                     WidthRequest="120" 
                     HeightRequest="120" 
                 />
 
                 <Button
                     ImageSource="icon_weather_512.png"
-                    Text="Clima"
+                    Text="{extensions:Translate WeatherText}"
                     FontAttributes="Bold"
                     ContentLayout="Top, 0" 
                     Margin="8,0,8,16"
-                    Padding="30,20,30,10"
+                    Padding="25,15,25,10"
                     WidthRequest="120" 
                     HeightRequest="120" 
                 />
