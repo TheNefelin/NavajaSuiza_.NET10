@@ -31,5 +31,39 @@ public class ThemeService : IThemeService
     private void ApplyTheme(bool isDarkMode)
     {
         Application.Current!.UserAppTheme = isDarkMode ? AppTheme.Dark : AppTheme.Light;
+
+        UpdateStatusBarColors(isDarkMode);
+    }
+
+    private void UpdateStatusBarColors(bool isDarkMode)
+    {
+#if ANDROID
+        try
+        {
+            var window = (Application.Current as App)?.MainPage?.Window?.Handler?.PlatformView as Android.App.Activity;
+
+            if (window != null)
+            {
+                if (isDarkMode)
+                {
+                    var statusBarColor = Android.Graphics.Color.ParseColor("#243042");
+                    window.Window?.SetStatusBarColor(statusBarColor);
+                    window.Window?.SetNavigationBarColor(statusBarColor);
+                }
+                else
+                {
+                    var statusBarColor = Android.Graphics.Color.ParseColor("#F7F5F0");
+                    window.Window?.SetStatusBarColor(statusBarColor);
+                    window.Window?.SetNavigationBarColor(statusBarColor);
+                }
+
+                //_logger.LogInformation("[ThemeService] - Status bar colors updated: {Mode}", isDarkMode ? "Dark" : "Light");
+            }
+        }
+        catch (Exception ex)
+        {
+            //_logger.LogError(ex, "[ThemeService] - Error updating status bar colors");
+        }
+#endif
     }
 }

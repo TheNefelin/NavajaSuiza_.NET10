@@ -24,8 +24,6 @@ public static class MauiProgram
             })
             .ConfigureServices();
 
-        ConfigureStatusBar();
-
 #if DEBUG
         builder.Logging.AddDebug();
         builder.Services.AddLogging(configure =>
