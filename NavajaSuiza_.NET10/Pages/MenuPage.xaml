@@ -5,11 +5,112 @@
              x:Class="NavajaSuiza_.NET10.Pages.MenuPage"
              Title="{extensions:Translate MenuText}">
 
-    <VerticalStackLayout Padding="20" VerticalOptions="Center">
-        <Button
-            x:Name="BtnTest"
-            Text="Prueba"
-            Clicked="OnClicked"/>
-    </VerticalStackLayout>
+    <ScrollView>
+        <VerticalStackLayout HorizontalOptions="Center" Padding="10,20">
+            <Label Text="¿Que Nececitas Hoy?" FontAttributes="Bold" FontSize="20" Padding="10"/>
 
+            <FlexLayout
+                Wrap="Wrap"
+                Padding="20">
+
+                <Button
+                    ImageSource="icon_flashlight_512.png"
+                    Text="Linterna"
+                    FontAttributes="Bold"
+                    ContentLayout="Top, 0" 
+                    Margin="8,0,8,16"
+                    Padding="30,20,30,10"
+                    WidthRequest="120" 
+                    HeightRequest="120" 
+                />
+
+                <Button
+                    ImageSource="icon_tuner_512.png"
+                    Text="Afinador"
+                    FontAttributes="Bold"
+                    ContentLayout="Top, 0" 
+                    Margin="8,0,8,16"
+                    Padding="30,20,30,10"
+                    WidthRequest="120" 
+                    HeightRequest="120" 
+                />
+
+                <Button
+                    ImageSource="icon_insta_512.png"
+                    Text="Encuadre"
+                    FontAttributes="Bold"
+                    ContentLayout="Top, 0" 
+                    Margin="8,0,8,16"
+                    Padding="30,20,30,10"
+                    WidthRequest="120" 
+                    HeightRequest="120"
+                />
+
+                <Button
+                    ImageSource="icon_notebook_512.png"
+                    Text="Libreta"
+                    FontAttributes="Bold"
+                    ContentLayout="Top, 0" 
+                    Margin="8,0,8,16"
+                    Padding="30,20,30,10"
+                    WidthRequest="120" 
+                    HeightRequest="120" 
+                />
+
+                <Button
+                    ImageSource="icon_weather_512.png"
+                    Text="Clima"
+                    FontAttributes="Bold"
+                    ContentLayout="Top, 0" 
+                    Margin="8,0,8,16"
+                    Padding="30,20,30,10"
+                    WidthRequest="120" 
+                    HeightRequest="120" 
+                />
+            </FlexLayout>
+
+            <Label Text="Estado Rápido" FontAttributes="Bold" FontSize="20" Padding="10,0,10,10"/>
+
+            <Border
+                Padding="16" 
+                StrokeShape="16"
+                Margin="0,0,0,10">
+                
+                <Grid ColumnDefinitions="*,Auto">
+                    <HorizontalStackLayout Grid.Column="0" Spacing="12">
+                        <Ellipse 
+                            WidthRequest="10" HeightRequest="10" 
+                            Fill="Red" />
+                        <Label 
+                            Text="Batería" 
+                            FontSize="14" FontAttributes="Bold"/>
+                    </HorizontalStackLayout>
+                    <Label 
+                        Text="78%"
+                        Grid.Column="1" FontSize="13" />
+                </Grid>
+            </Border>
+
+            <Border
+                Padding="16" 
+                StrokeShape="16"
+                Margin="0,0,0,10">
+
+                <Grid ColumnDefinitions="*,Auto">
+                    <HorizontalStackLayout Grid.Column="0" Spacing="12">
+                        <Ellipse 
+                            WidthRequest="10" HeightRequest="10" 
+                            Fill="Red" />
+                        <Label 
+                            Text="Almacenamiento" 
+                            FontSize="14" FontAttributes="Bold" />
+                    </HorizontalStackLayout>
+                    <Label 
+                        Text="48 GB" 
+                        Grid.Column="1" FontSize="13" />
+                </Grid>
+            </Border>
+        </VerticalStackLayout>
+    </ScrollView>
+    
 </ContentPage>

@@ -22,9 +22,9 @@ public static class MauiProgram
                 fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                 fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
             })
-            .ConfigureServices(); ;
+            .ConfigureServices();
 
-        //ConfigureStatusBar();
+        ConfigureStatusBar();
 
 #if DEBUG
         builder.Logging.AddDebug();
@@ -55,7 +55,7 @@ public static class MauiProgram
         Microsoft.Maui.Handlers.WindowHandler.Mapper.AppendToMapping(nameof(IWindow), (handler, view) =>
         {
 #if ANDROID
-            var color = Android.Graphics.Color.ParseColor("#E4E4E5");
+            var color = Android.Graphics.Color.ParseColor("#243042");
 
             handler.PlatformView.Window?.SetStatusBarColor(color);
             handler.PlatformView.Window?.SetNavigationBarColor(color);

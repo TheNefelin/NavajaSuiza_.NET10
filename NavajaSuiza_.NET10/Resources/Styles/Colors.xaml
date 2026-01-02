@@ -5,13 +5,38 @@
 
     <!-- Note: For Android please see also Platforms\Android\Resources\values\colors.xml -->
 
+    <Color x:Key="MyBackgroundDark">#1A2332</Color>
+    <Color x:Key="MyBackgroundLight">#E8E6E1</Color>
+    
+    <Color x:Key="MyBackgroundMenuDark">#243042</Color>
+    <Color x:Key="MyBackgroundMenuLight">#F7F5F0</Color>
+   
+    <Color x:Key="MyPrimaryDark">#2D3E50</Color>
+    <Color x:Key="MyPrimaryLight">#FFFFFF</Color>
+    <Color x:Key="MyPrimaryTextDark">#F0EDE6</Color>
+    <Color x:Key="MyPrimaryTextLight">#2E4057</Color>
+
+    <Color x:Key="MyAccentOrangeDark">#F08B70</Color>
+    <Color x:Key="MyAccentOrangeLight">#E07A5F</Color>
+    <Color x:Key="MyAccentGreenDark">#5F8D78</Color>
+    <Color x:Key="MyAccentGreenLight">#7AA894</Color>
+
+
+
+    <Color x:Key="MyPrimaryHoverDark">#384D63</Color>
+    <Color x:Key="MySecondaryTextDark">#8A9AAC</Color>
+    <Color x:Key="MyPlaceholderTextDark">#5A6A7A</Color>
+    <Color x:Key="MyAccentOrangBlueDeepDark">#4A637A</Color>
+
+    <!-- -->
+    
     <Color x:Key="Primary">#512BD4</Color>
-    <Color x:Key="PrimaryDark">#ac99ea</Color>
+    <Color x:Key="PrimaryDark">#384D63</Color>
     <Color x:Key="PrimaryDarkText">#242424</Color>
     <Color x:Key="Secondary">#DFD8F7</Color>
     <Color x:Key="SecondaryDarkText">#9880e5</Color>
     <Color x:Key="Tertiary">#2B0B98</Color>
-
+       
     <Color x:Key="White">White</Color>
     <Color x:Key="Black">Black</Color>
     <Color x:Key="Magenta">#D600AA</Color>
