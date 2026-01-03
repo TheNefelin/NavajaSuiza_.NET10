@@ -1,12 +1,114 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:extensions="clr-namespace:NavajaSuiza_.NET10.Extensions"
              x:Class="NavajaSuiza_.NET10.Pages.FlashlightPage"
-             Title="FlashlightPage">
-    <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+             Title="{extensions:Translate FlashlightText}">
+
+    <ScrollView>
+        <VerticalStackLayout 
+            Padding="20,40"
+            Spacing="20">
+
+            <Image Source="icon_flashlight.svg" WidthRequest="100">
+                <Image.Behaviors>
+                    <toolkit:IconTintColorBehavior TintColor="{StaticResource MyAccentOrange}" />
+                </Image.Behaviors>
+            </Image>
+
+            <Label 
+                Text="Elige tu fuente de luz"
+                FontSize="12"
+                HorizontalTextAlignment="Center"
+                Opacity="0.6" />
+
+            <Grid ColumnDefinitions="auto,auto" HorizontalOptions="Center">
+                <Button
+                    Grid.Column="0"
+                    Text="Flash"
+                    TextColor="{StaticResource MyPrimaryDark}"
+                    BackgroundColor="{StaticResource MyAccent}"
+                    ImageSource="icon_flash.svg"
+                    FontAttributes="Bold"
+                    ContentLayout="Top, 0" 
+                    Margin="8,0,8,16"
+                    Padding="25,15,25,10"
+                    WidthRequest="120" 
+                    HeightRequest="120" 
+                >
+                    <Button.Behaviors>
+                        <toolkit:IconTintColorBehavior TintColor="{StaticResource MyAccentOrange}" />
+                    </Button.Behaviors>
+                </Button>
+
+                <Button
+                    Grid.Column="1"
+                    ImageSource="icon_mobile_screen.svg"
+                    Text="Pantalla"
+                    FontAttributes="Bold"
+                    ContentLayout="Top, 0" 
+                    Margin="8,0,8,16"
+                    Padding="33,15,33,10"
+                    WidthRequest="120" 
+                    HeightRequest="120" 
+                >
+                    <Button.Behaviors>
+                        <toolkit:IconTintColorBehavior TintColor="{StaticResource MyAccentOrange}" />
+                    </Button.Behaviors>
+                </Button>
+            </Grid>
+         
+            <!-- Estado de la linterna -->
+            <Border
+                Padding="20"
+                StrokeShape="16">
+
+                <VerticalStackLayout 
+                    Spacing="12"
+                    HorizontalOptions="Center">
+
+                    <HorizontalStackLayout 
+                        Spacing="8"
+                        HorizontalOptions="Center">
+
+                        <Ellipse 
+                            x:Name="StatusIndicator"
+                            WidthRequest="15"
+                            HeightRequest="15"
+                            Fill="{StaticResource MyOff}"
+                            VerticalOptions="Center" />
+
+                        <Label 
+                            x:Name="StatusLabel"
+                            Text="Apagada"
+                            FontSize="16"
+                            FontAttributes="Bold"
+                            VerticalOptions="Center" />
+                    </HorizontalStackLayout>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Botón principal de encendido/apagado -->
+            <Button 
+                x:Name="ToggleButton"
+                TextColor="{StaticResource MyPrimaryLight}"
+                BackgroundColor="{StaticResource MyAccentGreen}"
+                Text="Encender"
+                FontSize="18"
+                FontAttributes="Bold"
+                Padding="24,18"
+                CornerRadius="16" />
+
+            <!-- Nota informativa -->
+            <Label 
+                Text="Nota: La pantalla usará el máximo brillo para simular luz"
+                FontSize="12"
+                HorizontalTextAlignment="Center"
+                Opacity="0.6"
+                Padding="16" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+    
 </ContentPage>

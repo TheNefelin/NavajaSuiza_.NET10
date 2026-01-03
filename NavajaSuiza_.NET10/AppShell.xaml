@@ -18,24 +18,20 @@
             x:Name="MenuTxt"
             Title="{extensions:Translate MenuText}"
             ContentTemplate="{DataTemplate pages:MenuPage}"
-            Icon="icon_menu_512.png"
+            Icon="icon_menu.svg"
             Route="MenuPage" />
         <ShellContent
             x:Name="ManualTxt"
             Title="{extensions:Translate ManualText}"
             ContentTemplate="{DataTemplate pages:ManualPage}"
-            Icon="icon_manual_512.png"
+            Icon="icon_manual.svg"
             Route="ManualPage" />
         <ShellContent
             x:Name="AboutTxt"
             Title="{extensions:Translate AboutText}"
             ContentTemplate="{DataTemplate pages:AboutPage}"
-            Icon="icon_about_512.png"
+            Icon="icon_about.svg"
             Route="AboutPage" />
     </TabBar>
-
-    <ShellContent
-        Route="flashlight"
-        ContentTemplate="{DataTemplate pages:FlashlightPage}" />
 
 </Shell>

@@ -33,7 +33,7 @@
         <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource MyPrimaryLight}, Dark={StaticResource MyPrimaryDark}}" />
         <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource MyPrimaryTextLight}, Dark={StaticResource MyPrimaryTextDark}}" />
         <Setter Property="BorderWidth" Value="1" />
-        <Setter Property="BorderColor" Value="{AppThemeBinding Light={StaticResource MyPrimaryTextLight}, Dark={StaticResource MyAccentGreenDark}}" />
+        <Setter Property="BorderColor" Value="{AppThemeBinding Light={StaticResource MyPrimaryTextLight}, Dark={StaticResource MyAccentGreen}}" />
         <!-- -->
         <Setter Property="FontFamily" Value="OpenSansRegular"/>
         <Setter Property="FontSize" Value="14"/>
@@ -435,8 +435,8 @@
         <!--<Setter Property="Shell.TabBarForegroundColor" Value="{AppThemeBinding Light={StaticResource Magenta}, Dark={StaticResource White}}" />-->
         <!--<Setter Property="Shell.TabBarTitleColor" Value="{AppThemeBinding Light={StaticResource Magenta}, Dark={StaticResource White}}" />-->
         <Setter Property="Shell.TabBarBackgroundColor" Value="{AppThemeBinding Light={StaticResource MyBackgroundMenuLight}, Dark={StaticResource MyBackgroundMenuDark}}" />
-        <Setter Property="Shell.TabBarForegroundColor" Value="{AppThemeBinding Light={StaticResource MyAccentOrangeLight}, Dark={StaticResource MyAccentOrangeDark}}" />
-        <Setter Property="Shell.TabBarTitleColor" Value="{AppThemeBinding Light={StaticResource MyAccentOrangeLight}, Dark={StaticResource MyAccentOrangeDark}}" />
+        <Setter Property="Shell.TabBarForegroundColor" Value="{AppThemeBinding Light={StaticResource MyAccentOrange}, Dark={StaticResource MyAccentOrange}}" />
+        <Setter Property="Shell.TabBarTitleColor" Value="{AppThemeBinding Light={StaticResource MyAccentOrange}, Dark={StaticResource MyAccentOrange}}" />
         <!-- -->
         <Setter Property="Shell.TabBarUnselectedColor" Value="{AppThemeBinding Light={StaticResource Gray900}, Dark={StaticResource Gray200}}" />
     </Style>

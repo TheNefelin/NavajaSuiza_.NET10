@@ -16,18 +16,14 @@
     <Color x:Key="MyPrimaryTextDark">#F0EDE6</Color>
     <Color x:Key="MyPrimaryTextLight">#2E4057</Color>
 
-    <Color x:Key="MyAccentOrangeDark">#F08B70</Color>
-    <Color x:Key="MyAccentOrangeLight">#E07A5F</Color>
-    <Color x:Key="MyAccentGreenDark">#5F8D78</Color>
-    <Color x:Key="MyAccentGreenLight">#7AA894</Color>
+    <Color x:Key="MyAccent">#B0FFFA</Color>
+    <Color x:Key="MyAccentOrange">#E07A5F</Color>
+    <Color x:Key="MyAccentGreen">#7AA894</Color>
+    
+    <Color x:Key="MyOn">#FF0000</Color>
+    <Color x:Key="MyOff">#999999</Color>
 
-
-
-    <Color x:Key="MyPrimaryHoverDark">#384D63</Color>
-    <Color x:Key="MySecondaryTextDark">#8A9AAC</Color>
-    <Color x:Key="MyPlaceholderTextDark">#5A6A7A</Color>
-    <Color x:Key="MyAccentOrangBlueDeepDark">#4A637A</Color>
-
+    <!--FCA120 CCCCFF-->
     <!-- -->
     
     <Color x:Key="Primary">#512BD4</Color>
