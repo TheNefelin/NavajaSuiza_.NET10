@@ -14,8 +14,9 @@
                 Padding="20">
 
                 <Button
-                    ImageSource="icon_flashlight_512.png"
+                    Command="{Binding NavigateToFlashlightCommand}"
                     Text="{extensions:Translate FlashlightText}"
+                    ImageSource="icon_flashlight_512.png"
                     FontAttributes="Bold"
                     ContentLayout="Top, 0" 
                     Margin="8,0,8,16"

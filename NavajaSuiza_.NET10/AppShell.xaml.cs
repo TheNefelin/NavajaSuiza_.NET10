@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using CommunityToolkit.Maui.Alerts;
+using Microsoft.Extensions.Logging;
 using NavajaSuiza_.NET10.Extensions;
 using NavajaSuiza_.NET10.Resources.Languages;
 using NavajaSuiza_.NET10.Services.Interfaces;
@@ -81,5 +82,17 @@ public partial class AppShell : Shell
 
             _logger.LogInformation("[AppShell] - Toolbar updated to: {Text}", toolbarItem.Text);
         }
+    }
+
+    public static async Task DisplayToastAsync(string message)
+    {
+        // Toast is currently not working in MCT on Windows
+        if (OperatingSystem.IsWindows())
+            return;
+
+        var toast = Toast.Make(message, textSize: 18);
+
+        var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+        await toast.Show(cts.Token);
     }
 }

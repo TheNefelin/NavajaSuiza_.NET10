@@ -44,7 +44,11 @@ public static class MauiProgram
         builder.Services
             .AddSingleton<AppShell>()
             .AddSingleton<AboutPage>()
-            .AddSingleton<AboutViewModel>();
+            .AddSingleton<AboutViewModel>()
+            .AddSingleton<MenuPage>()
+            .AddSingleton<MenuViewModel>()
+            .AddSingleton<FlashlightPage>()
+            .AddSingleton<FlashlightViewModel>();
 
         return builder;
     }

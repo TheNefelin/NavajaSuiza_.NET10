@@ -79,6 +79,24 @@ namespace NavajaSuiza_.NET10.Resources.Languages {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Linterna.
+        /// </summary>
+        internal static string FlashlightText {
+            get {
+                return ResourceManager.GetString("FlashlightText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Encuadre.
+        /// </summary>
+        internal static string FramingText {
+            get {
+                return ResourceManager.GetString("FramingText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Manual.
         /// </summary>
         internal static string ManualText {
@@ -93,6 +111,15 @@ namespace NavajaSuiza_.NET10.Resources.Languages {
         internal static string MenuText {
             get {
                 return ResourceManager.GetString("MenuText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Notas.
+        /// </summary>
+        internal static string NotesText {
+            get {
+                return ResourceManager.GetString("NotesText", resourceCulture);
             }
         }
         
@@ -147,6 +174,24 @@ namespace NavajaSuiza_.NET10.Resources.Languages {
         internal static string ThemeText {
             get {
                 return ResourceManager.GetString("ThemeText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Afinador.
+        /// </summary>
+        internal static string TunerText {
+            get {
+                return ResourceManager.GetString("TunerText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Clima.
+        /// </summary>
+        internal static string WeatherText {
+            get {
+                return ResourceManager.GetString("WeatherText", resourceCulture);
             }
         }
     }

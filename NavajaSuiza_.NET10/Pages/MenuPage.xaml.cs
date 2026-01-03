@@ -1,18 +1,12 @@
-using NavajaSuiza_.NET10.Extensions;
-using System.Globalization;
+using NavajaSuiza_.NET10.PagesViewModel;
 
 namespace NavajaSuiza_.NET10.Pages;
 
 public partial class MenuPage : ContentPage
 {
-    public MenuPage()
+    public MenuPage(MenuViewModel viewModel)
 	{
 		InitializeComponent();
-        BindingContext = this;
-    }
-
-    private void OnClicked(object sender, EventArgs e)
-    {
-
+        BindingContext = viewModel;
     }
 }
