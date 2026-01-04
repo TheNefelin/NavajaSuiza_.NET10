@@ -6,10 +6,10 @@ public partial class ScreenLightViewModel : BaseViewModel
 
     public void InitializeScreenLight()
     {
-#if ANDROID
-        _originalBrightness = GetCurrentBrightness();
-        SetScreenBrightness(1.0);
-#endif
+//#if ANDROID
+//        _originalBrightness = GetCurrentBrightness();
+//        SetScreenBrightness(1.0);
+//#endif
         DeviceDisplay.Current.KeepScreenOn = true;
     }
 

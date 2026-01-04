@@ -7,6 +7,12 @@
 - Microsoft.Maui.Controls
 - Syncfusion.Maui.Toolkit
 
+### AndroidManifest permissions
+- BATTERY_STATUS
+- CAMERA
+- FLASHLIGHT
+- 
+
 ### Structure
 ```
 NavajaSuiza_.NET10/
@@ -23,10 +29,16 @@ NavajaSuiza_.NET10/
 │   └── SupportedLanguages.cs
 │
 ├── 📁 Resources/
-│   └── Languages/
-│       ├── AppResources.resx
-│       ├── AppResources.en.resx
-│       └── AppResources.sv.resx
+│   ├── AppIcon/
+│   ├── Images/
+│   ├── Languages/
+│   │   ├── AppResources.resx
+│   │   ├── AppResources.en.resx
+│   │   └── AppResources.sv.resx
+│   ├── Splash/
+│   └── Styles/
+│       ├── Colors.xaml
+│       └── Styles.xaml
 │
 ├── 📁 Services/
 │   ├── Implementations/
@@ -35,13 +47,18 @@ NavajaSuiza_.NET10/
 │       └── ILanguageService.cs
 │
 ├── 📁 ViewModels/
+│   ├── AboutViewModel.cs
 │   ├── BaseViewModel.cs
-│   └── AboutViewModel.cs
+│   ├── FlashlightViewModel.cs
+│   ├── MenuViewModel.cs
+│   └── ScreenLightViewModel.cs
 │
 ├── 📁 Views/
 │   ├── AboutPage.xaml/cs
+│   ├── FlashlightPage.xaml/cs
 │   ├── ManualPage.xaml/cs
-│   └── AboutViewModel.xaml/cs
+│   ├── MenuPage.xaml/cs
+│   └── ScreenLightPage.xaml/cs
 │
 ├── App.xaml/cs
 ├── AppShell.xaml/cs
