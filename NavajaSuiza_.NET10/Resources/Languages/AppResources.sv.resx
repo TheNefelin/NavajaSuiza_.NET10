@@ -123,6 +123,30 @@
   <data name="CancelText" xml:space="preserve">
     <value>Avbryt</value>
   </data>
+  <data name="FlashlightActionOffText" xml:space="preserve">
+    <value>Stänga av</value>
+  </data>
+  <data name="FlashlightActionOnText" xml:space="preserve">
+    <value>Sätta på</value>
+  </data>
+  <data name="FlashlightNote" xml:space="preserve">
+    <value>Obs: Skärmen använder maximal ljusstyrka för att simulera ljus.</value>
+  </data>
+  <data name="FlashlightOpFlashText" xml:space="preserve">
+    <value>Flash</value>
+  </data>
+  <data name="FlashlightOpScreenText" xml:space="preserve">
+    <value>Skärm</value>
+  </data>
+  <data name="FlashlightOptionsText" xml:space="preserve">
+    <value>Välj din ljuskälla</value>
+  </data>
+  <data name="FlashlightStatusOffText" xml:space="preserve">
+    <value>På</value>
+  </data>
+  <data name="FlashlightStatusOnText" xml:space="preserve">
+    <value>Av</value>
+  </data>
   <data name="FlashlightText" xml:space="preserve">
     <value>Ficklampa</value>
   </data>

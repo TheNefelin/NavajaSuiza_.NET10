@@ -123,6 +123,30 @@
   <data name="CancelText" xml:space="preserve">
     <value>Cancelar</value>
   </data>
+  <data name="FlashlightActionOffText" xml:space="preserve">
+    <value>Apagar</value>
+  </data>
+  <data name="FlashlightActionOnText" xml:space="preserve">
+    <value>Prender</value>
+  </data>
+  <data name="FlashlightNote" xml:space="preserve">
+    <value>Nota: La pantalla usará el máximo brillo para simular luz</value>
+  </data>
+  <data name="FlashlightOpFlashText" xml:space="preserve">
+    <value>Flash</value>
+  </data>
+  <data name="FlashlightOpScreenText" xml:space="preserve">
+    <value>Pantalla</value>
+  </data>
+  <data name="FlashlightOptionsText" xml:space="preserve">
+    <value>Elige tu fuente de luz</value>
+  </data>
+  <data name="FlashlightStatusOffText" xml:space="preserve">
+    <value>Encendido</value>
+  </data>
+  <data name="FlashlightStatusOnText" xml:space="preserve">
+    <value>Apagado</value>
+  </data>
   <data name="FlashlightText" xml:space="preserve">
     <value>Linterna</value>
   </data>

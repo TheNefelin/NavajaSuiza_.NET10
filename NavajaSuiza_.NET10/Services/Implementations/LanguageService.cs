@@ -9,6 +9,8 @@ public class LanguageService : ILanguageService
 {
     private readonly ILogger<LanguageService> _logger;
 
+    public event EventHandler LanguageChanged;
+
     public LanguageService(ILogger<LanguageService> logger)
     {
         _logger = logger;
@@ -49,6 +51,8 @@ public class LanguageService : ILanguageService
 
             LocalizationResourceManager.Instance.Culture = nextCulture;
             SaveLanguage(languageCode);
+
+            LanguageChanged?.Invoke(this, EventArgs.Empty);
 
             _logger.LogInformation("[LanguageService] - Language set successfully to: {Culture}", nextCulture.Name);
         }

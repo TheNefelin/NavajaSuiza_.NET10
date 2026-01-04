@@ -79,6 +79,78 @@ namespace NavajaSuiza_.NET10.Resources.Languages {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Apagar.
+        /// </summary>
+        internal static string FlashlightActionOffText {
+            get {
+                return ResourceManager.GetString("FlashlightActionOffText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Prender.
+        /// </summary>
+        internal static string FlashlightActionOnText {
+            get {
+                return ResourceManager.GetString("FlashlightActionOnText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Nota: La pantalla usará el máximo brillo para simular luz.
+        /// </summary>
+        internal static string FlashlightNote {
+            get {
+                return ResourceManager.GetString("FlashlightNote", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Flash.
+        /// </summary>
+        internal static string FlashlightOpFlashText {
+            get {
+                return ResourceManager.GetString("FlashlightOpFlashText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pantalla.
+        /// </summary>
+        internal static string FlashlightOpScreenText {
+            get {
+                return ResourceManager.GetString("FlashlightOpScreenText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Elige tu fuente de luz.
+        /// </summary>
+        internal static string FlashlightOptionsText {
+            get {
+                return ResourceManager.GetString("FlashlightOptionsText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Encendido.
+        /// </summary>
+        internal static string FlashlightStatusOffText {
+            get {
+                return ResourceManager.GetString("FlashlightStatusOffText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Apagado.
+        /// </summary>
+        internal static string FlashlightStatusOnText {
+            get {
+                return ResourceManager.GetString("FlashlightStatusOnText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Linterna.
         /// </summary>
         internal static string FlashlightText {
