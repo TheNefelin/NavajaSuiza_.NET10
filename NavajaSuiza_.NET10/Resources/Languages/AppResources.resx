@@ -189,4 +189,10 @@
   <data name="FlashlightScreenLightText" xml:space="preserve">
     <value>Luz de la Pantalla</value>
   </data>
+  <data name="MenuStorageText" xml:space="preserve">
+    <value>Almacenamiento</value>
+  </data>
+  <data name="MenuBateryText" xml:space="preserve">
+    <value>Batería</value>
+  </data>
 </root>

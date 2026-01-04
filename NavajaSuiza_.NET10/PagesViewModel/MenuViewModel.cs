@@ -1,15 +1,33 @@
-﻿using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using NavajaSuiza_.NET10.Pages;
+using NavajaSuiza_.NET10.Services.Interfaces;
 
 namespace NavajaSuiza_.NET10.PagesViewModel;
 
 public partial class MenuViewModel : BaseViewModel
 {
     private readonly IServiceProvider _serviceProvider;
+    private readonly IDeviceStatusService _deviceStatusService;
 
-    public MenuViewModel(IServiceProvider serviceProvider)
+    [ObservableProperty]
+    private string _availableStorage = "0 GB";
+
+    [ObservableProperty]
+    private string _batteryLevel = "0%";
+
+    public MenuViewModel(
+        IServiceProvider serviceProvider,
+        IDeviceStatusService deviceStatusService)
     {
         _serviceProvider = serviceProvider;
+        _deviceStatusService = deviceStatusService;
+    }
+
+    public void OnPageAppearing()
+    {
+        BatteryLevel = _deviceStatusService.GetBatteryLevel();
+        AvailableStorage = _deviceStatusService.GetAvailableStorage();
     }
 
     [RelayCommand]

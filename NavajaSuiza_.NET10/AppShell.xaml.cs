@@ -1,14 +1,10 @@
 ﻿using CommunityToolkit.Maui.Alerts;
 using Microsoft.Extensions.Logging;
 using NavajaSuiza_.NET10.Extensions;
-using NavajaSuiza_.NET10.Resources.Languages;
 using NavajaSuiza_.NET10.Services.Interfaces;
 
 namespace NavajaSuiza_.NET10;
 
-/// <summary>
-/// AppShell handles the main shell layout and language switching functionality
-/// </summary>
 public partial class AppShell : Shell
 {
     private readonly ILogger<AppShell> _logger;

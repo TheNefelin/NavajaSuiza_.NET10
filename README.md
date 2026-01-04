@@ -42,9 +42,13 @@ NavajaSuiza_.NET10/
 │
 ├── 📁 Services/
 │   ├── Implementations/
-│   │   └── LanguageService.cs
+│   │   ├── DeviceStatusService.cs
+│   │   ├── LanguageService.cs
+│   │   └── ThemeService.cs
 │   └── Interfaces/
-│       └── ILanguageService.cs
+│       ├── IDeviceStatusService.cs
+│       ├── ILanguageService.cs
+│       └── IThemeService.cs
 │
 ├── 📁 ViewModels/
 │   ├── AboutViewModel.cs

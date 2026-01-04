@@ -39,26 +39,26 @@ public partial class FlashlightViewModel : BaseViewModel
     {
         IsFlashOn = !IsFlashOn;
 
-        //try
-        //{
-        //    if (IsFlashOn)
-        //    {
-        //        await Flashlight.Default.TurnOnAsync();
-        //    }
-        //    else
-        //    {
-        //        await Flashlight.Default.TurnOffAsync();
-        //    }
-        //}
-        //catch (Exception ex)
-        //{
-        //    IsFlashOn = !IsFlashOn; // Revierte el cambio si falla
+        try
+        {
+            if (IsFlashOn)
+            {
+                await Flashlight.Default.TurnOnAsync();
+            }
+            else
+            {
+                await Flashlight.Default.TurnOffAsync();
+            }
+        }
+        catch (Exception ex)
+        {
+            IsFlashOn = !IsFlashOn; // Revierte el cambio si falla
 
-        //    await Shell.Current.DisplayAlertAsync(
-        //        "Error",
-        //        "No se pudo acceder a la linterna. Verifica los permisos.",
-        //        "OK");
-        //}
+            //await Shell.Current.DisplayAlertAsync(
+            //    "Error",
+            //    "No se pudo acceder a la linterna. Verifica los permisos.",
+            //    "OK");
+        }
     }
   
     [RelayCommand]
@@ -66,28 +66,28 @@ public partial class FlashlightViewModel : BaseViewModel
     {
         IsScreenOn = !IsScreenOn;
 
-        //try
-        //{
-        //    if (IsScreenOn)
-        //    {
-        //        var screenLightPage = _serviceProvider.GetRequiredService<ScreenLightPage>();
-        //        await Shell.Current.Navigation.PushAsync(screenLightPage);
-        //        IsScreenOn = false;
-        //    }
-        //    else
-        //    {
-        //        DeviceDisplay.Current.KeepScreenOn = false;
-        //    }
-        //}
-        //catch (Exception ex)
-        //{
-        //    IsScreenOn = !IsScreenOn;
+        try
+        {
+            if (IsScreenOn)
+            {
+                var screenLightPage = _serviceProvider.GetRequiredService<ScreenLightPage>();
+                await Shell.Current.Navigation.PushAsync(screenLightPage);
+                IsScreenOn = false;
+            }
+            else
+            {
+                DeviceDisplay.Current.KeepScreenOn = false;
+            }
+        }
+        catch (Exception ex)
+        {
+            IsScreenOn = !IsScreenOn;
 
-        //    _ = Shell.Current.DisplayAlertAsync(
-        //        "Error",
-        //        ex.Message,
-        //        "OK");
-        //}
+            //await Shell.Current.DisplayAlertAsync(
+            //    "Error",
+            //    ex.Message,
+            //    "OK");
+        }
     }
 
     //[RelayCommand]

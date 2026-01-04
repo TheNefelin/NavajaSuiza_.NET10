@@ -34,9 +34,4 @@
             Route="AboutPage" />
     </TabBar>
 
-    <ShellContent
-        Title="Screen Light"
-        ContentTemplate="{DataTemplate local:ScreenLightPage}"
-        Route="screenlightpage" />
-    
 </Shell>

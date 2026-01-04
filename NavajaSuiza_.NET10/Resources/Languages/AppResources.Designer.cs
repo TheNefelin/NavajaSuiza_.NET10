@@ -187,6 +187,24 @@ namespace NavajaSuiza_.NET10.Resources.Languages {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Batería.
+        /// </summary>
+        internal static string MenuBateryText {
+            get {
+                return ResourceManager.GetString("MenuBateryText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Almacenamiento.
+        /// </summary>
+        internal static string MenuStorageText {
+            get {
+                return ResourceManager.GetString("MenuStorageText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Menú.
         /// </summary>
         internal static string MenuText {

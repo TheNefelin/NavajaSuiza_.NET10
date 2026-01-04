@@ -9,4 +9,13 @@ public partial class MenuPage : ContentPage
 		InitializeComponent();
         BindingContext = viewModel;
     }
+
+    protected override void OnAppearing()
+    {
+        base.OnAppearing();
+        if (BindingContext is MenuViewModel viewModel)
+        {
+            viewModel.OnPageAppearing();
+        }
+    }
 }

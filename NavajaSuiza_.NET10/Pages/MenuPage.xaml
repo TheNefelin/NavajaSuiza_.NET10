@@ -104,11 +104,11 @@
                             WidthRequest="10" HeightRequest="10" 
                             Fill="{StaticResource MyOn}" />
                         <Label 
-                            Text="Batería" 
+                            Text="{extensions:Translate MenuBateryText}" 
                             FontSize="14" FontAttributes="Bold"/>
                     </HorizontalStackLayout>
                     <Label 
-                        Text="78%"
+                        Text="{Binding BatteryLevel}"
                         Grid.Column="1" FontSize="13" />
                 </Grid>
             </Border>
@@ -124,11 +124,11 @@
                             WidthRequest="10" HeightRequest="10" 
                             Fill="{StaticResource MyOn}" />
                         <Label 
-                            Text="Almacenamiento" 
+                            Text="{extensions:Translate MenuStorageText}" 
                             FontSize="14" FontAttributes="Bold" />
                     </HorizontalStackLayout>
                     <Label 
-                        Text="48 GB" 
+                        Text="{Binding AvailableStorage}" 
                         Grid.Column="1" FontSize="13" />
                 </Grid>
             </Border>

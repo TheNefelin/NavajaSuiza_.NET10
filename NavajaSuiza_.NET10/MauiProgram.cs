@@ -30,6 +30,12 @@ public static class MauiProgram
             configure
                 .AddDebug()
                 .SetMinimumLevel(LogLevel.Trace));
+#else
+    // En Release también queremos logs
+    builder.Services.AddLogging(configure =>
+        configure
+            .AddDebug()
+            .SetMinimumLevel(LogLevel.Information));
 #endif
 
         return builder.Build();
@@ -39,14 +45,16 @@ public static class MauiProgram
     {
         builder.Services
             .AddSingleton<ILanguageService, LanguageService>()
-            .AddSingleton<IThemeService, ThemeService>();
+            .AddSingleton<IThemeService, ThemeService>()
+            .AddSingleton<IDeviceStatusService, DeviceStatusService>()
+            ;
 
         builder.Services
             .AddSingleton<AppShell>()
-            .AddSingleton<AboutViewModel>()
-            .AddSingleton<AboutPage>()
             .AddSingleton<MenuViewModel>()
             .AddSingleton<MenuPage>()
+            .AddSingleton<AboutViewModel>()
+            .AddSingleton<AboutPage>()
             .AddSingleton<FlashlightViewModel>()
             .AddSingleton<FlashlightPage>()
             .AddSingleton<ScreenLightViewModel>()
