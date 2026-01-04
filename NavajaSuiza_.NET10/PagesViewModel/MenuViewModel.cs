@@ -36,4 +36,11 @@ public partial class MenuViewModel : BaseViewModel
         var page = _serviceProvider.GetRequiredService<FlashlightPage>();
         await Shell.Current.Navigation.PushAsync(page);
     }
+
+    [RelayCommand]
+    private async Task NavigateToTuner()
+    {
+        var page = _serviceProvider.GetRequiredService<TunerPage>();
+        await Shell.Current.Navigation.PushAsync(page);
+    }
 }

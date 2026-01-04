@@ -31,23 +31,8 @@
                 </Button>
 
                 <Button
-                    ImageSource="icon_tuner.svg"
-                    Text="{extensions:Translate TunerText}"
-                    FontAttributes="Bold"
-                    ContentLayout="Top, 0" 
-                    Margin="8,0,8,16"
-                    Padding="25,15,25,10"
-                    WidthRequest="120" 
-                    HeightRequest="120" 
-                >
-                    <Button.Behaviors>
-                        <toolkit:IconTintColorBehavior TintColor="{StaticResource MyAccentOrange}" />
-                    </Button.Behaviors>
-                </Button>
-
-                <Button
-                    ImageSource="icon_instagram.svg"
                     Text="{extensions:Translate FramingText}"
+                    ImageSource="icon_instagram.svg"                    
                     FontAttributes="Bold"
                     ContentLayout="Top, 0" 
                     Margin="8,0,8,16"
@@ -61,8 +46,39 @@
                 </Button>
 
                 <Button
-                    ImageSource="icon_notebook.svg"
+                    Command="{Binding NavigateToTunerCommand}"                    
+                    Text="{extensions:Translate TunerText}"
+                    ImageSource="icon_tuner.svg"                    
+                    FontAttributes="Bold"
+                    ContentLayout="Top, 0" 
+                    Margin="8,0,8,16"
+                    Padding="25,15,25,10"
+                    WidthRequest="120" 
+                    HeightRequest="120" 
+                >
+                    <Button.Behaviors>
+                        <toolkit:IconTintColorBehavior TintColor="{StaticResource MyAccentOrange}" />
+                    </Button.Behaviors>
+                </Button>
+
+                <Button
+                    Text="{extensions:Translate TunerText}"
+                    ImageSource="icon_instrument.svg"                    
+                    FontAttributes="Bold"
+                    ContentLayout="Top, 0" 
+                    Margin="8,0,8,16"
+                    Padding="25,15,25,10"
+                    WidthRequest="120" 
+                    HeightRequest="120" 
+                >
+                    <Button.Behaviors>
+                        <toolkit:IconTintColorBehavior TintColor="{StaticResource MyAccentOrange}" />
+                    </Button.Behaviors>
+                </Button>
+
+                <Button
                     Text="{extensions:Translate NotesText}"
+                    ImageSource="icon_notebook.svg"                    
                     FontAttributes="Bold"
                     ContentLayout="Top, 0" 
                     Margin="8,0,8,16"
@@ -76,8 +92,8 @@
                 </Button>
 
                 <Button
-                    ImageSource="icon_weather.svg"
                     Text="{extensions:Translate WeatherText}"
+                    ImageSource="icon_weather.svg"                    
                     FontAttributes="Bold"
                     ContentLayout="Top, 0" 
                     Margin="8,0,8,16"

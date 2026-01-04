@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="NavajaSuiza_.NET10.Pages.TunerPage"
+             Title="TunerPage">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="30">
+
+            <!-- Header -->
+            <VerticalStackLayout Spacing="5" HorizontalOptions="Center">
+                <Label 
+                    Text="🎵 AFINADOR" 
+                    FontSize="32" 
+                    FontAttributes="Bold"
+                    HorizontalTextAlignment="Center"
+                    TextColor="#00D9FF" />
+                <Label 
+                    Text="Afina tu instrumento con precisión" 
+                    FontSize="12"
+                    Opacity="0.6"
+                    HorizontalTextAlignment="Center" />
+            </VerticalStackLayout>
+
+            <!-- Selector de Instrumento -->
+            <VerticalStackLayout Spacing="12">
+                <Label 
+                    Text="INSTRUMENTO" 
+                    FontSize="13" 
+                    FontAttributes="Bold"
+                    Opacity="0.8" />
+                <HorizontalStackLayout Spacing="10">
+                    <Button 
+                        Text="🎸 Guitarra" 
+                        Padding="12,12" 
+                        CornerRadius="10"
+                        BackgroundColor="#2D2D2D"
+                        TextColor="#FFFFFF"
+                        FontSize="12"
+                        FontAttributes="Bold"
+                         />
+                    <Button 
+                        Text="🎹 Piano" 
+                        Padding="12,12" 
+                        CornerRadius="10"
+                        BackgroundColor="#2D2D2D"
+                        TextColor="#FFFFFF"
+                        FontSize="12"
+                        FontAttributes="Bold"
+                         />
+                    <Button 
+                        Text="🎺 Charango" 
+                        Padding="12,12" 
+                        CornerRadius="10"
+                        BackgroundColor="#2D2D2D"
+                        TextColor="#FFFFFF"
+                        FontSize="12"
+                        FontAttributes="Bold"
+                         />
+                </HorizontalStackLayout>
+            </VerticalStackLayout>
+
+            <!-- Display Principal - Nota Seleccionada -->
+            <Border 
+                Padding="30" 
+                StrokeShape="20"
+                BackgroundColor="#252525"
+                
+                StrokeThickness="2">
+                <VerticalStackLayout Spacing="15" HorizontalOptions="Center">
+                    <Label 
+                        Text="NOTA ACTUAL" 
+                        FontSize="11"
+                        Opacity="0.6"
+                        HorizontalTextAlignment="Center"
+                        FontAttributes="Bold" />
+                    <Label 
+                        Text="DO" 
+                        FontSize="64" 
+                        FontAttributes="Bold"
+                        HorizontalTextAlignment="Center"
+                        TextColor="#00D9FF" />
+                    <Label 
+                        Text="Octava 3" 
+                        FontSize="16"
+                        Opacity="0.7"
+                        HorizontalTextAlignment="Center" />
+                    <Label 
+                        Text="261.63 Hz" 
+                        FontSize="13"
+                        Opacity="0.5"
+                        HorizontalTextAlignment="Center"
+                        FontFamily="Monospace" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Selector de Notas -->
+            <VerticalStackLayout Spacing="12">
+                <Label 
+                    Text="NOTAS" 
+                    FontSize="13" 
+                    FontAttributes="Bold"
+                    Opacity="0.8" />
+                <Grid ColumnDefinitions="*,*,*,*,*,*,*" ColumnSpacing="8">
+                    <Button Text="C" Grid.Column="0" Padding="10" CornerRadius="10" BackgroundColor="#2D2D2D" TextColor="#FFFFFF" FontAttributes="Bold" />
+                    <Button Text="D" Grid.Column="1" Padding="10" CornerRadius="10" BackgroundColor="#2D2D2D" TextColor="#FFFFFF" FontAttributes="Bold" />
+                    <Button Text="E" Grid.Column="2" Padding="10" CornerRadius="10" BackgroundColor="#2D2D2D" TextColor="#FFFFFF" FontAttributes="Bold" />
+                    <Button Text="F" Grid.Column="3" Padding="10" CornerRadius="10" BackgroundColor="#2D2D2D" TextColor="#FFFFFF" FontAttributes="Bold" />
+                    <Button Text="G" Grid.Column="4" Padding="10" CornerRadius="10" BackgroundColor="#2D2D2D" TextColor="#FFFFFF" FontAttributes="Bold" />
+                    <Button Text="A" Grid.Column="5" Padding="10" CornerRadius="10" BackgroundColor="#2D2D2D" TextColor="#FFFFFF" FontAttributes="Bold" />
+                    <Button Text="B" Grid.Column="6" Padding="10" CornerRadius="10" BackgroundColor="#2D2D2D" TextColor="#FFFFFF" FontAttributes="Bold" />
+                </Grid>
+            </VerticalStackLayout>
+
+            <!-- Selector de Octava -->
+            <VerticalStackLayout Spacing="12">
+                <Label 
+                    Text="OCTAVA" 
+                    FontSize="13" 
+                    FontAttributes="Bold"
+                    Opacity="0.8" />
+                <HorizontalStackLayout Spacing="8" HorizontalOptions="Center">
+                    <Button Text="1" Padding="16,12" CornerRadius="10" BackgroundColor="#2D2D2D" TextColor="#FFFFFF" FontAttributes="Bold" WidthRequest="50" />
+                    <Button Text="2" Padding="16,12" CornerRadius="10" BackgroundColor="#2D2D2D" TextColor="#FFFFFF" FontAttributes="Bold" WidthRequest="50" />
+                    <Button Text="3" Padding="16,12" CornerRadius="10" BackgroundColor="#00D9FF" TextColor="#000000" FontAttributes="Bold" WidthRequest="50" />
+                    <Button Text="4" Padding="16,12" CornerRadius="10" BackgroundColor="#2D2D2D" TextColor="#FFFFFF" FontAttributes="Bold" WidthRequest="50" />
+                    <Button Text="5" Padding="16,12" CornerRadius="10" BackgroundColor="#2D2D2D" TextColor="#FFFFFF" FontAttributes="Bold" WidthRequest="50" />
+                </HorizontalStackLayout>
+            </VerticalStackLayout>
+
+            <!-- Visualizador de Ondas -->
+            <Border 
+                Padding="20" 
+                StrokeShape="16"
+                BackgroundColor="#252525">
+                <VerticalStackLayout Spacing="15" HorizontalOptions="Center">
+                    <Label 
+                        Text="∿ ∿ ∿ ∿ ∿ ∿ ∿ ∿" 
+                        FontSize="28"
+                        HorizontalTextAlignment="Center"
+                        TextColor="#00D9FF"
+                        Opacity="0.8" />
+                    <Label 
+                        Text="Presiona REPRODUCIR" 
+                        FontSize="12"
+                        HorizontalTextAlignment="Center"
+                        Opacity="0.6" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Botón Principal Play -->
+            <Button 
+                Text="▶ REPRODUCIR"
+                FontSize="16"
+                FontAttributes="Bold"
+                Padding="24,16"
+                CornerRadius="14"
+                BackgroundColor="#00D9FF"
+                TextColor="#000000"
+                Margin="0,10" />
+
+            <!-- Botón Stop -->
+            <Button 
+                Text="⏹ DETENER"
+                FontSize="16"
+                FontAttributes="Bold"
+                Padding="24,16"
+                CornerRadius="14"
+                BackgroundColor="#FF4444"
+                TextColor="#FFFFFF"
+                Margin="0,0,0,20" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>
