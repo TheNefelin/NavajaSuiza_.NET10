@@ -186,4 +186,7 @@
   <data name="WeatherText" xml:space="preserve">
     <value>Väder</value>
   </data>
+  <data name="FlashlightScreenLightText" xml:space="preserve">
+    <value>Skärmljus</value>
+  </data>
 </root>

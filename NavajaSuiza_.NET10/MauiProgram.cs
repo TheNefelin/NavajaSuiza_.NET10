@@ -48,7 +48,9 @@ public static class MauiProgram
             .AddSingleton<MenuViewModel>()
             .AddSingleton<MenuPage>()
             .AddSingleton<FlashlightViewModel>()
-            .AddSingleton<FlashlightPage>();
+            .AddSingleton<FlashlightPage>()
+            .AddSingleton<ScreenLightViewModel>()
+            .AddSingleton<ScreenLightPage>();
 
         return builder;
     }

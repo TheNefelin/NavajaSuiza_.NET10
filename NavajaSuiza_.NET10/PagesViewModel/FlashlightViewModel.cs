@@ -1,13 +1,13 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using NavajaSuiza_.NET10.Extensions;
+using NavajaSuiza_.NET10.Pages;
 using NavajaSuiza_.NET10.Services.Interfaces;
-using System.ComponentModel;
 
 namespace NavajaSuiza_.NET10.PagesViewModel;
 
 public partial class FlashlightViewModel : BaseViewModel
 {
+    private readonly IServiceProvider _serviceProvider;
     private readonly ILanguageService _languageService;
 
     [ObservableProperty]
@@ -20,8 +20,10 @@ public partial class FlashlightViewModel : BaseViewModel
     private bool _isLightOn = false;
 
     public FlashlightViewModel(
+        IServiceProvider serviceProvider,
         ILanguageService languageService)
     {
+        _serviceProvider = serviceProvider;
         _languageService = languageService;
         // Suscríbete a cambios de idioma
         _languageService.LanguageChanged += OnLanguageChanged;
@@ -33,16 +35,61 @@ public partial class FlashlightViewModel : BaseViewModel
     }
 
     [RelayCommand]
-    private async Task ClickFlashAsync() => IsFlashOn = !IsFlashOn;
+    private async void ClickFlash()
+    {
+        IsFlashOn = !IsFlashOn;
+
+        try
+        {
+            if (IsFlashOn)
+            {
+                await Flashlight.Default.TurnOnAsync();
+            }
+            else
+            {
+                await Flashlight.Default.TurnOffAsync();
+            }
+        }
+        catch (Exception ex)
+        {
+            IsFlashOn = !IsFlashOn; // Revierte el cambio si falla
+            //await Shell.Current.DisplayAlertAsync(
+            //    "Error",
+            //    "No se pudo acceder a la linterna. Verifica los permisos.",
+            //    "OK");
+        }
+    }
   
     [RelayCommand]
-    private async void ClickScreen() => IsScreenOn = !IsScreenOn;
-
-    [RelayCommand]
-    private async void ClickLight()
+    private async void ClickScreen()
     {
-        IsLightOn = !IsLightOn;
-        // Fuerza re-evaluación del converter cuando cambia
-        //OnPropertyChanged(nameof(IsLightOn));
+        IsScreenOn = !IsScreenOn;
+
+        try
+        {
+            if (IsScreenOn)
+            {
+                var screenLightPage = _serviceProvider.GetRequiredService<ScreenLightPage>();
+                await Shell.Current.Navigation.PushAsync(screenLightPage);
+                IsScreenOn = false;
+            }
+            else
+            {
+                DeviceDisplay.Current.KeepScreenOn = false;
+            }
+        }
+        catch (Exception ex)
+        {
+            _ = Shell.Current.DisplayAlertAsync(
+                "Error",
+                ex.Message,
+                "OK");
+        }
     }
+
+    //[RelayCommand]
+    //private async void ClickLight()
+    //{
+    //    IsLightOn = !IsLightOn;
+    //}
 }

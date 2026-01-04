@@ -37,7 +37,8 @@
                 Text="{extensions:Translate FlashlightOptionsText}"
                 FontSize="12"
                 HorizontalTextAlignment="Center"
-                Opacity="0.6" />
+                Opacity="0.6" 
+                Padding="15"/>
 
             <Grid ColumnDefinitions="auto,auto" HorizontalOptions="Center">
                 <Button
@@ -88,7 +89,7 @@
             </Grid>
          
             <!-- Estado de la linterna -->
-            <Border
+            <!--<Border
                 Padding="20"
                 StrokeShape="16">
 
@@ -115,10 +116,10 @@
                             VerticalOptions="Center" />
                     </HorizontalStackLayout>
                 </VerticalStackLayout>
-            </Border>
+            </Border>-->
 
             <!-- Botón principal de encendido/apagado -->
-            <Button 
+            <!--<Button 
                 Command="{Binding ClickLightCommand}"
                 TextColor="{StaticResource MyPrimaryLight}"
                 BackgroundColor="{StaticResource MyAccentGreen}"
@@ -126,7 +127,7 @@
                 FontSize="18"
                 FontAttributes="Bold"
                 Padding="24,18"
-                CornerRadius="16" />
+                CornerRadius="16" />-->
 
             <!-- Nota informativa -->
             <Label 
@@ -134,7 +135,7 @@
                 FontSize="12"
                 HorizontalTextAlignment="Center"
                 Opacity="0.6"
-                Padding="16" />
+                Padding="15" />
 
         </VerticalStackLayout>
     </ScrollView>

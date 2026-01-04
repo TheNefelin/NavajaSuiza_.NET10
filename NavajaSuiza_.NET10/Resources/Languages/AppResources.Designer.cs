@@ -133,6 +133,15 @@ namespace NavajaSuiza_.NET10.Resources.Languages {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Luz de la Pantalla.
+        /// </summary>
+        internal static string FlashlightScreenLightText {
+            get {
+                return ResourceManager.GetString("FlashlightScreenLightText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Encendido.
         /// </summary>
         internal static string FlashlightStatusOffText {
