@@ -19,6 +19,7 @@
                         <toolkit:IconTintColorBehavior TintColor="{StaticResource MyAccentBlue}" />
                     </Image.Behaviors>
                 </Image>
+                
                 <Label 
                     Text="AFINADOR" 
                     FontSize="32" 
@@ -39,12 +40,12 @@
                 <Border StrokeThickness="1">
                     <Border.Background>
                         <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                            <GradientStop Offset="0.0" Color="{StaticResource MyBackgroundMenuDark}" />
-                            <GradientStop Offset="0.2" Color="{StaticResource MyBackgroundDark}" />
-                            <GradientStop Offset="0.4" Color="{StaticResource MyBackgroundMenuDark}" />
-                            <GradientStop Offset="0.6" Color="{StaticResource MyBackgroundMenuDark}" />                            
-                            <GradientStop Offset="0.8" Color="{StaticResource MyBackgroundDark}" />
-                            <GradientStop Offset="1.0" Color="{StaticResource MyBackgroundMenuDark}" />
+                            <GradientStop Offset="0.0" Color="{AppThemeBinding Dark={StaticResource MyBackgroundMenuDark}, Light={StaticResource MyBackgroundMenuLight}}" />
+                            <GradientStop Offset="0.2" Color="{AppThemeBinding Dark={StaticResource MyBackgroundDark}, Light={StaticResource MyBackgroundLight}}" />
+                            <GradientStop Offset="0.4" Color="{AppThemeBinding Dark={StaticResource MyBackgroundMenuDark}, Light={StaticResource MyBackgroundMenuLight}}" />
+                            <GradientStop Offset="0.6" Color="{AppThemeBinding Dark={StaticResource MyBackgroundMenuDark}, Light={StaticResource MyBackgroundMenuLight}}" />
+                            <GradientStop Offset="0.8" Color="{AppThemeBinding Dark={StaticResource MyBackgroundDark}, Light={StaticResource MyBackgroundLight}}" />
+                            <GradientStop Offset="1.0" Color="{AppThemeBinding Dark={StaticResource MyBackgroundMenuDark}, Light={StaticResource MyBackgroundMenuLight}}" />
                         </LinearGradientBrush>
                     </Border.Background>
                 </Border>
@@ -58,6 +59,7 @@
                     StrokeThickness="6"
                     Background="{AppThemeBinding Dark={StaticResource MyBackgroundDark}, Light={StaticResource MyBackgroundLight}}"
                     Stroke="{StaticResource MyAccentGreen}">
+                    
                     <Border.StrokeShape>
                         <RoundRectangle CornerRadius="110" />
                     </Border.StrokeShape>
@@ -65,15 +67,20 @@
 
                 <!-- Contenedor de cuerdas -->
                 <VerticalStackLayout
-                    Spacing="10"
                     VerticalOptions="Center"
                     Padding="10,0">
 
                     <!-- Cuerda 6: E2 -->
                     <Grid 
-                        ColumnDefinitions="45,*,60" 
+                        ColumnDefinitions="45,*,60"
                         HeightRequest="50">
 
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer
+                                Command="{Binding StringTappedCommand}" 
+                                CommandParameter="E2" />
+                        </Grid.GestureRecognizers>
+                        
                         <Label 
                             Text="E2" 
                             TextColor="{StaticResource MyAccentOrange}" 
@@ -81,9 +88,14 @@
                             FontAttributes="Bold" 
                             VerticalOptions="Center" />
 
-                        <Border Grid.Column="1" StrokeThickness="0" VerticalOptions="Center">
-                            <BoxView HeightRequest="5" />
-                        </Border>
+                        <Border 
+                            Grid.Column="1" 
+                            x:Name="StringE2Border"
+                            StrokeThickness="0" 
+                            HeightRequest="6"
+                            VerticalOptions="Center"
+                            Padding="0,10"
+                            BackgroundColor="{AppThemeBinding Dark={StaticResource MyPrimaryTextDark}, Light={StaticResource MyPrimaryTextLight}}" />
 
                         <Label 
                             Grid.Column="2" 
@@ -99,6 +111,12 @@
                          ColumnDefinitions="45,*,60" 
                          HeightRequest="50">
 
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer
+                                Command="{Binding StringTappedCommand}" 
+                                CommandParameter="A2" />
+                        </Grid.GestureRecognizers>
+
                         <Label 
                              Text="A2" 
                              TextColor="{StaticResource MyAccentOrange}" 
@@ -106,9 +124,13 @@
                              FontAttributes="Bold" 
                              VerticalOptions="Center" />
 
-                        <Border Grid.Column="1" StrokeThickness="0" VerticalOptions="Center">
-                            <BoxView HeightRequest="5" />
-                        </Border>
+                        <Border
+                            x:Name="StringA2Border"
+                            Grid.Column="1" 
+                            StrokeThickness="0" 
+                            HeightRequest="6"
+                            VerticalOptions="Center"
+                            BackgroundColor="{AppThemeBinding Dark={StaticResource MyPrimaryTextDark}, Light={StaticResource MyPrimaryTextLight}}" />
 
                         <Label 
                              Grid.Column="2" 
@@ -124,6 +146,12 @@
                          ColumnDefinitions="45,*,60" 
                          HeightRequest="50">
 
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer
+                                Command="{Binding StringTappedCommand}" 
+                                CommandParameter="D3" />
+                        </Grid.GestureRecognizers>
+                        
                         <Label 
                              Text="D3" 
                              TextColor="{StaticResource MyAccentOrange}" 
@@ -131,10 +159,14 @@
                              FontAttributes="Bold" 
                              VerticalOptions="Center" />
 
-                        <Border Grid.Column="1" StrokeThickness="0" VerticalOptions="Center">
-                            <BoxView HeightRequest="5" />
-                        </Border>
-                        
+                        <Border 
+                            x:Name="StringD3Border"
+                            Grid.Column="1"
+                            StrokeThickness="0" 
+                            HeightRequest="6"
+                            VerticalOptions="Center"
+                            BackgroundColor="{AppThemeBinding Dark={StaticResource MyPrimaryTextDark}, Light={StaticResource MyPrimaryTextLight}}" />
+
                         <Label 
                              Grid.Column="2" 
                              Text="146.83 Hz"
@@ -149,6 +181,12 @@
                          ColumnDefinitions="45,*,60" 
                          HeightRequest="50">
 
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer
+                                Command="{Binding StringTappedCommand}" 
+                                CommandParameter="G3" />
+                        </Grid.GestureRecognizers>
+                        
                         <Label 
                              Text="G3" 
                              TextColor="{StaticResource MyAccentOrange}" 
@@ -156,9 +194,13 @@
                              FontAttributes="Bold" 
                              VerticalOptions="Center" />
 
-                        <Border Grid.Column="1" StrokeThickness="0" VerticalOptions="Center">
-                            <BoxView HeightRequest="5" />
-                        </Border>
+                        <Border 
+                            x:Name="StringG3Border"
+                            Grid.Column="1"
+                            StrokeThickness="0"
+                            HeightRequest="6"
+                            VerticalOptions="Center"
+                            BackgroundColor="{AppThemeBinding Dark={StaticResource MyPrimaryTextDark}, Light={StaticResource MyPrimaryTextLight}}" />
 
                         <Label 
                              Grid.Column="2" 
@@ -174,6 +216,12 @@
                          ColumnDefinitions="45,*,60" 
                          HeightRequest="50">
 
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer
+                                Command="{Binding StringTappedCommand}" 
+                                CommandParameter="B3" />
+                        </Grid.GestureRecognizers>
+                        
                         <Label 
                              Text="B3" 
                              TextColor="{StaticResource MyAccentOrange}" 
@@ -181,9 +229,13 @@
                              FontAttributes="Bold" 
                              VerticalOptions="Center" />
 
-                        <Border Grid.Column="1" StrokeThickness="0" VerticalOptions="Center">
-                            <BoxView HeightRequest="5" />
-                        </Border>
+                        <Border 
+                            x:Name="StringB3Border"
+                            Grid.Column="1" 
+                            StrokeThickness="0" 
+                            HeightRequest="6"
+                            VerticalOptions="Center"
+                            BackgroundColor="{AppThemeBinding Dark={StaticResource MyPrimaryTextDark}, Light={StaticResource MyPrimaryTextLight}}" />
 
                         <Label 
                              Grid.Column="2" 
@@ -199,6 +251,12 @@
                          ColumnDefinitions="45,*,60" 
                          HeightRequest="50">
 
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer
+                                Command="{Binding StringTappedCommand}" 
+                                CommandParameter="E4" />
+                        </Grid.GestureRecognizers>
+
                         <Label 
                              Text="E4" 
                              TextColor="{StaticResource MyAccentOrange}" 
@@ -206,9 +264,13 @@
                              FontAttributes="Bold" 
                              VerticalOptions="Center" />
 
-                        <Border Grid.Column="1" StrokeThickness="0" VerticalOptions="Center">
-                            <BoxView HeightRequest="5" />
-                        </Border>
+                        <Border 
+                            x:Name="StringE4Border" 
+                            Grid.Column="1" 
+                            StrokeThickness="0" 
+                            HeightRequest="6"
+                            VerticalOptions="Center"
+                            BackgroundColor="{AppThemeBinding Dark={StaticResource MyPrimaryTextDark}, Light={StaticResource MyPrimaryTextLight}}" />
 
                         <Label 
                              Grid.Column="2" 
@@ -222,7 +284,11 @@
             </Grid>
 
             <!-- Botón Detener -->
-            <Button Text="Detener" Padding="20" Margin="20"/>
+            <Button 
+                Command="{Binding StopAllCommand}" 
+                Text="Detener" 
+                Padding="20" 
+                Margin="20"/>
 
             <!-- Texto informativo -->
             <Label
