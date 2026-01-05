@@ -5,10 +5,194 @@
              x:Class="NavajaSuiza_.NET10.Pages.ManualPage"
              Title="{extensions:Translate ManualText}">
     
-    <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+
+     <Grid>
+        <!-- Fondo de madera oscura -->
+        <Border StrokeThickness="0">
+            <Border.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                    <GradientStop Color="#3E2723" Offset="0.0" />
+                    <GradientStop Color="#2D1F1F" Offset="1.0" />
+                </LinearGradientBrush>
+            </Border.Background>
+        </Border>
+
+        <!-- Agujero de resonancia -->
+        <Border
+            HeightRequest="200"
+            WidthRequest="200"
+            HorizontalOptions="Center"
+            VerticalOptions="Center"
+            StrokeThickness="0">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="100" />
+            </Border.StrokeShape>
+            <Border.Background>
+                <RadialGradientBrush Center="0.5,0.5" Radius="0.5">
+                    <GradientStop Color="#0D0705" Offset="0.0" />
+                    <GradientStop Color="#1A0F0A" Offset="1.0" />
+                </RadialGradientBrush>
+            </Border.Background>
+        </Border>
+
+        <!-- Borde decorativo del agujero (roseta) -->
+        <Border
+            HeightRequest="220"
+            WidthRequest="220"
+            HorizontalOptions="Center"
+            VerticalOptions="Center"
+            StrokeThickness="6"
+            Stroke="#5D4037">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="110" />
+            </Border.StrokeShape>
+        </Border>
+
+        <!-- Contenedor de cuerdas -->
+        <VerticalStackLayout
+            Spacing="15"
+            VerticalOptions="Center"
+            Padding="30,0">
+
+            <!-- Cuerda 6: E2 -->
+            <Grid ColumnDefinitions="50,*,80" HeightRequest="50">
+                <Label Text="E2" TextColor="#FFECB3" FontSize="22" FontAttributes="Bold" VerticalOptions="Center" />
+                <Border Grid.Column="1" StrokeThickness="0" VerticalOptions="Center">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                            <GradientStop Color="Transparent" Offset="0.0" />
+                            <GradientStop Color="#FFF8E1" Offset="0.2" />
+                            <GradientStop Color="#FFD54F" Offset="0.5" />
+                            <GradientStop Color="#FFF8E1" Offset="0.8" />
+                            <GradientStop Color="Transparent" Offset="1.0" />
+                        </LinearGradientBrush>
+                    </Border.Background>
+                    <BoxView HeightRequest="5" />
+                </Border>
+                <Label Grid.Column="2" Text="82.41 Hz" TextColor="#FFECB3" FontSize="12" VerticalOptions="Center" HorizontalOptions="End" />
+            </Grid>
+
+            <!-- Cuerda 5: A2 -->
+            <Grid ColumnDefinitions="50,*,80" HeightRequest="50">
+                <Label Text="A2" TextColor="#FFECB3" FontSize="22" FontAttributes="Bold" VerticalOptions="Center" />
+                <Border Grid.Column="1" StrokeThickness="0" VerticalOptions="Center">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                            <GradientStop Color="Transparent" Offset="0.0" />
+                            <GradientStop Color="#FFF8E1" Offset="0.2" />
+                            <GradientStop Color="#FFD54F" Offset="0.5" />
+                            <GradientStop Color="#FFF8E1" Offset="0.8" />
+                            <GradientStop Color="Transparent" Offset="1.0" />
+                        </LinearGradientBrush>
+                    </Border.Background>
+                    <BoxView HeightRequest="4" />
+                </Border>
+                <Label Grid.Column="2" Text="110.00 Hz" TextColor="#FFECB3" FontSize="12" VerticalOptions="Center" HorizontalOptions="End" />
+            </Grid>
+
+            <!-- Cuerda 4: D3 -->
+            <Grid ColumnDefinitions="50,*,80" HeightRequest="50">
+                <Label Text="D3" TextColor="#FFECB3" FontSize="22" FontAttributes="Bold" VerticalOptions="Center" />
+                <Border Grid.Column="1" StrokeThickness="0" VerticalOptions="Center">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                            <GradientStop Color="Transparent" Offset="0.0" />
+                            <GradientStop Color="#FFF8E1" Offset="0.2" />
+                            <GradientStop Color="#FFD54F" Offset="0.5" />
+                            <GradientStop Color="#FFF8E1" Offset="0.8" />
+                            <GradientStop Color="Transparent" Offset="1.0" />
+                        </LinearGradientBrush>
+                    </Border.Background>
+                    <BoxView HeightRequest="3" />
+                </Border>
+                <Label Grid.Column="2" Text="146.83 Hz" TextColor="#FFECB3" FontSize="12" VerticalOptions="Center" HorizontalOptions="End" />
+            </Grid>
+
+            <!-- Cuerda 3: G3 -->
+            <Grid ColumnDefinitions="50,*,80" HeightRequest="50">
+                <Label Text="G3" TextColor="#FFECB3" FontSize="22" FontAttributes="Bold" VerticalOptions="Center" />
+                <Border Grid.Column="1" StrokeThickness="0" VerticalOptions="Center">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                            <GradientStop Color="Transparent" Offset="0.0" />
+                            <GradientStop Color="#FFF8E1" Offset="0.2" />
+                            <GradientStop Color="#FFD54F" Offset="0.5" />
+                            <GradientStop Color="#FFF8E1" Offset="0.8" />
+                            <GradientStop Color="Transparent" Offset="1.0" />
+                        </LinearGradientBrush>
+                    </Border.Background>
+                    <BoxView HeightRequest="2.5" />
+                </Border>
+                <Label Grid.Column="2" Text="196.00 Hz" TextColor="#FFECB3" FontSize="12" VerticalOptions="Center" HorizontalOptions="End" />
+            </Grid>
+
+            <!-- Cuerda 2: B3 -->
+            <Grid ColumnDefinitions="50,*,80" HeightRequest="50">
+                <Label Text="B3" TextColor="#FFECB3" FontSize="22" FontAttributes="Bold" VerticalOptions="Center" />
+                <Border Grid.Column="1" StrokeThickness="0" VerticalOptions="Center">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                            <GradientStop Color="Transparent" Offset="0.0" />
+                            <GradientStop Color="#FFF8E1" Offset="0.2" />
+                            <GradientStop Color="#FFD54F" Offset="0.5" />
+                            <GradientStop Color="#FFF8E1" Offset="0.8" />
+                            <GradientStop Color="Transparent" Offset="1.0" />
+                        </LinearGradientBrush>
+                    </Border.Background>
+                    <BoxView HeightRequest="2" />
+                </Border>
+                <Label Grid.Column="2" Text="246.94 Hz" TextColor="#FFECB3" FontSize="12" VerticalOptions="Center" HorizontalOptions="End" />
+            </Grid>
+
+            <!-- Cuerda 1: E4 -->
+            <Grid ColumnDefinitions="50,*,80" HeightRequest="50">
+                <Label Text="E4" TextColor="#FFECB3" FontSize="22" FontAttributes="Bold" VerticalOptions="Center" />
+                <Border Grid.Column="1" StrokeThickness="0" VerticalOptions="Center">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                            <GradientStop Color="Transparent" Offset="0.0" />
+                            <GradientStop Color="#FFF8E1" Offset="0.2" />
+                            <GradientStop Color="#FFD54F" Offset="0.5" />
+                            <GradientStop Color="#FFF8E1" Offset="0.8" />
+                            <GradientStop Color="Transparent" Offset="1.0" />
+                        </LinearGradientBrush>
+                    </Border.Background>
+                    <BoxView HeightRequest="1.5" />
+                </Border>
+                <Label Grid.Column="2" Text="329.63 Hz" TextColor="#FFECB3" FontSize="12" VerticalOptions="Center" HorizontalOptions="End" />
+            </Grid>
+
+        </VerticalStackLayout>
+
+        <!-- Botón Detener -->
+        <Border
+            x:Name="StopButton"
+            Grid.Row="0"
+            HorizontalOptions="Center"
+            VerticalOptions="End"
+            Margin="0,0,0,60"
+            Background="#8D6E63"
+            StrokeThickness="0">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="8" />
+            </Border.StrokeShape>
+            <Label
+                Text="Detener Todo"
+                TextColor="#FFECB3"
+                FontSize="14"
+                FontAttributes="Bold"
+                Padding="24,12" />
+        </Border>
+
+        <!-- Texto informativo -->
+        <Label
+            HorizontalOptions="Center"
+            VerticalOptions="End"
+            Margin="0,0,0,20"
+            Text="Cuerdas de Nailon • A4 = 440 Hz"
+            TextColor="#FFECB3"
+            Opacity="0.5"
+            FontSize="10" />
+
+    </Grid>
 </ContentPage>

@@ -5,6 +5,8 @@
 
     <!-- Note: For Android please see also Platforms\Android\Resources\values\colors.xml -->
 
+    <Color x:Key="MyBackground">#252525</Color>
+    
     <Color x:Key="MyBackgroundDark">#1A2332</Color>
     <Color x:Key="MyBackgroundLight">#E8E6E1</Color>
     
@@ -18,12 +20,12 @@
 
     <Color x:Key="MyAccent">#B0FFFA</Color>
     <Color x:Key="MyAccentOrange">#E07A5F</Color>
+    <Color x:Key="MyAccentBlue">#00D9FF</Color>
     <Color x:Key="MyAccentGreen">#7AA894</Color>
     
     <Color x:Key="MyOn">#FF0000</Color>
     <Color x:Key="MyOff">#999999</Color>
 
-    <!--FCA120 CCCCFF-->
     <!-- -->
     
     <Color x:Key="Primary">#512BD4</Color>
