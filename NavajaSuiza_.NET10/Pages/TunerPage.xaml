@@ -2,6 +2,7 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:mediaElement="clr-namespace:CommunityToolkit.Maui.Views;assembly=CommunityToolkit.Maui"
              xmlns:extensions="clr-namespace:NavajaSuiza_.NET10.Extensions"
              xmlns:converters="clr-namespace:NavajaSuiza_.NET10.Converters"             
              x:Class="NavajaSuiza_.NET10.Pages.TunerPage"
@@ -11,6 +12,12 @@
         <VerticalStackLayout 
             Padding="0,40"
             Spacing="20">
+
+            <!-- MediaElement invisible para reproducir audio -->
+            <toolkit:MediaElement 
+                x:Name="TunerMediaElement"
+                ShouldLoopPlayback="True"
+                IsVisible="False" />
 
             <!-- Header -->
             <HorizontalStackLayout Spacing="5" HorizontalOptions="Center">
@@ -78,7 +85,7 @@
                         <Grid.GestureRecognizers>
                             <TapGestureRecognizer
                                 Command="{Binding StringTappedCommand}" 
-                                CommandParameter="E2" />
+                                CommandParameter="GN_E2" />
                         </Grid.GestureRecognizers>
                         
                         <Label 
@@ -114,7 +121,7 @@
                         <Grid.GestureRecognizers>
                             <TapGestureRecognizer
                                 Command="{Binding StringTappedCommand}" 
-                                CommandParameter="A2" />
+                                CommandParameter="GN_A2" />
                         </Grid.GestureRecognizers>
 
                         <Label 
@@ -128,7 +135,7 @@
                             x:Name="StringA2Border"
                             Grid.Column="1" 
                             StrokeThickness="0" 
-                            HeightRequest="6"
+                            HeightRequest="5"
                             VerticalOptions="Center"
                             BackgroundColor="{AppThemeBinding Dark={StaticResource MyPrimaryTextDark}, Light={StaticResource MyPrimaryTextLight}}" />
 
@@ -149,7 +156,7 @@
                         <Grid.GestureRecognizers>
                             <TapGestureRecognizer
                                 Command="{Binding StringTappedCommand}" 
-                                CommandParameter="D3" />
+                                CommandParameter="GN_D3" />
                         </Grid.GestureRecognizers>
                         
                         <Label 
@@ -163,7 +170,7 @@
                             x:Name="StringD3Border"
                             Grid.Column="1"
                             StrokeThickness="0" 
-                            HeightRequest="6"
+                            HeightRequest="4"
                             VerticalOptions="Center"
                             BackgroundColor="{AppThemeBinding Dark={StaticResource MyPrimaryTextDark}, Light={StaticResource MyPrimaryTextLight}}" />
 
@@ -184,7 +191,7 @@
                         <Grid.GestureRecognizers>
                             <TapGestureRecognizer
                                 Command="{Binding StringTappedCommand}" 
-                                CommandParameter="G3" />
+                                CommandParameter="GN_G3" />
                         </Grid.GestureRecognizers>
                         
                         <Label 
@@ -198,7 +205,7 @@
                             x:Name="StringG3Border"
                             Grid.Column="1"
                             StrokeThickness="0"
-                            HeightRequest="6"
+                            HeightRequest="3"
                             VerticalOptions="Center"
                             BackgroundColor="{AppThemeBinding Dark={StaticResource MyPrimaryTextDark}, Light={StaticResource MyPrimaryTextLight}}" />
 
@@ -219,7 +226,7 @@
                         <Grid.GestureRecognizers>
                             <TapGestureRecognizer
                                 Command="{Binding StringTappedCommand}" 
-                                CommandParameter="B3" />
+                                CommandParameter="GN_B3" />
                         </Grid.GestureRecognizers>
                         
                         <Label 
@@ -233,7 +240,7 @@
                             x:Name="StringB3Border"
                             Grid.Column="1" 
                             StrokeThickness="0" 
-                            HeightRequest="6"
+                            HeightRequest="2"
                             VerticalOptions="Center"
                             BackgroundColor="{AppThemeBinding Dark={StaticResource MyPrimaryTextDark}, Light={StaticResource MyPrimaryTextLight}}" />
 
@@ -254,7 +261,7 @@
                         <Grid.GestureRecognizers>
                             <TapGestureRecognizer
                                 Command="{Binding StringTappedCommand}" 
-                                CommandParameter="E4" />
+                                CommandParameter="GN_E4" />
                         </Grid.GestureRecognizers>
 
                         <Label 
@@ -268,7 +275,7 @@
                             x:Name="StringE4Border" 
                             Grid.Column="1" 
                             StrokeThickness="0" 
-                            HeightRequest="6"
+                            HeightRequest="1"
                             VerticalOptions="Center"
                             BackgroundColor="{AppThemeBinding Dark={StaticResource MyPrimaryTextDark}, Light={StaticResource MyPrimaryTextLight}}" />
 

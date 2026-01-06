@@ -1,11 +1,12 @@
 ﻿# NavajaSuiza .NET10
 
 ### Dependencies
-- CommunityToolkit.Maui
-- CommunityToolkit.Mvvm
-- Microsoft.Extensions.Logging.Debug
-- Microsoft.Maui.Controls
-- Syncfusion.Maui.Toolkit
+- CommunityToolkit.Maui 13.0.0
+- CommunityToolkit.Maui.MediaElement 6.1.3
+- CommunityToolkit.Mvvm 8.4.0
+- Microsoft.Extensions.Logging.Debug 10.0.1
+- Microsoft.Maui.Controls 10.0.20
+- Syncfusion.Maui.Toolkit 1.0.8
 
 ### AndroidManifest permissions
 - BATTERY_STATUS
@@ -35,6 +36,19 @@ NavajaSuiza_.NET10/
 │   │   ├── AppResources.resx
 │   │   ├── AppResources.en.resx
 │   │   └── AppResources.sv.resx
+│   ├── Raw/
+│   │   ├── B_00_B0.wav
+│   │   ├── ...
+│   │   ├── C_01_G4.wav
+│   │   ├── ...
+│   │   ├── GN_03_D3.wav
+│   │   ├── ...
+│   │   ├── GS_01_E2.wav
+│   │   ├── ...
+│   │   ├── U_01_G4.wav
+│   │   ├── ...
+│   │   ├── V_01_G2.wav
+│   │   └── ...
 │   ├── Splash/
 │   └── Styles/
 │       ├── Colors.xaml
@@ -55,14 +69,16 @@ NavajaSuiza_.NET10/
 │   ├── BaseViewModel.cs
 │   ├── FlashlightViewModel.cs
 │   ├── MenuViewModel.cs
-│   └── ScreenLightViewModel.cs
+│   ├── ScreenLightViewModel.cs
+│   └── TunerPage.cs
 │
 ├── 📁 Views/
 │   ├── AboutPage.xaml/cs
 │   ├── FlashlightPage.xaml/cs
 │   ├── ManualPage.xaml/cs
 │   ├── MenuPage.xaml/cs
-│   └── ScreenLightPage.xaml/cs
+│   ├── ScreenLightPage.xaml/cs
+│   └── TunerViewModel.xaml/cs
 │
 ├── App.xaml/cs
 ├── AppShell.xaml/cs

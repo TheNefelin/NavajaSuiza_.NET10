@@ -16,6 +16,7 @@ public static class MauiProgram
         builder
             .UseMauiApp<App>()
             .UseMauiCommunityToolkit()
+            .UseMauiCommunityToolkitMediaElement()
             .ConfigureSyncfusionToolkit()
             .ConfigureFonts(fonts =>
             {
@@ -53,6 +54,8 @@ public static class MauiProgram
             .AddSingleton<AppShell>()
             .AddSingleton<MenuViewModel>()
             .AddSingleton<MenuPage>()
+            .AddSingleton<ManualViewModel>()
+            .AddSingleton<ManualPage>()
             .AddSingleton<AboutViewModel>()
             .AddSingleton<AboutPage>()
             .AddSingleton<FlashlightViewModel>()
