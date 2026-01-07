@@ -1,98 +1,10 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:extensions="clr-namespace:NavajaSuiza_.NET10.Extensions"
+             xmlns:extensions="clr-namespace:NavajaSuiza_.NET10.Extensions"          
              x:Class="NavajaSuiza_.NET10.Pages.ManualPage"
              Title="{extensions:Translate ManualText}">
 
-    <Grid RowDefinitions="*,Auto" Padding="0">
-
-        <!-- CarouselView - Galería rotatoria -->
-        <CarouselView 
-            x:Name="InstrumentCarousel"
-            ItemsSource="{Binding Instruments}"
-            CurrentItemChangedCommand="{Binding ItemChangedCommand}"
-            CurrentItemChangedCommandParameter="{Binding Source={x:Reference InstrumentCarousel}, Path=CurrentItem}"
-            PeekAreaInsets="100"
-            IsScrollAnimated="True"
-            IsBounceEnabled="True">
-
-            <CarouselView.ItemTemplate>
-                <DataTemplate>
-                    <StackLayout Spacing="20" Padding="20">
-                        <!-- Imagen del instrumento -->
-                        <Image 
-                            Source="{Binding ImagePath}"
-                            Aspect="AspectFit"
-                            HeightRequest="100"
-                            WidthRequest="100" />
-
-                        <!-- Nombre del instrumento -->
-                        <Label 
-                            Text="{Binding Name}"
-                            FontSize="24"
-                            FontAttributes="Bold"
-                            HorizontalTextAlignment="Center"
-                            TextColor="{StaticResource MyAccentBlue}" />
-
-                        <!-- Descripción -->
-                        <Label 
-                            Text="{Binding Description}"
-                            FontSize="14"
-                            HorizontalTextAlignment="Center"
-                            Opacity="0.7"
-                            Padding="10" />
-                    </StackLayout>
-                </DataTemplate>
-            </CarouselView.ItemTemplate>
-        </CarouselView>
-
-        <!-- Indicador de posición (dots) -->
-        <StackLayout 
-            Grid.Row="1"
-            Orientation="Horizontal"
-            HorizontalOptions="Center"
-            Spacing="8"
-            Padding="0,20">
-
-            <!-- Dots dinámicos - necesitarás actualizar desde code-behind -->
-            <BoxView 
-                WidthRequest="12" 
-                HeightRequest="12" 
-                CornerRadius="6"
-                BackgroundColor="{StaticResource MyAccentBlue}" />
-
-            <BoxView 
-                WidthRequest="12" 
-                HeightRequest="12" 
-                CornerRadius="6"
-                BackgroundColor="{StaticResource MyAccentGray}" />
-
-            <BoxView 
-                WidthRequest="12" 
-                HeightRequest="12" 
-                CornerRadius="6"
-                BackgroundColor="{StaticResource MyAccentGray}" />
-
-            <BoxView 
-                WidthRequest="12" 
-                HeightRequest="12" 
-                CornerRadius="6"
-                BackgroundColor="{StaticResource MyAccentGray}" />
-
-            <BoxView 
-                WidthRequest="12" 
-                HeightRequest="12" 
-                CornerRadius="6"
-                BackgroundColor="{StaticResource MyAccentGray}" />
-
-            <BoxView 
-                WidthRequest="12" 
-                HeightRequest="12" 
-                CornerRadius="6"
-                BackgroundColor="{StaticResource MyAccentGray}" />
-        </StackLayout>
-
-    </Grid>
-
+    
+   
 </ContentPage>

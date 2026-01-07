@@ -78,14 +78,6 @@
                     VerticalOptions="Center"
                     Padding="10,0">
 
-
-                    <components:InstrumentStringComponent 
-                        Note="G2"
-                        AudioName="V_01_G2"
-                        Description="98.00 Hz"
-                        Thickness="1" />
-                    
-                    
                     <!-- Cuerda 6: E2 -->
                     <Grid 
                         ColumnDefinitions="45,*,60"
@@ -312,6 +304,72 @@
                 VerticalOptions="End"
                 Text="Cuerdas de Nailon • A4 = 440 Hz"
                 Opacity="0.5" />
+
+            <Grid>
+                <!-- Fondo de madera oscura -->
+                <Border StrokeThickness="1">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                            <GradientStop Offset="0.0" Color="{AppThemeBinding Dark={StaticResource MyBackgroundMenuDark}, Light={StaticResource MyBackgroundMenuLight}}" />
+                            <GradientStop Offset="0.5" Color="{AppThemeBinding Dark={StaticResource MyBackgroundDark}, Light={StaticResource MyBackgroundLight}}" />
+                            <GradientStop Offset="1.0" Color="{AppThemeBinding Dark={StaticResource MyBackgroundMenuDark}, Light={StaticResource MyBackgroundMenuLight}}" />
+                        </LinearGradientBrush>
+                    </Border.Background>
+                </Border>
+
+                <!-- Borde decorativo del agujero (roseta) -->
+                <Border
+                     HeightRequest="200"
+                     WidthRequest="200"
+                     HorizontalOptions="Center"
+                     VerticalOptions="Center" 
+                     StrokeThickness="6"
+                     Background="{AppThemeBinding Dark={StaticResource MyBackgroundDark}, Light={StaticResource MyBackgroundLight}}"
+                     Stroke="{StaticResource MyAccentGreen}">
+
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="110" />
+                    </Border.StrokeShape>
+                </Border>
+
+                <!-- Contenedor de cuerdas -->
+                <VerticalStackLayout
+                    VerticalOptions="Center"
+                    Padding="10,0">
+
+                    <components:InstrumentStringComponent 
+                        Note="G2"
+                        AudioName="V_01_G2.wav"
+                        Description="98.00 Hz"
+                        Thickness="1" />
+
+                    <components:InstrumentStringComponent 
+                        Note="D3"
+                        AudioName="V_02_D3.wav"
+                        Description="98.00 Hz"
+                        Thickness="1" />
+
+                    <components:InstrumentStringComponent 
+                        Note="A3"
+                        AudioName="V_03_A3.wav"
+                        Description="98.00 Hz"
+                        Thickness="1" />
+
+                    <components:InstrumentStringComponent 
+                        Note="E4"
+                        AudioName="V_04_E4.wav"
+                        Description="98.00 Hz"
+                        Thickness="1" />
+                </VerticalStackLayout>
+            </Grid>
+
+            <!-- Botón Detener -->
+            <Button 
+                Command="{Binding StopAllStringCommand}" 
+                Text="Detener" 
+                Padding="20" 
+                Margin="20"/>
+
         </VerticalStackLayout>
     </ScrollView>
 

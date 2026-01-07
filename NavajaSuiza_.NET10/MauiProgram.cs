@@ -48,6 +48,12 @@ public static class MauiProgram
             .AddSingleton<ILanguageService, LanguageService>()
             .AddSingleton<IThemeService, ThemeService>()
             .AddSingleton<IDeviceStatusService, DeviceStatusService>()
+            .AddSingleton<IInstrumentAudioService, InstrumentAudioService>()
+            ;
+
+        builder.Services
+            .AddSingleton<TestingViewModel>()
+            .AddSingleton<TestingPage>()
             ;
 
         builder.Services

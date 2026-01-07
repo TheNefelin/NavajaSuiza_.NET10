@@ -43,4 +43,11 @@ public partial class MenuViewModel : BaseViewModel
         var page = _serviceProvider.GetRequiredService<TunerPage>();
         await Shell.Current.Navigation.PushAsync(page);
     }
+
+    [RelayCommand]
+    private async Task NavigateToTest()
+    {
+        var page = _serviceProvider.GetRequiredService<TestingPage>();
+        await Shell.Current.Navigation.PushAsync(page);
+    }
 }

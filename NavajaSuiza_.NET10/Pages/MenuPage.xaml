@@ -62,6 +62,7 @@
                 </Button>
 
                 <Button
+                    Command="{Binding NavigateToTestCommand}"
                     Text="{extensions:Translate TunerText}"
                     ImageSource="icon_instrument.svg"                    
                     FontAttributes="Bold"

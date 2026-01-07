@@ -9,9 +9,8 @@
         HeightRequest="50">
 
         <Grid.GestureRecognizers>
-            <TapGestureRecognizer
-                Command="{Binding StringTappedCommand}" 
-                CommandParameter="{Binding AudioName, Source={x:Reference InstrumentStringComponentRoot}}" />
+            <TapGestureRecognizer 
+                Tapped="OnStringTapped" />
         </Grid.GestureRecognizers>
 
         <Label 

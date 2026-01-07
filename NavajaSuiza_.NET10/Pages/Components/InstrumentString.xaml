@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="NavajaSuiza_.NET10.Pages.Components.InstrumentString"
+             x:Name="InstrumentStringComponentRoot">
+
+    <Grid 
+       ColumnDefinitions="45,*,60"
+       HeightRequest="50">
+
+        <Grid.GestureRecognizers>
+            <TapGestureRecognizer 
+               Tapped="OnStringTapped" />
+        </Grid.GestureRecognizers>
+
+        <Label 
+           Text="{Binding Note, Source={x:Reference InstrumentStringComponentRoot}}" 
+           TextColor="{StaticResource MyAccentOrange}" 
+           FontSize="22" 
+           FontAttributes="Bold" 
+           VerticalOptions="Center" />
+
+        <Border 
+           Grid.Column="1" 
+           x:Name="InternalStringBorder"
+           StrokeThickness="0" 
+           HeightRequest="{Binding Thickness, Source={x:Reference InstrumentStringComponentRoot}}"
+           VerticalOptions="Center"
+           Padding="0,10"
+           BackgroundColor="{AppThemeBinding Dark={StaticResource MyPrimaryTextDark}, Light={StaticResource MyPrimaryTextLight}}" />
+
+        <Label 
+           Grid.Column="2" 
+           Text="{Binding Description, Source={x:Reference InstrumentStringComponentRoot}}" 
+           TextColor="{StaticResource MyAccentOrange}" 
+           FontSize="12"
+           VerticalOptions="Center" 
+           HorizontalOptions="End" />
+    </Grid>
+
+</ContentView>

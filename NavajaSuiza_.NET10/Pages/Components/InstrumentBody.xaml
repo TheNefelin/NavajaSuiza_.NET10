@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="NavajaSuiza_.NET10.Pages.Components.InstrumentBody">
+
+    <Grid RowDefinitions="*">
+        <!-- Fondo de madera oscura -->
+        <Border StrokeThickness="1">
+            <Border.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                    <GradientStop Offset="0.0" Color="{AppThemeBinding Dark={StaticResource MyBackgroundMenuDark}, Light={StaticResource MyBackgroundMenuLight}}" />
+                    <GradientStop Offset="0.5" Color="{AppThemeBinding Dark={StaticResource MyBackgroundDark}, Light={StaticResource MyBackgroundLight}}" />
+                    <GradientStop Offset="1.0" Color="{AppThemeBinding Dark={StaticResource MyBackgroundMenuDark}, Light={StaticResource MyBackgroundMenuLight}}" />
+                </LinearGradientBrush>
+            </Border.Background>
+
+            <!-- Borde decorativo del agujero (roseta) -->
+            <Border
+                 HeightRequest="200"
+                 WidthRequest="200"
+                 Margin="0,10"
+                 HorizontalOptions="Center"
+                 VerticalOptions="Center"
+                 StrokeThickness="6"
+                 Background="{AppThemeBinding Dark={StaticResource MyBackgroundDark}, Light={StaticResource MyBackgroundLight}}"
+                 Stroke="{StaticResource MyAccentGreen}">
+
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="110" />
+                </Border.StrokeShape>
+            </Border>
+        </Border>
+    </Grid>
+  
+</ContentView>

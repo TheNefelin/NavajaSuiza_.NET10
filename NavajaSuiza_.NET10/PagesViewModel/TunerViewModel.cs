@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
+using NavajaSuiza_.NET10.Services.Interfaces;
 
 namespace NavajaSuiza_.NET10.PagesViewModel;
 
@@ -21,8 +22,7 @@ public partial class TunerViewModel : BaseViewModel
             { "GS_D3", "GN_03_D3.wav" },
             { "GS_G3", "GN_04_G3.wav" },
             { "GS_B3", "GN_05_B3.wav" },
-            { "GS_E4", "GN_06_E4.wav" },
-            { "V_01_G2", "V_01_G2.wav" }
+            { "GS_E4", "GN_06_E4.wav" }
         };
     private MediaElement _mediaElement;
     private Border? _currentlyVibrating;
@@ -31,7 +31,9 @@ public partial class TunerViewModel : BaseViewModel
     private const int VIBRATION_COUNT = 8;
     private const double VIBRATION_DURATION = 0.05;
 
-    public TunerViewModel(ILogger<TunerViewModel> logger)
+    public TunerViewModel(
+        ILogger<TunerViewModel> logger,
+        IInstrumentAudioService instrumentAudioService)
     {
         _logger = logger;
     }
@@ -89,6 +91,12 @@ public partial class TunerViewModel : BaseViewModel
         {
             StopVibration(_currentlyVibrating);
         }
+    }
+
+    [RelayCommand]
+    private void StopAllString()
+    {
+        
     }
 
     private void VibrateString(Border stringBorder)

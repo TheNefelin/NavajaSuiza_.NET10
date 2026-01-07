@@ -1,12 +1,9 @@
 using NavajaSuiza_.NET10.PagesViewModel;
-using NavajaSuiza_.NET10.Services.Interfaces;
 
 namespace NavajaSuiza_.NET10.Pages.Components;
 
-public partial class InstrumentStringComponent : ContentView
+public partial class InstrumentString : ContentView
 {
-    private IInstrumentAudioService _instrumentAudioService;
-
     public static readonly BindableProperty NoteProperty = BindableProperty.Create(nameof(Note), typeof(string), typeof(InstrumentStringComponent), string.Empty);
     public static readonly BindableProperty AudioNameProperty = BindableProperty.Create(nameof(AudioName), typeof(string), typeof(InstrumentStringComponent), string.Empty);
     public static readonly BindableProperty DescriptionProperty = BindableProperty.Create(nameof(Description), typeof(string), typeof(InstrumentStringComponent), string.Empty);
@@ -36,33 +33,36 @@ public partial class InstrumentStringComponent : ContentView
         set => SetValue(ThicknessProperty, value);
     }
 
-    public InstrumentStringComponent()
+    public InstrumentString()
 	{
 		InitializeComponent();
-    }
+	}
 
     protected override void OnBindingContextChanged()
     {
         base.OnBindingContextChanged();
-        
-        if (this.BindingContext is TunerViewModel viewModel)
-        {
-            _instrumentAudioService = IPlatformApplication.Current.Services.GetService<IInstrumentAudioService>();
 
+        if (this.BindingContext is TestingViewModel viewModel)
+        {
             var internalBorder = this.FindByName<Border>("InternalStringBorder");
+
             if (internalBorder != null)
             {
-                _instrumentAudioService.RegisterStringBorder(internalBorder, AudioName);
+                viewModel.RegisterStringBorder(internalBorder, AudioName);
             }
         }
     }
 
     private async void OnStringTapped(object sender, TappedEventArgs e)
     {
-        var internalBorder = this.FindByName<Border>("InternalStringBorder");
-        if (internalBorder != null && _instrumentAudioService != null)
+        if (this.BindingContext is TestingViewModel viewModel)
         {
-            await _instrumentAudioService.StringTappedAsync(internalBorder);
+            var internalBorder = this.FindByName<Border>("InternalStringBorder");
+
+            if (internalBorder != null)
+            {
+                _ = viewModel.StringTappedAsync(internalBorder);
+            }
         }
     }
 }
