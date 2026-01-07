@@ -4,7 +4,8 @@
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:mediaElement="clr-namespace:CommunityToolkit.Maui.Views;assembly=CommunityToolkit.Maui"
              xmlns:extensions="clr-namespace:NavajaSuiza_.NET10.Extensions"
-             xmlns:converters="clr-namespace:NavajaSuiza_.NET10.Converters"             
+             xmlns:converters="clr-namespace:NavajaSuiza_.NET10.Converters"
+             xmlns:components="clr-namespace:NavajaSuiza_.NET10.Pages.Components"
              x:Class="NavajaSuiza_.NET10.Pages.TunerPage"
              Title="{extensions:Translate TunerText}">
 
@@ -77,6 +78,14 @@
                     VerticalOptions="Center"
                     Padding="10,0">
 
+
+                    <components:InstrumentStringComponent 
+                        Note="G2"
+                        AudioName="V_01_G2"
+                        Description="98.00 Hz"
+                        Thickness="1" />
+                    
+                    
                     <!-- Cuerda 6: E2 -->
                     <Grid 
                         ColumnDefinitions="45,*,60"

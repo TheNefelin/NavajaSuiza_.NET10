@@ -21,7 +21,8 @@ public partial class TunerViewModel : BaseViewModel
             { "GS_D3", "GN_03_D3.wav" },
             { "GS_G3", "GN_04_G3.wav" },
             { "GS_B3", "GN_05_B3.wav" },
-            { "GS_E4", "GN_06_E4.wav" }
+            { "GS_E4", "GN_06_E4.wav" },
+            { "V_01_G2", "V_01_G2.wav" }
         };
     private MediaElement _mediaElement;
     private Border? _currentlyVibrating;

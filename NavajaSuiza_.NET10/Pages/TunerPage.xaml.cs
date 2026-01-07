@@ -1,4 +1,3 @@
-using CommunityToolkit.Maui.Views;
 using NavajaSuiza_.NET10.PagesViewModel;
 
 namespace NavajaSuiza_.NET10.Pages;

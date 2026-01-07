@@ -87,6 +87,9 @@
 	  <MauiXaml Update="Pages\AboutPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Pages\Components\InstrumentStringComponent.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Pages\FlashlightPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
