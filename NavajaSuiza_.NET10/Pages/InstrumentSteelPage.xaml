@@ -3,14 +3,14 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:components="clr-namespace:NavajaSuiza_.NET10.Pages.Components"
-             xmlns:extensions="clr-namespace:NavajaSuiza_.NET10.Extensions"
-             x:Class="NavajaSuiza_.NET10.Pages.InstrumentViolinPage"
-             Title="Violin">
+             xmlns:extensions="clr-namespace:NavajaSuiza_.NET10.Extensions"                  
+             x:Class="NavajaSuiza_.NET10.Pages.InstrumentSteelPage"
+             Title="{extensions:Translate TunerSteelText}">
 
     <ScrollView>
         <VerticalStackLayout 
-            Padding="0,20"
-            Spacing="20">
+           Padding="0,20"
+           Spacing="20">
 
             <!-- MediaElement invisible para reproducir audio -->
             <toolkit:MediaElement 
@@ -18,9 +18,9 @@
                 ShouldLoopPlayback="True"
                 IsVisible="False" />
 
-            <Image Source="instrument_v.png" 
-               HorizontalOptions="Center"
-               WidthRequest="100" />
+            <Image Source="instrument_gs.png" 
+                HorizontalOptions="Center"
+                WidthRequest="100" />
 
             <components:LoadingComponent IsVisible="{Binding IsLoading}" />
 
@@ -30,8 +30,8 @@
 
                 <!-- Contenedor de cuerdas -->
                 <VerticalStackLayout
-                     VerticalOptions="Center"
-                     Padding="10,0">
+                    VerticalOptions="Center"
+                    Padding="10,0">
 
                     <!-- Cuerdas -->
                     <CollectionView ItemsSource="{Binding InstrumentStrings}">
@@ -61,7 +61,7 @@
                 HorizontalOptions="Center"
                 VerticalOptions="End"
                 Opacity="0.5" />
-            
+
         </VerticalStackLayout>
     </ScrollView>
     

@@ -129,7 +129,7 @@
   <data name="FlashlightActionOnText" xml:space="preserve">
     <value>Turn on</value>
   </data>
-  <data name="FlashlightNote" xml:space="preserve">
+  <data name="FlashlightNoteText" xml:space="preserve">
     <value>Note: The screen will use maximum brightness to simulate light.</value>
   </data>
   <data name="FlashlightOpFlashText" xml:space="preserve">
@@ -165,18 +165,6 @@
   <data name="SelectLanguageText" xml:space="preserve">
     <value>Select Language</value>
   </data>
-  <data name="ThemeAuto" xml:space="preserve">
-    <value>Auto</value>
-  </data>
-  <data name="ThemeContentText" xml:space="preserve">
-    <value>Switch between light and dark themes</value>
-  </data>
-  <data name="ThemeDark" xml:space="preserve">
-    <value>Dark</value>
-  </data>
-  <data name="ThemeLight" xml:space="preserve">
-    <value>Light</value>
-  </data>
   <data name="ThemeText" xml:space="preserve">
     <value>Theme</value>
   </data>
@@ -197,5 +185,35 @@
   </data>
   <data name="MetronomeText" xml:space="preserve">
     <value>Metronome</value>
+  </data>
+  <data name="TunerOptionsText" xml:space="preserve">
+    <value>Select an Instrument</value>
+  </data>
+  <data name="TunerNylonText" xml:space="preserve">
+    <value>Nylon</value>
+  </data>
+  <data name="TunerSteelText" xml:space="preserve">
+    <value>Steel</value>
+  </data>
+  <data name="TunerBassText" xml:space="preserve">
+    <value>Bass</value>
+  </data>
+  <data name="TunerUkeleleText" xml:space="preserve">
+    <value>Ukelele</value>
+  </data>
+  <data name="TunerViolinText" xml:space="preserve">
+    <value>Violin</value>
+  </data>
+  <data name="TunerCharangoText" xml:space="preserve">
+    <value>Charango</value>
+  </data>
+  <data name="TunerNoteText" xml:space="preserve">
+    <value>A4 = 440 Hz</value>
+  </data>
+  <data name="TunerActionOffText" xml:space="preserve">
+    <value>Stop</value>
+  </data>
+  <data name="ThemeContentText" xml:space="preserve">
+    <value>Switch between light and dark themes</value>
   </data>
 </root>

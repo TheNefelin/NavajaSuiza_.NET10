@@ -129,7 +129,7 @@
   <data name="FlashlightActionOnText" xml:space="preserve">
     <value>Sätta på</value>
   </data>
-  <data name="FlashlightNote" xml:space="preserve">
+  <data name="FlashlightNoteText" xml:space="preserve">
     <value>Obs: Skärmen använder maximal ljusstyrka för att simulera ljus.</value>
   </data>
   <data name="FlashlightOpFlashText" xml:space="preserve">
@@ -165,18 +165,6 @@
   <data name="SelectLanguageText" xml:space="preserve">
     <value>Välj språk</value>
   </data>
-  <data name="ThemeAuto" xml:space="preserve">
-    <value>Auto</value>
-  </data>
-  <data name="ThemeContentText" xml:space="preserve">
-    <value>Växla mellan ljusa och mörka teman</value>
-  </data>
-  <data name="ThemeDark" xml:space="preserve">
-    <value>Mörk</value>
-  </data>
-  <data name="ThemeLight" xml:space="preserve">
-    <value>Ljus</value>
-  </data>
   <data name="ThemeText" xml:space="preserve">
     <value>Utfärda</value>
   </data>
@@ -197,5 +185,35 @@
   </data>
   <data name="MetronomeText" xml:space="preserve">
     <value>Metronom</value>
+  </data>
+  <data name="TunerOptionsText" xml:space="preserve">
+    <value>Välj ett instrument</value>
+  </data>
+  <data name="TunerNylonText" xml:space="preserve">
+    <value>Nylon</value>
+  </data>
+  <data name="TunerSteelText" xml:space="preserve">
+    <value>Stål</value>
+  </data>
+  <data name="TunerBassText" xml:space="preserve">
+    <value>Bas</value>
+  </data>
+  <data name="TunerUkeleleText" xml:space="preserve">
+    <value>Ukelele</value>
+  </data>
+  <data name="TunerViolinText" xml:space="preserve">
+    <value>Fiol</value>
+  </data>
+  <data name="TunerCharangoText" xml:space="preserve">
+    <value>Charango</value>
+  </data>
+  <data name="TunerNoteText" xml:space="preserve">
+    <value>A4 = 440 Hz</value>
+  </data>
+  <data name="TunerActionOffText" xml:space="preserve">
+    <value>Stoppa</value>
+  </data>
+  <data name="ThemeContentText" xml:space="preserve">
+    <value>Växla mellan ljusa och mörka teman</value>
   </data>
 </root>

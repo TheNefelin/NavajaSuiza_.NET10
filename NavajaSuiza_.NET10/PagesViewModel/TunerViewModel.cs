@@ -18,9 +18,44 @@ public partial class TunerViewModel : BaseViewModel
     }
 
     [RelayCommand]
+    private async Task NavigateToNylon()
+    {
+        var page = _serviceProvider.GetRequiredService<InstrumentNylonPage>();
+        await Shell.Current.Navigation.PushAsync(page);
+    }
+
+    [RelayCommand]
+    private async Task NavigateToSteel()
+    {
+        var page = _serviceProvider.GetRequiredService<InstrumentSteelPage>();
+        await Shell.Current.Navigation.PushAsync(page);
+    }
+
+    [RelayCommand]
+    private async Task NavigateToBass()
+    {
+        var page = _serviceProvider.GetRequiredService<InstrumentBassPage>();
+        await Shell.Current.Navigation.PushAsync(page);
+    }
+
+    [RelayCommand]
+    private async Task NavigateToUkelele()
+    {
+        var page = _serviceProvider.GetRequiredService<InstrumentUkulelePage>();
+        await Shell.Current.Navigation.PushAsync(page);
+    }
+
+    [RelayCommand]
     private async Task NavigateToViolin()
     {
         var page = _serviceProvider.GetRequiredService<InstrumentViolinPage>();
+        await Shell.Current.Navigation.PushAsync(page);
+    }
+
+    [RelayCommand]
+    private async Task NavigateToCharango()
+    {
+        var page = _serviceProvider.GetRequiredService<InstrumentCharangoPage>();
         await Shell.Current.Navigation.PushAsync(page);
     }
 }

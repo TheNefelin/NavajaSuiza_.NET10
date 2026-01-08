@@ -21,8 +21,8 @@
                         FontAttributes="Bold"/>
 
                     <Label 
-                        Grid.Row="1" Grid.Column="0"
                         Text="{extensions:Translate ThemeContentText}" 
+                        Grid.Row="1" Grid.Column="0"
                         VerticalOptions="Center"
                         FontSize="12" />
 

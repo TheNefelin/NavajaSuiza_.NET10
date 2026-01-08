@@ -99,9 +99,9 @@ namespace NavajaSuiza_.NET10.Resources.Languages {
         /// <summary>
         ///   Looks up a localized string similar to Nota: La pantalla usará el máximo brillo para simular luz.
         /// </summary>
-        internal static string FlashlightNote {
+        internal static string FlashlightNoteText {
             get {
-                return ResourceManager.GetString("FlashlightNote", resourceCulture);
+                return ResourceManager.GetString("FlashlightNoteText", resourceCulture);
             }
         }
         
@@ -241,38 +241,11 @@ namespace NavajaSuiza_.NET10.Resources.Languages {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Automático.
-        /// </summary>
-        internal static string ThemeAuto {
-            get {
-                return ResourceManager.GetString("ThemeAuto", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Cambia entre tema claro y oscuro.
         /// </summary>
         internal static string ThemeContentText {
             get {
                 return ResourceManager.GetString("ThemeContentText", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Oscuro.
-        /// </summary>
-        internal static string ThemeDark {
-            get {
-                return ResourceManager.GetString("ThemeDark", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Claro.
-        /// </summary>
-        internal static string ThemeLight {
-            get {
-                return ResourceManager.GetString("ThemeLight", resourceCulture);
             }
         }
         
@@ -286,11 +259,92 @@ namespace NavajaSuiza_.NET10.Resources.Languages {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Detener.
+        /// </summary>
+        internal static string TunerActionOffText {
+            get {
+                return ResourceManager.GetString("TunerActionOffText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Bajo.
+        /// </summary>
+        internal static string TunerBassText {
+            get {
+                return ResourceManager.GetString("TunerBassText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Charango.
+        /// </summary>
+        internal static string TunerCharangoText {
+            get {
+                return ResourceManager.GetString("TunerCharangoText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A4 = 440 Hz.
+        /// </summary>
+        internal static string TunerNoteText {
+            get {
+                return ResourceManager.GetString("TunerNoteText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Nailon.
+        /// </summary>
+        internal static string TunerNylonText {
+            get {
+                return ResourceManager.GetString("TunerNylonText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Seleccione un Instrumento.
+        /// </summary>
+        internal static string TunerOptionsText {
+            get {
+                return ResourceManager.GetString("TunerOptionsText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Acero.
+        /// </summary>
+        internal static string TunerSteelText {
+            get {
+                return ResourceManager.GetString("TunerSteelText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Afinador.
         /// </summary>
         internal static string TunerText {
             get {
                 return ResourceManager.GetString("TunerText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ukelele.
+        /// </summary>
+        internal static string TunerUkeleleText {
+            get {
+                return ResourceManager.GetString("TunerUkeleleText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Violín.
+        /// </summary>
+        internal static string TunerViolinText {
+            get {
+                return ResourceManager.GetString("TunerViolinText", resourceCulture);
             }
         }
         

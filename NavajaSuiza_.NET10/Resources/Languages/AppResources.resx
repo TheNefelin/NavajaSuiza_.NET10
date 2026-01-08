@@ -129,7 +129,7 @@
   <data name="FlashlightActionOnText" xml:space="preserve">
     <value>Prender</value>
   </data>
-  <data name="FlashlightNote" xml:space="preserve">
+  <data name="FlashlightNoteText" xml:space="preserve">
     <value>Nota: La pantalla usará el máximo brillo para simular luz</value>
   </data>
   <data name="FlashlightOpFlashText" xml:space="preserve">
@@ -165,18 +165,6 @@
   <data name="SelectLanguageText" xml:space="preserve">
     <value>Seleccionar idioma</value>
   </data>
-  <data name="ThemeAuto" xml:space="preserve">
-    <value>Automático</value>
-  </data>
-  <data name="ThemeContentText" xml:space="preserve">
-    <value>Cambia entre tema claro y oscuro</value>
-  </data>
-  <data name="ThemeDark" xml:space="preserve">
-    <value>Oscuro</value>
-  </data>
-  <data name="ThemeLight" xml:space="preserve">
-    <value>Claro</value>
-  </data>
   <data name="ThemeText" xml:space="preserve">
     <value>Tema</value>
   </data>
@@ -197,5 +185,35 @@
   </data>
   <data name="MetronomeText" xml:space="preserve">
     <value>Metrónomo</value>
+  </data>
+  <data name="TunerOptionsText" xml:space="preserve">
+    <value>Seleccione un Instrumento</value>
+  </data>
+  <data name="TunerNylonText" xml:space="preserve">
+    <value>Nailon</value>
+  </data>
+  <data name="TunerSteelText" xml:space="preserve">
+    <value>Acero</value>
+  </data>
+  <data name="TunerBassText" xml:space="preserve">
+    <value>Bajo</value>
+  </data>
+  <data name="TunerUkeleleText" xml:space="preserve">
+    <value>Ukelele</value>
+  </data>
+  <data name="TunerViolinText" xml:space="preserve">
+    <value>Violín</value>
+  </data>
+  <data name="TunerCharangoText" xml:space="preserve">
+    <value>Charango</value>
+  </data>
+  <data name="TunerNoteText" xml:space="preserve">
+    <value>A4 = 440 Hz</value>
+  </data>
+  <data name="TunerActionOffText" xml:space="preserve">
+    <value>Detener</value>
+  </data>
+  <data name="ThemeContentText" xml:space="preserve">
+    <value>Cambia entre tema claro y oscuro</value>
   </data>
 </root>

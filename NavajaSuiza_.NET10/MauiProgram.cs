@@ -72,6 +72,16 @@ public static class MauiProgram
             .AddSingleton<TunerPage>()
             .AddSingleton<InstrumentViolinViewModel>()
             .AddSingleton<InstrumentViolinPage>()
+            .AddSingleton<InstrumentNylonViewModel>()
+            .AddSingleton<InstrumentNylonPage>()
+            .AddSingleton<InstrumentSteelViewModel>()
+            .AddSingleton<InstrumentSteelPage>()
+            .AddSingleton<InstrumentBassViewModel>()
+            .AddSingleton<InstrumentBassPage>()
+            .AddSingleton<InstrumentUkuleleViewModel>()
+            .AddSingleton<InstrumentUkulelePage>()
+            .AddSingleton<InstrumentCharangoViewModel>()
+            .AddSingleton<InstrumentCharangoPage>()
             ;
 
         return builder;

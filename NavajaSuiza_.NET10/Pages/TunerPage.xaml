@@ -6,14 +6,16 @@
              Title="{extensions:Translate TunerText}">
 
     <ScrollView>
-        <VerticalStackLayout HorizontalOptions="Center" Padding="0,20">
+        <VerticalStackLayout 
+            HorizontalOptions="Center" 
+            Padding="0,20,0,0">
 
             <!-- Header -->
             <HorizontalStackLayout Spacing="5" HorizontalOptions="Center" Padding="0,20">
                 <Image Source="icon_tuner.png" WidthRequest="50" />
 
                 <Label 
-                    Text="AFINADOR" 
+                    Text="{extensions:Translate TunerText}" 
                     FontSize="32" 
                     FontAttributes="Bold"
                     HorizontalTextAlignment="Center"
@@ -21,7 +23,7 @@
             </HorizontalStackLayout>
 
             <Label 
-                Text="Seleccione un Instrumento"
+                Text="{extensions:Translate TunerOptionsText}"
                 HorizontalTextAlignment="Center"
                 Opacity="0.6" 
                 Padding="15"/>
@@ -31,7 +33,8 @@
                 Padding="20">
 
                 <Button
-                    Text="Nylon"
+                    Text="{extensions:Translate TunerNylonText}"
+                    Command="{Binding NavigateToNylonCommand}"
                     ImageSource="instrument_gn.png"
                     FontAttributes="Bold"
                     ContentLayout="Top, 0" 
@@ -42,7 +45,8 @@
                 />
 
                 <Button
-                    Text="Steel"
+                    Text="{extensions:Translate TunerSteelText}"
+                    Command="{Binding NavigateToSteelCommand}"
                     ImageSource="instrument_gs.png"
                     FontAttributes="Bold"
                     ContentLayout="Top, 0" 
@@ -53,7 +57,8 @@
                 />
 
                 <Button
-                    Text="Bass"
+                    Text="{extensions:Translate TunerBassText}"
+                    Command="{Binding NavigateToBassCommand}"
                     ImageSource="instrument_b.png"
                     FontAttributes="Bold"
                     ContentLayout="Top, 0" 
@@ -64,7 +69,8 @@
                 />
 
                 <Button
-                    Text="Ukelele"
+                    Text="{extensions:Translate TunerUkeleleText}"
+                    Command="{Binding NavigateToUkeleleCommand}"
                     ImageSource="instrument_u.png"
                     FontAttributes="Bold"
                     ContentLayout="Top, 0" 
@@ -75,8 +81,8 @@
                 />
 
                 <Button
+                    Text="{extensions:Translate TunerViolinText}"
                     Command="{Binding NavigateToViolinCommand}"
-                    Text="Violin"
                     ImageSource="instrument_v.png"
                     FontAttributes="Bold"
                     ContentLayout="Top, 0" 
@@ -87,7 +93,8 @@
                 />
 
                 <Button
-                    Text="Charango"
+                    Text="{extensions:Translate TunerCharangoText}"
+                    Command="{Binding NavigateToCharangoCommand}"
                     ImageSource="instrument_c.png"
                     FontAttributes="Bold"
                     ContentLayout="Top, 0" 

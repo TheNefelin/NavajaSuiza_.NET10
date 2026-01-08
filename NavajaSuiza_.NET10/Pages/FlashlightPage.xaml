@@ -23,14 +23,23 @@
     
     <ScrollView>
         <VerticalStackLayout 
-            Padding="20,40"
+            Padding="20"
             Spacing="20">
+            
+            <!-- Header -->
+            <HorizontalStackLayout Spacing="5" HorizontalOptions="Center" Padding="0,20">
+                <Image Source="icon_flashlight.png" WidthRequest="50" />
 
-            <Image Source="icon_flashlight.svg" WidthRequest="100" />
+                <Label 
+                    Text="{extensions:Translate FlashlightText}" 
+                    FontSize="32" 
+                    FontAttributes="Bold"
+                    HorizontalTextAlignment="Center"
+                    TextColor="{StaticResource MyAccentBlue}" />
+            </HorizontalStackLayout>
 
             <Label 
                 Text="{extensions:Translate FlashlightOptionsText}"
-                FontSize="12"
                 HorizontalTextAlignment="Center"
                 Opacity="0.6" 
                 Padding="15"/>
@@ -78,7 +87,7 @@
             </Grid>
 
             <Label 
-                Text="{extensions:Translate FlashlightNote}"
+                Text="{extensions:Translate FlashlightNoteText}"
                 FontSize="12"
                 HorizontalTextAlignment="Center"
                 Opacity="0.6"
