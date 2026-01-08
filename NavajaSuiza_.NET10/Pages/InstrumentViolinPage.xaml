@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:components="clr-namespace:NavajaSuiza_.NET10.Pages.Components"    
+             x:Class="NavajaSuiza_.NET10.Pages.InstrumentViolinPage"
+             Title="Violin">
+
+    <ScrollView>
+        <VerticalStackLayout 
+            Padding="0,20"
+            Spacing="20">
+
+            <!-- MediaElement invisible para reproducir audio -->
+            <toolkit:MediaElement 
+                x:Name="TunerMediaElement"
+                ShouldLoopPlayback="True"
+                IsVisible="False" />
+
+            <Image Source="instrument_v.png" 
+               HorizontalOptions="Center"
+               WidthRequest="100" />
+
+            <components:LoadingComponent IsVisible="{Binding IsLoading}" />
+
+            <Grid IsVisible="{Binding IsBusy}">
+                <!-- Cuerpo del instrumento -->
+                <components:InstrumentBody />
+
+                <!-- Contenedor de cuerdas -->
+                <VerticalStackLayout
+                     VerticalOptions="Center"
+                     Padding="10,0">
+
+                    <!-- Cuerdas -->
+                    <CollectionView ItemsSource="{Binding ViolinStrings}">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <components:InstrumentStringComponent
+                                    Note="{Binding Note}"
+                                    AudioName="{Binding AudioName}"
+                                    Description="{Binding Description}"
+                                    Thickness="{Binding Thickness}" />
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
+            </Grid>
+
+            <!-- Botón Detener -->
+            <Button 
+                Command="{Binding StopAllStringCommand}" 
+                Text="Detener" 
+                Padding="20" 
+                Margin="20,20,20,0" />
+
+            <!-- Texto informativo -->
+            <Label
+                HorizontalOptions="Center"
+                VerticalOptions="End"
+                Text="A4 = 440 Hz"
+                Opacity="0.5" />
+            
+        </VerticalStackLayout>
+    </ScrollView>
+    
+</ContentPage>

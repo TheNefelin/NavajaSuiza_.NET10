@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:extensions="clr-namespace:NavajaSuiza_.NET10.Extensions"
              xmlns:converters="clr-namespace:NavajaSuiza_.NET10.Converters"
              x:Class="NavajaSuiza_.NET10.Pages.FlashlightPage"
@@ -27,11 +26,7 @@
             Padding="20,40"
             Spacing="20">
 
-            <Image Source="icon_flashlight.svg" WidthRequest="100">
-                <Image.Behaviors>
-                    <toolkit:IconTintColorBehavior TintColor="{StaticResource MyAccentOrange}" />
-                </Image.Behaviors>
-            </Image>
+            <Image Source="icon_flashlight.svg" WidthRequest="100" />
 
             <Label 
                 Text="{extensions:Translate FlashlightOptionsText}"
@@ -45,7 +40,7 @@
                     Grid.Column="0"
                     Command="{Binding ClickFlashCommand}"
                     Text="{extensions:Translate FlashlightOpFlashText}"
-                    ImageSource="icon_flash.svg"
+                    ImageSource="icon_flash.png"
                     FontAttributes="Bold"
                     ContentLayout="Top, 0" 
                     Margin="8,0,8,16"
@@ -59,16 +54,13 @@
                             <Setter Property="TextColor" Value="{StaticResource MyPrimaryDark}" />
                         </DataTrigger>
                     </Button.Triggers>
-                    <Button.Behaviors>
-                        <toolkit:IconTintColorBehavior TintColor="{StaticResource MyAccentOrange}" />
-                    </Button.Behaviors>
                 </Button>
 
                 <Button
                     Grid.Column="1"
                     Command="{Binding ClickScreenCommand}"          
                     Text="{extensions:Translate FlashlightOpScreenText}"                  
-                    ImageSource="icon_mobile_screen.svg"
+                    ImageSource="icon_screen.png"
                     FontAttributes="Bold"
                     ContentLayout="Top, 0" 
                     Margin="8,0,8,16"
@@ -82,54 +74,9 @@
                             <Setter Property="TextColor" Value="{StaticResource MyPrimaryDark}" />
                         </DataTrigger>
                     </Button.Triggers>                    
-                    <Button.Behaviors>
-                        <toolkit:IconTintColorBehavior TintColor="{StaticResource MyAccentOrange}" />
-                    </Button.Behaviors>
                 </Button>
             </Grid>
-         
-            <!-- Estado de la linterna -->
-            <!--<Border
-                Padding="20"
-                StrokeShape="16">
 
-                <VerticalStackLayout 
-                    Spacing="12"
-                    HorizontalOptions="Center">
-
-                    <HorizontalStackLayout 
-                        Spacing="8"
-                        HorizontalOptions="Center">
-
-                        <Ellipse 
-                            x:Name="StatusIndicator"
-                            WidthRequest="15"
-                            HeightRequest="15"
-                            Fill="{Binding IsLightOn, Converter={StaticResource ToggleLight}}"
-                            VerticalOptions="Center" />
-
-                        <Label 
-                            x:Name="StatusLabel"
-                            Text="{Binding IsLightOn, Converter={StaticResource BoolToStatusText}}"
-                            FontSize="16"
-                            FontAttributes="Bold"
-                            VerticalOptions="Center" />
-                    </HorizontalStackLayout>
-                </VerticalStackLayout>
-            </Border>-->
-
-            <!-- Botón principal de encendido/apagado -->
-            <!--<Button 
-                Command="{Binding ClickLightCommand}"
-                TextColor="{StaticResource MyPrimaryLight}"
-                BackgroundColor="{StaticResource MyAccentGreen}"
-                Text="{Binding IsLightOn, Converter={StaticResource BoolToActionText}}"
-                FontSize="18"
-                FontAttributes="Bold"
-                Padding="24,18"
-                CornerRadius="16" />-->
-
-            <!-- Nota informativa -->
             <Label 
                 Text="{extensions:Translate FlashlightNote}"
                 FontSize="12"

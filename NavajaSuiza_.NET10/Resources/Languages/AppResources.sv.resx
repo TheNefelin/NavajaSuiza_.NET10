@@ -195,4 +195,7 @@
   <data name="MenuBateryText" xml:space="preserve">
     <value>Batteri</value>
   </data>
+  <data name="MetronomeText" xml:space="preserve">
+    <value>Metronom</value>
+  </data>
 </root>

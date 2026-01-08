@@ -1,4 +1,3 @@
-using NavajaSuiza_.NET10.PagesViewModel;
 using NavajaSuiza_.NET10.Services.Interfaces;
 
 namespace NavajaSuiza_.NET10.Pages.Components;
@@ -44,25 +43,26 @@ public partial class InstrumentStringComponent : ContentView
     protected override void OnBindingContextChanged()
     {
         base.OnBindingContextChanged();
-        
-        if (this.BindingContext is TunerViewModel viewModel)
-        {
-            _instrumentAudioService = IPlatformApplication.Current.Services.GetService<IInstrumentAudioService>();
 
-            var internalBorder = this.FindByName<Border>("InternalStringBorder");
-            if (internalBorder != null)
-            {
-                _instrumentAudioService.RegisterStringBorder(internalBorder, AudioName);
-            }
+        // Inyectar el servicio
+        _instrumentAudioService = IPlatformApplication.Current.Services.GetService<IInstrumentAudioService>();
+
+        var internalBorder = this.FindByName<Border>("InternalStringBorder");
+        if (internalBorder != null && _instrumentAudioService != null)
+        {
+            _instrumentAudioService.RegisterStringBorder(internalBorder, AudioName);
         }
     }
 
     private async void OnStringTapped(object sender, TappedEventArgs e)
     {
-        var internalBorder = this.FindByName<Border>("InternalStringBorder");
-        if (internalBorder != null && _instrumentAudioService != null)
+        if (_instrumentAudioService != null)
         {
-            await _instrumentAudioService.StringTappedAsync(internalBorder);
+            var internalBorder = this.FindByName<Border>("InternalStringBorder");
+            if (internalBorder != null)
+            {
+                await _instrumentAudioService.StringTappedAsync(internalBorder);
+            }
         }
     }
 }

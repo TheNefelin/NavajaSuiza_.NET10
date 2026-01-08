@@ -13,6 +13,7 @@ public partial class MenuPage : ContentPage
     protected override void OnAppearing()
     {
         base.OnAppearing();
+
         if (BindingContext is MenuViewModel viewModel)
         {
             viewModel.OnPageAppearing();

@@ -1,33 +1,17 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-             xmlns:mediaElement="clr-namespace:CommunityToolkit.Maui.Views;assembly=CommunityToolkit.Maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
              xmlns:extensions="clr-namespace:NavajaSuiza_.NET10.Extensions"
-             xmlns:converters="clr-namespace:NavajaSuiza_.NET10.Converters"
-             xmlns:components="clr-namespace:NavajaSuiza_.NET10.Pages.Components"
              x:Class="NavajaSuiza_.NET10.Pages.TunerPage"
              Title="{extensions:Translate TunerText}">
 
     <ScrollView>
-        <VerticalStackLayout 
-            Padding="0,40"
-            Spacing="20">
-
-            <!-- MediaElement invisible para reproducir audio -->
-            <toolkit:MediaElement 
-                x:Name="TunerMediaElement"
-                ShouldLoopPlayback="True"
-                IsVisible="False" />
+        <VerticalStackLayout HorizontalOptions="Center" Padding="0,20">
 
             <!-- Header -->
-            <HorizontalStackLayout Spacing="5" HorizontalOptions="Center">
-                <Image Source="icon_tuner.png" WidthRequest="50">
-                    <Image.Behaviors>
-                        <toolkit:IconTintColorBehavior TintColor="{StaticResource MyAccentBlue}" />
-                    </Image.Behaviors>
-                </Image>
-                
+            <HorizontalStackLayout Spacing="5" HorizontalOptions="Center" Padding="0,20">
+                <Image Source="icon_tuner.png" WidthRequest="50" />
+
                 <Label 
                     Text="AFINADOR" 
                     FontSize="32" 
@@ -37,339 +21,82 @@
             </HorizontalStackLayout>
 
             <Label 
-                Text="Afina tu instrumento con precisión"
-                FontSize="12"
+                Text="Seleccione un Instrumento"
                 HorizontalTextAlignment="Center"
                 Opacity="0.6" 
                 Padding="15"/>
 
-            <Grid>
-                <!-- Fondo de madera oscura -->
-                <Border StrokeThickness="1">
-                    <Border.Background>
-                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                            <GradientStop Offset="0.0" Color="{AppThemeBinding Dark={StaticResource MyBackgroundMenuDark}, Light={StaticResource MyBackgroundMenuLight}}" />
-                            <GradientStop Offset="0.2" Color="{AppThemeBinding Dark={StaticResource MyBackgroundDark}, Light={StaticResource MyBackgroundLight}}" />
-                            <GradientStop Offset="0.4" Color="{AppThemeBinding Dark={StaticResource MyBackgroundMenuDark}, Light={StaticResource MyBackgroundMenuLight}}" />
-                            <GradientStop Offset="0.6" Color="{AppThemeBinding Dark={StaticResource MyBackgroundMenuDark}, Light={StaticResource MyBackgroundMenuLight}}" />
-                            <GradientStop Offset="0.8" Color="{AppThemeBinding Dark={StaticResource MyBackgroundDark}, Light={StaticResource MyBackgroundLight}}" />
-                            <GradientStop Offset="1.0" Color="{AppThemeBinding Dark={StaticResource MyBackgroundMenuDark}, Light={StaticResource MyBackgroundMenuLight}}" />
-                        </LinearGradientBrush>
-                    </Border.Background>
-                </Border>
+            <FlexLayout
+                Wrap="Wrap"
+                Padding="20">
 
-                <!-- Borde decorativo del agujero (roseta) -->
-                <Border
-                    HeightRequest="200"
-                    WidthRequest="200"
-                    HorizontalOptions="Center"
-                    VerticalOptions="Center"
-                    StrokeThickness="6"
-                    Background="{AppThemeBinding Dark={StaticResource MyBackgroundDark}, Light={StaticResource MyBackgroundLight}}"
-                    Stroke="{StaticResource MyAccentGreen}">
-                    
-                    <Border.StrokeShape>
-                        <RoundRectangle CornerRadius="110" />
-                    </Border.StrokeShape>
-                </Border>
+                <Button
+                    Text="Nylon"
+                    ImageSource="instrument_gn.png"
+                    FontAttributes="Bold"
+                    ContentLayout="Top, 0" 
+                    Margin="8,0,8,16"
+                    Padding="25,15,25,10"
+                    WidthRequest="120" 
+                    HeightRequest="120" 
+                />
 
-                <!-- Contenedor de cuerdas -->
-                <VerticalStackLayout
-                    VerticalOptions="Center"
-                    Padding="10,0">
+                <Button
+                    Text="Steel"
+                    ImageSource="instrument_gs.png"
+                    FontAttributes="Bold"
+                    ContentLayout="Top, 0" 
+                    Margin="8,0,8,16"
+                    Padding="25,15,25,10"
+                    WidthRequest="120" 
+                    HeightRequest="120" 
+                />
 
-                    <!-- Cuerda 6: E2 -->
-                    <Grid 
-                        ColumnDefinitions="45,*,60"
-                        HeightRequest="50">
+                <Button
+                    Text="Bass"
+                    ImageSource="instrument_b.png"
+                    FontAttributes="Bold"
+                    ContentLayout="Top, 0" 
+                    Margin="8,0,8,16"
+                    Padding="25,15,25,10"
+                    WidthRequest="120" 
+                    HeightRequest="120" 
+                />
 
-                        <Grid.GestureRecognizers>
-                            <TapGestureRecognizer
-                                Command="{Binding StringTappedCommand}" 
-                                CommandParameter="GN_E2" />
-                        </Grid.GestureRecognizers>
-                        
-                        <Label 
-                            Text="E2" 
-                            TextColor="{StaticResource MyAccentOrange}" 
-                            FontSize="22" 
-                            FontAttributes="Bold" 
-                            VerticalOptions="Center" />
+                <Button
+                    Text="Ukelele"
+                    ImageSource="instrument_u.png"
+                    FontAttributes="Bold"
+                    ContentLayout="Top, 0" 
+                    Margin="8,0,8,16"
+                    Padding="25,15,25,10"
+                    WidthRequest="120" 
+                    HeightRequest="120" 
+                />
 
-                        <Border 
-                            Grid.Column="1" 
-                            x:Name="StringE2Border"
-                            StrokeThickness="0" 
-                            HeightRequest="6"
-                            VerticalOptions="Center"
-                            Padding="0,10"
-                            BackgroundColor="{AppThemeBinding Dark={StaticResource MyPrimaryTextDark}, Light={StaticResource MyPrimaryTextLight}}" />
+                <Button
+                    Command="{Binding NavigateToViolinCommand}"
+                    Text="Violin"
+                    ImageSource="instrument_v.png"
+                    FontAttributes="Bold"
+                    ContentLayout="Top, 0" 
+                    Margin="8,0,8,16"
+                    Padding="25,15,25,10"
+                    WidthRequest="120" 
+                    HeightRequest="120" 
+                />
 
-                        <Label 
-                            Grid.Column="2" 
-                            Text="82.41 Hz" 
-                            TextColor="{StaticResource MyAccentOrange}" 
-                            FontSize="12"
-                            VerticalOptions="Center" 
-                            HorizontalOptions="End" />
-                    </Grid>
-
-                    <!-- Cuerda 5: A2 -->
-                    <Grid 
-                         ColumnDefinitions="45,*,60" 
-                         HeightRequest="50">
-
-                        <Grid.GestureRecognizers>
-                            <TapGestureRecognizer
-                                Command="{Binding StringTappedCommand}" 
-                                CommandParameter="GN_A2" />
-                        </Grid.GestureRecognizers>
-
-                        <Label 
-                             Text="A2" 
-                             TextColor="{StaticResource MyAccentOrange}" 
-                             FontSize="22" 
-                             FontAttributes="Bold" 
-                             VerticalOptions="Center" />
-
-                        <Border
-                            x:Name="StringA2Border"
-                            Grid.Column="1" 
-                            StrokeThickness="0" 
-                            HeightRequest="5"
-                            VerticalOptions="Center"
-                            BackgroundColor="{AppThemeBinding Dark={StaticResource MyPrimaryTextDark}, Light={StaticResource MyPrimaryTextLight}}" />
-
-                        <Label 
-                             Grid.Column="2" 
-                             Text="110.00 Hz"
-                             TextColor="{StaticResource MyAccentOrange}" 
-                             FontSize="12"
-                             VerticalOptions="Center" 
-                             HorizontalOptions="End" />
-                    </Grid>
-
-                    <!-- Cuerda 4: D3 -->
-                    <Grid 
-                         ColumnDefinitions="45,*,60" 
-                         HeightRequest="50">
-
-                        <Grid.GestureRecognizers>
-                            <TapGestureRecognizer
-                                Command="{Binding StringTappedCommand}" 
-                                CommandParameter="GN_D3" />
-                        </Grid.GestureRecognizers>
-                        
-                        <Label 
-                             Text="D3" 
-                             TextColor="{StaticResource MyAccentOrange}" 
-                             FontSize="22" 
-                             FontAttributes="Bold" 
-                             VerticalOptions="Center" />
-
-                        <Border 
-                            x:Name="StringD3Border"
-                            Grid.Column="1"
-                            StrokeThickness="0" 
-                            HeightRequest="4"
-                            VerticalOptions="Center"
-                            BackgroundColor="{AppThemeBinding Dark={StaticResource MyPrimaryTextDark}, Light={StaticResource MyPrimaryTextLight}}" />
-
-                        <Label 
-                             Grid.Column="2" 
-                             Text="146.83 Hz"
-                             TextColor="{StaticResource MyAccentOrange}" 
-                             FontSize="12"
-                             VerticalOptions="Center" 
-                             HorizontalOptions="End" />
-                    </Grid>
-
-                    <!-- Cuerda 3: G3 -->
-                    <Grid 
-                         ColumnDefinitions="45,*,60" 
-                         HeightRequest="50">
-
-                        <Grid.GestureRecognizers>
-                            <TapGestureRecognizer
-                                Command="{Binding StringTappedCommand}" 
-                                CommandParameter="GN_G3" />
-                        </Grid.GestureRecognizers>
-                        
-                        <Label 
-                             Text="G3" 
-                             TextColor="{StaticResource MyAccentOrange}" 
-                             FontSize="22" 
-                             FontAttributes="Bold" 
-                             VerticalOptions="Center" />
-
-                        <Border 
-                            x:Name="StringG3Border"
-                            Grid.Column="1"
-                            StrokeThickness="0"
-                            HeightRequest="3"
-                            VerticalOptions="Center"
-                            BackgroundColor="{AppThemeBinding Dark={StaticResource MyPrimaryTextDark}, Light={StaticResource MyPrimaryTextLight}}" />
-
-                        <Label 
-                             Grid.Column="2" 
-                             Text="196.00 Hz"
-                             TextColor="{StaticResource MyAccentOrange}" 
-                             FontSize="12"
-                             VerticalOptions="Center" 
-                             HorizontalOptions="End" />
-                    </Grid>
-
-                    <!-- Cuerda 2: B3 -->
-                    <Grid 
-                         ColumnDefinitions="45,*,60" 
-                         HeightRequest="50">
-
-                        <Grid.GestureRecognizers>
-                            <TapGestureRecognizer
-                                Command="{Binding StringTappedCommand}" 
-                                CommandParameter="GN_B3" />
-                        </Grid.GestureRecognizers>
-                        
-                        <Label 
-                             Text="B3" 
-                             TextColor="{StaticResource MyAccentOrange}" 
-                             FontSize="22" 
-                             FontAttributes="Bold" 
-                             VerticalOptions="Center" />
-
-                        <Border 
-                            x:Name="StringB3Border"
-                            Grid.Column="1" 
-                            StrokeThickness="0" 
-                            HeightRequest="2"
-                            VerticalOptions="Center"
-                            BackgroundColor="{AppThemeBinding Dark={StaticResource MyPrimaryTextDark}, Light={StaticResource MyPrimaryTextLight}}" />
-
-                        <Label 
-                             Grid.Column="2" 
-                             Text="246.94 Hz"
-                             TextColor="{StaticResource MyAccentOrange}" 
-                             FontSize="12"
-                             VerticalOptions="Center" 
-                             HorizontalOptions="End" />
-                    </Grid>
-
-                    <!-- Cuerda 1: E4 -->
-                    <Grid 
-                         ColumnDefinitions="45,*,60" 
-                         HeightRequest="50">
-
-                        <Grid.GestureRecognizers>
-                            <TapGestureRecognizer
-                                Command="{Binding StringTappedCommand}" 
-                                CommandParameter="GN_E4" />
-                        </Grid.GestureRecognizers>
-
-                        <Label 
-                             Text="E4" 
-                             TextColor="{StaticResource MyAccentOrange}" 
-                             FontSize="22" 
-                             FontAttributes="Bold" 
-                             VerticalOptions="Center" />
-
-                        <Border 
-                            x:Name="StringE4Border" 
-                            Grid.Column="1" 
-                            StrokeThickness="0" 
-                            HeightRequest="1"
-                            VerticalOptions="Center"
-                            BackgroundColor="{AppThemeBinding Dark={StaticResource MyPrimaryTextDark}, Light={StaticResource MyPrimaryTextLight}}" />
-
-                        <Label 
-                             Grid.Column="2" 
-                             Text="329.63 Hz"
-                             TextColor="{StaticResource MyAccentOrange}" 
-                             FontSize="12"
-                             VerticalOptions="Center" 
-                             HorizontalOptions="End" />
-                    </Grid>
-                </VerticalStackLayout>
-            </Grid>
-
-            <!-- Botón Detener -->
-            <Button 
-                Command="{Binding StopAllCommand}" 
-                Text="Detener" 
-                Padding="20" 
-                Margin="20"/>
-
-            <!-- Texto informativo -->
-            <Label
-                HorizontalOptions="Center"
-                VerticalOptions="End"
-                Text="Cuerdas de Nailon • A4 = 440 Hz"
-                Opacity="0.5" />
-
-            <Grid>
-                <!-- Fondo de madera oscura -->
-                <Border StrokeThickness="1">
-                    <Border.Background>
-                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                            <GradientStop Offset="0.0" Color="{AppThemeBinding Dark={StaticResource MyBackgroundMenuDark}, Light={StaticResource MyBackgroundMenuLight}}" />
-                            <GradientStop Offset="0.5" Color="{AppThemeBinding Dark={StaticResource MyBackgroundDark}, Light={StaticResource MyBackgroundLight}}" />
-                            <GradientStop Offset="1.0" Color="{AppThemeBinding Dark={StaticResource MyBackgroundMenuDark}, Light={StaticResource MyBackgroundMenuLight}}" />
-                        </LinearGradientBrush>
-                    </Border.Background>
-                </Border>
-
-                <!-- Borde decorativo del agujero (roseta) -->
-                <Border
-                     HeightRequest="200"
-                     WidthRequest="200"
-                     HorizontalOptions="Center"
-                     VerticalOptions="Center" 
-                     StrokeThickness="6"
-                     Background="{AppThemeBinding Dark={StaticResource MyBackgroundDark}, Light={StaticResource MyBackgroundLight}}"
-                     Stroke="{StaticResource MyAccentGreen}">
-
-                    <Border.StrokeShape>
-                        <RoundRectangle CornerRadius="110" />
-                    </Border.StrokeShape>
-                </Border>
-
-                <!-- Contenedor de cuerdas -->
-                <VerticalStackLayout
-                    VerticalOptions="Center"
-                    Padding="10,0">
-
-                    <components:InstrumentStringComponent 
-                        Note="G2"
-                        AudioName="V_01_G2.wav"
-                        Description="98.00 Hz"
-                        Thickness="1" />
-
-                    <components:InstrumentStringComponent 
-                        Note="D3"
-                        AudioName="V_02_D3.wav"
-                        Description="98.00 Hz"
-                        Thickness="1" />
-
-                    <components:InstrumentStringComponent 
-                        Note="A3"
-                        AudioName="V_03_A3.wav"
-                        Description="98.00 Hz"
-                        Thickness="1" />
-
-                    <components:InstrumentStringComponent 
-                        Note="E4"
-                        AudioName="V_04_E4.wav"
-                        Description="98.00 Hz"
-                        Thickness="1" />
-                </VerticalStackLayout>
-            </Grid>
-
-            <!-- Botón Detener -->
-            <Button 
-                Command="{Binding StopAllStringCommand}" 
-                Text="Detener" 
-                Padding="20" 
-                Margin="20"/>
-
+                <Button
+                    Text="Charango"
+                    ImageSource="instrument_c.png"
+                    FontAttributes="Bold"
+                    ContentLayout="Top, 0" 
+                    Margin="8,0,8,16"
+                    Padding="25,15,25,10"
+                    WidthRequest="120" 
+                    HeightRequest="120" 
+                />
+            </FlexLayout>
         </VerticalStackLayout>
     </ScrollView>
 

@@ -48,6 +48,12 @@ public class InstrumentAudioService : IInstrumentAudioService
         StopAudio();
     }
 
+    public void ClearAllBorders()
+    {
+        _borderAudioMap.Clear();
+        _logger.LogInformation("Cleared all string borders");
+    }
+
     private void StartVibration(Border border)
     {
         try

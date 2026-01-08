@@ -70,6 +70,8 @@ public static class MauiProgram
             .AddSingleton<ScreenLightPage>()
             .AddSingleton<TunerViewModel>()
             .AddSingleton<TunerPage>()
+            .AddSingleton<InstrumentViolinViewModel>()
+            .AddSingleton<InstrumentViolinPage>()
             ;
 
         return builder;

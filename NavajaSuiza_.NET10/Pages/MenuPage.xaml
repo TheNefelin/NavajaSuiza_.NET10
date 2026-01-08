@@ -17,7 +17,7 @@
                 <Button
                     Command="{Binding NavigateToFlashlightCommand}"
                     Text="{extensions:Translate FlashlightText}"
-                    ImageSource="icon_flashlight.svg"
+                    ImageSource="icon_flashlight.png"
                     FontAttributes="Bold"
                     ContentLayout="Top, 0" 
                     Margin="8,0,8,16"
@@ -25,87 +25,102 @@
                     WidthRequest="120" 
                     HeightRequest="120" 
                 >
-                    <Button.Behaviors>
+                    <!--<Button.Behaviors>
                         <toolkit:IconTintColorBehavior TintColor="{StaticResource MyAccentOrange}" />
-                    </Button.Behaviors>
+                    </Button.Behaviors>-->
                 </Button>
 
                 <Button
                     Text="{extensions:Translate FramingText}"
-                    ImageSource="icon_instagram.svg"                    
+                    ImageSource="icon_camera.png"                    
                     FontAttributes="Bold"
                     ContentLayout="Top, 0" 
                     Margin="8,0,8,16"
                     Padding="25,15,25,10"
                     WidthRequest="120" 
                     HeightRequest="120" 
-                >
-                    <Button.Behaviors>
-                        <toolkit:IconTintColorBehavior TintColor="{StaticResource MyAccentOrange}" />
-                    </Button.Behaviors>
-                </Button>
+                />
 
                 <Button
                     Command="{Binding NavigateToTunerCommand}"                    
                     Text="{extensions:Translate TunerText}"
-                    ImageSource="icon_tuner.svg"                    
+                    ImageSource="icon_tuner.png"                    
                     FontAttributes="Bold"
                     ContentLayout="Top, 0" 
                     Margin="8,0,8,16"
                     Padding="25,15,25,10"
                     WidthRequest="120" 
                     HeightRequest="120" 
-                >
-                    <Button.Behaviors>
-                        <toolkit:IconTintColorBehavior TintColor="{StaticResource MyAccentOrange}" />
-                    </Button.Behaviors>
-                </Button>
+                />
 
                 <Button
-                    Command="{Binding NavigateToTestCommand}"
-                    Text="{extensions:Translate TunerText}"
-                    ImageSource="icon_instrument.svg"                    
+                    Text="{extensions:Translate MetronomeText}"
+                    ImageSource="icon_metronome.png"                    
                     FontAttributes="Bold"
                     ContentLayout="Top, 0" 
                     Margin="8,0,8,16"
                     Padding="25,15,25,10"
                     WidthRequest="120" 
                     HeightRequest="120" 
-                >
-                    <Button.Behaviors>
-                        <toolkit:IconTintColorBehavior TintColor="{StaticResource MyAccentOrange}" />
-                    </Button.Behaviors>
-                </Button>
+                />
 
                 <Button
                     Text="{extensions:Translate NotesText}"
-                    ImageSource="icon_notebook.svg"                    
+                    ImageSource="icon_notebook.png"                    
                     FontAttributes="Bold"
                     ContentLayout="Top, 0" 
                     Margin="8,0,8,16"
                     Padding="25,15,25,10"
                     WidthRequest="120" 
                     HeightRequest="120" 
-                >
-                    <Button.Behaviors>
-                        <toolkit:IconTintColorBehavior TintColor="{StaticResource MyAccentOrange}" />
-                    </Button.Behaviors>
-                </Button>
+                />
 
                 <Button
                     Text="{extensions:Translate WeatherText}"
-                    ImageSource="icon_weather.svg"                    
+                    ImageSource="icon_weather.png"                    
                     FontAttributes="Bold"
                     ContentLayout="Top, 0" 
                     Margin="8,0,8,16"
                     Padding="25,15,25,10"
                     WidthRequest="120" 
                     HeightRequest="120" 
-                >
-                    <Button.Behaviors>
-                        <toolkit:IconTintColorBehavior TintColor="{StaticResource MyAccentOrange}" />
-                    </Button.Behaviors>
-                </Button>
+                />
+
+                <Button
+                    Command="{Binding NavigateToManualCommand}"                    
+                    Text="{extensions:Translate ManualText}"
+                    ImageSource="icon_manual.png"                    
+                    FontAttributes="Bold"
+                    ContentLayout="Top, 0" 
+                    Margin="8,0,8,16"
+                    Padding="25,15,25,10"
+                    WidthRequest="120" 
+                    HeightRequest="120" 
+                />
+
+                <Button
+                    Command="{Binding NavigateToAboutCommand}"
+                    Text="{extensions:Translate AboutText}"
+                    ImageSource="icon_about.png"                    
+                    FontAttributes="Bold"
+                    ContentLayout="Top, 0" 
+                    Margin="8,0,8,16"
+                    Padding="25,15,25,10"
+                    WidthRequest="120" 
+                    HeightRequest="120" 
+                />
+
+                <Button
+                    Command="{Binding NavigateToTestCommand}"                    
+                    Text="TEST"
+                    ImageSource="test.png"                    
+                    FontAttributes="Bold"
+                    ContentLayout="Top, 0" 
+                    Margin="8,0,8,16"
+                    Padding="25,15,25,10"
+                    WidthRequest="120" 
+                    HeightRequest="120" 
+                />
             </FlexLayout>
 
             <Label Text="Estado Rápido" FontAttributes="Bold" FontSize="20" Padding="10,0,10,10"/>

@@ -8,4 +8,5 @@ public interface IInstrumentAudioService
     void RegisterStringBorder(Border border, string audioName);
     Task StringTappedAsync(Border border);
     Task StopAllStringAsync();
+    void ClearAllBorders();
 }

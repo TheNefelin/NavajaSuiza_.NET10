@@ -5,6 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:pages="clr-namespace:NavajaSuiza_.NET10.Pages"
     xmlns:extensions="clr-namespace:NavajaSuiza_.NET10.Extensions"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     Title="Navaja Suiza">
 
     <Shell.ToolbarItems>
@@ -13,25 +14,37 @@
             Clicked="OnLanguageClicked" />
     </Shell.ToolbarItems>
 
-    <TabBar>
+    <TabBar x:Name="TabBarMenu">
         <ShellContent
-            x:Name="MenuTxt"
-            Title="{extensions:Translate MenuText}"
-            ContentTemplate="{DataTemplate pages:MenuPage}"
-            Icon="icon_menu.svg"
-            Route="MenuPage" />
+             x:Name="MenuPage"
+             Title="{extensions:Translate MenuText}"
+             ContentTemplate="{DataTemplate pages:MenuPage}"
+             Icon="menu.svg"
+             Route="MenuPage">
+        </ShellContent>
+
+        <!--
+        <ShellContent
+             x:Name="MenuPage"
+             Title="{extensions:Translate MenuText}"
+             ContentTemplate="{DataTemplate pages:MenuPage}"
+             Icon="menu.svg"
+             Route="MenuPage" />
+                
         <ShellContent
             x:Name="ManualTxt"
             Title="{extensions:Translate ManualText}"
             ContentTemplate="{DataTemplate pages:ManualPage}"
             Icon="icon_manual.svg"
             Route="ManualPage" />
+
         <ShellContent
             x:Name="AboutTxt"
             Title="{extensions:Translate AboutText}"
             ContentTemplate="{DataTemplate pages:AboutPage}"
             Icon="icon_about.svg"
-            Route="AboutPage" />
+            Route="AboutPage" 
+        />-->
     </TabBar>
 
 </Shell>

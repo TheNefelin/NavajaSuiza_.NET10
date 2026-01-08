@@ -18,6 +18,9 @@
 ```
 NavajaSuiza_.NET10/
 │
+├── 📁 Behaviors/
+│   └── ???
+│
 ├── 📁 Converters/
 │   ├── InvertedBoolConverter.cs
 │   └── StringNotEmptyToBoolConverter.cs

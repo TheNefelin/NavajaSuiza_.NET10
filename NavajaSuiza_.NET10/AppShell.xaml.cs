@@ -18,6 +18,8 @@ public partial class AppShell : Shell
         _logger = logger;
         _languageService = languageService;
 
+        Shell.SetTabBarIsVisible(this, true);
+
         UpdateToolbarForCurrentLanguage();
     }
 
