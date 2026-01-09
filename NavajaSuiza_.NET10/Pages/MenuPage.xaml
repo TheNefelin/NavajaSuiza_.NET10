@@ -55,6 +55,7 @@
 
                 <Button
                     Text="{extensions:Translate MetronomeText}"
+                    Command="{Binding NavigateToMetronomeCommand}"
                     ImageSource="icon_metronome.png"                    
                     FontAttributes="Bold"
                     ContentLayout="Top, 0" 
@@ -75,7 +76,7 @@
                     HeightRequest="120" 
                 />
 
-                <Button
+                <!--<Button
                     Text="{extensions:Translate WeatherText}"
                     ImageSource="icon_weather.png"                    
                     FontAttributes="Bold"
@@ -84,7 +85,7 @@
                     Padding="25,15,25,10"
                     WidthRequest="120" 
                     HeightRequest="120" 
-                />
+                />-->
 
                 <Button
                     Command="{Binding NavigateToManualCommand}"                    
@@ -98,7 +99,7 @@
                     HeightRequest="120" 
                 />
 
-                <Button
+                <!--<Button
                     Command="{Binding NavigateToAboutCommand}"
                     Text="{extensions:Translate AboutText}"
                     ImageSource="icon_about.png"                    
@@ -108,7 +109,7 @@
                     Padding="25,15,25,10"
                     WidthRequest="120" 
                     HeightRequest="120" 
-                />
+                />-->
 
                 <Button
                     Command="{Binding NavigateToTestCommand}"                    

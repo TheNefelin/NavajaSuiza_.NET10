@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             x:Class="NavajaSuiza_.NET10.Pages.MetronomePage"
+             Title="MetronomePage">
+
+    <ScrollView>
+        <VerticalStackLayout 
+            Padding="0,20"
+            Spacing="30">
+
+            <!-- MediaElement -->
+            <toolkit:MediaElement 
+                x:Name="AccentMediaElement"
+                IsVisible="False" />
+                <!--Source="embed://tik_50ms_1000hz.wav"-->
+
+            <toolkit:MediaElement 
+                x:Name="NormalMediaElement"                
+                IsVisible="False" />
+                <!--Source="embed://tik_50ms_800hz.wav"-->
+
+            <!-- Header -->
+            <HorizontalStackLayout Spacing="5" HorizontalOptions="Center" Padding="0,20">
+                <Image Source="icon_metronome.png" WidthRequest="50" />
+
+                <Label 
+                    Text="Metronomo" 
+                    FontSize="32" 
+                    FontAttributes="Bold"
+                    HorizontalTextAlignment="Center"
+                    TextColor="{StaticResource MyAccentBlue}" />
+            </HorizontalStackLayout>
+
+            <FlexLayout
+                Wrap="Wrap"
+                JustifyContent="Center"
+                Padding="0">
+
+                <Button    
+                    Text="3/4"                    
+                    Command="{Binding SelectTimeSignatureCommand}"
+                    CommandParameter="3/4"                    
+                    WidthRequest="55" HeightRequest="55" FontAttributes="Bold" Margin="2">
+
+                    <Button.Triggers>
+                        <DataTrigger TargetType="Button" Binding="{Binding SelectedTimeSignature}" Value="3/4">
+                            <Setter Property="BackgroundColor" Value="{StaticResource MyAccent}" />
+                            <Setter Property="TextColor" Value="{StaticResource MyPrimaryDark}" />
+                        </DataTrigger>
+                    </Button.Triggers>
+                </Button>
+
+                <Button
+                    Text="4/4"                    
+                    Command="{Binding SelectTimeSignatureCommand}"
+                    CommandParameter="4/4"                    
+                    WidthRequest="55" HeightRequest="55" FontAttributes="Bold" Margin="2">
+
+                    <Button.Triggers>
+                        <DataTrigger TargetType="Button" Binding="{Binding SelectedTimeSignature}" Value="4/4">
+                            <Setter Property="BackgroundColor" Value="{StaticResource MyAccent}" />
+                            <Setter Property="TextColor" Value="{StaticResource MyPrimaryDark}" />
+                        </DataTrigger>
+                    </Button.Triggers>
+                </Button>
+
+                <Button      
+                    Text="5/4"
+                    Command="{Binding SelectTimeSignatureCommand}"
+                    CommandParameter="5/4"                       
+                    WidthRequest="55" HeightRequest="55" FontAttributes="Bold" Margin="2">
+
+                    <Button.Triggers>
+                        <DataTrigger TargetType="Button" Binding="{Binding SelectedTimeSignature}" Value="5/4">
+                            <Setter Property="BackgroundColor" Value="{StaticResource MyAccent}" />
+                            <Setter Property="TextColor" Value="{StaticResource MyPrimaryDark}" />
+                        </DataTrigger>
+                    </Button.Triggers>                    
+                </Button>
+
+                <Button 
+                    Text="6/8"
+                    Command="{Binding SelectTimeSignatureCommand}"
+                    CommandParameter="6/8"    
+                    WidthRequest="55" HeightRequest="55" FontAttributes="Bold" Margin="2">
+
+                    <Button.Triggers>
+                        <DataTrigger TargetType="Button" Binding="{Binding SelectedTimeSignature}" Value="6/8">
+                            <Setter Property="BackgroundColor" Value="{StaticResource MyAccent}" />
+                            <Setter Property="TextColor" Value="{StaticResource MyPrimaryDark}" />
+                        </DataTrigger>
+                    </Button.Triggers>
+                </Button>
+
+                <Button
+                    Text="7/8"
+                    Command="{Binding SelectTimeSignatureCommand}"
+                    CommandParameter="7/8"                        
+                    WidthRequest="55" HeightRequest="55" FontAttributes="Bold" Margin="2">
+
+                    <Button.Triggers>
+                        <DataTrigger TargetType="Button" Binding="{Binding SelectedTimeSignature}" Value="7/8">
+                            <Setter Property="BackgroundColor" Value="{StaticResource MyAccent}" />
+                            <Setter Property="TextColor" Value="{StaticResource MyPrimaryDark}" />
+                        </DataTrigger>
+                    </Button.Triggers>
+                </Button>
+            </FlexLayout>
+
+            <!-- BPM Display -->
+            <Border
+                Padding="20"
+                Margin="30,0"
+                StrokeThickness="2"
+                Stroke="{StaticResource MyAccentBlue}"
+                StrokeShape="RoundRectangle 20">
+                
+                <VerticalStackLayout Spacing="10" HorizontalOptions="Center">
+                    <Label 
+                        Text="BPM"
+                        FontSize="14"
+                        HorizontalTextAlignment="Center"
+                        Opacity="0.7" />
+                    <Label 
+                        Text="{Binding CurrentBPM}"
+                        FontSize="48"
+                        FontAttributes="Bold"
+                        HorizontalTextAlignment="Center"
+                        TextColor="{StaticResource MyAccentBlue}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- BPM Slider -->
+            <VerticalStackLayout Padding="20,0">
+                <Slider
+                    IsEnabled="{Binding IsEnabled}"
+                    Value="{Binding CurrentBPM}"
+                    Minimum="50"
+                    Maximum="350"
+                    HorizontalOptions="Fill" />
+
+                <Grid ColumnDefinitions="*,*,*" Padding="10,0">
+                    <Label Grid.Column="0" Text="50" FontSize="20" FontAttributes="Bold" HorizontalOptions="Start"/>
+                    <Label Grid.Column="1" Text="Velocidad" Opacity="0.6" HorizontalOptions="Center"/>
+                    <Label Grid.Column="2" Text="350" FontSize="20" FontAttributes="Bold" HorizontalOptions="End"/>
+                </Grid>
+            </VerticalStackLayout>
+
+            <!-- Control Buttons -->
+            <HorizontalStackLayout HorizontalOptions="Center" Spacing="40" Padding="20">
+
+                <Button
+                    IsEnabled="{Binding IsEnabled}"
+                    Command="{Binding PlayMetronomeCommand}"
+                    ImageSource="icon_play.png"
+                    WidthRequest="120" 
+                    HeightRequest="120" 
+                />
+
+                <Button
+                    Command="{Binding StopMetronomeCommand}"
+                    ImageSource="icon_stop.png"
+                    WidthRequest="120" 
+                    HeightRequest="120" 
+                />
+            </HorizontalStackLayout>
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

@@ -58,7 +58,7 @@
                     HeightRequest="120"
                 >
                     <Button.Triggers>
-                        <DataTrigger TargetType="Button" Binding="{Binding IsFlashOn}" Value="True">
+                        <DataTrigger TargetType="Button" Value="True">
                             <Setter Property="BackgroundColor" Value="{StaticResource MyAccent}" />
                             <Setter Property="TextColor" Value="{StaticResource MyPrimaryDark}" />
                         </DataTrigger>

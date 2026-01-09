@@ -4,6 +4,7 @@ using NavajaSuiza_.NET10.Pages;
 using NavajaSuiza_.NET10.PagesViewModel;
 using NavajaSuiza_.NET10.Services.Implementations;
 using NavajaSuiza_.NET10.Services.Interfaces;
+using Plugin.Maui.Audio;
 using Syncfusion.Maui.Toolkit.Hosting;
 
 namespace NavajaSuiza_.NET10;
@@ -45,10 +46,12 @@ public static class MauiProgram
     private static MauiAppBuilder ConfigureServices(this MauiAppBuilder builder)
     {
         builder.Services
+            .AddSingleton(AudioManager.Current)
             .AddSingleton<ILanguageService, LanguageService>()
             .AddSingleton<IThemeService, ThemeService>()
             .AddSingleton<IDeviceStatusService, DeviceStatusService>()
             .AddSingleton<IInstrumentAudioService, InstrumentAudioService>()
+            .AddSingleton<IMetronomeService, MetronomeService>()
             ;
 
         builder.Services
@@ -82,6 +85,8 @@ public static class MauiProgram
             .AddSingleton<InstrumentUkulelePage>()
             .AddSingleton<InstrumentCharangoViewModel>()
             .AddSingleton<InstrumentCharangoPage>()
+            .AddSingleton<MetronomeViewModel>()
+            .AddSingleton<MetronomePage>()
             ;
 
         return builder;

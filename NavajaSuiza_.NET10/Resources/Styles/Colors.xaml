@@ -8,13 +8,13 @@
     <Color x:Key="MyBackground">#252525</Color>
     
     <Color x:Key="MyBackgroundDark">#1A2332</Color>
-    <Color x:Key="MyBackgroundLight">#E8E6E1</Color>
+    <Color x:Key="MyBackgroundLight">#FFFFFF</Color>
     
     <Color x:Key="MyBackgroundMenuDark">#243042</Color>
     <Color x:Key="MyBackgroundMenuLight">#F7F5F0</Color>
    
     <Color x:Key="MyPrimaryDark">#2D3E50</Color>
-    <Color x:Key="MyPrimaryLight">#FFFFFF</Color>
+    <Color x:Key="MyPrimaryLight">#E8E6E1</Color>
     <Color x:Key="MyPrimaryTextDark">#F0EDE6</Color>
     <Color x:Key="MyPrimaryTextLight">#2E4057</Color>
 

@@ -44,6 +44,14 @@ public partial class MenuViewModel : BaseViewModel
         await Shell.Current.Navigation.PushAsync(page);
     }
 
+    
+    [RelayCommand]
+    private async Task NavigateToMetronome()
+    {
+        var page = _serviceProvider.GetRequiredService<MetronomePage>();
+        await Shell.Current.Navigation.PushAsync(page);
+    }
+
     [RelayCommand]
     private async Task NavigateToManual()
     {

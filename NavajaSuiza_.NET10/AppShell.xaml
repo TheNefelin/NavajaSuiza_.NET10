@@ -20,8 +20,15 @@
              Title="{extensions:Translate MenuText}"
              ContentTemplate="{DataTemplate pages:MenuPage}"
              Icon="menu.svg"
-             Route="MenuPage">
-        </ShellContent>
+             Route="MenuPage" />
+
+        <ShellContent
+            x:Name="AboutTxt"
+            Title="{extensions:Translate AboutText}"
+            ContentTemplate="{DataTemplate pages:AboutPage}"
+            Icon="manual.svg"
+            Route="AboutPage" />
+
 
         <!--
         <ShellContent

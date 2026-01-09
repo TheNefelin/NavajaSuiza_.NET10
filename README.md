@@ -6,6 +6,7 @@
 - CommunityToolkit.Mvvm 8.4.0
 - Microsoft.Extensions.Logging.Debug 10.0.1
 - Microsoft.Maui.Controls 10.0.20
+- Plugin.Maui.Audio 4.0.0
 - Syncfusion.Maui.Toolkit 1.0.8
 
 ### AndroidManifest permissions
@@ -71,15 +72,30 @@ NavajaSuiza_.NET10/
 │   ├── AboutViewModel.cs
 │   ├── BaseViewModel.cs
 │   ├── FlashlightViewModel.cs
+│   ├── InstrumentBassPage.cs
+│   ├── InstrumentCharangoPage.cs
+│   ├── InstrumentNylonPage.cs
+│   ├── InstrumentSteelPage.cs
+│   ├── InstrumentUkulelePage.cs
+│   ├── InstrumentViolinViewModel.cs
+│   ├── ManualPage.cs
 │   ├── MenuViewModel.cs
+│   ├── MetronomeViewModel.cs
 │   ├── ScreenLightViewModel.cs
 │   └── TunerPage.cs
 │
 ├── 📁 Views/
 │   ├── AboutPage.xaml/cs
 │   ├── FlashlightPage.xaml/cs
+│   ├── InstrumentBassPage.xaml/cs
+│   ├── InstrumentCharangoPage.xaml/cs
+│   ├── InstrumentNylonPage.xaml/cs
+│   ├── InstrumentSteelPage.xaml/cs
+│   ├── InstrumentUkulelePage.xaml/cs
+│   ├── InstrumentViolinViewModel.xaml/cs
 │   ├── ManualPage.xaml/cs
 │   ├── MenuPage.xaml/cs
+│   ├── MetronomeViewModel.xaml/cs
 │   ├── ScreenLightPage.xaml/cs
 │   └── TunerViewModel.xaml/cs
 │
