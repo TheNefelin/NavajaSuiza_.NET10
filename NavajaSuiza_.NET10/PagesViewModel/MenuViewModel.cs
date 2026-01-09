@@ -38,6 +38,13 @@ public partial class MenuViewModel : BaseViewModel
     }
 
     [RelayCommand]
+    private async Task NavigateToFraming()
+    {
+        var page = _serviceProvider.GetRequiredService<FramingPage>();
+        await Shell.Current.Navigation.PushAsync(page);
+    }
+
+    [RelayCommand]
     private async Task NavigateToTuner()
     {
         var page = _serviceProvider.GetRequiredService<TunerPage>();

@@ -85,6 +85,8 @@ public static class MauiProgram
             .AddSingleton<InstrumentCharangoPage>()
             .AddSingleton<MetronomeViewModel>()
             .AddSingleton<MetronomePage>()
+            .AddSingleton<FramingViewModel>()
+            .AddSingleton<FramingPage>()    
             ;
 
         return builder;

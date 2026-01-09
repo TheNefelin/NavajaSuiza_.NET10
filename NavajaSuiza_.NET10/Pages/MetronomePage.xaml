@@ -2,8 +2,9 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:extensions="clr-namespace:NavajaSuiza_.NET10.Extensions"
              x:Class="NavajaSuiza_.NET10.Pages.MetronomePage"
-             Title="MetronomePage">
+             Title="{extensions:Translate MetronomeText}">
 
     <ScrollView>
         <VerticalStackLayout 
@@ -26,7 +27,7 @@
                 <Image Source="icon_metronome.png" WidthRequest="50" />
 
                 <Label 
-                    Text="Metronomo" 
+                    Text="{extensions:Translate MetronomeText}" 
                     FontSize="32" 
                     FontAttributes="Bold"
                     HorizontalTextAlignment="Center"
@@ -142,9 +143,14 @@
                     HorizontalOptions="Fill" />
 
                 <Grid ColumnDefinitions="*,*,*" Padding="10,0">
-                    <Label Grid.Column="0" Text="50" FontSize="20" FontAttributes="Bold" HorizontalOptions="Start"/>
-                    <Label Grid.Column="1" Text="Velocidad" Opacity="0.6" HorizontalOptions="Center"/>
-                    <Label Grid.Column="2" Text="350" FontSize="20" FontAttributes="Bold" HorizontalOptions="End"/>
+                    <Label 
+                        Grid.Column="0" Text="50" FontSize="20" FontAttributes="Bold" HorizontalOptions="Start"/>
+                    <Label 
+                        Grid.Column="1" 
+                        Text="{extensions:Translate MetronomeSpeedText}" 
+                        Opacity="0.6" HorizontalOptions="Center"/>
+                    <Label 
+                        Grid.Column="2" Text="350" FontSize="20" FontAttributes="Bold" HorizontalOptions="End"/>
                 </Grid>
             </VerticalStackLayout>
 

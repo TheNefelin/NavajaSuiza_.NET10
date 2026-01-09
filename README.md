@@ -39,17 +39,8 @@ NavajaSuiza_.NET10/
 │   │   ├── AppResources.en.resx
 │   │   └── AppResources.sv.resx
 │   ├── Raw/
-│   │   ├── B_00_B0.wav
-│   │   ├── ...
-│   │   ├── C_01_G4.wav
-│   │   ├── ...
-│   │   ├── GN_03_D3.wav
-│   │   ├── ...
-│   │   ├── GS_01_E2.wav
-│   │   ├── ...
-│   │   ├── U_01_G4.wav
-│   │   ├── ...
-│   │   ├── V_01_G2.wav
+│   │   ├── tik_50ms_1000hz.wav
+│   │   ├── tik_50ms_800hz.wav
 │   │   └── ...
 │   ├── Splash/
 │   └── Styles/
@@ -70,6 +61,7 @@ NavajaSuiza_.NET10/
 │   ├── AboutViewModel.cs
 │   ├── BaseViewModel.cs
 │   ├── FlashlightViewModel.cs
+│   ├── FramingViewModel.cs
 │   ├── InstrumentBassPage.cs
 │   ├── InstrumentCharangoPage.cs
 │   ├── InstrumentNylonPage.cs
@@ -85,6 +77,7 @@ NavajaSuiza_.NET10/
 ├── 📁 Views/
 │   ├── AboutPage.xaml/cs
 │   ├── FlashlightPage.xaml/cs
+│   ├── FramingPage.xaml/cs
 │   ├── InstrumentBassPage.xaml/cs
 │   ├── InstrumentCharangoPage.xaml/cs
 │   ├── InstrumentNylonPage.xaml/cs

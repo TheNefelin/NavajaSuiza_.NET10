@@ -214,6 +214,15 @@ namespace NavajaSuiza_.NET10.Resources.Languages {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Velocidad.
+        /// </summary>
+        internal static string MetronomeSpeedText {
+            get {
+                return ResourceManager.GetString("MetronomeSpeedText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Metrónomo.
         /// </summary>
         internal static string MetronomeText {

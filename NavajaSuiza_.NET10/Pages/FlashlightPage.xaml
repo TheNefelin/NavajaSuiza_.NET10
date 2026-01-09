@@ -22,77 +22,87 @@
     </ContentPage.Resources>
     
     <ScrollView>
-        <VerticalStackLayout 
-            Padding="20"
-            Spacing="20">
+        <VerticalStackLayout
+            Padding="0,20">
             
             <!-- Header -->
-            <HorizontalStackLayout Spacing="5" HorizontalOptions="Center" Padding="0,20">
+            <HorizontalStackLayout 
+                HorizontalOptions="Center"
+                Padding="20"
+                Spacing="5">
+
                 <Image Source="icon_flashlight.png" WidthRequest="50" />
 
                 <Label 
                     Text="{extensions:Translate FlashlightText}" 
                     FontSize="32" 
                     FontAttributes="Bold"
-                    HorizontalTextAlignment="Center"
                     TextColor="{StaticResource MyAccentBlue}" />
             </HorizontalStackLayout>
 
-            <Label 
-                Text="{extensions:Translate FlashlightOptionsText}"
-                HorizontalTextAlignment="Center"
-                Opacity="0.6" 
-                Padding="15"/>
+            <VerticalStackLayout
+                VerticalOptions="Center">
 
-            <Grid ColumnDefinitions="auto,auto" HorizontalOptions="Center">
-                <Button
-                    Grid.Column="0"
-                    Command="{Binding ClickFlashCommand}"
-                    Text="{extensions:Translate FlashlightOpFlashText}"
-                    ImageSource="icon_flash.png"
-                    FontAttributes="Bold"
-                    ContentLayout="Top, 0" 
-                    Margin="8,0,8,16"
-                    Padding="25,15,25,10"
-                    WidthRequest="120" 
-                    HeightRequest="120"
-                >
-                    <Button.Triggers>
-                        <DataTrigger TargetType="Button" Value="True">
-                            <Setter Property="BackgroundColor" Value="{StaticResource MyAccent}" />
-                            <Setter Property="TextColor" Value="{StaticResource MyPrimaryDark}" />
-                        </DataTrigger>
-                    </Button.Triggers>
-                </Button>
+                <Label 
+                    Text="{extensions:Translate FlashlightOptionsText}"
+                    HorizontalTextAlignment="Center"
+                    Opacity="0.6" 
+                    Padding="10"/>
 
-                <Button
-                    Grid.Column="1"
-                    Command="{Binding ClickScreenCommand}"          
-                    Text="{extensions:Translate FlashlightOpScreenText}"                  
-                    ImageSource="icon_screen.png"
-                    FontAttributes="Bold"
-                    ContentLayout="Top, 0" 
-                    Margin="8,0,8,16"
-                    Padding="33,15,33,10"
-                    WidthRequest="120" 
-                    HeightRequest="120" 
-                >
-                    <Button.Triggers>
-                        <DataTrigger TargetType="Button" Binding="{Binding IsScreenOn}" Value="True">
-                            <Setter Property="BackgroundColor" Value="{StaticResource MyAccent}" />
-                            <Setter Property="TextColor" Value="{StaticResource MyPrimaryDark}" />
-                        </DataTrigger>
-                    </Button.Triggers>                    
-                </Button>
-            </Grid>
+                <FlexLayout
+                    Wrap="Wrap"
+                    Padding="20"
+                    HorizontalOptions="Center">
 
-            <Label 
-                Text="{extensions:Translate FlashlightNoteText}"
-                FontSize="12"
-                HorizontalTextAlignment="Center"
-                Opacity="0.6"
-                Padding="15" />
+                    <Button
+                        Grid.Column="0"
+                        Command="{Binding ClickFlashCommand}"
+                        Text="{extensions:Translate FlashlightOpFlashText}"
+                        ImageSource="icon_flash.png"
+                        FontAttributes="Bold"
+                        ContentLayout="Top, 0" 
+                        Margin="8"
+                        Padding="25,15,25,10"
+                        WidthRequest="120" 
+                        HeightRequest="120">
 
+                        <Button.Triggers>
+                            <DataTrigger TargetType="Button" Value="True">
+                                <Setter Property="BackgroundColor" Value="{StaticResource MyAccent}" />
+                                <Setter Property="TextColor" Value="{StaticResource MyPrimaryDark}" />
+                            </DataTrigger>
+                        </Button.Triggers>
+                    </Button>
+
+                    <Button
+                        Grid.Column="1"
+                        Command="{Binding ClickScreenCommand}"          
+                        Text="{extensions:Translate FlashlightOpScreenText}"                  
+                        ImageSource="icon_screen.png"
+                        FontAttributes="Bold"
+                        ContentLayout="Top, 0" 
+                        Padding="33,15,33,10"
+                        Margin="8"
+                        WidthRequest="120" 
+                        HeightRequest="120">
+
+                        <Button.Triggers>
+                            <DataTrigger TargetType="Button" Binding="{Binding IsScreenOn}" Value="True">
+                                <Setter Property="BackgroundColor" Value="{StaticResource MyAccent}" />
+                                <Setter Property="TextColor" Value="{StaticResource MyPrimaryDark}" />
+                            </DataTrigger>
+                        </Button.Triggers>
+                    </Button>
+                </FlexLayout>
+
+                <Label 
+                    Text="{extensions:Translate FlashlightNoteText}"
+                    FontSize="12"
+                    HorizontalTextAlignment="Center"
+                    Opacity="0.6"
+                    Padding="10" />
+            </VerticalStackLayout>
+            
         </VerticalStackLayout>
     </ScrollView>
     

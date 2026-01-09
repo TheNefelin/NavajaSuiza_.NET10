@@ -29,7 +29,6 @@
             Icon="manual.svg"
             Route="AboutPage" />
 
-
         <!--
         <ShellContent
              x:Name="MenuPage"

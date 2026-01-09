@@ -19,14 +19,14 @@
     <Color x:Key="MyPrimaryTextLight">#2E4057</Color>
 
     <Color x:Key="MyAccent">#B0FFFA</Color>
-    <Color x:Key="MyAccentOrange">#E07A5F</Color>
+    <Color x:Key="MyAccentOrange">#FF990A</Color>
     <Color x:Key="MyAccentBlue">#00D9FF</Color>
     <Color x:Key="MyAccentGreen">#7AA894</Color>
     
     <Color x:Key="MyOn">#FF0000</Color>
     <Color x:Key="MyOff">#999999</Color>
 
-    <!-- -->
+    <!-- E07A5F FCA120 FF990A-->
     
     <Color x:Key="Primary">#512BD4</Color>
     <Color x:Key="PrimaryDark">#384D63</Color>

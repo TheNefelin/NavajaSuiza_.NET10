@@ -99,6 +99,9 @@
 	  <MauiXaml Update="Pages\FlashlightPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Pages\FramingPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Pages\InstrumentBassPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

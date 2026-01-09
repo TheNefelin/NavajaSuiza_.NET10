@@ -216,4 +216,7 @@
   <data name="ThemeContentText" xml:space="preserve">
     <value>Cambia entre tema claro y oscuro</value>
   </data>
+  <data name="MetronomeSpeedText" xml:space="preserve">
+    <value>Velocidad</value>
+  </data>
 </root>
