@@ -1,7 +1,5 @@
 ﻿using CommunityToolkit.Maui.Views;
 using NavajaSuiza_.NET10.Services.Interfaces;
-using Plugin.Maui.Audio;
-using Encoding = System.Text.Encoding;
 
 namespace NavajaSuiza_.NET10.Services.Implementations;
 

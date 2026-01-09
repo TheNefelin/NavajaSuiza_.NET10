@@ -13,13 +13,13 @@
             <!-- MediaElement -->
             <toolkit:MediaElement 
                 x:Name="AccentMediaElement"
+                Source="embed://tik_50ms_1000hz.wav"
                 IsVisible="False" />
-                <!--Source="embed://tik_50ms_1000hz.wav"-->
 
             <toolkit:MediaElement 
-                x:Name="NormalMediaElement"                
+                x:Name="NormalMediaElement"   
+                Source="embed://tik_50ms_800hz.wav"
                 IsVisible="False" />
-                <!--Source="embed://tik_50ms_800hz.wav"-->
 
             <!-- Header -->
             <HorizontalStackLayout Spacing="5" HorizontalOptions="Center" Padding="0,20">

@@ -6,14 +6,12 @@
 - CommunityToolkit.Mvvm 8.4.0
 - Microsoft.Extensions.Logging.Debug 10.0.1
 - Microsoft.Maui.Controls 10.0.20
-- Plugin.Maui.Audio 4.0.0
 - Syncfusion.Maui.Toolkit 1.0.8
 
 ### AndroidManifest permissions
 - BATTERY_STATUS
 - CAMERA
 - FLASHLIGHT
-- 
 
 ### Structure
 ```
