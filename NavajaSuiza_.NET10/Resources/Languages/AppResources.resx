@@ -219,4 +219,43 @@
   <data name="MetronomeSpeedText" xml:space="preserve">
     <value>Velocidad</value>
   </data>
+  <data name="FramingUploadImageText" xml:space="preserve">
+    <value>Cargar Imagen</value>
+  </data>
+  <data name="FramingAspectRatioSquareText" xml:space="preserve">
+    <value>(Cuadrado)</value>
+  </data>
+  <data name="FramingAspectRatioPortraitText" xml:space="preserve">
+    <value>(Vertical) Retrato</value>
+  </data>
+  <data name="FramingAspectRatioStoriesText" xml:space="preserve">
+    <value>(Vertical) Historias</value>
+  </data>
+  <data name="FramingAspectRatioLandscapeText" xml:space="preserve">
+    <value>(Horizontal) Paisaje</value>
+  </data>
+  <data name="FramingModeContainText" xml:space="preserve">
+    <value>Contener</value>
+  </data>
+  <data name="FramingModeCoverText" xml:space="preserve">
+    <value>Cubrir</value>
+  </data>
+  <data name="FramingModeFillText" xml:space="preserve">
+    <value>Llenar</value>
+  </data>
+  <data name="FramingBackgroundBlurText" xml:space="preserve">
+    <value>Difuminar</value>
+  </data>
+  <data name="FramingBackgroundBlackText" xml:space="preserve">
+    <value>Negro</value>
+  </data>
+  <data name="FramingBackgroundWhiteText" xml:space="preserve">
+    <value>Blanco</value>
+  </data>
+  <data name="FramingBtnGuardarText" xml:space="preserve">
+    <value>Guardar</value>
+  </data>
+  <data name="FramingBtnResetText" xml:space="preserve">
+    <value>Resetear</value>
+  </data>
 </root>

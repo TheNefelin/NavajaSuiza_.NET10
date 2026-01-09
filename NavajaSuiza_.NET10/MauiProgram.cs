@@ -50,6 +50,7 @@ public static class MauiProgram
             .AddSingleton<IDeviceStatusService, DeviceStatusService>()
             .AddSingleton<IInstrumentAudioService, InstrumentAudioService>()
             .AddSingleton<IMetronomeService, MetronomeService>()
+            .AddSingleton<IImageProcessingService, ImageProcessingService>()
             ;
 
         builder.Services

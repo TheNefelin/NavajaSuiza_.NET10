@@ -28,4 +28,6 @@ public interface ILanguageService
     /// Save the selected language code to persistent storage
     /// <summary>
     void SaveLanguage(string languageCode);
+
+    string GetString(string resourceKey);
 }

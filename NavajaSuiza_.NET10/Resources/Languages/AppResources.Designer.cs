@@ -169,11 +169,128 @@ namespace NavajaSuiza_.NET10.Resources.Languages {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to (Horizontal) Paisaje.
+        /// </summary>
+        internal static string FramingAspectRatioLandscapeText {
+            get {
+                return ResourceManager.GetString("FramingAspectRatioLandscapeText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to (Vertical) Retrato.
+        /// </summary>
+        internal static string FramingAspectRatioPortraitText {
+            get {
+                return ResourceManager.GetString("FramingAspectRatioPortraitText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to (Cuadrado).
+        /// </summary>
+        internal static string FramingAspectRatioSquareText {
+            get {
+                return ResourceManager.GetString("FramingAspectRatioSquareText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to (Vertical) Historias.
+        /// </summary>
+        internal static string FramingAspectRatioStoriesText {
+            get {
+                return ResourceManager.GetString("FramingAspectRatioStoriesText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Negro.
+        /// </summary>
+        internal static string FramingBackgroundBlackText {
+            get {
+                return ResourceManager.GetString("FramingBackgroundBlackText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Difuminar.
+        /// </summary>
+        internal static string FramingBackgroundBlurText {
+            get {
+                return ResourceManager.GetString("FramingBackgroundBlurText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Blanco.
+        /// </summary>
+        internal static string FramingBackgroundWhiteText {
+            get {
+                return ResourceManager.GetString("FramingBackgroundWhiteText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Guardar.
+        /// </summary>
+        internal static string FramingBtnGuardarText {
+            get {
+                return ResourceManager.GetString("FramingBtnGuardarText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Resetear.
+        /// </summary>
+        internal static string FramingBtnResetText {
+            get {
+                return ResourceManager.GetString("FramingBtnResetText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Contener.
+        /// </summary>
+        internal static string FramingModeContainText {
+            get {
+                return ResourceManager.GetString("FramingModeContainText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cubrir.
+        /// </summary>
+        internal static string FramingModeCoverText {
+            get {
+                return ResourceManager.GetString("FramingModeCoverText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Llenar.
+        /// </summary>
+        internal static string FramingModeFillText {
+            get {
+                return ResourceManager.GetString("FramingModeFillText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Encuadre.
         /// </summary>
         internal static string FramingText {
             get {
                 return ResourceManager.GetString("FramingText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cargar Imagen.
+        /// </summary>
+        internal static string FramingUploadImageText {
+            get {
+                return ResourceManager.GetString("FramingUploadImageText", resourceCulture);
             }
         }
         

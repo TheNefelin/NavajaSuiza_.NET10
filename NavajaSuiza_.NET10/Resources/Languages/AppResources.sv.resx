@@ -219,4 +219,43 @@
   <data name="MetronomeSpeedText" xml:space="preserve">
     <value>Hastighet</value>
   </data>
+  <data name="FramingUploadImageText" xml:space="preserve">
+    <value>Ladda upp Bild</value>
+  </data>
+  <data name="FramingAspectRatioSquareText" xml:space="preserve">
+    <value>(Fyrkant)</value>
+  </data>
+  <data name="FramingAspectRatioPortraitText" xml:space="preserve">
+    <value>(Vertikalt) Porträtt</value>
+  </data>
+  <data name="FramingAspectRatioStoriesText" xml:space="preserve">
+    <value>(Vertikalt) Berättelser</value>
+  </data>
+  <data name="FramingAspectRatioLandscapeText" xml:space="preserve">
+    <value>(Horisontellt) Landskap</value>
+  </data>
+  <data name="FramingModeContainText" xml:space="preserve">
+    <value>Innehålla</value>
+  </data>
+  <data name="FramingModeCoverText" xml:space="preserve">
+    <value>Täcka</value>
+  </data>
+  <data name="FramingModeFillText" xml:space="preserve">
+    <value>Fylla</value>
+  </data>
+  <data name="FramingBackgroundBlurText" xml:space="preserve">
+    <value>Fläck</value>
+  </data>
+  <data name="FramingBackgroundBlackText" xml:space="preserve">
+    <value>Svart</value>
+  </data>
+  <data name="FramingBackgroundWhiteText" xml:space="preserve">
+    <value>Vit</value>
+  </data>
+  <data name="FramingBtnGuardarText" xml:space="preserve">
+    <value>Spara</value>
+  </data>
+  <data name="FramingBtnResetText" xml:space="preserve">
+    <value>Återställ</value>
+  </data>
 </root>

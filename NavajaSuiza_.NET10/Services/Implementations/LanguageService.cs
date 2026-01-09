@@ -84,4 +84,17 @@ public class LanguageService : ILanguageService
 
         _logger.LogInformation("[LanguageService] - Language saved to storage: {Code}", languageCode);
     }
+
+    public string GetString(string resourceKey)
+    {
+        try
+        {
+            return (string)LocalizationResourceManager.Instance[resourceKey];
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "[LanguageService] - Error getting string for key: {Key}", resourceKey);
+            return resourceKey; // Retorna la clave si no la encuentra
+        }
+    }
 }
