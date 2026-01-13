@@ -140,7 +140,7 @@
             <Label Text="{Binding StatusText}" FontSize="16" HorizontalOptions="Center" />
 
             <Border 
-                BackgroundColor="{StaticResource MyBackground}"
+                BackgroundColor="{AppThemeBinding Dark={StaticResource MyPrimaryDark}, Light={StaticResource MyPrimaryLight}}"
                 StrokeShape="10" 
                 Padding="15"
                 Margin="20,0">
