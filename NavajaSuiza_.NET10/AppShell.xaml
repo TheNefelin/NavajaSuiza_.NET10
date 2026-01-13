@@ -16,7 +16,7 @@
 
     <TabBar x:Name="TabBarMenu">
         <ShellContent
-             x:Name="MenuPage"
+             x:Name="MenuShellContent"
              Title="{extensions:Translate MenuText}"
              ContentTemplate="{DataTemplate pages:MenuPage}"
              Icon="menu.svg"
@@ -28,29 +28,6 @@
             ContentTemplate="{DataTemplate pages:AboutPage}"
             Icon="manual.svg"
             Route="AboutPage" />
-
-        <!--
-        <ShellContent
-             x:Name="MenuPage"
-             Title="{extensions:Translate MenuText}"
-             ContentTemplate="{DataTemplate pages:MenuPage}"
-             Icon="menu.svg"
-             Route="MenuPage" />
-                
-        <ShellContent
-            x:Name="ManualTxt"
-            Title="{extensions:Translate ManualText}"
-            ContentTemplate="{DataTemplate pages:ManualPage}"
-            Icon="icon_manual.svg"
-            Route="ManualPage" />
-
-        <ShellContent
-            x:Name="AboutTxt"
-            Title="{extensions:Translate AboutText}"
-            ContentTemplate="{DataTemplate pages:AboutPage}"
-            Icon="icon_about.svg"
-            Route="AboutPage" 
-        />-->
     </TabBar>
 
 </Shell>

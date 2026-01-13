@@ -26,77 +26,22 @@
                 Command="{Binding LoadImageCommand}"
                 BackgroundColor="{StaticResource MyAccentOrange}"
                 ImageSource="fram_search.png" HeightRequest="70" Padding="0" Margin="10,0"/> 
-            
-            <!-- Aspect Ratio -->
-            <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="10" Padding="10">
-                <Button
-                    Command="{Binding SetAspectRatioCommand}"
-                    CommandParameter="1:1"
-                    Grid.Column="0" Text="1:1" FontAttributes="Bold" Margin="2">
-
-                    <Button.Triggers>
-                        <DataTrigger TargetType="Button" Binding="{Binding AspectRatio}" Value="1:1">
-                            <Setter Property="BackgroundColor" Value="{StaticResource MyAccent}" />
-                            <Setter Property="TextColor" Value="{StaticResource MyPrimaryDark}" />
-                        </DataTrigger>
-                    </Button.Triggers>
-                </Button>
-
-                <Button
-                    Command="{Binding SetAspectRatioCommand}"                    
-                    CommandParameter="4:5"
-                    Grid.Column="1" Text="4:5" FontAttributes="Bold" Margin="2">
-
-                    <Button.Triggers>
-                        <DataTrigger TargetType="Button" Binding="{Binding AspectRatio}" Value="4:5">
-                            <Setter Property="BackgroundColor" Value="{StaticResource MyAccent}" />
-                            <Setter Property="TextColor" Value="{StaticResource MyPrimaryDark}" />
-                        </DataTrigger>
-                    </Button.Triggers>
-                </Button>
-
-                <Button   
-                    Command="{Binding SetAspectRatioCommand}"
-                    CommandParameter="9:16"
-                    Grid.Column="2" Text="9:16" FontAttributes="Bold" Margin="2">
-
-                    <Button.Triggers>
-                        <DataTrigger TargetType="Button" Binding="{Binding AspectRatio}" Value="9:16">
-                            <Setter Property="BackgroundColor" Value="{StaticResource MyAccent}" />
-                            <Setter Property="TextColor" Value="{StaticResource MyPrimaryDark}" />
-                        </DataTrigger>
-                    </Button.Triggers>
-                </Button>                
-                
-                <Button 
-                    Command="{Binding SetAspectRatioCommand}"
-                    CommandParameter="16:9"
-                    Grid.Column="3" Text="16:9" FontAttributes="Bold" Margin="2">
-
-                    <Button.Triggers>
-                        <DataTrigger TargetType="Button" Binding="{Binding AspectRatio}" Value="16:9">
-                            <Setter Property="BackgroundColor" Value="{StaticResource MyAccent}" />
-                            <Setter Property="TextColor" Value="{StaticResource MyPrimaryDark}" />
-                        </DataTrigger>
-                    </Button.Triggers>
-                </Button>
-            </Grid>
-            
+           
             <!-- Área de Preview Principal -->
             <Border
-                x:Name="PreviewFrame"
-                HeightRequest="400"
-                BackgroundColor="Black"
+                x:Name="PreviewGrid"
+                BackgroundColor="Red"
                 StrokeThickness="0"
-                Margin="5"
+                Margin="5,20"
                 StrokeShape="14"
                 Padding="0">
 
                 <Grid
-                    x:Name="PreviewGrid"
-                    BackgroundColor="Black">
+                    x:Name="PreviewFrame"
+                    HeightRequest="{Binding CanvasHeight}"
+                    BackgroundColor="blue">
 
-                    <!-- Encuadre -->
+                     <!--Encuadre--> 
                     <Label
                         Text="{Binding AspectRatioName}"
                         TextColor="White"
@@ -105,21 +50,27 @@
                         VerticalOptions="Start"
                         Margin="8" />                    
                     
-                    <!-- Imagen de fondo con blur -->
+                     <!--Imagen de fondo con blur--> 
                     <Image
-                        x:Name="BlurBackgroundImage"
+                        x:Name="BlurBackgroundImage"                        
+                        Source="{Binding LoadedImage}"
+                        WidthRequest="{Binding CanvasWidth}"
+                        HeightRequest="{Binding CanvasHeight}"  
+                        BackgroundColor="{Binding CanvasBackgroundColor}"
+                        Opacity="{Binding CanvasBackgroundOpacity}"
                         Aspect="AspectFill"
-                        Opacity="0.5" />
+                        >
+                    </Image>
 
-                    <!-- Imagen principal -->
+                     <!--Imagen principal--> 
                     <Image
                         x:Name="MainImage"
                         Source="{Binding LoadedImage}"
-                        Aspect="AspectFit"
-                        HorizontalOptions="Center"
-                        VerticalOptions="Center" />
+                        WidthRequest="{Binding CanvasWidth}"
+                        HeightRequest="{Binding CanvasHeight}"
+                        Aspect="{Binding AspectMode}" />
 
-                    <!-- Indicador de overlay si es necesario -->
+                     <!--Indicador de overlay si es necesario--> 
                     <Label
                         x:Name="DimensionsLabel"
                         Text="1080 x 1080"
@@ -132,99 +83,151 @@
                 </Grid>
             </Border>
 
-            <!-- Sección de Modo de Ajuste -->
-            <Grid RowDefinitions="auto,auto,auto" ColumnDefinitions="*,*,*" ColumnSpacing="10" RowSpacing="10" Padding="10">
-                <Button 
-                    Text="{extensions:Translate FramingModeContainText}"
-                    Command="{Binding SetFitModeCommand}"
-                    CommandParameter="Contain"
-                    Grid.Row="0" Grid.Column="0">
-                    <Button.Triggers>
-                        <DataTrigger TargetType="Button" Binding="{Binding FitMode}" Value="Contain">
-                            <Setter Property="BackgroundColor" Value="{StaticResource MyAccent}" />
-                            <Setter Property="TextColor" Value="{StaticResource MyPrimaryDark}" />
-                        </DataTrigger>
-                    </Button.Triggers>
-                </Button>
+            <VerticalStackLayout Padding="10,0" Spacing="10">
+                <!-- Aspect Ratio -->
+                <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="5">
+                    <Button
+                         Command="{Binding SetAspectRatioCommand}"
+                         CommandParameter="1:1"
+                         Grid.Column="0" Text="1:1" FontAttributes="Bold" Margin="2">
 
-                <Button
-                    Text="{extensions:Translate FramingModeCoverText}"
-                    Command="{Binding SetFitModeCommand}"
-                    CommandParameter="Cover"                    
-                    Grid.Row="0" Grid.Column="1">
-                    <Button.Triggers>
-                        <DataTrigger TargetType="Button" Binding="{Binding FitMode}" Value="Cover">
-                            <Setter Property="BackgroundColor" Value="{StaticResource MyAccent}" />
-                            <Setter Property="TextColor" Value="{StaticResource MyPrimaryDark}" />
-                        </DataTrigger>
-                    </Button.Triggers>
-                </Button>
+                        <Button.Triggers>
+                            <DataTrigger TargetType="Button" Binding="{Binding AspectRatio}" Value="1:1">
+                                <Setter Property="BackgroundColor" Value="{StaticResource MyAccent}" />
+                                <Setter Property="TextColor" Value="{StaticResource MyPrimaryDark}" />
+                            </DataTrigger>
+                        </Button.Triggers>
+                    </Button>
 
-                <Button 
-                    Text="{extensions:Translate FramingModeFillText}"
-                    Command="{Binding SetFitModeCommand}"
-                    CommandParameter="Fill"                       
-                    Grid.Row="0" Grid.Column="2">
-                    <Button.Triggers>
-                        <DataTrigger TargetType="Button" Binding="{Binding FitMode}" Value="Fill">
-                            <Setter Property="BackgroundColor" Value="{StaticResource MyAccent}" />
-                            <Setter Property="TextColor" Value="{StaticResource MyPrimaryDark}" />
-                        </DataTrigger>
-                    </Button.Triggers>
-                </Button>
+                    <Button
+                         Command="{Binding SetAspectRatioCommand}"                    
+                         CommandParameter="4:5"
+                         Grid.Column="1" Text="4:5" FontAttributes="Bold" Margin="2">
+
+                        <Button.Triggers>
+                            <DataTrigger TargetType="Button" Binding="{Binding AspectRatio}" Value="4:5">
+                                <Setter Property="BackgroundColor" Value="{StaticResource MyAccent}" />
+                                <Setter Property="TextColor" Value="{StaticResource MyPrimaryDark}" />
+                            </DataTrigger>
+                        </Button.Triggers>
+                    </Button>
+
+                    <Button   
+                         Command="{Binding SetAspectRatioCommand}"
+                         CommandParameter="9:16"
+                         Grid.Column="2" Text="9:16" FontAttributes="Bold" Margin="2">
+
+                        <Button.Triggers>
+                            <DataTrigger TargetType="Button" Binding="{Binding AspectRatio}" Value="9:16">
+                                <Setter Property="BackgroundColor" Value="{StaticResource MyAccent}" />
+                                <Setter Property="TextColor" Value="{StaticResource MyPrimaryDark}" />
+                            </DataTrigger>
+                        </Button.Triggers>
+                    </Button>
+
+                    <Button 
+                         Command="{Binding SetAspectRatioCommand}"
+                         CommandParameter="16:9"
+                         Grid.Column="3" Text="16:9" FontAttributes="Bold" Margin="2">
+
+                        <Button.Triggers>
+                            <DataTrigger TargetType="Button" Binding="{Binding AspectRatio}" Value="16:9">
+                                <Setter Property="BackgroundColor" Value="{StaticResource MyAccent}" />
+                                <Setter Property="TextColor" Value="{StaticResource MyPrimaryDark}" />
+                            </DataTrigger>
+                        </Button.Triggers>
+                    </Button>
+                </Grid>
+
+                <!-- Sección de Modo de Ajuste -->
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                    <Button 
+                        Text="{extensions:Translate FramingModeContainText}"
+                        Command="{Binding SetAspectModeCommand}"
+                        CommandParameter="AspectFit"
+                        Grid.Row="0" Grid.Column="0">
+
+                        <Button.Triggers>
+                            <DataTrigger TargetType="Button" Binding="{Binding AspectMode}" Value="AspectFit">
+                                <Setter Property="BackgroundColor" Value="{StaticResource MyAccent}" />
+                                <Setter Property="TextColor" Value="{StaticResource MyPrimaryDark}" />
+                            </DataTrigger>
+                        </Button.Triggers>
+                    </Button>
+
+                    <Button
+                        Text="{extensions:Translate FramingModeCoverText}"
+                        Command="{Binding SetAspectModeCommand}"
+                        CommandParameter="AspectFill"                    
+                        Grid.Row="0" Grid.Column="1">
+
+                        <Button.Triggers>
+                            <DataTrigger TargetType="Button" Binding="{Binding AspectMode}" Value="AspectFill">
+                                <Setter Property="BackgroundColor" Value="{StaticResource MyAccent}" />
+                                <Setter Property="TextColor" Value="{StaticResource MyPrimaryDark}" />
+                            </DataTrigger>
+                        </Button.Triggers>
+                    </Button>
+                </Grid>
 
                 <!-- Sección de Fondo -->
-                <Button 
-                    Text="{extensions:Translate FramingBackgroundBlurText}"
-                    Command="{Binding SetCanvasBackgroundCommand}"
-                    CommandParameter="Blur"                      
-                    Grid.Row="1" Grid.Column="0">
-                    <Button.Triggers>
-                        <DataTrigger TargetType="Button" Binding="{Binding CanvasBackground}" Value="Blur">
-                            <Setter Property="BackgroundColor" Value="{StaticResource MyAccent}" />
-                            <Setter Property="TextColor" Value="{StaticResource MyPrimaryDark}" />
-                        </DataTrigger>
-                    </Button.Triggers>
-                </Button>
+                <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10">
+                    <Button 
+                        Text="{extensions:Translate FramingBackgroundBlurText}"
+                        Command="{Binding SetCanvasBackgroundCommand}"
+                        CommandParameter="Blur"                      
+                        Grid.Row="1" Grid.Column="0">
 
-                <Button 
-                    Text="{extensions:Translate FramingBackgroundBlackText}"                    
-                    Command="{Binding SetCanvasBackgroundCommand}"
-                    CommandParameter="Black"    
-                    Grid.Row="1" Grid.Column="1">
-                    <Button.Triggers>
-                        <DataTrigger TargetType="Button" Binding="{Binding CanvasBackground}" Value="Black">
-                            <Setter Property="BackgroundColor" Value="{StaticResource MyAccent}" />
-                            <Setter Property="TextColor" Value="{StaticResource MyPrimaryDark}" />
-                        </DataTrigger>
-                    </Button.Triggers>
-                </Button>
+                        <Button.Triggers>
+                            <DataTrigger TargetType="Button" Binding="{Binding CanvasBackground}" Value="Blur">
+                                <Setter Property="BackgroundColor" Value="{StaticResource MyAccent}" />
+                                <Setter Property="TextColor" Value="{StaticResource MyPrimaryDark}" />
+                            </DataTrigger>
+                        </Button.Triggers>
+                    </Button>
 
-                <Button 
-                    Text="{extensions:Translate FramingBackgroundWhiteText}"                    
-                    Command="{Binding SetCanvasBackgroundCommand}"
-                    CommandParameter="White"    
-                    Grid.Row="1" Grid.Column="2">
-                    <Button.Triggers>
-                        <DataTrigger TargetType="Button" Binding="{Binding CanvasBackground}" Value="White">
-                            <Setter Property="BackgroundColor" Value="{StaticResource MyAccent}" />
-                            <Setter Property="TextColor" Value="{StaticResource MyPrimaryDark}" />
-                        </DataTrigger>
-                    </Button.Triggers>
-                </Button>
+                    <Button 
+                        Text="{extensions:Translate FramingBackgroundBlackText}"                    
+                        Command="{Binding SetCanvasBackgroundCommand}"
+                        CommandParameter="Black"    
+                        Grid.Row="1" Grid.Column="1">
 
-                <Grid ColumnDefinitions="auto,*,auto" Grid.Row="2" Grid.ColumnSpan="3">
+                        <Button.Triggers>
+                            <DataTrigger TargetType="Button" Binding="{Binding CanvasBackground}" Value="Black">
+                                <Setter Property="BackgroundColor" Value="{StaticResource MyAccent}" />
+                                <Setter Property="TextColor" Value="{StaticResource MyPrimaryDark}" />
+                            </DataTrigger>
+                        </Button.Triggers>
+                    </Button>
+
+                    <Button 
+                        Text="{extensions:Translate FramingBackgroundWhiteText}"                    
+                        Command="{Binding SetCanvasBackgroundCommand}"
+                        CommandParameter="White"    
+                        Grid.Row="1" Grid.Column="2">
+
+                        <Button.Triggers>
+                            <DataTrigger TargetType="Button" Binding="{Binding CanvasBackground}" Value="White">
+                                <Setter Property="BackgroundColor" Value="{StaticResource MyAccent}" />
+                                <Setter Property="TextColor" Value="{StaticResource MyPrimaryDark}" />
+                            </DataTrigger>
+                        </Button.Triggers>
+                    </Button>
+                </Grid>
+
+                <!-- Slider -->
+                <Grid ColumnDefinitions="auto,*,auto" Grid.Row="2" Grid.ColumnSpan="3" Padding="0,10">
                     <Label 
                         Text="{Binding BlurIntensity}"
                         Grid.Column="0" />
-                    
+
                     <Slider 
                         Value="{Binding BlurIntensity}"
-                        Grid.Column="1" Margin="10,0" Minimum="0" Maximum="100" />
-                    
-                    <Label Grid.Column="2" Text="100" HorizontalOptions="End"/>
+                        Grid.Column="1" Margin="10,0" Minimum="0" Maximum="25" />
+
+                    <Label Grid.Column="2" Text="25" HorizontalOptions="End"/>
                 </Grid>
-            </Grid>
+            </VerticalStackLayout>
 
             <!-- Control Buttons -->
             <HorizontalStackLayout HorizontalOptions="Center" Spacing="40" Padding="20">

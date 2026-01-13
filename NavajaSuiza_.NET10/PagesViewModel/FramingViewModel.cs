@@ -17,22 +17,44 @@ public partial class FramingViewModel : BaseViewModel
     private readonly ILanguageService _languageService;
 
     [ObservableProperty]
-    private string _aspectRatio = "1:1";
-
-    [ObservableProperty]
     private string _aspectRatioName = "";
 
     [ObservableProperty]
-    private string _fitMode = "Contain";
+    private string _aspectRatio = "1:1";
+
+    [ObservableProperty]
+    private string _aspectMode = "AspectFill";
 
     [ObservableProperty]
     private string _canvasBackground = "Blur";
 
     [ObservableProperty]
-    private int _blurIntensity = 50;
+    private string _canvasBackgroundColor = "Black";
+
+    [ObservableProperty]
+    private double _canvasBackgroundOpacity = 1.0f;
+
+    [ObservableProperty]
+    private double _canvasWidth;
+
+    [ObservableProperty]
+    private double _canvasHeight;
+
+    private const double MAX_CANVAS_WIDTH = 500;
+
+    [ObservableProperty]
+    private int _blurIntensity = 13; // max 25
 
     [ObservableProperty]
     private ImageSource _loadedImage;
+
+    private Dictionary<string, double> _aspectRatios = new()
+    {
+        { "1:1", 1.0 },      // alto/ancho
+        { "4:5", 1.25 },
+        { "9:16", 1.777 },
+        { "16:9", 0.5625 }
+    };
 
     public FramingViewModel(
         ILogger<FramingViewModel> logger,
@@ -42,42 +64,9 @@ public partial class FramingViewModel : BaseViewModel
         _logger = logger;
         _imageProcessingService = imageProcessingService;
         _languageService = languageService;
-
         _languageService.LanguageChanged += OnLanguageChanged;
+
         UpdateAspectRatioName(AspectRatio);
-    }
-
-    [RelayCommand]
-    private async void SetAspectRatio(string ratio)
-    {
-        AspectRatio = ratio;
-        UpdateAspectRatioName(ratio);
-    }
-
-    [RelayCommand]
-    private async void SetFitMode(string mode)
-    {
-        FitMode = mode;
-    }
-
-    [RelayCommand]
-    private async void SetCanvasBackground(string background)
-    {
-        CanvasBackground = background;
-    }
-
-    [RelayCommand]
-    private async Task LoadImage()
-    {
-        try
-        {
-            _logger.LogInformation("[FramingViewModel] - Loading image...");
-            LoadedImage = await _imageProcessingService.LoadImageAsync();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "[FramingViewModel] - Error loading image");
-        }
     }
 
     private void OnLanguageChanged(object sender, EventArgs e)
@@ -95,5 +84,61 @@ public partial class FramingViewModel : BaseViewModel
             "16:9" => _languageService.GetString("FramingAspectRatioLandscapeText"),
             _ => "Unknown"
         };
+    }
+
+    public void SetCanvasWidth(double width)
+    {
+        CanvasWidth = width;
+        CanvasHeight = width;
+    }      
+
+    [RelayCommand]
+    private async void SetAspectRatio(string ratio)
+    {
+        AspectRatio = ratio;
+        UpdateAspectRatioName(ratio);
+
+        // Calcular nueva altura
+        if (_aspectRatios.TryGetValue(ratio, out var heightMultiplier))
+        {
+            CanvasHeight = CanvasWidth * heightMultiplier;
+        }
+    }
+
+    [RelayCommand]
+    private async void SetAspectMode(string mode)
+    {
+        AspectMode = mode;
+    }
+
+    [RelayCommand]
+    private async void SetCanvasBackground(string background)
+    {
+        CanvasBackground = background;
+
+        if (background == "Blur")
+        {
+            CanvasBackgroundColor = "Transparent";
+            CanvasBackgroundOpacity = 1.0f;
+        } 
+        else
+        {
+            CanvasBackgroundColor = CanvasBackground;
+            CanvasBackgroundOpacity = 0.0f;
+        }
+    }
+
+    [RelayCommand]
+    private async Task LoadImage()
+    {
+        var result = await FilePicker.PickAsync(new PickOptions
+        {
+            PickerTitle = "Selecciona una imagen",
+            FileTypes = FilePickerFileType.Images
+        });
+
+        if (result == null) return;
+        
+        LoadedImage = ImageSource.FromFile(result.FullPath);
     }
 }

@@ -6,14 +6,14 @@ public class ImageProcessingService : IImageProcessingService
 {
     public async Task<ImageSource> LoadImageAsync()
     {
-        var result = await FilePicker.PickAsync(new PickOptions
-        {
-            PickerTitle = "Selecciona una imagen",
-            FileTypes = FilePickerFileType.Images
-        });
+        //var result = await FilePicker.PickAsync(new PickOptions
+        //{
+        //    PickerTitle = "Selecciona una imagen",
+        //    FileTypes = FilePickerFileType.Images
+        //});
 
-        if (result != null)
-            return ImageSource.FromFile(result.FullPath);
+        //if (result != null)
+        //    return ImageSource.FromFile(result.FullPath);
 
         return null;
     }

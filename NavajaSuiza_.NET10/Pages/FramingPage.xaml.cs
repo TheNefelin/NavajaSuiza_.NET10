@@ -9,4 +9,19 @@ public partial class FramingPage : ContentPage
 		InitializeComponent();
 		BindingContext = viewModel;
     }
+
+    protected override void OnAppearing()
+    {
+        base.OnAppearing();
+
+        MainThread.BeginInvokeOnMainThread(async () =>
+        {
+            await Task.Delay(100); // Pequeño delay para que se renderice
+
+            if (BindingContext is FramingViewModel viewModel)
+            {
+                viewModel.SetCanvasWidth(PreviewFrame.Width);
+            }
+        });
+    }
 }

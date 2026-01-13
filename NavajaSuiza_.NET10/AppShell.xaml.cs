@@ -18,9 +18,9 @@ public partial class AppShell : Shell
         _logger = logger;
         _languageService = languageService;
 
-        Shell.SetTabBarIsVisible(this, true);
-
         UpdateToolbarForCurrentLanguage();
+
+        //Shell.SetTabBarIsVisible(this, true);
     }
 
     private void UpdateToolbarForCurrentLanguage()
@@ -92,5 +92,10 @@ public partial class AppShell : Shell
 
         var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
         await toast.Show(cts.Token);
+    }
+
+    private void OnMenuClicked(object sender, TappedEventArgs e)
+    {
+        Shell.Current.DisplayAlert("ok", "You clicked the Menu tab", "Close");
     }
 }

@@ -6,9 +6,16 @@
              Title="{extensions:Translate AboutText}">
 
     <ScrollView>
-        <VerticalStackLayout Padding="20" Spacing="10">
+        <Grid 
+            RowDefinitions="*,auto" 
+            RowSpacing="20"
+            Padding="20">
 
-            <Border Padding="10" >
+            <Border 
+                Grid.Row="0"
+                Padding="10" 
+                HeightRequest="100" VerticalOptions="Start">
+                
                 <Border.StrokeShape>
                     <RoundRectangle CornerRadius="10" />
                 </Border.StrokeShape>
@@ -33,13 +40,12 @@
                 </Grid>
             </Border>
 
-            <VerticalStackLayout Padding="20">
-                <Image Source="icon_swiss_knife.png" WidthRequest="100"/>
-
+            <VerticalStackLayout Grid.Row="1" Spacing="10">
+                <Image Source="logo.svg" HeightRequest="100"/>
                 <Label Text="Beta: v1.0.0" HorizontalOptions="Center"/>
             </VerticalStackLayout>
 
-        </VerticalStackLayout>
+        </Grid>
     </ScrollView>
     
 </ContentPage>

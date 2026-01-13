@@ -16,6 +16,9 @@ public partial class MenuViewModel : BaseViewModel
     [ObservableProperty]
     private string _batteryLevel = "0%";
 
+    [ObservableProperty]
+    private bool _isDevelopment = false;
+
     public MenuViewModel(
         IServiceProvider serviceProvider,
         IDeviceStatusService deviceStatusService)

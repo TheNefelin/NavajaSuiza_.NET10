@@ -15,33 +15,6 @@
                 Padding="20">
 
                 <Button
-                    Command="{Binding NavigateToFlashlightCommand}"
-                    Text="{extensions:Translate FlashlightText}"
-                    ImageSource="icon_flashlight.png"
-                    FontAttributes="Bold"
-                    ContentLayout="Top, 0" 
-                    Margin="8,0,8,16"
-                    Padding="25,15,25,10"
-                    WidthRequest="120" 
-                    HeightRequest="120" 
-                >
-                    <!--<Button.Behaviors>
-                        <toolkit:IconTintColorBehavior TintColor="{StaticResource MyAccentOrange}" />
-                    </Button.Behaviors>-->
-                </Button>
-
-                <Button
-                    Command="{Binding NavigateToFramingCommand}"
-                    Text="{extensions:Translate FramingText}"
-                    ImageSource="icon_camera.png"                    
-                    FontAttributes="Bold"
-                    ContentLayout="Top, 0" 
-                    Margin="8,0,8,16"
-                    Padding="25,15,25,10"
-                    WidthRequest="120" 
-                    HeightRequest="120" />
-
-                <Button
                     Command="{Binding NavigateToTunerCommand}"                    
                     Text="{extensions:Translate TunerText}"
                     ImageSource="icon_tuner.png"                    
@@ -64,14 +37,20 @@
                     HeightRequest="120" />
 
                 <Button
-                    Text="{extensions:Translate NotesText}"
-                    ImageSource="icon_notebook.png"                    
+                    Command="{Binding NavigateToFlashlightCommand}"
+                    Text="{extensions:Translate FlashlightText}"
+                    ImageSource="icon_flashlight.png"
                     FontAttributes="Bold"
                     ContentLayout="Top, 0" 
                     Margin="8,0,8,16"
                     Padding="25,15,25,10"
                     WidthRequest="120" 
-                    HeightRequest="120"  />
+                    HeightRequest="120" 
+                >
+                    <!--<Button.Behaviors>
+                        <toolkit:IconTintColorBehavior TintColor="{StaticResource MyAccentOrange}" />
+                    </Button.Behaviors>-->
+                </Button>
 
                 <Button
                     Command="{Binding NavigateToCompassCommand}"                    
@@ -84,7 +63,31 @@
                     WidthRequest="120" 
                     HeightRequest="120" />
 
-                <!--<Button
+                <Button
+                    IsVisible="{Binding IsDevelopment}"
+                    Command="{Binding NavigateToFramingCommand}"
+                    Text="{extensions:Translate FramingText}"
+                    ImageSource="icon_camera.png"                    
+                    FontAttributes="Bold"
+                    ContentLayout="Top, 0" 
+                    Margin="8,0,8,16"
+                    Padding="25,15,25,10"
+                    WidthRequest="120" 
+                    HeightRequest="120" />
+
+                <Button
+                    IsVisible="{Binding IsDevelopment}"
+                    Text="{extensions:Translate NotesText}"
+                    ImageSource="icon_notebook.png"                    
+                    FontAttributes="Bold"
+                    ContentLayout="Top, 0" 
+                    Margin="8,0,8,16"
+                    Padding="25,15,25,10"
+                    WidthRequest="120" 
+                    HeightRequest="120"  />
+
+                <Button
+                    IsVisible="{Binding IsDevelopment}"
                     Text="{extensions:Translate WeatherText}"
                     ImageSource="icon_weather.png"                    
                     FontAttributes="Bold"
@@ -93,9 +96,10 @@
                     Padding="25,15,25,10"
                     WidthRequest="120" 
                     HeightRequest="120" 
-                />-->
+                />
 
                 <Button
+                    IsVisible="{Binding IsDevelopment}"
                     Command="{Binding NavigateToManualCommand}"                    
                     Text="{extensions:Translate ManualText}"
                     ImageSource="icon_manual.png"                    
@@ -106,7 +110,8 @@
                     WidthRequest="120" 
                     HeightRequest="120" />
 
-                <!--<Button
+                <Button
+                    IsVisible="{Binding IsDevelopment}"
                     Command="{Binding NavigateToAboutCommand}"
                     Text="{extensions:Translate AboutText}"
                     ImageSource="icon_about.png"                    
@@ -116,9 +121,10 @@
                     Padding="25,15,25,10"
                     WidthRequest="120" 
                     HeightRequest="120" 
-                />-->
+                />
 
                 <Button
+                    IsVisible="{Binding IsDevelopment}"
                     Command="{Binding NavigateToTestCommand}"                    
                     Text="TEST"
                     ImageSource="test.png"                    

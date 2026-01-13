@@ -2,8 +2,7 @@
   <Folder Name="/Solution Items/">
     <File Path="README.md" />
   </Folder>
-  <Project Path="MauiAppDemo/MauiAppDemo.csproj" />
   <Project Path="NavajaSuiza_.NET10/NavajaSuiza_.NET10.csproj">
-    <Deploy Solution="Debug|*" />
+    <Deploy />
   </Project>
 </Solution>

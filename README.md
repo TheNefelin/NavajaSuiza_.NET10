@@ -105,6 +105,13 @@ NavajaSuiza_.NET10/
 └── NavajaSuiza.Maui.csproj
 ```
 
+## Release App
+- Dhange debug to Release
+- For apk : 
+    - Right click project > Properties > Android Package Signing
+    - Check "Sign the .APK using the following keystore details"
+    - Fill in keystore details
+
 ## Languages 
 - Resoures/Languages
     - AppResources.resx (Default)
