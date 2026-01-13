@@ -4,6 +4,7 @@ using NavajaSuiza_.NET10.Pages;
 using NavajaSuiza_.NET10.PagesViewModel;
 using NavajaSuiza_.NET10.Services.Implementations;
 using NavajaSuiza_.NET10.Services.Interfaces;
+using SkiaSharp.Views.Maui.Controls.Hosting;
 using Syncfusion.Maui.Toolkit.Hosting;
 
 namespace NavajaSuiza_.NET10;
@@ -18,6 +19,7 @@ public static class MauiProgram
             .UseMauiCommunityToolkit()
             .UseMauiCommunityToolkitMediaElement()
             .ConfigureSyncfusionToolkit()
+            .UseSkiaSharp()
             .ConfigureFonts(fonts =>
             {
                 fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
@@ -87,7 +89,9 @@ public static class MauiProgram
             .AddSingleton<MetronomeViewModel>()
             .AddSingleton<MetronomePage>()
             .AddSingleton<FramingViewModel>()
-            .AddSingleton<FramingPage>()    
+            .AddSingleton<FramingPage>()
+            .AddSingleton<CompassViewModel>()
+            .AddSingleton<CompassPage>()
             ;
 
         return builder;

@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:extensions="clr-namespace:NavajaSuiza_.NET10.Extensions"
+             x:Class="NavajaSuiza_.NET10.Pages.CompassPage"
+             Title="{extensions:Translate CompassText}">
+
+    <ScrollView>
+        <!-- CONTENEDOR PRINCIPAL DE LA BRÚJULA -->
+        <VerticalStackLayout 
+            Padding="0,20"
+            Spacing="20">
+
+            <!-- Header -->
+            <HorizontalStackLayout Spacing="5" HorizontalOptions="Center" Padding="0,20">
+                <Image Source="icon_compass.png" WidthRequest="50" />
+
+                <Label 
+                    Text="{extensions:Translate CompassText}" 
+                    FontSize="32" 
+                    FontAttributes="Bold"
+                    HorizontalTextAlignment="Center"
+                    TextColor="{StaticResource MyAccentBlue}" />
+            </HorizontalStackLayout>
+
+            <!-- DIAL DE LA BRÚJULA (GIRA) -->
+            <Grid 
+                x:Name="CompassDial"
+                HeightRequest="300"
+                WidthRequest="300"
+                Rotation="{Binding CompassDialRotation}">
+
+                <Line 
+                    X1="0" X2="300"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center"
+                    StrokeThickness="5"
+                    Stroke="Red" />
+
+                <Line 
+                    Y1="0" Y2="300"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center"
+                    StrokeThickness="5"
+                    Stroke="Red" />
+
+                <!-- Círculo exterior -->
+                <Ellipse 
+                    Stroke="{StaticResource MyAccentBlue}"
+                    StrokeThickness="3"
+                    BackgroundColor="{AppThemeBinding Dark={StaticResource MyBackgroundMenuDark}, Light={StaticResource MyBackgroundMenuLight}}"
+                    WidthRequest="270" HeightRequest="270"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center" />
+
+                <Line 
+                    X1="0" X2="150"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center"
+                    StrokeThickness="5"
+                    Stroke="Red" />
+
+                <Line 
+                    Y1="0" Y2="150"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center"
+                    StrokeThickness="5"
+                    Stroke="Red" />
+
+                <!-- Puntos cardinales (GIRAN con el dial) -->
+                <Grid>
+                    <!-- Norte -->
+                    <Label 
+                        Text="{extensions:Translate CompassCardinalNText}" FontSize="24" FontAttributes="Bold"
+                        TextColor="#FF3B30" Margin="0,30,0,0"
+                        HorizontalOptions="Center" VerticalOptions="Start" />
+                    <!-- Este -->
+                    <Label 
+                        Text="{extensions:Translate CompassCardinalEText}" FontSize="24" FontAttributes="Bold"
+                        TextColor="#34C759" Margin="0,0,30,0"
+                        HorizontalOptions="End" VerticalOptions="Center" />
+                    <!-- Sur -->
+                    <Label 
+                        Text="{extensions:Translate CompassCardinalSText}" FontSize="24" FontAttributes="Bold"
+                        TextColor="#007AFF" Margin="0,0,0,30"
+                        HorizontalOptions="Center" VerticalOptions="End" />
+                    <!-- Oeste -->
+                    <Label 
+                        Text="{extensions:Translate CompassCardinalWText}" FontSize="24" FontAttributes="Bold"
+                        TextColor="#FF9500" Margin="30,0,0,0"
+                        HorizontalOptions="Start" VerticalOptions="Center" />
+                </Grid>
+
+                <!-- Marcas intermedias (opcional) -->
+                <Grid>
+                    <!-- Marca NE -->
+                    <Label 
+                        Text="•" FontSize="20"
+                        VerticalOptions="Start" HorizontalOptions="End"
+                        Margin="0,70,70,0" />
+                    <!-- Marca SE -->
+                    <Label 
+                        Text="•" FontSize="20"
+                        VerticalOptions="End" HorizontalOptions="End"
+                        Margin="0,0,70,70" />
+                    <!-- Marca SO -->
+                    <Label 
+                        Text="•" FontSize="20"
+                        VerticalOptions="End" HorizontalOptions="Start"
+                        Margin="70,0,0,70" />
+                    <!-- Marca NO -->
+                    <Label 
+                        Text="•" FontSize="20"
+                        VerticalOptions="Start" HorizontalOptions="Start"
+                        Margin="70,70,0,0" />
+                </Grid>
+
+                <!-- Indicador numérico central (GIRA con el dial) -->
+                <Border
+                    BackgroundColor="{StaticResource MyBackground}"
+                    StrokeShape="50"
+                    WidthRequest="100" HeightRequest="100"
+                    AbsoluteLayout.LayoutBounds="0.5,0.5"
+                    AbsoluteLayout.LayoutFlags="PositionProportional" >
+
+                    <VerticalStackLayout 
+                        HorizontalOptions="Center" 
+                        VerticalOptions="Center"
+                        Spacing="5">
+
+                        <Label 
+                            Text="{Binding AngleText}" 
+                            FontSize="28" FontAttributes="Bold"
+                            HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
+                </Border>
+            </Grid>
+
+            <!-- Indicador de estado principal -->
+            <Label Text="{Binding StatusText}" FontSize="16" HorizontalOptions="Center" />
+
+            <Border 
+                BackgroundColor="{StaticResource MyBackground}"
+                StrokeShape="10" 
+                Padding="15"
+                Margin="20,0">
+
+                <VerticalStackLayout Spacing="5">
+                    <Label 
+                        Text="{extensions:Translate CompassCardinalAddressText}" FontSize="12" 
+                        HorizontalOptions="Center" />
+                    <Label 
+                        Text="{Binding CardinalDirection}" FontSize="24" 
+                        FontAttributes="Bold" HorizontalOptions="Center" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Label 
+                Text="{extensions:Translate CompassAdviceText}"
+                HorizontalTextAlignment="Center"
+                Opacity="0.6" 
+                Padding="10"/>
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

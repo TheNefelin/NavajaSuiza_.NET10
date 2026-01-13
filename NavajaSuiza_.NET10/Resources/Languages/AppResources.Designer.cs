@@ -79,6 +79,186 @@ namespace NavajaSuiza_.NET10.Resources.Languages {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Para mejor precisión evita conectar a fuentes de energía y mantente alejado de elementos magnéticos.
+        /// </summary>
+        internal static string CompassAdviceText {
+            get {
+                return ResourceManager.GetString("CompassAdviceText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Dirección Cardinal.
+        /// </summary>
+        internal static string CompassCardinalAddressText {
+            get {
+                return ResourceManager.GetString("CompassCardinalAddressText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ESTE.
+        /// </summary>
+        internal static string CompassCardinalEastText {
+            get {
+                return ResourceManager.GetString("CompassCardinalEastText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to E.
+        /// </summary>
+        internal static string CompassCardinalEText {
+            get {
+                return ResourceManager.GetString("CompassCardinalEText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to NORESTE.
+        /// </summary>
+        internal static string CompassCardinalNorthEastText {
+            get {
+                return ResourceManager.GetString("CompassCardinalNorthEastText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to NORTE.
+        /// </summary>
+        internal static string CompassCardinalNorthText {
+            get {
+                return ResourceManager.GetString("CompassCardinalNorthText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to NOROESTE.
+        /// </summary>
+        internal static string CompassCardinalNorthWestText {
+            get {
+                return ResourceManager.GetString("CompassCardinalNorthWestText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to N.
+        /// </summary>
+        internal static string CompassCardinalNText {
+            get {
+                return ResourceManager.GetString("CompassCardinalNText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SURESTE.
+        /// </summary>
+        internal static string CompassCardinalSouthEastText {
+            get {
+                return ResourceManager.GetString("CompassCardinalSouthEastText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SUR.
+        /// </summary>
+        internal static string CompassCardinalSouthText {
+            get {
+                return ResourceManager.GetString("CompassCardinalSouthText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SUROESTE.
+        /// </summary>
+        internal static string CompassCardinalSouthWestText {
+            get {
+                return ResourceManager.GetString("CompassCardinalSouthWestText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to S.
+        /// </summary>
+        internal static string CompassCardinalSText {
+            get {
+                return ResourceManager.GetString("CompassCardinalSText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to OESTE.
+        /// </summary>
+        internal static string CompassCardinalWestText {
+            get {
+                return ResourceManager.GetString("CompassCardinalWestText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to O.
+        /// </summary>
+        internal static string CompassCardinalWText {
+            get {
+                return ResourceManager.GetString("CompassCardinalWText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Plano ✅.
+        /// </summary>
+        internal static string CompassStatusAText {
+            get {
+                return ResourceManager.GetString("CompassStatusAText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ligeramente Inclinado ⚠️.
+        /// </summary>
+        internal static string CompassStatusBText {
+            get {
+                return ResourceManager.GetString("CompassStatusBText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Inclinado ⚠️⚠️.
+        /// </summary>
+        internal static string CompassStatusCText {
+            get {
+                return ResourceManager.GetString("CompassStatusCText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to My Inclinado ❌.
+        /// </summary>
+        internal static string CompassStatusDText {
+            get {
+                return ResourceManager.GetString("CompassStatusDText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Vertical ❌❌.
+        /// </summary>
+        internal static string CompassStatusEText {
+            get {
+                return ResourceManager.GetString("CompassStatusEText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Brújula.
+        /// </summary>
+        internal static string CompassText {
+            get {
+                return ResourceManager.GetString("CompassText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Apagar.
         /// </summary>
         internal static string FlashlightActionOffText {

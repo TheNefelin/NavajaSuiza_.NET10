@@ -8,10 +8,16 @@
 - Microsoft.Maui.Controls 10.0.20
 - Syncfusion.Maui.Toolkit 1.0.8
 
+- SkiaSharp.Views.Maui.Controls 3.119.1
+- SkiaSharp.Extended 3.0.0
+
+
 ### AndroidManifest permissions
 - BATTERY_STATUS
 - CAMERA
 - FLASHLIGHT
+- ACCESS_COARSE_LOCATION
+- ACCESS_FINE_LOCATION
 
 ### Structure
 ```
@@ -60,6 +66,7 @@ NavajaSuiza_.NET10/
 ├── 📁 ViewModels/
 │   ├── AboutViewModel.cs
 │   ├── BaseViewModel.cs
+│   ├── CompassViewModel.cs
 │   ├── FlashlightViewModel.cs
 │   ├── FramingViewModel.cs
 │   ├── InstrumentBassPage.cs
@@ -76,6 +83,7 @@ NavajaSuiza_.NET10/
 │
 ├── 📁 Views/
 │   ├── AboutPage.xaml/cs
+│   ├── CompassPage.xaml/cs
 │   ├── FlashlightPage.xaml/cs
 │   ├── FramingPage.xaml/cs
 │   ├── InstrumentBassPage.xaml/cs

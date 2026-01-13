@@ -258,4 +258,64 @@
   <data name="FramingBtnResetText" xml:space="preserve">
     <value>Resetear</value>
   </data>
+  <data name="CompassText" xml:space="preserve">
+    <value>Brújula</value>
+  </data>
+  <data name="CompassAdviceText" xml:space="preserve">
+    <value>Para mejor precisión evita conectar a fuentes de energía y mantente alejado de elementos magnéticos</value>
+  </data>
+  <data name="CompassCardinalAddressText" xml:space="preserve">
+    <value>Dirección Cardinal</value>
+  </data>
+  <data name="CompassCardinalNorthText" xml:space="preserve">
+    <value>NORTE</value>
+  </data>
+  <data name="CompassCardinalEastText" xml:space="preserve">
+    <value>ESTE</value>
+  </data>
+  <data name="CompassCardinalWestText" xml:space="preserve">
+    <value>OESTE</value>
+  </data>
+  <data name="CompassCardinalSouthText" xml:space="preserve">
+    <value>SUR</value>
+  </data>
+  <data name="CompassCardinalEText" xml:space="preserve">
+    <value>E</value>
+  </data>
+  <data name="CompassCardinalNText" xml:space="preserve">
+    <value>N</value>
+  </data>
+  <data name="CompassCardinalSText" xml:space="preserve">
+    <value>S</value>
+  </data>
+  <data name="CompassCardinalWText" xml:space="preserve">
+    <value>O</value>
+  </data>
+  <data name="CompassStatusAText" xml:space="preserve">
+    <value>Plano ✅</value>
+  </data>
+  <data name="CompassStatusBText" xml:space="preserve">
+    <value>Ligeramente Inclinado ⚠️</value>
+  </data>
+  <data name="CompassStatusCText" xml:space="preserve">
+    <value>Inclinado ⚠️⚠️</value>
+  </data>
+  <data name="CompassStatusDText" xml:space="preserve">
+    <value>My Inclinado ❌</value>
+  </data>
+  <data name="CompassStatusEText" xml:space="preserve">
+    <value>Vertical ❌❌</value>
+  </data>
+  <data name="CompassCardinalNorthEastText" xml:space="preserve">
+    <value>NORESTE</value>
+  </data>
+  <data name="CompassCardinalSouthEastText" xml:space="preserve">
+    <value>SURESTE</value>
+  </data>
+  <data name="CompassCardinalSouthWestText" xml:space="preserve">
+    <value>SUROESTE</value>
+  </data>
+  <data name="CompassCardinalNorthWestText" xml:space="preserve">
+    <value>NOROESTE</value>
+  </data>
 </root>

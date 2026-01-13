@@ -258,4 +258,64 @@
   <data name="FramingBtnResetText" xml:space="preserve">
     <value>Återställ</value>
   </data>
+  <data name="CompassText" xml:space="preserve">
+    <value>Kompass</value>
+  </data>
+  <data name="CompassAdviceText" xml:space="preserve">
+    <value>För bättre noggrannhet, undvik att ansluta till strömkällor och håll dig borta från magnetiska element.</value>
+  </data>
+  <data name="CompassCardinalAddressText" xml:space="preserve">
+    <value>Kardinaladress</value>
+  </data>
+  <data name="CompassCardinalNorthText" xml:space="preserve">
+    <value>NORD</value>
+  </data>
+  <data name="CompassCardinalEastText" xml:space="preserve">
+    <value>ÖST</value>
+  </data>
+  <data name="CompassCardinalWestText" xml:space="preserve">
+    <value>VÄST</value>
+  </data>
+  <data name="CompassCardinalSouthText" xml:space="preserve">
+    <value>SYD</value>
+  </data>
+  <data name="CompassCardinalEText" xml:space="preserve">
+    <value>Ö</value>
+  </data>
+  <data name="CompassCardinalNText" xml:space="preserve">
+    <value>N</value>
+  </data>
+  <data name="CompassCardinalSText" xml:space="preserve">
+    <value>S</value>
+  </data>
+  <data name="CompassCardinalWText" xml:space="preserve">
+    <value>V</value>
+  </data>
+  <data name="CompassStatusAText" xml:space="preserve">
+    <value>Platt ✅</value>
+  </data>
+  <data name="CompassStatusBText" xml:space="preserve">
+    <value>Lätt Sluttande ⚠️</value>
+  </data>
+  <data name="CompassStatusCText" xml:space="preserve">
+    <value>Sluttande ⚠️⚠️</value>
+  </data>
+  <data name="CompassStatusDText" xml:space="preserve">
+    <value>Mycket Sluttande ❌</value>
+  </data>
+  <data name="CompassStatusEText" xml:space="preserve">
+    <value>Vertikal ❌❌</value>
+  </data>
+  <data name="CompassCardinalNorthEastText" xml:space="preserve">
+    <value>NORDOST</value>
+  </data>
+  <data name="CompassCardinalSouthEastText" xml:space="preserve">
+    <value>SYDOST</value>
+  </data>
+  <data name="CompassCardinalSouthWestText" xml:space="preserve">
+    <value>SYDVÄST</value>
+  </data>
+  <data name="CompassCardinalNorthWestText" xml:space="preserve">
+    <value>NORDVÄST</value>
+  </data>
 </root>

@@ -89,10 +89,4 @@ public partial class FlashlightViewModel : BaseViewModel
             //    "OK");
         }
     }
-
-    //[RelayCommand]
-    //private async void ClickLight()
-    //{
-    //    IsLightOn = !IsLightOn;
-    //}
 }

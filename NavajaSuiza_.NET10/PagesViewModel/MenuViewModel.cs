@@ -60,6 +60,13 @@ public partial class MenuViewModel : BaseViewModel
     }
 
     [RelayCommand]
+    private async Task NavigateToCompass()
+    {
+        var page = _serviceProvider.GetRequiredService<CompassPage>();
+        await Shell.Current.Navigation.PushAsync(page);
+    }
+
+    [RelayCommand]
     private async Task NavigateToManual()
     {
         var page = _serviceProvider.GetRequiredService<ManualPage>();

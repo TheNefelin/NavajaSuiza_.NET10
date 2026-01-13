@@ -39,8 +39,7 @@
                     Margin="8,0,8,16"
                     Padding="25,15,25,10"
                     WidthRequest="120" 
-                    HeightRequest="120" 
-                />
+                    HeightRequest="120" />
 
                 <Button
                     Command="{Binding NavigateToTunerCommand}"                    
@@ -51,8 +50,7 @@
                     Margin="8,0,8,16"
                     Padding="25,15,25,10"
                     WidthRequest="120" 
-                    HeightRequest="120" 
-                />
+                    HeightRequest="120" />
 
                 <Button
                     Text="{extensions:Translate MetronomeText}"
@@ -63,8 +61,7 @@
                     Margin="8,0,8,16"
                     Padding="25,15,25,10"
                     WidthRequest="120" 
-                    HeightRequest="120" 
-                />
+                    HeightRequest="120" />
 
                 <Button
                     Text="{extensions:Translate NotesText}"
@@ -74,8 +71,18 @@
                     Margin="8,0,8,16"
                     Padding="25,15,25,10"
                     WidthRequest="120" 
-                    HeightRequest="120" 
-                />
+                    HeightRequest="120"  />
+
+                <Button
+                    Command="{Binding NavigateToCompassCommand}"                    
+                    Text="{extensions:Translate CompassText}"
+                    ImageSource="icon_compass.png"                    
+                    FontAttributes="Bold"
+                    ContentLayout="Top, 0" 
+                    Margin="8,0,8,16"
+                    Padding="25,15,25,10"
+                    WidthRequest="120" 
+                    HeightRequest="120" />
 
                 <!--<Button
                     Text="{extensions:Translate WeatherText}"
@@ -97,8 +104,7 @@
                     Margin="8,0,8,16"
                     Padding="25,15,25,10"
                     WidthRequest="120" 
-                    HeightRequest="120" 
-                />
+                    HeightRequest="120" />
 
                 <!--<Button
                     Command="{Binding NavigateToAboutCommand}"
@@ -121,8 +127,7 @@
                     Margin="8,0,8,16"
                     Padding="25,15,25,10"
                     WidthRequest="120" 
-                    HeightRequest="120" 
-                />
+                    HeightRequest="120" />
             </FlexLayout>
 
             <Label Text="Estado Rápido" FontAttributes="Bold" FontSize="20" Padding="10,0,10,10"/>
