@@ -318,4 +318,10 @@
   <data name="CompassCardinalNorthWestText" xml:space="preserve">
     <value>NORTHWEST</value>
   </data>
+  <data name="MenuWelcomeText" xml:space="preserve">
+    <value>What do you need today?</value>
+  </data>
+  <data name="MenuStatusText" xml:space="preserve">
+    <value>Quick Status</value>
+  </data>
 </root>

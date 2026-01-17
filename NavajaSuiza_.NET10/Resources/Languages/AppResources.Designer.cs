@@ -493,6 +493,15 @@ namespace NavajaSuiza_.NET10.Resources.Languages {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Estado Rápido.
+        /// </summary>
+        internal static string MenuStatusText {
+            get {
+                return ResourceManager.GetString("MenuStatusText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Almacenamiento.
         /// </summary>
         internal static string MenuStorageText {
@@ -507,6 +516,15 @@ namespace NavajaSuiza_.NET10.Resources.Languages {
         internal static string MenuText {
             get {
                 return ResourceManager.GetString("MenuText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ¿Que Necesitas Hoy?.
+        /// </summary>
+        internal static string MenuWelcomeText {
+            get {
+                return ResourceManager.GetString("MenuWelcomeText", resourceCulture);
             }
         }
         

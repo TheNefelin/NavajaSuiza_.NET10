@@ -8,7 +8,7 @@
 
     <ScrollView>
         <VerticalStackLayout HorizontalOptions="Center" Padding="0,20">
-            <Label Text="¿Que Nececitas Hoy?" FontAttributes="Bold" FontSize="20" Padding="10"/>
+            <Label Text="{extensions:Translate MenuWelcomeText}" FontAttributes="Bold" FontSize="20" Padding="10"/>
 
             <FlexLayout
                 Wrap="Wrap"
@@ -136,7 +136,7 @@
                     HeightRequest="120" />
             </FlexLayout>
 
-            <Label Text="Estado Rápido" FontAttributes="Bold" FontSize="20" Padding="10,0,10,10"/>
+            <Label Text="{extensions:Translate MenuStatusText}" FontAttributes="Bold" FontSize="20" Padding="10,0,10,10"/>
 
             <Border
                 Padding="16" 
