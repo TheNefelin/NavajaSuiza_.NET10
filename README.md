@@ -106,7 +106,7 @@ NavajaSuiza_.NET10/
 ```
 
 ## Release App
-- Dhange debug to Release
+- Change Debug to Release
 - For apk : 
     - Right click project > Properties > Android Package Signing
     - Check "Sign the .APK using the following keystore details"
