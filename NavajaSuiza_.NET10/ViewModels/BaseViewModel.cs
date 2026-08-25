@@ -1,6 +1,6 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace NavajaSuiza_.NET10.PagesViewModel;
+namespace NavajaSuiza_.NET10.ViewModels;
 
 public abstract partial class BaseViewModel : ObservableObject
 {
@@ -15,6 +15,6 @@ public abstract partial class BaseViewModel : ObservableObject
 
     public virtual void Cleanup()
     {
-        // Método virtual para que las clases derivadas lo implementen si lo necesitan
+        // M�todo virtual para que las clases derivadas lo implementen si lo necesitan
     }
 }

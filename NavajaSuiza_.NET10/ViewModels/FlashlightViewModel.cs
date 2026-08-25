@@ -1,9 +1,9 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using NavajaSuiza_.NET10.Pages;
 using NavajaSuiza_.NET10.Services.Interfaces;
 
-namespace NavajaSuiza_.NET10.PagesViewModel;
+namespace NavajaSuiza_.NET10.ViewModels;
 
 public partial class FlashlightViewModel : BaseViewModel
 {
@@ -25,7 +25,7 @@ public partial class FlashlightViewModel : BaseViewModel
     {
         _serviceProvider = serviceProvider;
         _languageService = languageService;
-        // Suscríbete a cambios de idioma
+        // Suscr�bete a cambios de idioma
         _languageService.LanguageChanged += OnLanguageChanged;
     }
 

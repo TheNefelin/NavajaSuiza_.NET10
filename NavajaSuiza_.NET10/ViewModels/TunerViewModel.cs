@@ -1,8 +1,8 @@
-﻿using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
 using NavajaSuiza_.NET10.Pages;
 
-namespace NavajaSuiza_.NET10.PagesViewModel;
+namespace NavajaSuiza_.NET10.ViewModels;
 
 public partial class TunerViewModel : BaseViewModel
 {

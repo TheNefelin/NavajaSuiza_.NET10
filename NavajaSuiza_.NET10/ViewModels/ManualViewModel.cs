@@ -1,6 +1,6 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 
-namespace NavajaSuiza_.NET10.PagesViewModel;
+namespace NavajaSuiza_.NET10.ViewModels;
 
 public partial class ManualViewModel : BaseViewModel
 {

@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Maui.Views;
+using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
@@ -6,30 +6,30 @@ using NavajaSuiza_.NET10.Models;
 using NavajaSuiza_.NET10.Services.Interfaces;
 using System.Collections.ObjectModel;
 
-namespace NavajaSuiza_.NET10.PagesViewModel;
+namespace NavajaSuiza_.NET10.ViewModels;
 
-public partial class InstrumentSteelViewModel : BaseViewModel
+public partial class InstrumentUkuleleViewModel : BaseViewModel
 {
-    private readonly ILogger<InstrumentSteelViewModel> _logger;
+    private readonly ILogger<InstrumentUkuleleViewModel> _logger;
     private readonly IInstrumentAudioService _instrumentAudioService;
 
     [ObservableProperty]
     private ObservableCollection<InstrumentStringData> _instrumentStrings = new();
 
-    public InstrumentSteelViewModel(
-        ILogger<InstrumentSteelViewModel> logger,
+    public InstrumentUkuleleViewModel(
+        ILogger<InstrumentUkuleleViewModel> logger,
         IInstrumentAudioService instrumentAudioService)
     {
         _logger = logger;
         _instrumentAudioService = instrumentAudioService;
 
         // Agregar cuerdas
-        InstrumentStrings = _instrumentAudioService.GetSteelStringConfig();
+        InstrumentStrings = _instrumentAudioService.GetUkeleleStringConfig();
     }
 
     public async Task InitializeAsync()
     {
-        _logger.LogInformation("[InstrumentSteelViewModel] - Initializing Violin Strings in InstrumentSteelViewModel");
+        _logger.LogInformation("[InstrumentUkuleleViewModel] - Initializing Violin Strings in InstrumentUkuleleViewModel");
 
         IsLoading = true;
         IsBusy = false;
@@ -43,20 +43,20 @@ public partial class InstrumentSteelViewModel : BaseViewModel
 
     public void RegisterMediaElement(MediaElement mediaElement)
     {
-        _logger.LogInformation("[InstrumentSteelViewModel] - Registering MediaElement in InstrumentSteelViewModel");
+        _logger.LogInformation("[InstrumentUkuleleViewModel] - Registering MediaElement in InstrumentUkuleleViewModel");
         _instrumentAudioService.RegisterMediaElement(mediaElement);
     }
 
     public void ClearStringBorders()
     {
-        _logger.LogInformation("[InstrumentSteelViewModel] - Clearing All String Borders in InstrumentSteelViewModel");
+        _logger.LogInformation("[InstrumentUkuleleViewModel] - Clearing All String Borders in InstrumentUkuleleViewModel");
         _instrumentAudioService.ClearAllBorders();
     }
 
     [RelayCommand]
     public async Task StopAllStringAsync()
     {
-        _logger.LogInformation("[InstrumentSteelViewModel] - Stopping All Strings in InstrumentSteelViewModel");
+        _logger.LogInformation("[InstrumentUkuleleViewModel] - Stopping All Strings in InstrumentUkuleleViewModel");
         await _instrumentAudioService.StopAllStringAsync();
     }
 }

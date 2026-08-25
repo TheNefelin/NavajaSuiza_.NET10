@@ -1,7 +1,7 @@
-﻿using CommunityToolkit.Maui;
+using CommunityToolkit.Maui;
 using Microsoft.Extensions.Logging;
 using NavajaSuiza_.NET10.Pages;
-using NavajaSuiza_.NET10.PagesViewModel;
+using NavajaSuiza_.NET10.ViewModels;
 using NavajaSuiza_.NET10.Services.Implementations;
 using NavajaSuiza_.NET10.Services.Interfaces;
 using SkiaSharp.Views.Maui.Controls.Hosting;
@@ -34,7 +34,7 @@ public static class MauiProgram
                 .AddDebug()
                 .SetMinimumLevel(LogLevel.Trace));
 #else
-    // En Release también queremos logs
+    // En Release tambi�n queremos logs
     builder.Services.AddLogging(configure =>
         configure
             .AddDebug()
