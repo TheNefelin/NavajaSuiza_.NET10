@@ -5,6 +5,7 @@
              xmlns:components="clr-namespace:NavajaSuiza_.NET10.Pages.Components"
              xmlns:extensions="clr-namespace:NavajaSuiza_.NET10.Extensions"                
              x:Class="NavajaSuiza_.NET10.Pages.InstrumentUkulelePage"
+             x:Name="UkulelePage"
              Title="{extensions:Translate TunerUkeleleText}">
 
     <ScrollView>
@@ -41,7 +42,8 @@
                                     Note="{Binding Note}"
                                     AudioName="{Binding AudioName}"
                                     Description="{Binding Description}"
-                                    Thickness="{Binding Thickness}" />
+                                    Thickness="{Binding Thickness}"
+                                    AudioService="{Binding Source={x:Reference UkulelePage}, Path=BindingContext.AudioService}" />
                             </DataTemplate>
                         </CollectionView.ItemTemplate>
                     </CollectionView>

@@ -64,6 +64,15 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <AndroidResource Remove="Behaviors\**" />
+	  <Compile Remove="Behaviors\**" />
+	  <EmbeddedResource Remove="Behaviors\**" />
+	  <MauiCss Remove="Behaviors\**" />
+	  <MauiXaml Remove="Behaviors\**" />
+	  <None Remove="Behaviors\**" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Maui" Version="15.0.1" />
 		<PackageReference Include="CommunityToolkit.Maui.MediaElement" Version="10.0.0" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
@@ -145,10 +154,6 @@
 	  <MauiXaml Update="Pages\TunerPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Behaviors\" />
 	</ItemGroup>
 
 </Project>

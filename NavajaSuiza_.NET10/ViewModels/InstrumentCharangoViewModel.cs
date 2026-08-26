@@ -13,6 +13,8 @@ public partial class InstrumentCharangoViewModel : BaseViewModel
     private readonly ILogger<InstrumentCharangoViewModel> _logger;
     private readonly IInstrumentAudioService _instrumentAudioService;
 
+    public IInstrumentAudioService AudioService => _instrumentAudioService;
+
     [ObservableProperty]
     private ObservableCollection<InstrumentStringData> _instrumentStrings = new();
 

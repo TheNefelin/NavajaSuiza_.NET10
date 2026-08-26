@@ -10,6 +10,7 @@ public partial class InstrumentStringComponent : ContentView
     public static readonly BindableProperty AudioNameProperty = BindableProperty.Create(nameof(AudioName), typeof(string), typeof(InstrumentStringComponent), string.Empty);
     public static readonly BindableProperty DescriptionProperty = BindableProperty.Create(nameof(Description), typeof(string), typeof(InstrumentStringComponent), string.Empty);
     public static readonly BindableProperty ThicknessProperty = BindableProperty.Create(nameof(Thickness), typeof(string), typeof(InstrumentStringComponent), string.Empty);
+    public static readonly BindableProperty AudioServiceProperty = BindableProperty.Create(nameof(AudioService), typeof(IInstrumentAudioService), typeof(InstrumentStringComponent), null, propertyChanged: OnAudioServiceChanged);
 
     public string Note
     {
@@ -35,18 +36,34 @@ public partial class InstrumentStringComponent : ContentView
         set => SetValue(ThicknessProperty, value);
     }
 
+    public IInstrumentAudioService AudioService
+    {
+        get => (IInstrumentAudioService)GetValue(AudioServiceProperty);
+        set => SetValue(AudioServiceProperty, value);
+    }
+
     public InstrumentStringComponent()
 	{
 		InitializeComponent();
     }
 
+    private static void OnAudioServiceChanged(BindableObject bindable, object oldValue, object newValue)
+    {
+        if (bindable is InstrumentStringComponent component && newValue is IInstrumentAudioService service)
+        {
+            component._instrumentAudioService = service;
+            component.RegisterBorder();
+        }
+    }
+
     protected override void OnBindingContextChanged()
     {
         base.OnBindingContextChanged();
+        RegisterBorder();
+    }
 
-        // Inyectar el servicio
-        _instrumentAudioService = IPlatformApplication.Current.Services.GetService<IInstrumentAudioService>();
-
+    private void RegisterBorder()
+    {
         var internalBorder = this.FindByName<Border>("InternalStringBorder");
         if (internalBorder != null && _instrumentAudioService != null)
         {
