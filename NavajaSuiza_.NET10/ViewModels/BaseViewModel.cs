@@ -5,13 +5,13 @@ namespace NavajaSuiza_.NET10.ViewModels;
 public abstract partial class BaseViewModel : ObservableObject
 {
     [ObservableProperty]
-    private bool _isBusy;
+    public partial bool IsBusy { get; set; }
 
     [ObservableProperty]
-    private bool _isLoading;
+    public partial bool IsLoading { get; set; }
 
     [ObservableProperty]
-    private string _title = string.Empty;
+    public partial string Title { get; set; } = string.Empty;
 
     public virtual void Cleanup()
     {

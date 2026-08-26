@@ -12,13 +12,13 @@ public partial class FlashlightViewModel : BaseViewModel
     private readonly ILanguageService _languageService;
 
     [ObservableProperty]
-    private bool _isFlashOn = false;
+    public partial bool IsFlashOn { get; set; }
 
     [ObservableProperty]
-    private bool _isScreenOn = false;
+    public partial bool IsScreenOn { get; set; }
 
     [ObservableProperty]
-    private bool _isLightOn = false;
+    public partial bool IsLightOn { get; set; }
 
     public FlashlightViewModel(
         IServiceProvider serviceProvider,

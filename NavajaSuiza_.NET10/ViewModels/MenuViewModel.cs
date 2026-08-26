@@ -12,13 +12,13 @@ public partial class MenuViewModel : BaseViewModel
     private readonly IDeviceStatusService _deviceStatusService;
 
     [ObservableProperty]
-    private string _availableStorage = "0 GB";
+    public partial string AvailableStorage { get; set; } = "0 GB";
 
     [ObservableProperty]
-    private string _batteryLevel = "0%";
+    public partial string BatteryLevel { get; set; } = "0%";
 
     [ObservableProperty]
-    private bool _isDevelopment = false;
+    public partial bool IsDevelopment { get; set; }
 
     public MenuViewModel(
         IServiceProvider serviceProvider,

@@ -9,7 +9,7 @@ public partial class AboutViewModel : BaseViewModel
     private readonly IThemeService _themeService;
 
     [ObservableProperty]
-    private bool _isDarkMode;
+    public partial bool IsDarkMode { get; set; }
 
     public AboutViewModel(
         IThemeService themeService)

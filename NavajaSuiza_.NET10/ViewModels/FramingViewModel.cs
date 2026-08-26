@@ -17,36 +17,36 @@ public partial class FramingViewModel : BaseViewModel
     private readonly ILanguageService _languageService;
 
     [ObservableProperty]
-    private string _aspectRatioName = "";
+    public partial string AspectRatioName { get; set; } = "";
 
     [ObservableProperty]
-    private string _aspectRatio = "1:1";
+    public partial string AspectRatio { get; set; } = "1:1";
 
     [ObservableProperty]
-    private string _aspectMode = "AspectFill";
+    public partial string AspectMode { get; set; } = "AspectFill";
 
     [ObservableProperty]
-    private string _canvasBackground = "Blur";
+    public partial string CanvasBackground { get; set; } = "Blur";
 
     [ObservableProperty]
-    private string _canvasBackgroundColor = "Black";
+    public partial string CanvasBackgroundColor { get; set; } = "Black";
 
     [ObservableProperty]
-    private double _canvasBackgroundOpacity = 1.0f;
+    public partial double CanvasBackgroundOpacity { get; set; } = 1.0f;
 
     [ObservableProperty]
-    private double _canvasWidth;
+    public partial double CanvasWidth { get; set; }
 
     [ObservableProperty]
-    private double _canvasHeight;
+    public partial double CanvasHeight { get; set; }
 
     private const double MAX_CANVAS_WIDTH = 500;
 
     [ObservableProperty]
-    private int _blurIntensity = 13;
+    public partial int BlurIntensity { get; set; } = 13;
 
     [ObservableProperty]
-    private ImageSource? _loadedImage;
+    public partial ImageSource? LoadedImage { get; set; }
 
     private Dictionary<string, double> _aspectRatios = new()
     {

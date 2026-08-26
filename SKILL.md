@@ -463,7 +463,7 @@ Las mismas reglas de C# y seguridad aplican al frontend MAUI. Anti-patrones que 
 | ViewModel Singleton con estado global compartido | Estado corrupto entre páginas | ViewModel Transiente, servicios como singletons |
 
 ### Reglas MAUI senior
-- **MVVM**: ViewModel por página, propiedades `ObservableProperty`, `[RelayCommand]`.
+- **MVVM**: ViewModel por página, `partial properties` con `[ObservableProperty]` (requiere `<LangVersion>preview</LangVersion>` en csproj), `[RelayCommand]`.
 - **Inyección de dependencias** (DI nativa de MAUI): servicios en `MauiProgram`, páginas/VM resueltas por DI.
 - **Nunca** lógica de negocio en `code-behind`; solo eventos de UI delegando a comandos.
 - **HttpClient singleton + auth** con handlers que agregan JWT/ApiKey.

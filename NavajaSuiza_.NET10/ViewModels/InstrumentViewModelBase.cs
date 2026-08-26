@@ -17,7 +17,7 @@ public abstract partial class InstrumentViewModelBase : BaseViewModel
     public IInstrumentAudioService AudioService => InstrumentAudioService;
 
     [ObservableProperty]
-    private ObservableCollection<InstrumentStringData> _instrumentStrings = new();
+    public partial ObservableCollection<InstrumentStringData> InstrumentStrings { get; set; } = new();
 
     protected InstrumentViewModelBase(
         ILogger logger,

@@ -96,6 +96,7 @@ NavajaSuiza_.NET10.sln
     │       └── IMetronomeService.cs
     ├── ViewModels/
     │   ├── AboutViewModel.cs
+    │   ├── BaseViewModel.cs
     │   ├── CompassViewModel.cs
     │   ├── FlashlightViewModel.cs
     │   ├── FramingViewModel.cs
@@ -104,6 +105,7 @@ NavajaSuiza_.NET10.sln
     │   ├── InstrumentNylonViewModel.cs
     │   ├── InstrumentSteelViewModel.cs
     │   ├── InstrumentUkuleleViewModel.cs
+    │   ├── InstrumentViewModelBase.cs
     │   ├── InstrumentViolinViewModel.cs
     │   ├── ManualViewModel.cs
     │   ├── MenuViewModel.cs

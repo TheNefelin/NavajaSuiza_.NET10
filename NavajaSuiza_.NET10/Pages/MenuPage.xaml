@@ -12,6 +12,7 @@
 
             <FlexLayout
                 Wrap="Wrap"
+                JustifyContent="Center"
                 Padding="20">
 
                 <Button

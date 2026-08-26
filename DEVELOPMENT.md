@@ -58,12 +58,14 @@ Clean Architecture resuelve problemas de **dominio complejo** (reglas de negocio
 
 ### 3.2 Patrón: MVVM
 
-La aplicación sigue el patrón **MVVM** (Model-View-ViewModel) utilizando el CommunityToolkit.Mvvm:
+La aplicación sigue el patrón **MVVM** (Model-View-ViewModel) utilizing el CommunityToolkit.Mvvm:
 
 - **Models**: Modelos de datos simples (`InstrumentStringData`, `SupportedLanguages`).
 - **Views** (Pages): Páginas XAML con code-behind mínimo (solo inicialización de BindingContext y ciclos de vida).
 - **ViewModels**: Lógica de presentación, comandos y estado de UI. Extienden `BaseViewModel`.
 - **Services**: Lógica de negocio y acceso a APIs de plataforma, separada de los ViewModels mediante interfaces.
+
+**Requisito de build**: `<LangVersion>preview</LangVersion>` en ambos csproj (Core y MAUI). CommunityToolkit.Mvvm 8.4.2 genera `INotifyPropertyChanged` correctamente para `partial properties` solo con C# preview (keyword `field`). Sin esta bandera, el source generator cae al fallback field-based y los Bindings no reciben notificaciones de cambio.
 
 ### 3.3 Estructura actual
 

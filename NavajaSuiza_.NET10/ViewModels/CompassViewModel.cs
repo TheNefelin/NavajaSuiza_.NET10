@@ -12,16 +12,16 @@ public partial class CompassViewModel : BaseViewModel
     private readonly ILanguageService _languageService;
 
     [ObservableProperty]
-    private string _statusText = "...";
+    public partial string StatusText { get; set; } = "...";
 
     [ObservableProperty]
-    private string _angleText = "0°";
+    public partial string AngleText { get; set; } = "0°";
 
     [ObservableProperty]
-    private string _cardinalDirection = "N/A";
+    public partial string CardinalDirection { get; set; } = "N/A";
 
     [ObservableProperty]
-    private double _CompassDialRotation = 0.0f;
+    public partial double CompassDialRotation { get; set; } = 0.0f;
 
     public CompassViewModel(
         ILogger<CompassViewModel> logger,
