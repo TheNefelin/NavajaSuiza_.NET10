@@ -4,9 +4,17 @@ namespace NavajaSuiza_.NET10.Pages;
 
 public partial class TunerPage : ContentPage
 {
-	public TunerPage(TunerViewModel viewModel)
-	{
-		InitializeComponent();
-		BindingContext = viewModel;
+    private readonly IServiceProvider _serviceProvider;
+
+    public TunerPage(IServiceProvider serviceProvider)
+    {
+        InitializeComponent();
+        _serviceProvider = serviceProvider;
+    }
+
+    protected override void OnNavigatedTo(NavigatedToEventArgs args)
+    {
+        base.OnNavigatedTo(args);
+        BindingContext = _serviceProvider.GetRequiredService<TunerViewModel>();
     }
 }

@@ -4,15 +4,18 @@ namespace NavajaSuiza_.NET10.Pages;
 
 public partial class ScreenLightPage : ContentPage
 {
-	public ScreenLightPage(ScreenLightViewModel viewModel)
-	{
-		InitializeComponent();
-		BindingContext = viewModel;
+    private readonly IServiceProvider _serviceProvider;
+
+    public ScreenLightPage(IServiceProvider serviceProvider)
+    {
+        InitializeComponent();
+        _serviceProvider = serviceProvider;
     }
 
-    protected override void OnAppearing()
+    protected override void OnNavigatedTo(NavigatedToEventArgs args)
     {
-        base.OnAppearing();
+        base.OnNavigatedTo(args);
+        BindingContext = _serviceProvider.GetRequiredService<ScreenLightViewModel>();
 
         if (BindingContext is ScreenLightViewModel viewModel)
         {
@@ -23,7 +26,6 @@ public partial class ScreenLightPage : ContentPage
     protected override void OnDisappearing()
     {
         base.OnDisappearing();
-
         if (BindingContext is ScreenLightViewModel viewModel)
         {
             viewModel.Cleanup();

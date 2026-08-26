@@ -4,19 +4,22 @@ namespace NavajaSuiza_.NET10.Pages;
 
 public partial class FramingPage : ContentPage
 {
-	public FramingPage(FramingViewModel viewModel)
-	{
-		InitializeComponent();
-		BindingContext = viewModel;
+    private readonly IServiceProvider _serviceProvider;
+
+    public FramingPage(IServiceProvider serviceProvider)
+    {
+        InitializeComponent();
+        _serviceProvider = serviceProvider;
     }
 
-    protected override void OnAppearing()
+    protected override void OnNavigatedTo(NavigatedToEventArgs args)
     {
-        base.OnAppearing();
+        base.OnNavigatedTo(args);
+        BindingContext = _serviceProvider.GetRequiredService<FramingViewModel>();
 
         MainThread.BeginInvokeOnMainThread(async () =>
         {
-            await Task.Delay(100); // Pequeño delay para que se renderice
+            await Task.Delay(100);
 
             if (BindingContext is FramingViewModel viewModel)
             {

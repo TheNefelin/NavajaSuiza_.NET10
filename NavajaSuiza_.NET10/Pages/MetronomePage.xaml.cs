@@ -4,15 +4,19 @@ namespace NavajaSuiza_.NET10.Pages;
 
 public partial class MetronomePage : ContentPage
 {
-	public MetronomePage(MetronomeViewModel viewModel)
-	{
-		InitializeComponent();
-		BindingContext = viewModel;
+    private readonly IServiceProvider _serviceProvider;
+
+    public MetronomePage(IServiceProvider serviceProvider)
+    {
+        InitializeComponent();
+        _serviceProvider = serviceProvider;
     }
 
-    protected override void OnAppearing()
+    protected override void OnNavigatedTo(NavigatedToEventArgs args)
     {
-        base.OnAppearing();
+        base.OnNavigatedTo(args);
+        BindingContext = _serviceProvider.GetRequiredService<MetronomeViewModel>();
+
         if (BindingContext is MetronomeViewModel viewModel)
         {
             viewModel.RegisterMediaElement(AccentMediaElement, NormalMediaElement);

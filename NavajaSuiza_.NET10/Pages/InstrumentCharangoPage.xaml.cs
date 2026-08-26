@@ -4,30 +4,33 @@ namespace NavajaSuiza_.NET10.Pages;
 
 public partial class InstrumentCharangoPage : ContentPage
 {
-	public InstrumentCharangoPage(InstrumentCharangoViewModel viewModel)
-	{
-		InitializeComponent();
-		BindingContext = viewModel;
-	}
+    private readonly IServiceProvider _serviceProvider;
 
-	protected override void OnAppearing()
-	{
-		base.OnAppearing();
-		if (BindingContext is InstrumentCharangoViewModel viewModel)
-		{
-			viewModel.RegisterMediaElement(TunerMediaElement);
-			_ = viewModel.InitializeAsync();
-		}
-	}
+    public InstrumentCharangoPage(IServiceProvider serviceProvider)
+    {
+        InitializeComponent();
+        _serviceProvider = serviceProvider;
+    }
 
-	protected override void OnDisappearing()
-	{
-		base.OnDisappearing();
-		if (BindingContext is InstrumentCharangoViewModel viewModel)
-		{
-			// Limpiar
-			_ = viewModel.StopAllStringAsync();
-			viewModel.ClearStringBorders();
+    protected override void OnNavigatedTo(NavigatedToEventArgs args)
+    {
+        base.OnNavigatedTo(args);
+        BindingContext = _serviceProvider.GetRequiredService<InstrumentCharangoViewModel>();
+
+        if (BindingContext is InstrumentCharangoViewModel viewModel)
+        {
+            viewModel.RegisterMediaElement(TunerMediaElement);
+            _ = viewModel.InitializeAsync();
+        }
+    }
+
+    protected override void OnDisappearing()
+    {
+        base.OnDisappearing();
+        if (BindingContext is InstrumentCharangoViewModel viewModel)
+        {
+            _ = viewModel.StopAllStringAsync();
+            viewModel.ClearStringBorders();
         }
     }
 }

@@ -4,15 +4,19 @@ namespace NavajaSuiza_.NET10.Pages;
 
 public partial class InstrumentSteelPage : ContentPage
 {
-	public InstrumentSteelPage(InstrumentSteelViewModel viewModel)
-	{
-		InitializeComponent();
-        BindingContext = viewModel;
+    private readonly IServiceProvider _serviceProvider;
+
+    public InstrumentSteelPage(IServiceProvider serviceProvider)
+    {
+        InitializeComponent();
+        _serviceProvider = serviceProvider;
     }
 
-    protected override void OnAppearing()
+    protected override void OnNavigatedTo(NavigatedToEventArgs args)
     {
-        base.OnAppearing();
+        base.OnNavigatedTo(args);
+        BindingContext = _serviceProvider.GetRequiredService<InstrumentSteelViewModel>();
+
         if (BindingContext is InstrumentSteelViewModel viewModel)
         {
             viewModel.RegisterMediaElement(TunerMediaElement);
@@ -25,7 +29,6 @@ public partial class InstrumentSteelPage : ContentPage
         base.OnDisappearing();
         if (BindingContext is InstrumentSteelViewModel viewModel)
         {
-            // Limpiar
             _ = viewModel.StopAllStringAsync();
             viewModel.ClearStringBorders();
         }

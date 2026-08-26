@@ -4,9 +4,17 @@ namespace NavajaSuiza_.NET10.Pages;
 
 public partial class ManualPage : ContentPage
 {
-	public ManualPage(ManualViewModel viewModel)
-	{
-		InitializeComponent();
-		BindingContext = viewModel;
-	}
+    private readonly IServiceProvider _serviceProvider;
+
+    public ManualPage(IServiceProvider serviceProvider)
+    {
+        InitializeComponent();
+        _serviceProvider = serviceProvider;
+    }
+
+    protected override void OnNavigatedTo(NavigatedToEventArgs args)
+    {
+        base.OnNavigatedTo(args);
+        BindingContext = _serviceProvider.GetRequiredService<ManualViewModel>();
+    }
 }

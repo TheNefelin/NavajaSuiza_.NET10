@@ -4,10 +4,13 @@ namespace NavajaSuiza_.NET10.Pages;
 
 public partial class MenuPage : ContentPage
 {
-    public MenuPage(MenuViewModel viewModel)
-	{
-		InitializeComponent();
-        BindingContext = viewModel;
+    private readonly IServiceProvider _serviceProvider;
+
+    public MenuPage(IServiceProvider serviceProvider)
+    {
+        InitializeComponent();
+        _serviceProvider = serviceProvider;
+        BindingContext = _serviceProvider.GetRequiredService<MenuViewModel>();
     }
 
     protected override void OnAppearing()

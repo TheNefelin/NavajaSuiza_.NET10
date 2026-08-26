@@ -4,9 +4,12 @@ namespace NavajaSuiza_.NET10.Pages;
 
 public partial class AboutPage : ContentPage
 {
-    public AboutPage(AboutViewModel viewModel)
-	{
-		InitializeComponent();
-		BindingContext = viewModel;
+    private readonly IServiceProvider _serviceProvider;
+
+    public AboutPage(IServiceProvider serviceProvider)
+    {
+        InitializeComponent();
+        _serviceProvider = serviceProvider;
+        BindingContext = _serviceProvider.GetRequiredService<AboutViewModel>();
     }
 }

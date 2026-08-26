@@ -4,15 +4,18 @@ namespace NavajaSuiza_.NET10.Pages;
 
 public partial class CompassPage : ContentPage
 {
-	public CompassPage(CompassViewModel viewModel)
-	{
-		InitializeComponent();
-		BindingContext = viewModel;
+    private readonly IServiceProvider _serviceProvider;
+
+    public CompassPage(IServiceProvider serviceProvider)
+    {
+        InitializeComponent();
+        _serviceProvider = serviceProvider;
     }
 
-    protected override void OnAppearing()
+    protected override void OnNavigatedTo(NavigatedToEventArgs args)
     {
-        base.OnAppearing();
+        base.OnNavigatedTo(args);
+        BindingContext = _serviceProvider.GetRequiredService<CompassViewModel>();
 
         if (BindingContext is CompassViewModel viewModel)
         {
@@ -23,7 +26,6 @@ public partial class CompassPage : ContentPage
     protected override void OnDisappearing()
     {
         base.OnDisappearing();
-
         if (BindingContext is CompassViewModel viewModel)
         {
             viewModel.StopSensors();

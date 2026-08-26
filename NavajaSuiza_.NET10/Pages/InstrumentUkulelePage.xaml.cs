@@ -4,30 +4,33 @@ namespace NavajaSuiza_.NET10.Pages;
 
 public partial class InstrumentUkulelePage : ContentPage
 {
-	public InstrumentUkulelePage(InstrumentUkuleleViewModel viewModel)
-	{
-		InitializeComponent();
-		BindingContext = viewModel;
-	}
+    private readonly IServiceProvider _serviceProvider;
 
-	protected override void OnAppearing()
-	{
-		base.OnAppearing();
-		if (BindingContext is InstrumentUkuleleViewModel viewModel)
-		{
-			viewModel.RegisterMediaElement(TunerMediaElement);
-			_ = viewModel.InitializeAsync();
-		}
-	}
-	
-	protected override void OnDisappearing()
-	{
-		base.OnDisappearing();
-		if (BindingContext is InstrumentUkuleleViewModel viewModel)
-		{
-			// Limpiar
-			_ = viewModel.StopAllStringAsync();
-			viewModel.ClearStringBorders();
+    public InstrumentUkulelePage(IServiceProvider serviceProvider)
+    {
+        InitializeComponent();
+        _serviceProvider = serviceProvider;
+    }
+
+    protected override void OnNavigatedTo(NavigatedToEventArgs args)
+    {
+        base.OnNavigatedTo(args);
+        BindingContext = _serviceProvider.GetRequiredService<InstrumentUkuleleViewModel>();
+
+        if (BindingContext is InstrumentUkuleleViewModel viewModel)
+        {
+            viewModel.RegisterMediaElement(TunerMediaElement);
+            _ = viewModel.InitializeAsync();
+        }
+    }
+
+    protected override void OnDisappearing()
+    {
+        base.OnDisappearing();
+        if (BindingContext is InstrumentUkuleleViewModel viewModel)
+        {
+            _ = viewModel.StopAllStringAsync();
+            viewModel.ClearStringBorders();
         }
     }
 }

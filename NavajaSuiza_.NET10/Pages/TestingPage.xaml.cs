@@ -4,9 +4,17 @@ namespace NavajaSuiza_.NET10.Pages;
 
 public partial class TestingPage : ContentPage
 {
-    public TestingPage(TestingViewModel viewModel)
+    private readonly IServiceProvider _serviceProvider;
+
+    public TestingPage(IServiceProvider serviceProvider)
     {
         InitializeComponent();
-        BindingContext = viewModel;
+        _serviceProvider = serviceProvider;
+    }
+
+    protected override void OnNavigatedTo(NavigatedToEventArgs args)
+    {
+        base.OnNavigatedTo(args);
+        BindingContext = _serviceProvider.GetRequiredService<TestingViewModel>();
     }
 }

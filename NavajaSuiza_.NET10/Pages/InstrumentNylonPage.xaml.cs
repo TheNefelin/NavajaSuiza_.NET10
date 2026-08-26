@@ -4,15 +4,19 @@ namespace NavajaSuiza_.NET10.Pages;
 
 public partial class InstrumentNylonPage : ContentPage
 {
-	public InstrumentNylonPage(InstrumentNylonViewModel viewModel)
-	{
-		InitializeComponent();
-		BindingContext = viewModel;
-	}
+    private readonly IServiceProvider _serviceProvider;
 
-    protected override void OnAppearing()
+    public InstrumentNylonPage(IServiceProvider serviceProvider)
     {
-        base.OnAppearing();
+        InitializeComponent();
+        _serviceProvider = serviceProvider;
+    }
+
+    protected override void OnNavigatedTo(NavigatedToEventArgs args)
+    {
+        base.OnNavigatedTo(args);
+        BindingContext = _serviceProvider.GetRequiredService<InstrumentNylonViewModel>();
+
         if (BindingContext is InstrumentNylonViewModel viewModel)
         {
             viewModel.RegisterMediaElement(TunerMediaElement);
@@ -25,7 +29,6 @@ public partial class InstrumentNylonPage : ContentPage
         base.OnDisappearing();
         if (BindingContext is InstrumentNylonViewModel viewModel)
         {
-            // Limpiar
             _ = viewModel.StopAllStringAsync();
             viewModel.ClearStringBorders();
         }

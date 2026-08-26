@@ -4,15 +4,19 @@ namespace NavajaSuiza_.NET10.Pages;
 
 public partial class InstrumentViolinPage : ContentPage
 {
-	public InstrumentViolinPage(InstrumentViolinViewModel viewModel)
-	{
-		InitializeComponent();
-		BindingContext = viewModel;
+    private readonly IServiceProvider _serviceProvider;
+
+    public InstrumentViolinPage(IServiceProvider serviceProvider)
+    {
+        InitializeComponent();
+        _serviceProvider = serviceProvider;
     }
 
-    protected override void OnAppearing()
+    protected override void OnNavigatedTo(NavigatedToEventArgs args)
     {
-        base.OnAppearing();
+        base.OnNavigatedTo(args);
+        BindingContext = _serviceProvider.GetRequiredService<InstrumentViolinViewModel>();
+
         if (BindingContext is InstrumentViolinViewModel viewModel)
         {
             viewModel.RegisterMediaElement(TunerMediaElement);
@@ -25,8 +29,7 @@ public partial class InstrumentViolinPage : ContentPage
         base.OnDisappearing();
         if (BindingContext is InstrumentViolinViewModel viewModel)
         {
-            // Limpiar
-            _ =  viewModel.StopAllStringAsync();
+            _ = viewModel.StopAllStringAsync();
             viewModel.ClearStringBorders();
         }
     }

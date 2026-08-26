@@ -4,9 +4,17 @@ namespace NavajaSuiza_.NET10.Pages;
 
 public partial class FlashlightPage : ContentPage
 {
-	public FlashlightPage(FlashlightViewModel viewModel)
-	{
-		InitializeComponent();
-		BindingContext = viewModel;
+    private readonly IServiceProvider _serviceProvider;
+
+    public FlashlightPage(IServiceProvider serviceProvider)
+    {
+        InitializeComponent();
+        _serviceProvider = serviceProvider;
+    }
+
+    protected override void OnNavigatedTo(NavigatedToEventArgs args)
+    {
+        base.OnNavigatedTo(args);
+        BindingContext = _serviceProvider.GetRequiredService<FlashlightViewModel>();
     }
 }
