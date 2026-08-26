@@ -459,8 +459,8 @@ Las mismas reglas de C# y seguridad aplican al frontend MAUI. Anti-patrones que 
 | `HttpClientHandler` manual con SSL bypass | MITM → fuga de credenciales | Configuración de trust del SO, nunca `ServerCertificateCustomValidationCallback = (_) => true` |
 | `System.Random` para contraseñas/IDs | Predictible, inseguro | `RandomNumberGenerator` |
 | Columnas `Data01`/`Data02` en BD | Sin semántica, imposible de mantener | Nombres de dominio reales |
-| `System.Timers.Timer` tocando la UI desde otro hilo | Race conditions / crashes de UI | `Dispatcher`/`MainThread.InvokeOnMainThreadAsync` |
-| ViewModel Singleton con estado global compartido | Estado corrupto entre páginas | ViewModel por página, servicios como singletons |
+| `System.Timers.Timer` tocando la UI desde otro hilo | Race conditions / crashes de UI | `PeriodicTimer` (async) o `MainThread.InvokeOnMainThreadAsync` |
+| ViewModel Singleton con estado global compartido | Estado corrupto entre páginas | ViewModel Transiente, servicios como singletons |
 
 ### Reglas MAUI senior
 - **MVVM**: ViewModel por página, propiedades `ObservableProperty`, `[RelayCommand]`.
@@ -468,6 +468,282 @@ Las mismas reglas de C# y seguridad aplican al frontend MAUI. Anti-patrones que 
 - **Nunca** lógica de negocio en `code-behind`; solo eventos de UI delegando a comandos.
 - **HttpClient singleton + auth** con handlers que agregan JWT/ApiKey.
 - Tratar la migración/refactor como un **proyecto de auditoría**: leer el análisis previo (por ejemplo `ANALISIS_V1.md`) y corregir los hallazgos uno a uno con aprobación del usuario (regla de issues).
+
+### 11.1 Lifecycle de MAUI Shell
+
+El orden de vida de una Page en MAUI Shell es:
+
+```
+Constructor → OnNavigatedTo → OnAppearing
+        ↑                         ↓
+        |                   (page visible)
+        |                         ↓
+        ←←←←←←←← OnDisappearing (page hidden)
+```
+
+**Regla crítica**: `OnAppearing` se ejecuta DESPUÉS de `OnNavigatedTo`. Cualquier lógica que dependa del BindingContext debe ir en `OnNavigatedTo`, no en `OnAppearing`.
+
+```csharp
+// CORRECTO
+protected override void OnNavigatedTo(NavigatedToEventArgs args)
+{
+    base.OnNavigatedTo(args);
+    BindingContext = _serviceProvider.GetRequiredService<MyViewModel>();
+    // Inicializar servicios aquí, donde BindingContext ya existe
+}
+
+// INCORRECTO — BindingContext puede ser null
+protected override void OnAppearing()
+{
+    base.OnAppearing();
+    if (BindingContext is MyViewModel vm)
+    {
+        vm.Initialize(); // BindingContext no seteado aún
+    }
+}
+```
+
+### 11.2 Singleton vs Transient en DI
+
+| Componente | Lifetime correcto | Justificación |
+|------------|-------------------|---------------|
+| **Services** (servicios de negocio) | Singleton | Comparten estado (audio, tema, idioma) entre páginas |
+| **ViewModels** | Transient | Fresh instance en cada navegación, sin estado residual |
+| **Pages** | Singleton (Shell) | Shell cachea las ShellContent pages |
+| **AppShell** | Singleton | Shell infrastructure |
+
+```csharp
+// En MauiProgram.cs
+builder.Services
+    // Services — Singleton
+    .AddSingleton<ILanguageService, LanguageService>()
+    .AddSingleton<IThemeService, ThemeService>()
+    .AddSingleton<IInstrumentAudioService, InstrumentAudioService>()
+    // ViewModels — Transient
+    .AddTransient<MenuViewModel>()
+    .AddTransient<InstrumentNylonViewModel>()
+    .AddTransient<MetronomeViewModel>()
+    // Pages — Singleton (Shell)
+    .AddSingleton<MenuPage>()
+    .AddSingleton<InstrumentNylonPage>()
+    .AddSingleton<MetronomePage>();
+```
+
+**Por qué Singleton en Pages**: Shell crea y cachea las ShellContent pages. Si la Page fuera Transiente, Shell la crearía de nuevo en cada navegación, lo cual es innecesario y rompe el estado de la UI.
+
+**Por qué Transient en ViewMs**: Un ViewModel Singleton mantiene estado entre navegaciones (BPM del metrónomo, cuerdas activas, heading de brújula). Transient garantiza estado limpio cada vez que el usuario navega a una página.
+
+### 11.3 Shell navigation: ShellContent vs Pushed pages
+
+MAUI Shell tiene dos tipos de navegación con comportamientos diferentes:
+
+**ShellContent pages** (tabs, menú principal):
+```xml
+<!-- En AppShell.xaml -->
+<TabBar>
+    <ShellContent
+        ContentTemplate="{DataTemplate pages:MenuPage}"
+        Route="MenuPage" />
+    <ShellContent
+        ContentTemplate="{DataTemplate pages:AboutPage}"
+        Route="AboutPage" />
+</TabShell>
+```
+- Shell las crea una vez y las cachea
+- `OnNavigatedTo` solo fires la primera vez
+- VM se resuelve en el constructor
+
+**Pushed pages** (navegación detallada):
+```csharp
+// Desde un ViewModel o code-behind
+var page = _serviceProvider.GetRequiredService<InstrumentNylonPage>();
+await Shell.Current.Navigation.PushAsync(page);
+```
+- Shell crea una nueva instancia en cada PushAsync
+- `OnNavigatedTo` fires en cada navegación
+- VM se resuelve en `OnNavigatedTo`
+
+```csharp
+// ShellContent page — VM en constructor
+public partial class MenuPage : ContentPage
+{
+    public MenuPage(IServiceProvider serviceProvider)
+    {
+        InitializeComponent();
+        BindingContext = serviceProvider.GetRequiredService<MenuViewModel>();
+    }
+}
+
+// Pushed page — VM en OnNavigatedTo
+public partial class InstrumentNylonPage : ContentPage
+{
+    private readonly IServiceProvider _serviceProvider;
+
+    public InstrumentNylonPage(IServiceProvider serviceProvider)
+    {
+        InitializeComponent();
+        _serviceProvider = serviceProvider;
+    }
+
+    protected override void OnNavigatedTo(NavigatedToEventArgs args)
+    {
+        base.OnNavigatedTo(args);
+        BindingContext = _serviceProvider.GetRequiredService<InstrumentNylonViewModel>();
+        // Inicializar servicios aquí
+    }
+}
+```
+
+### 11.4 DI en Pages: IServiceProvider pattern
+
+Las Pages no pueden recibir ViewModels por constructor cuando los VMs son Transient — el VM debe crearse en tiempo de navegación, no en tiempo de resolución de la Page.
+
+**Patrón correcto**:
+
+```csharp
+public partial class MyPage : ContentPage
+{
+    private readonly IServiceProvider _serviceProvider;
+
+    public MyPage(IServiceProvider serviceProvider)
+    {
+        InitializeComponent();
+        _serviceProvider = serviceProvider;
+    }
+
+    protected override void OnNavigatedTo(NavigatedToEventArgs args)
+    {
+        base.OnNavigatedTo(args);
+        BindingContext = _serviceProvider.GetRequiredService<MyViewModel>();
+    }
+
+    protected override void OnDisappearing()
+    {
+        base.OnDisappearing();
+        if (BindingContext is MyViewModel vm)
+        {
+            vm.Cleanup(); // Limpiar servicios (sensores, audio, timers)
+        }
+    }
+}
+```
+
+**Anti-patrón**: Resolver el VM en el constructor de una Pushed page:
+```csharp
+// MAL — el VM se crea una vez y se reusa (Singleton implícito)
+public MyPage(MyViewModel viewModel)
+{
+    InitializeComponent();
+    BindingContext = viewModel; // Misma instancia siempre
+}
+```
+
+### 11.5 BindableProperty para components
+
+Cuando un `ContentView` necesita dependencias (servicios), no puede usar DI por constructor. Usar `BindableProperty`:
+
+```csharp
+public partial class MyComponent : ContentView
+{
+    private IMyService _service;
+
+    public static readonly BindableProperty ServiceProperty =
+        BindableProperty.Create(nameof(Service), typeof(IMyService),
+            typeof(MyComponent), null, propertyChanged: OnServiceChanged);
+
+    public IMyService Service
+    {
+        get => (IMyService)GetValue(ServiceProperty);
+        set => SetValue(ServiceProperty, value);
+    }
+
+    private static void OnServiceChanged(BindableObject bindable,
+        object oldValue, object newValue)
+    {
+        if (bindable is MyComponent component && newValue is IMyService service)
+        {
+            component._service = service;
+        }
+    }
+}
+```
+
+En XAML, bindear desde el Page:
+```xml
+<components:MyComponent
+    Service="{Binding Source={x:Reference MyPage}, Path=BindingContext.MyService}" />
+```
+
+**Regla**: nunca usar `IPlatformApplication.Current.Services.GetService<>()` directamente en un ContentView. Siempre BindableProperty + binding desde el Page.
+
+### 11.6 Core + MAUI: separación de responsabilidades
+
+```
+NavajaSuiza.Core/              # Class Library (net10.0)
+├── Interfaces/                # Contratos sin dependencia de MAUI
+│   ├── ILanguageService.cs
+│   ├── IThemeService.cs
+│   └── IDeviceStatusService.cs
+├── Models/                    # Modelos compartidos
+│   └── SupportedLanguages.cs
+└── ViewModels/                # Base class
+    └── BaseViewModel.cs
+
+NavajaSuiza_.NET10/            # Proyecto MAUI
+├── Services/
+│   ├── Interfaces/            # Solo las que dependen de MAUI APIs
+│   │   ├── IInstrumentAudioService.cs
+│   │   └── IMetronomeService.cs
+│   └── Implementations/       # Implementaciones con MAUI types
+└── ViewModels/                # Extienden BaseViewModel de Core
+```
+
+**Va a Core**: interfaces, modelos, BaseViewModel — todo lo que no depende de `Microsoft.Maui`.
+**Se queda en MAUI**: servicios que usan `Flashlight.Default`, `Compass.Default`, `MediaElement`, `Window.Attributes`, etc.
+
+**Regla**: si un servicio importa `Microsoft.Maui` o `CommunityToolkit.Maui`, se queda en MAUI. Si solo usa `System.*` y tipos standard, va a Core.
+
+### 11.7 Timer moderno en MAUI
+
+`System.Timers.Timer` ejecuta en thread pool y requiere marshaling manual. Usar `PeriodicTimer` (.NET 6+):
+
+```csharp
+// MAL — thread pool, requiere MainThread.BeginInvokeOnMainThread
+private System.Timers.Timer _timer;
+_timer = new System.Timers.Timer(1000);
+_timer.Elapsed += (s, e) => UpdateUI(); // Crash: no es UI thread
+
+// BIEN — async, aware del lifecycle
+private CancellationTokenSource _cts;
+
+public void Start()
+{
+    _cts = new CancellationTokenSource();
+    _ = RunTimerAsync(_cts.Token);
+}
+
+private async Task RunTimerAsync(CancellationToken ct)
+{
+    using var timer = new PeriodicTimer(TimeSpan.FromMilliseconds(1000));
+    try
+    {
+        while (await timer.WaitForNextTickAsync(ct))
+        {
+            MainThread.BeginInvokeOnMainThread(() => UpdateUI());
+        }
+    }
+    catch (OperationCanceledException) { }
+}
+
+public void Stop()
+{
+    _cts?.Cancel();
+    _cts?.Dispose();
+    _cts = null;
+}
+```
+
+**Ventajas de `PeriodicTimer`**: async-aware, cancellation nativo, sin threads adicionales, se detiene limpiamente con `CancellationToken`.
 
 ---
 
@@ -499,6 +775,10 @@ Las mismas reglas de C# y seguridad aplican al frontend MAUI. Anti-patrones que 
 - [ ] Tests de integración cubriendo los códigos del envelope.
 - [ ] Verificación real en runtime (navegador/Swagger) tras el deploy; no basta que compile.
 - [ ] Documentar decisiones relevantes en `DEVELOPMENT.md` del proyecto.
+- [ ] MAUI: ViewModels Transientes, Pages Singleton, VM resuelto en `OnNavigatedTo`.
+- [ ] MAUI: Lógica de inicialización en `OnNavigatedTo`, no en `OnAppearing`.
+- [ ] MAUI: Components con BindableProperty, nunca Service Locator.
+- [ ] MAUI: `PeriodicTimer` en vez de `System.Timers.Timer`.
 
 ---
 
