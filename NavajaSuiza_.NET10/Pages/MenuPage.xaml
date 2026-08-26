@@ -45,12 +45,7 @@
                     Margin="8,0,8,16"
                     Padding="25,15,25,10"
                     WidthRequest="120" 
-                    HeightRequest="120" 
-                >
-                    <!--<Button.Behaviors>
-                        <toolkit:IconTintColorBehavior TintColor="{StaticResource MyAccentOrange}" />
-                    </Button.Behaviors>-->
-                </Button>
+                    HeightRequest="120" />
 
                 <Button
                     Command="{Binding NavigateToCompassCommand}"                    

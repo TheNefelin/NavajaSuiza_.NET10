@@ -7,6 +7,4 @@ public interface IMetronomeService
     void SetMediaElement(MediaElement accentMediaElement, MediaElement normalMediaElement);
     void Start(int currentBPM, string selectedTimeSignature);
     void Stop();
-    //void Start(int currentBPM, string selectedTimeSignature);
-    //void Stop();
 }

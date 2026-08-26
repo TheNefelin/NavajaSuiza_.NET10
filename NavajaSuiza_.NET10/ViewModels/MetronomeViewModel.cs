@@ -48,7 +48,6 @@ public partial class MetronomeViewModel : BaseViewModel
         IsEnabled = false;
 
         _metronomeService.Start(CurrentBPM, SelectedTimeSignature);
-        //_metronomeService.Start(CurrentBPM, SelectedTimeSignature);
     }
 
     [RelayCommand]

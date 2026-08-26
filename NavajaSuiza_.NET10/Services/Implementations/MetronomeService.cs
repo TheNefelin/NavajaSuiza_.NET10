@@ -61,7 +61,6 @@ public class MetronomeService : IMetronomeService
     private void OnBeat()
     {
         bool isAccent = _currentBeat == 1;
-        //var mediaElement = isAccent ? _accentMediaElement : _normalMediaElement;
 
         MainThread.BeginInvokeOnMainThread(async () =>
         {
@@ -71,16 +70,12 @@ public class MetronomeService : IMetronomeService
                 {
                     _accentMediaElement.SeekTo(TimeSpan.Zero);
                     _accentMediaElement.Play();
-                    //_accentMediaElement.Stop();
                 }
                 else
                 {
                     _normalMediaElement.SeekTo(TimeSpan.Zero);
                     _normalMediaElement.Play();
-                    //_normalMediaElement.Stop();
                 }
-                //mediaElement.Stop();
-                //mediaElement.Play();
             }
             catch (Exception ex)
             {

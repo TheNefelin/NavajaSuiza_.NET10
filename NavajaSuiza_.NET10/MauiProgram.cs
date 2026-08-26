@@ -4,7 +4,6 @@ using NavajaSuiza_.NET10.Pages;
 using NavajaSuiza_.NET10.ViewModels;
 using NavajaSuiza_.NET10.Services.Implementations;
 using NavajaSuiza_.NET10.Services.Interfaces;
-using SkiaSharp.Views.Maui.Controls.Hosting;
 using Syncfusion.Maui.Toolkit.Hosting;
 
 namespace NavajaSuiza_.NET10;
@@ -17,9 +16,8 @@ public static class MauiProgram
         builder
             .UseMauiApp<App>()
             .UseMauiCommunityToolkit()
-            .UseMauiCommunityToolkitMediaElement()
+            .UseMauiCommunityToolkitMediaElement(false)
             .ConfigureSyncfusionToolkit()
-            .UseSkiaSharp()
             .ConfigureFonts(fonts =>
             {
                 fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
@@ -52,7 +50,6 @@ public static class MauiProgram
             .AddSingleton<IDeviceStatusService, DeviceStatusService>()
             .AddSingleton<IInstrumentAudioService, InstrumentAudioService>()
             .AddSingleton<IMetronomeService, MetronomeService>()
-            .AddSingleton<IImageProcessingService, ImageProcessingService>()
             ;
 
         builder.Services

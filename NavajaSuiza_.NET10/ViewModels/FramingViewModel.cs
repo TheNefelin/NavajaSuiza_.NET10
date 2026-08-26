@@ -13,7 +13,6 @@ public partial class FramingViewModel : BaseViewModel
     // 16:9 (horizontal) Landscape
 
     private readonly ILogger<FramingViewModel> _logger;
-    private readonly IImageProcessingService _imageProcessingService;
     private readonly ILanguageService _languageService;
 
     [ObservableProperty]
@@ -58,11 +57,9 @@ public partial class FramingViewModel : BaseViewModel
 
     public FramingViewModel(
         ILogger<FramingViewModel> logger,
-        IImageProcessingService imageProcessingService,
         ILanguageService languageService)
     {
         _logger = logger;
-        _imageProcessingService = imageProcessingService;
         _languageService = languageService;
         _languageService.LanguageChanged += OnLanguageChanged;
 

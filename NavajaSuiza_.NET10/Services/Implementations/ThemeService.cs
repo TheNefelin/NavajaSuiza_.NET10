@@ -56,32 +56,5 @@ public class ThemeService : IThemeService
         }
 #endif
 
-//#if ANDROID
-//        try
-//        {
-//            var activity = (Application.Current?.MainPage?.Window?.Handler?.PlatformView as Android.App.Activity);
-//            if (activity != null)
-//            {
-//                if (isDarkMode)
-//                {
-//                    // Dark mode
-//                    activity.Window?.SetStatusBarColor(Android.Graphics.Color.ParseColor("#243042"));
-//                    activity.Window?.SetNavigationBarColor(Android.Graphics.Color.ParseColor("#243042"));
-//                }
-//                else
-//                {
-//                    // Light mode
-//                    activity.Window?.SetStatusBarColor(Android.Graphics.Color.ParseColor("#F7F5F0"));
-//                    activity.Window?.SetNavigationBarColor(Android.Graphics.Color.ParseColor("#F7F5F0"));
-//                }
-
-//                //activity.Recreate();
-//            }
-//        }
-//        catch (Exception ex)
-//        {
-//            //_logger.LogError(ex, "[ThemeService] - Error updating status bar");
-//        }
-//#endif
     }
 }

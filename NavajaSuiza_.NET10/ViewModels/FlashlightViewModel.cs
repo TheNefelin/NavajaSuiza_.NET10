@@ -53,11 +53,6 @@ public partial class FlashlightViewModel : BaseViewModel
         catch (Exception ex)
         {
             IsFlashOn = !IsFlashOn; // Revierte el cambio si falla
-
-            //await Shell.Current.DisplayAlertAsync(
-            //    "Error",
-            //    "No se pudo acceder a la linterna. Verifica los permisos.",
-            //    "OK");
         }
     }
   
@@ -82,11 +77,6 @@ public partial class FlashlightViewModel : BaseViewModel
         catch (Exception ex)
         {
             IsScreenOn = !IsScreenOn;
-
-            //await Shell.Current.DisplayAlertAsync(
-            //    "Error",
-            //    ex.Message,
-            //    "OK");
         }
     }
 }
