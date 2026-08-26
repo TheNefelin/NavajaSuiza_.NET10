@@ -29,7 +29,7 @@ public partial class InstrumentCharangoViewModel : BaseViewModel
 
     public async Task InitializeAsync()
     {
-        _logger.LogInformation("[InstrumentCharangoViewModel] - Initializing Violin Strings in InstrumentCharangoViewModel");
+        _logger.LogInformation("[InstrumentCharangoViewModel] - Initializing Charango Strings in InstrumentCharangoViewModel");
 
         IsLoading = true;
         IsBusy = false;

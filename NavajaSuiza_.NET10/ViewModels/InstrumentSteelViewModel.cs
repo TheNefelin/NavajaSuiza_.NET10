@@ -29,7 +29,7 @@ public partial class InstrumentSteelViewModel : BaseViewModel
 
     public async Task InitializeAsync()
     {
-        _logger.LogInformation("[InstrumentSteelViewModel] - Initializing Violin Strings in InstrumentSteelViewModel");
+        _logger.LogInformation("[InstrumentSteelViewModel] - Initializing Steel Strings in InstrumentSteelViewModel");
 
         IsLoading = true;
         IsBusy = false;

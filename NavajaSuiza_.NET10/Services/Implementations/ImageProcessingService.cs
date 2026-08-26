@@ -20,6 +20,6 @@ public class ImageProcessingService : IImageProcessingService
 
     public Task<Stream> ProcessImageAsync(Stream imageStream, string aspectRatio, string fitMode, string canvasBackground, int blurIntensity)
     {
-        throw new NotImplementedException();
+        return Task.FromResult<Stream>(null);
     }
 }

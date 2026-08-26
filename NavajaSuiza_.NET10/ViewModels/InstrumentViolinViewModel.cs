@@ -29,7 +29,7 @@ public partial class InstrumentViolinViewModel : BaseViewModel
 
     public async Task InitializeAsync()
     {
-        _logger.LogInformation("[InstrumentViolinViewModel] - Initializing Violin Strings in InstrumentNylonViewModel");
+        _logger.LogInformation("[InstrumentViolinViewModel] - Initializing Violin Strings in InstrumentViolinViewModel");
 
         IsLoading = true;
         IsBusy = false;
@@ -43,20 +43,20 @@ public partial class InstrumentViolinViewModel : BaseViewModel
 
     public void RegisterMediaElement(MediaElement mediaElement)
     {
-        _logger.LogInformation("[InstrumentViolinViewModel] - Registering MediaElement in InstrumentNylonViewModel");
+        _logger.LogInformation("[InstrumentViolinViewModel] - Registering MediaElement in InstrumentViolinViewModel");
         _instrumentAudioService.RegisterMediaElement(mediaElement);
     }
 
     public void ClearStringBorders()
     {
-        _logger.LogInformation("[InstrumentViolinViewModel] - Clearing All String Borders in InstrumentNylonViewModel");
+        _logger.LogInformation("[InstrumentViolinViewModel] - Clearing All String Borders in InstrumentViolinViewModel");
         _instrumentAudioService.ClearAllBorders();
     }
 
     [RelayCommand]
     public async Task StopAllStringAsync()
     {
-        _logger.LogInformation("[InstrumentViolinViewModel] - Stopping All Strings in InstrumentNylonViewModel");
+        _logger.LogInformation("[InstrumentViolinViewModel] - Stopping All Strings in InstrumentViolinViewModel");
         await _instrumentAudioService.StopAllStringAsync();
     }
 }
