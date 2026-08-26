@@ -30,7 +30,7 @@ public class LocalizationResourceManager : INotifyPropertyChanged
     public static LocalizationResourceManager Instance { get; } = new();
 
     public object this[string resourceKey]
-        => AppResources.ResourceManager.GetObject(resourceKey, _culture) ?? Array.Empty<byte>();
+        => AppResources.ResourceManager.GetObject(resourceKey, _culture) ?? resourceKey;
 
     public event PropertyChangedEventHandler PropertyChanged;
 }
