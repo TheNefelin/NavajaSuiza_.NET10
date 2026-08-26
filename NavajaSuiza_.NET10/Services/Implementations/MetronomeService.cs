@@ -5,7 +5,7 @@ namespace NavajaSuiza_.NET10.Services.Implementations;
 
 public class MetronomeService : IMetronomeService
 {
-    private System.Timers.Timer _timer;
+    private CancellationTokenSource _cts;
     private int _currentBeat;
     private int _beatsPerMeasure;
     private MediaElement _accentMediaElement;
@@ -29,26 +29,22 @@ public class MetronomeService : IMetronomeService
         if (_accentMediaElement == null || _normalMediaElement == null)
             throw new InvalidOperationException("MediaElement not set");
 
-        // Validar BPM
         if (currentBPM < 50) currentBPM = 50;
         if (currentBPM > 350) currentBPM = 350;
 
-        // Extraer beats del time signature
         _beatsPerMeasure = GetBeatsPerMeasure(selectedTimeSignature);
         _currentBeat = 1;
 
-        // Calcular intervalo y iniciar timer
         double intervalMs = 60000.0 / currentBPM;
-        _timer = new System.Timers.Timer(intervalMs);
-        _timer.Elapsed += (s, e) => OnBeat();
-        _timer.Start();
+        _cts = new CancellationTokenSource();
+        _ = RunTimerAsync(intervalMs, _cts.Token);
     }
 
     public void Stop()
     {
-        _timer?.Stop();
-        _timer?.Dispose();
-        _timer = null;
+        _cts?.Cancel();
+        _cts?.Dispose();
+        _cts = null;
 
         try
         {
@@ -58,15 +54,29 @@ public class MetronomeService : IMetronomeService
         catch { }
     }
 
-    private void OnBeat()
+    private async Task RunTimerAsync(double intervalMs, CancellationToken ct)
     {
-        bool isAccent = _currentBeat == 1;
+        using var timer = new PeriodicTimer(TimeSpan.FromMilliseconds(intervalMs));
 
-        MainThread.BeginInvokeOnMainThread(async () =>
+        try
+        {
+            while (await timer.WaitForNextTickAsync(ct))
+            {
+                await PlayBeatAsync();
+            }
+        }
+        catch (OperationCanceledException) { }
+    }
+
+    private Task PlayBeatAsync()
+    {
+        var tcs = new TaskCompletionSource();
+
+        MainThread.BeginInvokeOnMainThread(() =>
         {
             try
             {
-                if (isAccent)
+                if (_currentBeat == 1)
                 {
                     _accentMediaElement.SeekTo(TimeSpan.Zero);
                     _accentMediaElement.Play();
@@ -76,16 +86,21 @@ public class MetronomeService : IMetronomeService
                     _normalMediaElement.SeekTo(TimeSpan.Zero);
                     _normalMediaElement.Play();
                 }
+
+                tcs.SetResult();
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Error: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Metronome error: {ex.Message}");
+                tcs.SetResult();
             }
         });
 
         _currentBeat++;
         if (_currentBeat > _beatsPerMeasure)
             _currentBeat = 1;
+
+        return tcs.Task;
     }
 
     private int GetBeatsPerMeasure(string timeSignature)
