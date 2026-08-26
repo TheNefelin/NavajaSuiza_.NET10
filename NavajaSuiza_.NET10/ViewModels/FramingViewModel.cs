@@ -20,19 +20,19 @@ public partial class FramingViewModel : BaseViewModel
     public partial string AspectRatioName { get; set; } = "";
 
     [ObservableProperty]
-    public partial string AspectRatio { get; set; } = "1:1";
+    public partial string AspectRatio { get; set; } = AppConstants.Framing.DefaultAspectRatio;
 
     [ObservableProperty]
-    public partial string AspectMode { get; set; } = "AspectFill";
+    public partial string AspectMode { get; set; } = AppConstants.Framing.DefaultAspectMode;
 
     [ObservableProperty]
-    public partial string CanvasBackground { get; set; } = "Blur";
+    public partial string CanvasBackground { get; set; } = AppConstants.Framing.DefaultCanvasBackground;
 
     [ObservableProperty]
-    public partial string CanvasBackgroundColor { get; set; } = "Black";
+    public partial string CanvasBackgroundColor { get; set; } = AppConstants.Framing.DefaultCanvasBackgroundColor;
 
     [ObservableProperty]
-    public partial double CanvasBackgroundOpacity { get; set; } = 1.0f;
+    public partial double CanvasBackgroundOpacity { get; set; } = AppConstants.Framing.DefaultCanvasBackgroundOpacity;
 
     [ObservableProperty]
     public partial double CanvasWidth { get; set; }
@@ -43,18 +43,12 @@ public partial class FramingViewModel : BaseViewModel
     private const double MAX_CANVAS_WIDTH = 500;
 
     [ObservableProperty]
-    public partial int BlurIntensity { get; set; } = 13;
+    public partial int BlurIntensity { get; set; } = AppConstants.Framing.DefaultBlurIntensity;
 
     [ObservableProperty]
     public partial ImageSource? LoadedImage { get; set; }
 
-    private Dictionary<string, double> _aspectRatios = new()
-    {
-        { "1:1", 1.0 },      // alto/ancho
-        { "4:5", 1.25 },
-        { "9:16", 1.777 },
-        { "16:9", 0.5625 }
-    };
+    private readonly Dictionary<string, double> _aspectRatios = AppConstants.Framing.AspectRatios;
 
     public FramingViewModel(
         ILogger<FramingViewModel> logger,
@@ -82,7 +76,7 @@ public partial class FramingViewModel : BaseViewModel
     {
         AspectRatioName = ratio switch
         {
-            "1:1" => _languageService.GetString("FramingAspectRatioSquareText"),
+            AppConstants.Framing.DefaultAspectRatio => _languageService.GetString("FramingAspectRatioSquareText"),
             "4:5" => _languageService.GetString("FramingAspectRatioPortraitText"),
             "9:16" => _languageService.GetString("FramingAspectRatioStoriesText"),
             "16:9" => _languageService.GetString("FramingAspectRatioLandscapeText"),
@@ -120,7 +114,7 @@ public partial class FramingViewModel : BaseViewModel
     {
         CanvasBackground = background;
 
-        if (background == "Blur")
+        if (background == AppConstants.Framing.DefaultCanvasBackground)
         {
             CanvasBackgroundColor = "Transparent";
             CanvasBackgroundOpacity = 1.0f;

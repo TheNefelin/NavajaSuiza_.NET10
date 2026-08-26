@@ -96,7 +96,6 @@ NavajaSuiza_.NET10.sln
     │       └── IMetronomeService.cs
     ├── ViewModels/
     │   ├── AboutViewModel.cs
-    │   ├── BaseViewModel.cs
     │   ├── CompassViewModel.cs
     │   ├── FlashlightViewModel.cs
     │   ├── FramingViewModel.cs

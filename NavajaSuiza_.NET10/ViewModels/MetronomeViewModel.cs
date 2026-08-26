@@ -13,10 +13,10 @@ public partial class MetronomeViewModel : BaseViewModel
     private readonly IMetronomeService _metronomeService;
 
     [ObservableProperty]
-    public partial int CurrentBPM { get; set; } = 120;
+    public partial int CurrentBPM { get; set; } = AppConstants.Metronome.DefaultBPM;
 
     [ObservableProperty]
-    public partial string SelectedTimeSignature { get; set; } = "4/4";
+    public partial string SelectedTimeSignature { get; set; } = AppConstants.Metronome.DefaultTimeSignature;
 
     [ObservableProperty]
     public partial bool IsEnabled { get; set; } = true;
