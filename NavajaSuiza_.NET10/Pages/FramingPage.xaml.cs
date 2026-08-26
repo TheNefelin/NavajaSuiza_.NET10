@@ -16,7 +16,7 @@ public partial class FramingPage : ContentPage
 
         MainThread.BeginInvokeOnMainThread(async () =>
         {
-            await Task.Delay(100); // Pequeño delay para que se renderice
+            await Task.Delay(100); // PequeÃ±o delay para que se renderice
 
             if (BindingContext is FramingViewModel viewModel)
             {

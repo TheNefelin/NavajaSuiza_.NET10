@@ -25,7 +25,7 @@ public partial class FlashlightViewModel : BaseViewModel
     {
         _serviceProvider = serviceProvider;
         _languageService = languageService;
-        // Suscríbete a cambios de idioma
+        // SuscrÃ­bete a cambios de idioma
         _languageService.LanguageChanged += OnLanguageChanged;
     }
 

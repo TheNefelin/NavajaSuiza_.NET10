@@ -15,6 +15,6 @@ public abstract partial class BaseViewModel : ObservableObject
 
     public virtual void Cleanup()
     {
-        // Método virtual para que las clases derivadas lo implementen si lo necesitan
+        // MÃ©todo virtual para que las clases derivadas lo implementen si lo necesitan
     }
 }

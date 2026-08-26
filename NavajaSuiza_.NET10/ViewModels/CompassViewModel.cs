@@ -5,7 +5,7 @@ using NavajaSuiza_.NET10.Services.Interfaces;
 
 namespace NavajaSuiza_.NET10.ViewModels;
 
-public partial class CompassViewModel : ObservableObject
+public partial class CompassViewModel : BaseViewModel
 {
     private readonly ILogger<TestingViewModel> _logger;
     private readonly ILanguageService _languageService;
@@ -14,7 +14,7 @@ public partial class CompassViewModel : ObservableObject
     private string _statusText = "...";
 
     [ObservableProperty]
-    private string _angleText = "0°";
+    private string _angleText = "0Â°";
 
     [ObservableProperty]
     private string _cardinalDirection = "N/A";
@@ -68,7 +68,7 @@ public partial class CompassViewModel : ObservableObject
         var headingMagneticNorth = e.Reading.HeadingMagneticNorth;
 
         var angle = headingMagneticNorth;
-        AngleText = $"{angle:F0}°";
+        AngleText = $"{angle:F0}Â°";
         CompassDialRotation = 360 - angle;
         CardinalDirection = GetCardinalDirection(angle);
     }
@@ -77,13 +77,13 @@ public partial class CompassViewModel : ObservableObject
     {
         var reading = e.Reading;
 
-        // Método PRECISO usando Quaternion
+        // MÃ©todo PRECISO usando Quaternion
         double q0 = reading.Orientation.W;
         double q1 = reading.Orientation.X;
         double q2 = reading.Orientation.Y;
         double q3 = reading.Orientation.Z;
 
-        // Calcular pitch (inclinación frontal) y roll (inclinación lateral)
+        // Calcular pitch (inclinaciÃ³n frontal) y roll (inclinaciÃ³n lateral)
         double pitch = Math.Asin(2 * (q0 * q2 - q3 * q1));
         double roll = Math.Atan2(2 * (q0 * q1 + q2 * q3), 1 - 2 * (q1 * q1 + q2 * q2));
 
@@ -91,7 +91,7 @@ public partial class CompassViewModel : ObservableObject
         pitch = Math.Abs(pitch * (180.0 / Math.PI));
         roll = Math.Abs(roll * (180.0 / Math.PI));
 
-        // La inclinación total es el máximo de pitch y roll
+        // La inclinaciÃ³n total es el mÃ¡ximo de pitch y roll
         double tiltDegrees = Math.Max(pitch, roll);
 
         StatusText = GetTiltStatus(tiltDegrees);

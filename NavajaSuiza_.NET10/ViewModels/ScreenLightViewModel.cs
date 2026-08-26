@@ -13,8 +13,9 @@ public partial class ScreenLightViewModel : BaseViewModel
         DeviceDisplay.Current.KeepScreenOn = true;
     }
 
-    public void Cleanup()
+    public override void Cleanup()
     {
+        base.Cleanup();
 #if ANDROID
         SetScreenBrightness(_originalBrightness);
 #endif

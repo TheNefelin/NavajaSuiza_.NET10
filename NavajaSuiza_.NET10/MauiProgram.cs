@@ -34,7 +34,7 @@ public static class MauiProgram
                 .AddDebug()
                 .SetMinimumLevel(LogLevel.Trace));
 #else
-    // En Release también queremos logs
+    // En Release tambiÃ©n queremos logs
     builder.Services.AddLogging(configure =>
         configure
             .AddDebug()
