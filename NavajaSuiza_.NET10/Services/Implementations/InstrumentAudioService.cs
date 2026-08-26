@@ -100,7 +100,7 @@ public class InstrumentAudioService : IInstrumentAudioService
     public void RegisterStringBorder(Border border, string audioName)
     {
         _borderAudioMap[border] = audioName;
-        _logger.LogInformation($"Registered border with audio {audioName}");
+        _logger.LogInformation("Registered border with audio {AudioName}", audioName);
     }
 
     public async Task StringTappedAsync(Border border)
@@ -156,7 +156,7 @@ public class InstrumentAudioService : IInstrumentAudioService
         }
         catch (Exception ex)
         {
-            _logger.LogError($"Error in VibrateString: {ex.Message}");
+            _logger.LogError("Error in VibrateString: {Message}", ex.Message);
         }
     }
 
@@ -173,7 +173,7 @@ public class InstrumentAudioService : IInstrumentAudioService
         }
         catch (Exception ex)
         {
-            _logger.LogError($"Error in StopVibration: {ex.Message}");
+            _logger.LogError("Error in StopVibration: {Message}", ex.Message);
         }
     }
 
@@ -187,19 +187,19 @@ public class InstrumentAudioService : IInstrumentAudioService
                 return;
             }
 
-            _logger.LogInformation($"Playing audio: {audioName}");
+            _logger.LogInformation("Playing audio: {AudioName}", audioName);
             _mediaElement.Stop();
             _mediaElement.Source = MediaSource.FromResource(audioName);
             _mediaElement.Play();
         }
         catch (Exception ex)
         {
-            _logger.LogError($"Error playing audio: {ex.Message}");
+            _logger.LogError("Error playing audio: {Message}", ex.Message);
         }
     }
 
     private void StopAudio()
     {
-        _mediaElement.Stop();
+        _mediaElement?.Stop();
     }
 }
