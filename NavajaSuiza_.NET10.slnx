@@ -6,6 +6,7 @@
     <File Path="README.md" />
     <File Path="SKILL.md" />
   </Folder>
+  <Project Path="NavajaSuiza.Core/NavajaSuiza.Core.csproj" Id="6d2c5801-cdae-4933-9823-a1005f56378d" />
   <Project Path="NavajaSuiza_.NET10/NavajaSuiza_.NET10.csproj">
     <Deploy />
   </Project>

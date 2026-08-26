@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using NavajaSuiza_.NET10.Pages;
 using NavajaSuiza_.NET10.ViewModels;
 using NavajaSuiza_.NET10.Services.Implementations;
+using NavajaSuiza.Core.Interfaces;
 using NavajaSuiza_.NET10.Services.Interfaces;
 using Syncfusion.Maui.Toolkit.Hosting;
 

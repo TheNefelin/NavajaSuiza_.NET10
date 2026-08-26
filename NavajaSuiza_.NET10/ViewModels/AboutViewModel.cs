@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using NavajaSuiza_.NET10.Services.Interfaces;
+using NavajaSuiza.Core.Interfaces;
+using NavajaSuiza.Core.ViewModels;
 
 namespace NavajaSuiza_.NET10.ViewModels;
 

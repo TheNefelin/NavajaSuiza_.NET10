@@ -1,4 +1,4 @@
-﻿using NavajaSuiza_.NET10.Services.Interfaces;
+﻿using NavajaSuiza.Core.Interfaces;
 
 namespace NavajaSuiza_.NET10;
 

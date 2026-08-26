@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Logging;
+using NavajaSuiza.Core.ViewModels;
 
 namespace NavajaSuiza_.NET10.ViewModels;
 

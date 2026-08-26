@@ -1,4 +1,4 @@
-﻿namespace NavajaSuiza_.NET10.Services.Interfaces;
+namespace NavajaSuiza.Core.Interfaces;
 
 public interface IDeviceStatusService
 {

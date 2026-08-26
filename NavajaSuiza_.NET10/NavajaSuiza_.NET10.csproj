@@ -64,21 +64,16 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <AndroidResource Remove="Behaviors\**" />
-	  <Compile Remove="Behaviors\**" />
-	  <EmbeddedResource Remove="Behaviors\**" />
-	  <MauiCss Remove="Behaviors\**" />
-	  <MauiXaml Remove="Behaviors\**" />
-	  <None Remove="Behaviors\**" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Maui" Version="15.0.1" />
 		<PackageReference Include="CommunityToolkit.Maui.MediaElement" Version="10.0.0" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
 		<PackageReference Include="Microsoft.Maui.Controls" Version="10.0.100" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.11" />
 		<PackageReference Include="Syncfusion.Maui.Toolkit" Version="1.0.10" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\NavajaSuiza.Core\NavajaSuiza.Core.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
