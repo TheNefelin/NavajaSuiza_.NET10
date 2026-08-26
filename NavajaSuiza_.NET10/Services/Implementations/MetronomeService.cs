@@ -5,11 +5,11 @@ namespace NavajaSuiza_.NET10.Services.Implementations;
 
 public class MetronomeService : IMetronomeService
 {
-    private CancellationTokenSource _cts;
+    private CancellationTokenSource? _cts;
     private int _currentBeat;
     private int _beatsPerMeasure;
-    private MediaElement _accentMediaElement;
-    private MediaElement _normalMediaElement;
+    private MediaElement? _accentMediaElement;
+    private MediaElement? _normalMediaElement;
 
     public void SetMediaElement(
         MediaElement accentMediaElement,
@@ -78,12 +78,12 @@ public class MetronomeService : IMetronomeService
             {
                 if (_currentBeat == 1)
                 {
-                    _accentMediaElement.SeekTo(TimeSpan.Zero);
+                    _accentMediaElement!.SeekTo(TimeSpan.Zero);
                     _accentMediaElement.Play();
                 }
                 else
                 {
-                    _normalMediaElement.SeekTo(TimeSpan.Zero);
+                    _normalMediaElement!.SeekTo(TimeSpan.Zero);
                     _normalMediaElement.Play();
                 }
 

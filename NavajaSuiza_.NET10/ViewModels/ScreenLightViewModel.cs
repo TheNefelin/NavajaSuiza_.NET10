@@ -4,7 +4,9 @@ namespace NavajaSuiza_.NET10.ViewModels;
 
 public partial class ScreenLightViewModel : BaseViewModel
 {
+#if ANDROID
     private double _originalBrightness = 0.5;
+#endif
 
     public void InitializeScreenLight()
     {
@@ -36,11 +38,10 @@ public partial class ScreenLightViewModel : BaseViewModel
     private static void SetScreenBrightness(double brightness)
     {
         var window = Platform.CurrentActivity?.Window;
-        if (window != null)
+        window?.Attributes?.ScreenBrightness = (float)brightness;
+        if (window?.Attributes != null)
         {
-            var params_ = window.Attributes;
-            params_.ScreenBrightness = (float)brightness;
-            window.Attributes = params_;
+            window.Attributes = window.Attributes;
         }
     }
 #endif

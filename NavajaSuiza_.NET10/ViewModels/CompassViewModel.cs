@@ -59,7 +59,7 @@ public partial class CompassViewModel : BaseViewModel
         OrientationSensor.Default.ReadingChanged -= OnOrientationReadingChanged;
     }
 
-    private void OnCompassReadingChanged(object sender, CompassChangedEventArgs e)
+    private void OnCompassReadingChanged(object? sender, CompassChangedEventArgs e)
     {
         var headingMagneticNorth = e.Reading.HeadingMagneticNorth;
 
@@ -69,7 +69,7 @@ public partial class CompassViewModel : BaseViewModel
         CardinalDirection = GetCardinalDirection(angle);
     }
 
-    private void OnOrientationReadingChanged(object sender, OrientationSensorChangedEventArgs e)
+    private void OnOrientationReadingChanged(object? sender, OrientationSensorChangedEventArgs e)
     {
         var reading = e.Reading;
 

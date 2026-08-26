@@ -43,10 +43,10 @@ public partial class FramingViewModel : BaseViewModel
     private const double MAX_CANVAS_WIDTH = 500;
 
     [ObservableProperty]
-    private int _blurIntensity = 13; // max 25
+    private int _blurIntensity = 13;
 
     [ObservableProperty]
-    private ImageSource _loadedImage;
+    private ImageSource? _loadedImage;
 
     private Dictionary<string, double> _aspectRatios = new()
     {
@@ -67,7 +67,7 @@ public partial class FramingViewModel : BaseViewModel
         UpdateAspectRatioName(AspectRatio);
     }
 
-    private void OnLanguageChanged(object sender, EventArgs e)
+    private void OnLanguageChanged(object? sender, EventArgs e)
     {
         UpdateAspectRatioName(AspectRatio);
     }
@@ -97,7 +97,7 @@ public partial class FramingViewModel : BaseViewModel
     }      
 
     [RelayCommand]
-    private async void SetAspectRatio(string ratio)
+    private void SetAspectRatio(string ratio)
     {
         AspectRatio = ratio;
         UpdateAspectRatioName(ratio);
@@ -110,13 +110,13 @@ public partial class FramingViewModel : BaseViewModel
     }
 
     [RelayCommand]
-    private async void SetAspectMode(string mode)
+    private void SetAspectMode(string mode)
     {
         AspectMode = mode;
     }
 
     [RelayCommand]
-    private async void SetCanvasBackground(string background)
+    private void SetCanvasBackground(string background)
     {
         CanvasBackground = background;
 

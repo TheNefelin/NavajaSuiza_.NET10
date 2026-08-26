@@ -42,17 +42,18 @@ public class ThemeService : IThemeService
         try
         {
             var color = Android.Graphics.Color.ParseColor("#243042");
-            var activity = (Application.Current?.MainPage?.Window?.Handler?.PlatformView as Android.App.Activity);
+            var activity = Platform.CurrentActivity;
 
-            if (activity != null)
+            if (activity?.Window != null)
             {
-                activity.Window?.SetStatusBarColor(color);
-                activity.Window?.SetNavigationBarColor(color);
+#pragma warning disable CA1422 // Deprecated in Android 35; still functional on target API levels
+                activity.Window.SetStatusBarColor(color);
+                activity.Window.SetNavigationBarColor(color);
+#pragma warning restore CA1422
             }
         }
-        catch (Exception ex)
+        catch (Exception)
         {
-            //_logger.LogError(ex, "[ThemeService] - Error updating status bar");
         }
 #endif
 

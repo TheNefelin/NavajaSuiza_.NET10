@@ -30,7 +30,7 @@ public partial class FlashlightViewModel : BaseViewModel
         _languageService.LanguageChanged += OnLanguageChanged;
     }
 
-    private void OnLanguageChanged(object sender, EventArgs e)
+    private void OnLanguageChanged(object? sender, EventArgs e)
     {
         OnPropertyChanged(nameof(IsLightOn));
     }
@@ -42,7 +42,7 @@ public partial class FlashlightViewModel : BaseViewModel
     }
 
     [RelayCommand]
-    private async void ClickFlash()
+    private async Task ClickFlash()
     {
         IsFlashOn = !IsFlashOn;
 
@@ -57,14 +57,14 @@ public partial class FlashlightViewModel : BaseViewModel
                 await Flashlight.Default.TurnOffAsync();
             }
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             IsFlashOn = !IsFlashOn; // Revierte el cambio si falla
         }
     }
   
     [RelayCommand]
-    private async void ClickScreen()
+    private async Task ClickScreen()
     {
         IsScreenOn = !IsScreenOn;
 
@@ -81,7 +81,7 @@ public partial class FlashlightViewModel : BaseViewModel
                 DeviceDisplay.Current.KeepScreenOn = false;
             }
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             IsScreenOn = !IsScreenOn;
         }

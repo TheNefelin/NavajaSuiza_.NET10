@@ -6,10 +6,10 @@ namespace NavajaSuiza_.NET10.Converters;
 
 public class BoolToLocalizedStringConverter : IValueConverter
 {
-    public string TrueResourceKey { get; set; }
-    public string FalseResourceKey { get; set; }
+    public string TrueResourceKey { get; set; } = string.Empty;
+    public string FalseResourceKey { get; set; } = string.Empty;
 
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public object? Convert(object? value, Type? targetType, object? parameter, CultureInfo? culture)
     {
         if (value is bool isOn)
         {
@@ -20,7 +20,7 @@ public class BoolToLocalizedStringConverter : IValueConverter
         return string.Empty;
     }
 
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    public object? ConvertBack(object? value, Type? targetType, object? parameter, CultureInfo? culture)
     {
         throw new NotImplementedException();
     }

@@ -26,7 +26,7 @@ public partial class App : Application
         return new Window(appShell);
     }
 
-    protected override async void OnStart()
+    protected override void OnStart()
     {
         _languageService.InitializeLanguage();
         _themeService.ApplySavedTheme();

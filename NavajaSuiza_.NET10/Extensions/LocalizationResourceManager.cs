@@ -9,7 +9,7 @@ namespace NavajaSuiza_.NET10.Extensions;
 /// </summary>
 public class LocalizationResourceManager : INotifyPropertyChanged
 {
-    private CultureInfo _culture;
+    private CultureInfo _culture = CultureInfo.CurrentCulture;
 
     private LocalizationResourceManager()
     {
@@ -32,5 +32,5 @@ public class LocalizationResourceManager : INotifyPropertyChanged
     public object this[string resourceKey]
         => AppResources.ResourceManager.GetObject(resourceKey, _culture) ?? resourceKey;
 
-    public event PropertyChangedEventHandler PropertyChanged;
+    public event PropertyChangedEventHandler? PropertyChanged;
 }

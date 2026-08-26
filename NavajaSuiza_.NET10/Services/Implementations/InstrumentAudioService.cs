@@ -13,7 +13,7 @@ public class InstrumentAudioService : IInstrumentAudioService
     private Border? _currentlyVibrating;
     private bool _isVibrating;
     private const double VIBRATION_DURATION = 0.05;
-    private MediaElement _mediaElement;
+    private MediaElement? _mediaElement;
 
     public InstrumentAudioService(ILogger<InstrumentAudioService> logger)
     {
@@ -118,7 +118,7 @@ public class InstrumentAudioService : IInstrumentAudioService
 
     public async Task StopAllStringAsync()
     {
-        StopVibration(_currentlyVibrating);
+        StopVibration(_currentlyVibrating!);
         StopAudio();
     }
 
@@ -135,7 +135,7 @@ public class InstrumentAudioService : IInstrumentAudioService
             // Detener vibración anterior
             if (_currentlyVibrating != null)
             {
-                StopVibration(_currentlyVibrating);
+        StopVibration(_currentlyVibrating!);
             }
 
             _currentlyVibrating = border;

@@ -80,8 +80,7 @@ public partial class MenuViewModel : BaseViewModel
     [RelayCommand]
     private async Task NavigateToAbout()
     {
-        var page = _serviceProvider.GetRequiredService<AboutPage>();
-        await Shell.Current.Navigation.PushAsync(page);
+        await Shell.Current.GoToAsync("//AboutPage");
     }
 
     [RelayCommand]

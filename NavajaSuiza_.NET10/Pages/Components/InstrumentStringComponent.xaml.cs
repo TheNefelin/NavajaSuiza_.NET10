@@ -4,7 +4,7 @@ namespace NavajaSuiza_.NET10.Pages.Components;
 
 public partial class InstrumentStringComponent : ContentView
 {
-    private IInstrumentAudioService _instrumentAudioService;
+    private IInstrumentAudioService? _instrumentAudioService;
 
     public static readonly BindableProperty NoteProperty = BindableProperty.Create(nameof(Note), typeof(string), typeof(InstrumentStringComponent), string.Empty);
     public static readonly BindableProperty AudioNameProperty = BindableProperty.Create(nameof(AudioName), typeof(string), typeof(InstrumentStringComponent), string.Empty);

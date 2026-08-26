@@ -9,7 +9,7 @@ public class LanguageService : ILanguageService
 {
     private readonly ILogger<LanguageService> _logger;
 
-    public event EventHandler LanguageChanged;
+    public event EventHandler? LanguageChanged;
 
     public LanguageService(ILogger<LanguageService> logger)
     {
