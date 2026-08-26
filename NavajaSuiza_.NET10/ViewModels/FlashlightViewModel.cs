@@ -35,6 +35,12 @@ public partial class FlashlightViewModel : BaseViewModel
         OnPropertyChanged(nameof(IsLightOn));
     }
 
+    public override void Cleanup()
+    {
+        _languageService.LanguageChanged -= OnLanguageChanged;
+        base.Cleanup();
+    }
+
     [RelayCommand]
     private async void ClickFlash()
     {

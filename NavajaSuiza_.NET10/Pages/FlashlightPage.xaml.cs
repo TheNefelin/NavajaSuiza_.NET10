@@ -17,4 +17,13 @@ public partial class FlashlightPage : ContentPage
         base.OnNavigatedTo(args);
         BindingContext = _serviceProvider.GetRequiredService<FlashlightViewModel>();
     }
+
+    protected override void OnDisappearing()
+    {
+        base.OnDisappearing();
+        if (BindingContext is FlashlightViewModel viewModel)
+        {
+            viewModel.Cleanup();
+        }
+    }
 }

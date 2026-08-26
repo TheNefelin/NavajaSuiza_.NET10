@@ -27,4 +27,13 @@ public partial class FramingPage : ContentPage
             }
         });
     }
+
+    protected override void OnDisappearing()
+    {
+        base.OnDisappearing();
+        if (BindingContext is FramingViewModel viewModel)
+        {
+            viewModel.Cleanup();
+        }
+    }
 }

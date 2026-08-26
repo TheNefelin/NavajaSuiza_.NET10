@@ -8,7 +8,7 @@ namespace NavajaSuiza_.NET10.ViewModels;
 
 public partial class CompassViewModel : BaseViewModel
 {
-    private readonly ILogger<TestingViewModel> _logger;
+    private readonly ILogger<CompassViewModel> _logger;
     private readonly ILanguageService _languageService;
 
     [ObservableProperty]
@@ -24,29 +24,24 @@ public partial class CompassViewModel : BaseViewModel
     private double _CompassDialRotation = 0.0f;
 
     public CompassViewModel(
-        ILogger<TestingViewModel> logger,
+        ILogger<CompassViewModel> logger,
         ILanguageService languageService)
     {
         _logger = logger;
         _languageService = languageService;
-
-        ValidateSensors();
     }
 
-    private async void ValidateSensors()
+    [RelayCommand]
+    public async Task StartSensorsAsync()
     {
         if (!Compass.Default.IsSupported || !OrientationSensor.Default.IsSupported)
         {
             _logger.LogWarning("Navigating back due to unsupported sensors");
-
             await Shell.Current.DisplayAlertAsync("Error", "Los sensores necesarios no son soportados en este dispositivo.", "OK");
             await Shell.Current.GoToAsync("..");
+            return;
         }
-    }
 
-    [RelayCommand]
-    public void StartSensorsAsync()
-    {
         Compass.Default.ReadingChanged += OnCompassReadingChanged;
         Compass.Default.Start(SensorSpeed.UI, applyLowPassFilter: true);
 

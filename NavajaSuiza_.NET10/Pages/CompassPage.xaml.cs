@@ -12,14 +12,14 @@ public partial class CompassPage : ContentPage
         _serviceProvider = serviceProvider;
     }
 
-    protected override void OnNavigatedTo(NavigatedToEventArgs args)
+    protected override async void OnNavigatedTo(NavigatedToEventArgs args)
     {
         base.OnNavigatedTo(args);
         BindingContext = _serviceProvider.GetRequiredService<CompassViewModel>();
 
         if (BindingContext is CompassViewModel viewModel)
         {
-            viewModel.StartSensorsAsync();
+            await viewModel.StartSensorsAsync();
         }
     }
 

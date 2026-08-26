@@ -72,6 +72,12 @@ public partial class FramingViewModel : BaseViewModel
         UpdateAspectRatioName(AspectRatio);
     }
 
+    public override void Cleanup()
+    {
+        _languageService.LanguageChanged -= OnLanguageChanged;
+        base.Cleanup();
+    }
+
     private void UpdateAspectRatioName(string ratio)
     {
         AspectRatioName = ratio switch
