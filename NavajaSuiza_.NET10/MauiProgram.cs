@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using NavajaSuiza_.NET10.Pages;
 using NavajaSuiza_.NET10.Services.Implementations;
 using NavajaSuiza.Core.Interfaces;
+using NavajaSuiza.Core.Services;
 using NavajaSuiza.Core.ViewModels;
 using Syncfusion.Maui.Toolkit.Hosting;
 
@@ -58,6 +59,7 @@ public static class MauiProgram
             .AddSingleton<IDeviceDisplayService, DeviceDisplayService>()
             .AddSingleton<IImagePickerService, ImagePickerService>()
             .AddSingleton<IScreenBrightnessService, ScreenBrightnessService>()
+            .AddSingleton<IFlashlightStateService, FlashlightStateService>()
             ;
 
         builder.Services

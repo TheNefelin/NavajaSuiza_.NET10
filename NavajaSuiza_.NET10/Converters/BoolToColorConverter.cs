@@ -6,6 +6,8 @@ public class BoolToColorConverter : IValueConverter
 {
     public Color TrueColor { get; set; } = Colors.Transparent;
     public Color FalseColor { get; set; } = Colors.Transparent;
+    public Color FalseColorLight { get; set; } = Colors.Transparent;
+    public Color FalseColorDark { get; set; } = Colors.Transparent;
 
     public object? Convert(object? value, Type? targetType, object? parameter, CultureInfo? culture)
     {
@@ -13,6 +15,14 @@ public class BoolToColorConverter : IValueConverter
         {
             return TrueColor;
         }
+
+        if (FalseColorLight != Colors.Transparent && FalseColorDark != Colors.Transparent)
+        {
+            return Application.Current?.RequestedTheme == AppTheme.Dark
+                ? FalseColorDark
+                : FalseColorLight;
+        }
+
         return FalseColor;
     }
 

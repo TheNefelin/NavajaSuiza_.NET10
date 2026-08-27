@@ -11,9 +11,20 @@ public partial class FlashlightViewModel : BaseViewModel
     private readonly ILanguageService _languageService;
     private readonly IFlashlightService _flashlightService;
     private readonly IDeviceDisplayService _deviceDisplayService;
+    private readonly IFlashlightStateService _stateService;
 
-    [ObservableProperty]
-    public partial bool IsFlashOn { get; set; }
+    public bool IsFlashOn
+    {
+        get => _stateService.IsFlashOn;
+        set
+        {
+            if (_stateService.IsFlashOn != value)
+            {
+                _stateService.IsFlashOn = value;
+                OnPropertyChanged();
+            }
+        }
+    }
 
     [ObservableProperty]
     public partial bool IsScreenOn { get; set; }
@@ -25,12 +36,14 @@ public partial class FlashlightViewModel : BaseViewModel
         INavigationService navigationService,
         ILanguageService languageService,
         IFlashlightService flashlightService,
-        IDeviceDisplayService deviceDisplayService)
+        IDeviceDisplayService deviceDisplayService,
+        IFlashlightStateService stateService)
     {
         _navigationService = navigationService;
         _languageService = languageService;
         _flashlightService = flashlightService;
         _deviceDisplayService = deviceDisplayService;
+        _stateService = stateService;
         _languageService.LanguageChanged += OnLanguageChanged;
     }
 

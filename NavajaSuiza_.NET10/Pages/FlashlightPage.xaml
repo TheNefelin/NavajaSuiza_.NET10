@@ -8,9 +8,15 @@
 
     <ContentPage.Resources>
         <converters:BoolToColorConverter 
-            x:Key="ToggleLight"
-            TrueColor="{StaticResource MyOn}"
-            FalseColor="{StaticResource MyOff}" />
+            x:Key="FlashOnConverter"
+            TrueColor="{StaticResource MyAccent}"
+            FalseColorLight="{StaticResource MyPrimaryLight}"
+            FalseColorDark="{StaticResource MyPrimaryDark}" />
+        <converters:BoolToColorConverter 
+            x:Key="FlashTextOnConverter"
+            TrueColor="{StaticResource MyPrimaryDark}"
+            FalseColorLight="{StaticResource MyPrimaryTextLight}"
+            FalseColorDark="{StaticResource MyPrimaryTextDark}" />
         <converters:BoolToLocalizedStringConverter 
             x:Key="BoolToStatusText"
             TrueResourceKey="FlashlightStatusOffText"
@@ -64,15 +70,9 @@
                         Margin="8"
                         Padding="25,15,25,10"
                         WidthRequest="120" 
-                        HeightRequest="120">
-
-                        <Button.Triggers>
-                            <DataTrigger TargetType="Button" Binding="{Binding IsFlashOn}" Value="True">
-                                <Setter Property="BackgroundColor" Value="{StaticResource MyAccent}" />
-                                <Setter Property="TextColor" Value="{StaticResource MyPrimaryDark}" />
-                            </DataTrigger>
-                        </Button.Triggers>
-                    </Button>
+                        HeightRequest="120"
+                        BackgroundColor="{Binding IsFlashOn, Converter={StaticResource FlashOnConverter}}"
+                        TextColor="{Binding IsFlashOn, Converter={StaticResource FlashTextOnConverter}}" />
 
                     <Button
                         Grid.Column="1"
@@ -84,15 +84,9 @@
                         Padding="33,15,33,10"
                         Margin="8"
                         WidthRequest="120" 
-                        HeightRequest="120">
-
-                        <Button.Triggers>
-                            <DataTrigger TargetType="Button" Binding="{Binding IsScreenOn}" Value="True">
-                                <Setter Property="BackgroundColor" Value="{StaticResource MyAccent}" />
-                                <Setter Property="TextColor" Value="{StaticResource MyPrimaryDark}" />
-                            </DataTrigger>
-                        </Button.Triggers>
-                    </Button>
+                        HeightRequest="120"
+                        BackgroundColor="{Binding IsScreenOn, Converter={StaticResource FlashOnConverter}}"
+                        TextColor="{Binding IsScreenOn, Converter={StaticResource FlashTextOnConverter}}" />
                 </FlexLayout>
 
                 <Label 
