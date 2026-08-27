@@ -448,9 +448,8 @@ Constantes centralizadas agrupadas por dominio (Metronome, Framing, Instruments)
 
 ### 15.2 Issues pendientes
 
-1. **`B_00_B0.wav` no referenciado**: Archivo de audio del bajo que no está en la configuración de cuerdas.
-2. **`TestingPage`/`TestingViewModel` vacíos**: Página de pruebas sin implementación.
-3. **AboutPage navigation crash**: `GoToAsync("//AboutPage")` causa `JavaProxyThrowable` en Android. Root cause: Singleton DI + ShellContent conflict.
+1. **`TestingPage`/`TestingViewModel` vacíos**: Página de pruebas sin implementación.
+2. **AboutPage navigation crash**: `GoToAsync("//AboutPage")` causa `JavaProxyThrowable` en Android. Root cause: Singleton DI + ShellContent conflict.
 
 ---
 
