@@ -27,24 +27,37 @@ Navaja suiza digital — app multiplataforma (.NET MAUI) con herramientas de uso
 NavajaSuiza_.NET10.sln
 │
 ├── NavajaSuiza.Core/                    # Class Library (net10.0 puro, sin dependencias MAUI)
-│   ├── Interfaces/
+│   ├── Interfaces/                      # 13 interfaces
+│   │   ├── ICompassService.cs
+│   │   ├── IDeviceDisplayService.cs
 │   │   ├── IDeviceStatusService.cs
+│   │   ├── IFlashlightService.cs
+│   │   ├── IFlashlightStateService.cs
+│   │   ├── IImagePickerService.cs
+│   │   ├── IInstrumentAudioService.cs
 │   │   ├── ILanguageService.cs
-│   │   ├── IThemeService.cs
+│   │   ├── IMetronomeService.cs
 │   │   ├── INavigationService.cs
-│   │   ├── IInstrumentAudioService.cs    # Abstracted con object
-│   │   └── IMetronomeService.cs          # Abstracted con object
+│   │   ├── IOrientationService.cs
+│   │   ├── IScreenBrightnessService.cs
+│   │   └── IThemeService.cs
 │   ├── Models/
 │   │   ├── SupportedLanguages.cs
 │   │   └── InstrumentStringData.cs
-│   ├── ViewModels/
+│   ├── Services/
+│   │   └── FlashlightStateService.cs
+│   ├── ViewModels/                       # 18 ViewModels (testables, sin dependencias MAUI)
 │   │   ├── BaseViewModel.cs
 │   │   ├── AboutViewModel.cs
+│   │   ├── CompassViewModel.cs
+│   │   ├── FlashlightViewModel.cs
+│   │   ├── FramingViewModel.cs
 │   │   ├── MenuViewModel.cs
 │   │   ├── MetronomeViewModel.cs
-│   │   ├── TunerViewModel.cs
 │   │   ├── ManualViewModel.cs
+│   │   ├── ScreenLightViewModel.cs
 │   │   ├── TestingViewModel.cs
+│   │   ├── TunerViewModel.cs
 │   │   ├── InstrumentViewModelBase.cs
 │   │   ├── InstrumentBassViewModel.cs
 │   │   ├── InstrumentCharangoViewModel.cs
@@ -61,18 +74,20 @@ NavajaSuiza_.NET10.sln
 │   │   │   ├── InstrumentStringComponent.xaml/cs
 │   │   │   └── LoadingComponent.xaml/cs
 │   │   └── *.xaml/cs
-│   ├── ViewModels/                       # Solo ViewModels con APIs de plataforma
-│   │   ├── CompassViewModel.cs
-│   │   ├── FlashlightViewModel.cs
-│   │   ├── FramingViewModel.cs
-│   │   └── ScreenLightViewModel.cs
+│   ├── ViewModels/                       # Vacío — todas las VMs están en Core
 │   ├── Services/
-│   │   └── Implementations/
+│   │   └── Implementations/             # 12 implementaciones (solo APIs de plataforma)
+│   │       ├── CompassSensorService.cs
+│   │       ├── DeviceDisplayService.cs
 │   │       ├── DeviceStatusService.cs
+│   │       ├── FlashlightService.cs
+│   │       ├── ImagePickerService.cs
 │   │       ├── InstrumentAudioService.cs
 │   │       ├── LanguageService.cs
 │   │       ├── MetronomeService.cs
 │   │       ├── NavigationService.cs
+│   │       ├── OrientationSensorService.cs
+│   │       ├── ScreenBrightnessService.cs
 │   │       └── ThemeService.cs
 │   ├── Converters/
 │   ├── Extensions/
@@ -81,20 +96,27 @@ NavajaSuiza_.NET10.sln
 │   │   │   ├── AppResources.resx       # Default (es-CL)
 │   │   │   ├── AppResources.en.resx    # Inglés
 │   │   │   └── AppResources.sv.resx    # Sueco
-│   │   ├── Raw/                        # Assets de audio WAV
+│   │   ├── Raw/                        # Assets de audio WAV (37 archivos)
 │   │   └── Styles/
 │   ├── Platforms/
 │   ├── App.xaml/cs
 │   ├── AppShell.xaml/cs
 │   └── MauiProgram.cs
 │
-└── NavajaSuiza.Test/                    # Proyecto de tests (net10.0 puro)
-    ├── BaseViewModelTests.cs
-    ├── AboutViewModelTests.cs
-    ├── MetronomeViewModelTests.cs
-    ├── MenuViewModelTests.cs
-    ├── AppConstantsTests.cs
-    └── InstrumentStringDataTests.cs
+├── NavajaSuiza.Test/                    # Proyecto de tests (net10.0 puro)
+│   ├── AboutViewModelTests.cs
+│   ├── AppConstantsTests.cs
+│   ├── BaseViewModelTests.cs
+│   ├── CompassViewModelTests.cs
+│   ├── FlashlightViewModelTests.cs
+│   ├── FramingViewModelTests.cs
+│   ├── InstrumentStringDataTests.cs
+│   ├── MenuViewModelTests.cs
+│   ├── MetronomeViewModelTests.cs
+│   └── ScreenLightViewModelTests.cs
+│
+├── .editorconfig                        # Convenciones de código
+└── .github/workflows/build.yml          # CI/CD: build + test en push/PR
 ```
 
 ## Release App
@@ -142,3 +164,13 @@ Title="{extensions:Translate MenuText}"
 var selectLanguage = LocalizationResourceManager.Instance["SelectLanguageText"].ToString();
 var cancelText = LocalizationResourceManager.Instance["CancelText"]?.ToString();
 ```
+
+## CI/CD
+
+GitHub Actions workflow en `.github/workflows/build.yml`:
+- Ejecuta en push y PR a `main`
+- Steps: `dotnet restore` → `dotnet build` → `dotnet test`
+
+## Convenciones de código
+
+`.editorconfig` en raíz del repo con reglas de naming, formato y suppressions de analyzers.

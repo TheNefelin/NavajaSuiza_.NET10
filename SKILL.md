@@ -461,6 +461,7 @@ Las mismas reglas de C# y seguridad aplican al frontend MAUI. Anti-patrones que 
 | Columnas `Data01`/`Data02` en BD | Sin semántica, imposible de mantener | Nombres de dominio reales |
 | `System.Timers.Timer` tocando la UI desde otro hilo | Race conditions / crashes de UI | `PeriodicTimer` (async) o `MainThread.InvokeOnMainThreadAsync` |
 | ViewModel Singleton con estado global compartido | Estado corrupto entre páginas | ViewModel Transiente, servicios como singletons |
+| DataTriggers para estado visual binario | No revierten estilo base en MAUI | `IValueConverter` con Binding directo |
 
 ### Reglas MAUI senior
 - **MVVM**: ViewModel por página, `partial properties` con `[ObservableProperty]` (requiere `<LangVersion>preview</LangVersion>` en csproj), `[RelayCommand]`.
@@ -518,14 +519,23 @@ builder.Services
     // Services — Singleton
     .AddSingleton<ILanguageService, LanguageService>()
     .AddSingleton<IThemeService, ThemeService>()
-    .AddSingleton<IInstrumentAudioService, InstrumentAudioService>()
+    .AddSingleton<ICompassService, CompassSensorService>()
+    .AddSingleton<IOrientationService, OrientationSensorService>()
+    .AddSingleton<IFlashlightService, FlashlightService>()
+    .AddSingleton<IDeviceDisplayService, DeviceDisplayService>()
+    .AddSingleton<IImagePickerService, ImagePickerService>()
+    .AddSingleton<IScreenBrightnessService, ScreenBrightnessService>()
+    .AddSingleton<IFlashlightStateService, FlashlightStateService>()
+    // Services — Transient
+    .AddTransient<IMetronomeService, MetronomeService>()
+    .AddTransient<IInstrumentAudioService, InstrumentAudioService>()
     // ViewModels — Transient
     .AddTransient<MenuViewModel>()
-    .AddTransient<InstrumentNylonViewModel>()
+    .AddTransient<FlashlightViewModel>()
     .AddTransient<MetronomeViewModel>()
     // Pages — Singleton (Shell)
     .AddSingleton<MenuPage>()
-    .AddSingleton<InstrumentNylonPage>()
+    .AddSingleton<FlashlightPage>()
     .AddSingleton<MetronomePage>();
 ```
 
@@ -594,11 +604,9 @@ public partial class InstrumentNylonPage : ContentPage
 }
 ```
 
-### 11.4 DI en Pages: IServiceProvider pattern
+### 11.4 DI en Pages: IServiceProvider pattern vs Constructor DI
 
-Las Pages no pueden recibir ViewModels por constructor cuando los VMs son Transient — el VM debe crearse en tiempo de navegación, no en tiempo de resolución de la Page.
-
-**Patrón correcto**:
+**Opción A — IServiceProvider pattern** (cuando el VM es Transient y la Page es Singleton):
 
 ```csharp
 public partial class MyPage : ContentPage
@@ -622,21 +630,28 @@ public partial class MyPage : ContentPage
         base.OnDisappearing();
         if (BindingContext is MyViewModel vm)
         {
-            vm.Cleanup(); // Limpiar servicios (sensores, audio, timers)
+            vm.Cleanup();
         }
     }
 }
 ```
 
-**Anti-patrón**: Resolver el VM en el constructor de una Pushed page:
+**Opción B — Constructor DI** (cuando el VM se crea una vez y se reusa, o cuando el VM usa state services que persisten):
+
 ```csharp
-// MAL — el VM se crea una vez y se reusa (Singleton implícito)
-public MyPage(MyViewModel viewModel)
+public partial class FlashlightPage : ContentPage
 {
-    InitializeComponent();
-    BindingContext = viewModel; // Misma instancia siempre
+    public FlashlightPage(FlashlightViewModel viewModel)
+    {
+        InitializeComponent();
+        BindingContext = viewModel;
+    }
 }
 ```
+
+**Opción B es válida cuando** el VM delega estado a un servicio Singleton (como `IFlashlightStateService`) que persiste entre recreaciones de VM. El VM sigue siendo Transient, pero su estado sobrevive en el servicio.
+
+**Regla**: si el VM necesita Cleanup() al salir, usar Opción A. Si el estado vive en un servicio Singleton, Opción B es suficiente.
 
 ### 11.5 BindableProperty para components
 
@@ -680,22 +695,31 @@ En XAML, bindear desde el Page:
 
 ```
 NavajaSuiza.Core/              # Class Library (net10.0)
-├── Interfaces/                # Contratos sin dependencia de MAUI
+├── Interfaces/                # 13 contratos sin dependencia de MAUI
 │   ├── ILanguageService.cs
 │   ├── IThemeService.cs
-│   └── IDeviceStatusService.cs
+│   ├── IDeviceStatusService.cs
+│   ├── INavigationService.cs
+│   ├── ICompassService.cs
+│   ├── IOrientationService.cs
+│   ├── IFlashlightService.cs
+│   ├── IDeviceDisplayService.cs
+│   ├── IImagePickerService.cs
+│   ├── IScreenBrightnessService.cs
+│   ├── IFlashlightStateService.cs
+│   ├── IInstrumentAudioService.cs
+│   └── IMetronomeService.cs
 ├── Models/                    # Modelos compartidos
-│   └── SupportedLanguages.cs
-└── ViewModels/                # Base class
-    └── BaseViewModel.cs
+│   ├── SupportedLanguages.cs
+│   └── InstrumentStringData.cs
+├── Services/                  # Servicios puros (sin APIs de plataforma)
+│   └── FlashlightStateService.cs
+└── ViewModels/                # 18 ViewModels (todas testables, sin dependencias MAUI)
 
 NavajaSuiza_.NET10/            # Proyecto MAUI
 ├── Services/
-│   ├── Interfaces/            # Solo las que dependen de MAUI APIs
-│   │   ├── IInstrumentAudioService.cs
-│   │   └── IMetronomeService.cs
-│   └── Implementations/       # Implementaciones con MAUI types
-└── ViewModels/                # Extienden BaseViewModel de Core
+│   └── Implementations/       # 12 implementaciones con APIs de plataforma
+└── ViewModels/                # Vacío — todas las VMs están en Core
 ```
 
 **Va a Core**: interfaces, modelos, BaseViewModel — todo lo que no depende de `Microsoft.Maui`.
@@ -745,6 +769,24 @@ public void Stop()
 
 **Ventajas de `PeriodicTimer`**: async-aware, cancellation nativo, sin threads adicionales, se detiene limpiamente con `CancellationToken`.
 
+### 11.8 Convertidores para estado visual
+
+Para estado visual binario (on/off, active/inactive), usar `IValueConverter` con Binding directo en vez de DataTriggers:
+
+```xml
+<!-- INCORRECTO — DataTriggers no revierten estilo base en MAUI -->
+<Button.Triggers>
+    <DataTrigger TargetType="Button" Binding="{Binding IsOn}" Value="True">
+        <Setter Property="BackgroundColor" Value="{StaticResource MyAccent}" />
+    </DataTrigger>
+</Button.Triggers>
+
+<!-- CORRECTO — Binding directo con converter -->
+<Button BackgroundColor="{Binding IsOn, Converter={StaticResource OnOffConverter}}" />
+```
+
+**Regla**: los DataTriggers de MAUI tienen un bug conocido donde no revierten el estilo base correctamente al desactivarse. Usar `IValueConverter` con Binding directo es más confiable.
+
 ---
 
 ## 12. Tests
@@ -775,10 +817,11 @@ public void Stop()
 - [ ] Tests de integración cubriendo los códigos del envelope.
 - [ ] Verificación real en runtime (navegador/Swagger) tras el deploy; no basta que compile.
 - [ ] Documentar decisiones relevantes en `DEVELOPMENT.md` del proyecto.
-- [ ] MAUI: ViewModels Transientes, Pages Singleton, VM resuelto en `OnNavigatedTo`.
+- [ ] MAUI: ViewModels Transientes, Pages Singleton, VM resuelto en `OnNavigatedTo` o constructor DI con state service.
 - [ ] MAUI: Lógica de inicialización en `OnNavigatedTo`, no en `OnAppearing`.
 - [ ] MAUI: Components con BindableProperty, nunca Service Locator.
 - [ ] MAUI: `PeriodicTimer` en vez de `System.Timers.Timer`.
+- [ ] MAUI: `IValueConverter` con Binding directo en vez de DataTriggers para estado visual.
 
 ---
 

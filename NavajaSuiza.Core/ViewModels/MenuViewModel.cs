@@ -50,6 +50,8 @@ public partial class MenuViewModel : BaseViewModel
     [RelayCommand]
     private async Task NavigateToManual() => await _navigationService.PushAsync("ManualPage");
 
+    // Known issue: GoToAsync("//AboutPage") throws JavaProxyThrowable on Android
+    // when navigating simultaneously with the main menu. Button is hidden via IsDevelopment.
     [RelayCommand]
     private async Task NavigateToAbout() => await _navigationService.GoToAsync("//AboutPage");
 

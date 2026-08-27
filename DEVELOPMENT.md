@@ -31,7 +31,7 @@ Contexto técnico, arquitectura y evolución del proyecto.
 ### 3.1 Decisión arquitectónica: Core + MAUI
 
 **Fecha de decisión**: 2026-08-25  
-**Estado**: Parcialmente implementada
+**Estado**: Implementada
 
 #### Problema
 
@@ -72,18 +72,27 @@ La aplicación sigue el patrón **MVVM** (Model-View-ViewModel) utilizing el Com
 ```
 NavajaSuiza_.NET10/                   # Solution
 ├── NavajaSuiza.Core/                 # Class Library (net10.0 puro, sin dependencias MAUI)
-│   ├── Interfaces/
+│   ├── Interfaces/                   # 13 interfaces
 │   │   ├── ILanguageService.cs
 │   │   ├── IThemeService.cs
 │   │   ├── IDeviceStatusService.cs
 │   │   ├── INavigationService.cs
-│   │   ├── IInstrumentAudioService.cs   # Abstracted con object (no MAUI types)
-│   │   └── IMetronomeService.cs         # Abstracted con object (no MAUI types)
+│   │   ├── IInstrumentAudioService.cs
+│   │   ├── IMetronomeService.cs
+│   │   ├── ICompassService.cs
+│   │   ├── IOrientationService.cs
+│   │   ├── IFlashlightService.cs
+│   │   ├── IDeviceDisplayService.cs
+│   │   ├── IImagePickerService.cs
+│   │   ├── IScreenBrightnessService.cs
+│   │   └── IFlashlightStateService.cs
 │   ├── Models/
 │   │   ├── SupportedLanguages.cs
 │   │   └── InstrumentStringData.cs
+│   ├── Services/
+│   │   └── FlashlightStateService.cs   # Singleton: persiste estado flash entre VM recreations
 │   ├── AppConstants.cs
-│   └── ViewModels/
+│   └── ViewModels/                     # 18 ViewModels (todas testables, sin dependencias MAUI)
 │       ├── BaseViewModel.cs
 │       ├── AboutViewModel.cs
 │       ├── MenuViewModel.cs
@@ -91,6 +100,10 @@ NavajaSuiza_.NET10/                   # Solution
 │       ├── TunerViewModel.cs
 │       ├── ManualViewModel.cs
 │       ├── TestingViewModel.cs
+│       ├── CompassViewModel.cs
+│       ├── FlashlightViewModel.cs
+│       ├── FramingViewModel.cs
+│       ├── ScreenLightViewModel.cs
 │       ├── InstrumentViewModelBase.cs
 │       ├── InstrumentBassViewModel.cs
 │       ├── InstrumentCharangoViewModel.cs
@@ -106,19 +119,21 @@ NavajaSuiza_.NET10/                   # Solution
 │   │   │   ├── InstrumentStringComponent.xaml
 │   │   │   └── LoadingComponent.xaml
 │   │   └── *.xaml / *.xaml.cs
-│   ├── ViewModels/                     # Solo ViewModels con APIs de plataforma
-│   │   ├── CompassViewModel.cs         # Usa Compass.Default, OrientationSensor
-│   │   ├── FlashlightViewModel.cs      # Usa Flashlight.Default, DeviceDisplay
-│   │   ├── FramingViewModel.cs         # Usa FilePicker, ImageSource
-│   │   └── ScreenLightViewModel.cs     # Usa Android brightness APIs
+│   ├── ViewModels/                     # Vacío — todas las VMs están en Core
 │   ├── Services/
-│   │   └── Implementations/
+│   │   └── Implementations/           # 12 implementaciones (solo las que usan APIs de plataforma)
 │   │       ├── LanguageService.cs
 │   │       ├── ThemeService.cs
 │   │       ├── DeviceStatusService.cs
 │   │       ├── NavigationService.cs
 │   │       ├── InstrumentAudioService.cs
-│   │       └── MetronomeService.cs
+│   │       ├── MetronomeService.cs
+│   │       ├── CompassSensorService.cs
+│   │       ├── OrientationSensorService.cs
+│   │       ├── FlashlightService.cs
+│   │       ├── DeviceDisplayService.cs
+│   │       ├── ImagePickerService.cs
+│   │       └── ScreenBrightnessService.cs
 │   ├── Converters/
 │   ├── Extensions/
 │   ├── Resources/
@@ -131,25 +146,25 @@ NavajaSuiza_.NET10/                   # Solution
 │   └── MauiProgram.cs
 │
 └── NavajaSuiza.Test/                # Proyecto de tests (net10.0 puro)
-    └── *Tests.cs                     # xUnit + Moq, 29 tests
+    └── *Tests.cs                     # xUnit + Moq, 62 tests
 ```
 
 #### Regla de separación Core vs MAUI
 
 | Va a Core (reutilizable, net10.0 puro) | Se queda en MAUI (depende de APIs de plataforma) |
 |----------------------------------------|--------------------------------------------------|
-| `BaseViewModel` | `CompassViewModel` (usa `Compass.Default`, `OrientationSensor`) |
-| `AboutViewModel`, `MenuViewModel`, etc. | `FlashlightViewModel` (usa `Flashlight.Default`, `DeviceDisplay`) |
-| `InstrumentViewModelBase` + 6 instrumentos | `FramingViewModel` (usa `FilePicker`, `ImageSource`) |
-| `INavigationService` | `ScreenLightViewModel` (usa Android brightness) |
-| `IInstrumentAudioService`, `IMetronomeService` | `InstrumentAudioService` (usa `MediaElement`, `Border`) |
-| `InstrumentStringData` | `MetronomeService` (usa `MediaElement`) |
-| `AppConstants` | `NavigationService` (usa `Shell.Current`) |
-| `SupportedLanguages` | `LanguageService` (usa `Preferences`, `CultureInfo`) |
-| | `ThemeService` (usa `Application.Current`, Android Window) |
-| | `DeviceStatusService` (usa `Battery.Default`, Android APIs) |
-| | `TranslateExtension` (depende de MAUI XAML) |
-| | `InstrumentStringComponent` (ContentView) |
+| `BaseViewModel` | `NavigationService` (usa `Shell.Current`) |
+| Todos los ViewModels (18) | `LanguageService` (usa `Preferences`, `CultureInfo`) |
+| `ICompassService`, `IOrientationService` | `ThemeService` (usa `Application.Current`, Android Window) |
+| `IFlashlightService`, `IFlashlightStateService` | `DeviceStatusService` (usa `Battery.Default`, Android APIs) |
+| `IDeviceDisplayService`, `IImagePickerService` | `CompassSensorService` (usa `Compass.Default`, `OrientationSensor`) |
+| `IScreenBrightnessService` | `OrientationSensorService` (usa `OrientationSensor.Default`) |
+| `INavigationService`, `ILanguageService`, `IThemeService` | `FlashlightService` (usa `Flashlight.Default`) |
+| `IInstrumentAudioService`, `IMetronomeService` | `DeviceDisplayService` (usa `DeviceDisplay.Current`) |
+| `InstrumentStringData`, `SupportedLanguages` | `ImagePickerService` (usa `FilePicker`) |
+| `AppConstants` | `ScreenBrightnessService` (usa Android brightness APIs) |
+| `FlashlightStateService` (Core.Services) | `InstrumentAudioService` (usa `MediaElement`, `Border`) |
+| | `MetronomeService` (usa `MediaElement`) |
 
 **Patrón para desacoplar MAUI types en interfaces Core**: Las interfaces `IInstrumentAudioService` e `IMetronomeService` usan `object` en lugar de `MediaElement`/`Border` para no depender de MAUI. Las implementaciones en MAUI hacen el cast explícito.
 
@@ -203,9 +218,16 @@ Todos los servicios están registrados en `MauiProgram.cs` e inyectados por DI.
 | `ILanguageService` | `LanguageService` | Singleton | Localización, cambio de idioma, persistencia en `Preferences` |
 | `IThemeService` | `ThemeService` | Singleton | Tema oscuro/claro, persistencia, status bar (Android) |
 | `IDeviceStatusService` | `DeviceStatusService` | Singleton | Nivel de batería y almacenamiento disponible |
-| `INavigationService` | `NavigationService` | Singleton | Navegación Shell (`PushAsync`, `GoToAsync`, `DisplayAlertAsync`) |
-| `IMetronomeService` | `MetronomeService` | Singleton | Metrónomo con `System.Timers.Timer` y reproducción de audio |
-| `IInstrumentAudioService` | `InstrumentAudioService` | Singleton | Configuración de cuerdas, reproducción de audio, vibración de UI |
+| `INavigationService` | `NavigationService` | Transient | Navegación Shell (`PushAsync`, `GoToAsync`, `DisplayAlertAsync`) |
+| `ICompassService` | `CompassSensorService` | Singleton | Lectura de brújula (`Compass.Default`) |
+| `IOrientationService` | `OrientationSensorService` | Singleton | Lectura de orientación (`OrientationSensor.Default`) |
+| `IFlashlightService` | `FlashlightService` | Singleton | Control de flash (`Flashlight.Default`) |
+| `IDeviceDisplayService` | `DeviceDisplayService` | Singleton | Control de brillo y `KeepScreenOn` |
+| `IImagePickerService` | `ImagePickerService` | Singleton | Selección de imagen (`FilePicker`) |
+| `IScreenBrightnessService` | `ScreenBrightnessService` | Singleton | Brillo de pantalla nativo (Android) |
+| `IFlashlightStateService` | `FlashlightStateService` (Core) | Singleton | Persistencia de estado flash entre recreaciones de VM |
+| `IMetronomeService` | `MetronomeService` | Transient | Metrónomo con `PeriodicTimer` y reproducción de audio |
+| `IInstrumentAudioService` | `InstrumentAudioService` | Transient | Configuración de cuerdas, reproducción de audio, vibración |
 
 **ViewModels**: Todos registrados como **Transient** (cada navegación obtiene una nueva instancia, evitando estado residual).
 
@@ -216,9 +238,16 @@ Todos los servicios están registrados en `MauiProgram.cs` e inyectados por DI.
 | `LanguageService` | Singleton | Sin estado persistente en memoria, seguro como Singleton |
 | `ThemeService` | Singleton | Sin estado mutable |
 | `DeviceStatusService` | Singleton | Lee datos en cada llamada, sin estado |
-| `NavigationService` | Singleton | Stateless, resuelve páginas desde DI |
-| `MetronomeService` | Singleton | Mantiene referencia a MediaElement y timer; requiere Stop() al salir |
-| `InstrumentAudioService` | Singleton | Mantiene `_borderAudioMap` y `_mediaElement`; requiere ClearAllBorders() al salir |
+| `NavigationService` | Transient | Resuelve páginas desde DI, nuevo en cada llamada |
+| `CompassSensorService` | Singleton | Comparte datos de sensores entre componentes |
+| `OrientationSensorService` | Singleton | Comparte datos de sensores entre componentes |
+| `FlashlightService` | Singleton | Wrapper de `Flashlight.Default` |
+| `DeviceDisplayService` | Singleton | Wrapper de `DeviceDisplay.Current` |
+| `ImagePickerService` | Singleton | Wrapper de `FilePicker` |
+| `ScreenBrightnessService` | Singleton | Control de brillo nativo Android |
+| `FlashlightStateService` | Singleton | Persiste estado flash entre recreaciones de VM |
+| `MetronomeService` | Transient | Timer y estado por instancia |
+| `InstrumentAudioService` | Transient | Estado de audio por instancia |
 | **Todos los ViewModels** | **Transient** | Cada navegación obtiene nueva instancia; evita estado residual entre sesiones |
 
 ---
@@ -229,6 +258,8 @@ Todos los servicios están registrados en `MauiProgram.cs` e inyectados por DI.
 - Encender/apagar linterna del dispositivo (`Flashlight.Default`).
 - Navegar a pantalla de luz completa (`ScreenLightPage`).
 - Manejo de errores con reversión de estado.
+- **Estado flash persistente**: `FlashlightStateService` (Singleton) mantiene `IsFlashOn` entre recreaciones de VM Transient.
+- **Botones con converter**: `BoolToColorConverter` con `FalseColorLight`/`FalseColorDark` para soporte theme-aware. Reemplaza DataTriggers que no revertían correctamente el estilo base en MAUI.
 
 ### 6.2 Luz de pantalla (`ScreenLightPage`)
 - Pantalla a brillo máximo y encendida.
@@ -328,7 +359,7 @@ Constantes centralizadas agrupadas por dominio (Metronome, Framing, Instruments)
 | Converter | Función |
 |-----------|---------|
 | `BoolToLocalizedStringConverter` | Convierte `bool` a string localizado (TrueResourceKey/FalseResourceKey) |
-| `BoolToColorConverter` | Convierte `bool` a color (TrueColor/FalseColor) |
+| `BoolToColorConverter` | Convierte `bool` a color (TrueColor/FalseColor). Soporta `FalseColorLight`/`FalseColorDark` para theme-aware |
 
 ---
 
@@ -340,7 +371,7 @@ Constantes centralizadas agrupadas por dominio (Metronome, Framing, Instruments)
 |---------|-------------|----------|
 | `GN_` | Guitarra Nylon | 6 |
 | `GS_` | Guitarra Acero | 6 |
-| `B_` | Bajo | 5 (incluye B_00_B0.wav no referenciado) |
+| `B_` | Bajo | 5 |
 | `U_` | Ukulele | 4 |
 | `V_` | Violín | 4 |
 | `C_` | Charango | 6 |
@@ -421,7 +452,7 @@ Constantes centralizadas agrupadas por dominio (Metronome, Framing, Instruments)
 | 22 | Migrar InstrumentStringData a Core | Core/Models | ✅ Completado |
 | 23 | Crear AppConstants centralizado | Core | ✅ Completado |
 | 24 | Crear NavigationService en MAUI | MAUI/Services | ✅ Completado |
-| 25 | Crear proyecto de tests | NavajaSuiza.Test | ✅ Completado (29 tests) |
+| 25 | Crear proyecto de tests | NavajaSuiza.Test | ✅ Completado (62 tests) |
 
 ### Fase D — Enriquecimiento de SKILL.md
 
@@ -445,11 +476,13 @@ Constantes centralizadas agrupadas por dominio (Metronome, Framing, Instruments)
 8. **Carpeta `Behaviors/` vacía**: Eliminada.
 9. **Carpeta `PagesViewModel/` renombrada** a `ViewModels/`.
 10. **UTF-8 encoding corregido** en archivos que tenían caracteres corruptos.
+11. **FlashlightPage DataTrigger stuck**: DataTriggers no revertían estilo base al desactivarse. Reemplazados por `BoolToColorConverter` con Binding directo y soporte theme-aware (`FalseColorLight`/`FalseColorDark`).
+12. **FlashlightViewModel Transient sin persistencia**: `IFlashlightStateService` (Singleton) ahora persiste estado `IsFlashOn` entre recreaciones de VM.
 
 ### 15.2 Issues pendientes
 
 1. **`TestingPage`/`TestingViewModel` vacíos**: Página de pruebas sin implementación.
-2. **AboutPage navigation crash**: `GoToAsync("//AboutPage")` causa `JavaProxyThrowable` en Android. Root cause: Singleton DI + ShellContent conflict.
+2. **AboutPage navigation crash**: `GoToAsync("//AboutPage")` causa `JavaProxyThrowable` en Android. Botón oculto por `IsDevelopment`, no es bug visible. Documentado en `MenuViewModel.cs`.
 
 ---
 
