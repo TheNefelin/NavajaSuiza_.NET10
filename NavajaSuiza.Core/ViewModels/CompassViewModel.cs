@@ -4,13 +4,15 @@ using Microsoft.Extensions.Logging;
 using NavajaSuiza.Core.Interfaces;
 using NavajaSuiza.Core.ViewModels;
 
-namespace NavajaSuiza_.NET10.ViewModels;
+namespace NavajaSuiza.Core.ViewModels;
 
 public partial class CompassViewModel : BaseViewModel
 {
     private readonly ILogger<CompassViewModel> _logger;
     private readonly ILanguageService _languageService;
     private readonly INavigationService _navigationService;
+    private readonly ICompassService _compassService;
+    private readonly IOrientationService _orientationService;
 
     [ObservableProperty]
     public partial string StatusText { get; set; } = "...";
@@ -27,17 +29,21 @@ public partial class CompassViewModel : BaseViewModel
     public CompassViewModel(
         ILogger<CompassViewModel> logger,
         ILanguageService languageService,
-        INavigationService navigationService)
+        INavigationService navigationService,
+        ICompassService compassService,
+        IOrientationService orientationService)
     {
         _logger = logger;
         _languageService = languageService;
         _navigationService = navigationService;
+        _compassService = compassService;
+        _orientationService = orientationService;
     }
 
     [RelayCommand]
     public async Task StartSensorsAsync()
     {
-        if (!Compass.Default.IsSupported || !OrientationSensor.Default.IsSupported)
+        if (!_compassService.IsSupported || !_orientationService.IsSupported)
         {
             _logger.LogWarning("Navigating back due to unsupported sensors");
             await _navigationService.DisplayAlertAsync("Error", "Los sensores necesarios no son soportados en este dispositivo.", "OK");
@@ -45,41 +51,37 @@ public partial class CompassViewModel : BaseViewModel
             return;
         }
 
-        Compass.Default.ReadingChanged += OnCompassReadingChanged;
-        Compass.Default.Start(SensorSpeed.UI, applyLowPassFilter: true);
+        _compassService.ReadingChanged += OnCompassReadingChanged;
+        _compassService.Start(1, true);
 
-        OrientationSensor.Default.ReadingChanged += OnOrientationReadingChanged;
-        OrientationSensor.Default.Start(SensorSpeed.UI);
+        _orientationService.ReadingChanged += OnOrientationReadingChanged;
+        _orientationService.Start(1);
     }
 
     [RelayCommand]
     public void StopSensors()
     {
-        Compass.Default.Stop();
-        Compass.Default.ReadingChanged -= OnCompassReadingChanged;
+        _compassService.Stop();
+        _compassService.ReadingChanged -= OnCompassReadingChanged;
 
-        OrientationSensor.Default.Stop();
-        OrientationSensor.Default.ReadingChanged -= OnOrientationReadingChanged;
+        _orientationService.Stop();
+        _orientationService.ReadingChanged -= OnOrientationReadingChanged;
     }
 
-    private void OnCompassReadingChanged(object? sender, CompassChangedEventArgs e)
+    private void OnCompassReadingChanged(object? sender, CompassReadingChangedEventArgs e)
     {
-        var headingMagneticNorth = e.Reading.HeadingMagneticNorth;
-
-        var angle = headingMagneticNorth;
+        var angle = e.HeadingMagneticNorth;
         AngleText = $"{angle:F0}°";
         CompassDialRotation = 360 - angle;
         CardinalDirection = GetCardinalDirection(angle);
     }
 
-    private void OnOrientationReadingChanged(object? sender, OrientationSensorChangedEventArgs e)
+    private void OnOrientationReadingChanged(object? sender, OrientationReadingChangedEventArgs e)
     {
-        var reading = e.Reading;
-
-        double q0 = reading.Orientation.W;
-        double q1 = reading.Orientation.X;
-        double q2 = reading.Orientation.Y;
-        double q3 = reading.Orientation.Z;
+        double q0 = e.W;
+        double q1 = e.X;
+        double q2 = e.Y;
+        double q3 = e.Z;
 
         double pitch = Math.Asin(2 * (q0 * q2 - q3 * q1));
         double roll = Math.Atan2(2 * (q0 * q1 + q2 * q3), 1 - 2 * (q1 * q1 + q2 * q2));

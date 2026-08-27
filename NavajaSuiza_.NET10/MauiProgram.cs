@@ -2,7 +2,6 @@ using CommunityToolkit.Maui;
 using Microsoft.Extensions.Logging;
 using NavajaSuiza_.NET10.Pages;
 using NavajaSuiza_.NET10.Services.Implementations;
-using NavajaSuiza_.NET10.ViewModels;
 using NavajaSuiza.Core.Interfaces;
 using NavajaSuiza.Core.ViewModels;
 using Syncfusion.Maui.Toolkit.Hosting;
@@ -53,6 +52,12 @@ public static class MauiProgram
             .AddTransient<IInstrumentAudioService, InstrumentAudioService>()
             .AddTransient<IMetronomeService, MetronomeService>()
             .AddTransient<INavigationService, NavigationService>()
+            .AddSingleton<ICompassService, CompassSensorService>()
+            .AddSingleton<IOrientationService, OrientationSensorService>()
+            .AddSingleton<IFlashlightService, FlashlightService>()
+            .AddSingleton<IDeviceDisplayService, DeviceDisplayService>()
+            .AddSingleton<IImagePickerService, ImagePickerService>()
+            .AddSingleton<IScreenBrightnessService, ScreenBrightnessService>()
             ;
 
         builder.Services

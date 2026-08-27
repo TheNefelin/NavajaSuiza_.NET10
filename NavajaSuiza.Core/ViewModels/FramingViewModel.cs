@@ -5,12 +5,13 @@ using NavajaSuiza.Core;
 using NavajaSuiza.Core.Interfaces;
 using NavajaSuiza.Core.ViewModels;
 
-namespace NavajaSuiza_.NET10.ViewModels;
+namespace NavajaSuiza.Core.ViewModels;
 
 public partial class FramingViewModel : BaseViewModel
 {
     private readonly ILogger<FramingViewModel> _logger;
     private readonly ILanguageService _languageService;
+    private readonly IImagePickerService _imagePickerService;
 
     [ObservableProperty]
     public partial string AspectRatioName { get; set; } = "";
@@ -40,16 +41,18 @@ public partial class FramingViewModel : BaseViewModel
     public partial int BlurIntensity { get; set; } = AppConstants.Framing.DefaultBlurIntensity;
 
     [ObservableProperty]
-    public partial ImageSource? LoadedImage { get; set; }
+    public partial string? LoadedImage { get; set; }
 
     private readonly Dictionary<string, double> _aspectRatios = AppConstants.Framing.AspectRatios;
 
     public FramingViewModel(
         ILogger<FramingViewModel> logger,
-        ILanguageService languageService)
+        ILanguageService languageService,
+        IImagePickerService imagePickerService)
     {
         _logger = logger;
         _languageService = languageService;
+        _imagePickerService = imagePickerService;
         _languageService.LanguageChanged += OnLanguageChanged;
 
         UpdateAspectRatioName(AspectRatio);
@@ -122,14 +125,10 @@ public partial class FramingViewModel : BaseViewModel
     [RelayCommand]
     private async Task LoadImage()
     {
-        var result = await FilePicker.PickAsync(new PickOptions
-        {
-            PickerTitle = "Selecciona una imagen",
-            FileTypes = FilePickerFileType.Images
-        });
+        var path = await _imagePickerService.PickImageAsync("Selecciona una imagen");
 
-        if (result == null) return;
+        if (path == null) return;
 
-        LoadedImage = ImageSource.FromFile(result.FullPath);
+        LoadedImage = path;
     }
 }

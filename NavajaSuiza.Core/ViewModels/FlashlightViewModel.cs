@@ -3,12 +3,14 @@ using CommunityToolkit.Mvvm.Input;
 using NavajaSuiza.Core.Interfaces;
 using NavajaSuiza.Core.ViewModels;
 
-namespace NavajaSuiza_.NET10.ViewModels;
+namespace NavajaSuiza.Core.ViewModels;
 
 public partial class FlashlightViewModel : BaseViewModel
 {
     private readonly INavigationService _navigationService;
     private readonly ILanguageService _languageService;
+    private readonly IFlashlightService _flashlightService;
+    private readonly IDeviceDisplayService _deviceDisplayService;
 
     [ObservableProperty]
     public partial bool IsFlashOn { get; set; }
@@ -21,10 +23,14 @@ public partial class FlashlightViewModel : BaseViewModel
 
     public FlashlightViewModel(
         INavigationService navigationService,
-        ILanguageService languageService)
+        ILanguageService languageService,
+        IFlashlightService flashlightService,
+        IDeviceDisplayService deviceDisplayService)
     {
         _navigationService = navigationService;
         _languageService = languageService;
+        _flashlightService = flashlightService;
+        _deviceDisplayService = deviceDisplayService;
         _languageService.LanguageChanged += OnLanguageChanged;
     }
 
@@ -48,11 +54,11 @@ public partial class FlashlightViewModel : BaseViewModel
         {
             if (IsFlashOn)
             {
-                await Flashlight.Default.TurnOnAsync();
+                await _flashlightService.TurnOnAsync();
             }
             else
             {
-                await Flashlight.Default.TurnOffAsync();
+                await _flashlightService.TurnOffAsync();
             }
         }
         catch (Exception)
@@ -75,7 +81,7 @@ public partial class FlashlightViewModel : BaseViewModel
             }
             else
             {
-                DeviceDisplay.Current.KeepScreenOn = false;
+                _deviceDisplayService.KeepScreenOn = false;
             }
         }
         catch (Exception)
