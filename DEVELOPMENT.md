@@ -71,15 +71,33 @@ La aplicación sigue el patrón **MVVM** (Model-View-ViewModel) utilizing el Com
 
 ```
 NavajaSuiza_.NET10/                   # Solution
-├── NavajaSuiza.Core/                 # Class Library (net10.0)
+├── NavajaSuiza.Core/                 # Class Library (net10.0 puro, sin dependencias MAUI)
 │   ├── Interfaces/
 │   │   ├── ILanguageService.cs
 │   │   ├── IThemeService.cs
-│   │   └── IDeviceStatusService.cs
+│   │   ├── IDeviceStatusService.cs
+│   │   ├── INavigationService.cs
+│   │   ├── IInstrumentAudioService.cs   # Abstracted con object (no MAUI types)
+│   │   └── IMetronomeService.cs         # Abstracted con object (no MAUI types)
 │   ├── Models/
-│   │   └── SupportedLanguages.cs
+│   │   ├── SupportedLanguages.cs
+│   │   └── InstrumentStringData.cs
+│   ├── AppConstants.cs
 │   └── ViewModels/
-│       └── BaseViewModel.cs
+│       ├── BaseViewModel.cs
+│       ├── AboutViewModel.cs
+│       ├── MenuViewModel.cs
+│       ├── MetronomeViewModel.cs
+│       ├── TunerViewModel.cs
+│       ├── ManualViewModel.cs
+│       ├── TestingViewModel.cs
+│       ├── InstrumentViewModelBase.cs
+│       ├── InstrumentBassViewModel.cs
+│       ├── InstrumentCharangoViewModel.cs
+│       ├── InstrumentNylonViewModel.cs
+│       ├── InstrumentSteelViewModel.cs
+│       ├── InstrumentUkuleleViewModel.cs
+│       └── InstrumentViolinViewModel.cs
 │
 ├── NavajaSuiza_.NET10/               # Proyecto MAUI
 │   ├── Pages/
@@ -88,20 +106,19 @@ NavajaSuiza_.NET10/                   # Solution
 │   │   │   ├── InstrumentStringComponent.xaml
 │   │   │   └── LoadingComponent.xaml
 │   │   └── *.xaml / *.xaml.cs
-│   ├── ViewModels/
-│   │   └── *.cs (extienden BaseViewModel de Core)
+│   ├── ViewModels/                     # Solo ViewModels con APIs de plataforma
+│   │   ├── CompassViewModel.cs         # Usa Compass.Default, OrientationSensor
+│   │   ├── FlashlightViewModel.cs      # Usa Flashlight.Default, DeviceDisplay
+│   │   ├── FramingViewModel.cs         # Usa FilePicker, ImageSource
+│   │   └── ScreenLightViewModel.cs     # Usa Android brightness APIs
 │   ├── Services/
-│   │   ├── Interfaces/               # Solo las que dependen de MAUI APIs
-│   │   │   ├── IInstrumentAudioService.cs
-│   │   │   └── IMetronomeService.cs
 │   │   └── Implementations/
 │   │       ├── LanguageService.cs
 │   │       ├── ThemeService.cs
 │   │       ├── DeviceStatusService.cs
+│   │       ├── NavigationService.cs
 │   │       ├── InstrumentAudioService.cs
 │   │       └── MetronomeService.cs
-│   ├── Models/
-│   │   └── InstrumentStringData.cs
 │   ├── Converters/
 │   ├── Extensions/
 │   ├── Resources/
@@ -112,45 +129,29 @@ NavajaSuiza_.NET10/                   # Solution
 │   ├── App.xaml/cs
 │   ├── AppShell.xaml/cs
 │   └── MauiProgram.cs
-```
-
-### 3.4 Estructura objetivo (post-refactor)
-
-```
-NavajaSuiza.sln
-├── NavajaSuiza.Core/                  # Class Library (net10.0)
-│   ├── Interfaces/
-│   │   ├── ILanguageService.cs
-│   │   ├── IThemeService.cs
-│   │   └── IDeviceStatusService.cs
-│   ├── Models/
-│   │   └── SupportedLanguages.cs
-│   └── ViewModels/
-│       └── BaseViewModel.cs
 │
-├── NavajaSuiza_.NET10/               # Proyecto MAUI
-│   ├── Pages/...
-│   ├── ViewModels/...
-│   ├── Services/
-│   │   ├── Interfaces/               # Solo MAUI-dependent
-│   │   │   ├── IInstrumentAudioService.cs
-│   │   │   └── IMetronomeService.cs
-│   │   └── Implementations/...
-│   └── ...
+└── NavajaSuiza.Test/                # Proyecto de tests (net10.0 puro)
+    └── *Tests.cs                     # xUnit + Moq, 29 tests
 ```
 
 #### Regla de separación Core vs MAUI
 
-| Va a Core (reutilizable) | Se queda en MAUI (depende de APIs de plataforma) |
-|--------------------------|--------------------------------------------------|
-| `InstrumentStringData` | `DeviceStatusService` (usa `Battery.Default`, Android APIs) |
-| `SupportedLanguages` | `ThemeService` (usa `Application.Current`, Android Window) |
-| `ILanguageService` + `LanguageService` | `ScreenLightViewModel` (usa Android brightness) |
-| `IInstrumentAudioService` | `FlashlightViewModel` (usa `Flashlight.Default`) |
-| `IMetronomeService` | `CompassViewModel` (usa `Compass.Default`) |
-| `IImageProcessingService` | `TranslateExtension` (depende de MAUI XAML) |
-| `LocalizationResourceManager` | `InstrumentStringComponent` (ContentView) |
-| | `MetronomeService` (usa `MediaElement` — CommunityToolkit.Maui) |
+| Va a Core (reutilizable, net10.0 puro) | Se queda en MAUI (depende de APIs de plataforma) |
+|----------------------------------------|--------------------------------------------------|
+| `BaseViewModel` | `CompassViewModel` (usa `Compass.Default`, `OrientationSensor`) |
+| `AboutViewModel`, `MenuViewModel`, etc. | `FlashlightViewModel` (usa `Flashlight.Default`, `DeviceDisplay`) |
+| `InstrumentViewModelBase` + 6 instrumentos | `FramingViewModel` (usa `FilePicker`, `ImageSource`) |
+| `INavigationService` | `ScreenLightViewModel` (usa Android brightness) |
+| `IInstrumentAudioService`, `IMetronomeService` | `InstrumentAudioService` (usa `MediaElement`, `Border`) |
+| `InstrumentStringData` | `MetronomeService` (usa `MediaElement`) |
+| `AppConstants` | `NavigationService` (usa `Shell.Current`) |
+| `SupportedLanguages` | `LanguageService` (usa `Preferences`, `CultureInfo`) |
+| | `ThemeService` (usa `Application.Current`, Android Window) |
+| | `DeviceStatusService` (usa `Battery.Default`, Android APIs) |
+| | `TranslateExtension` (depende de MAUI XAML) |
+| | `InstrumentStringComponent` (ContentView) |
+
+**Patrón para desacoplar MAUI types en interfaces Core**: Las interfaces `IInstrumentAudioService` e `IMetronomeService` usan `object` en lugar de `MediaElement`/`Border` para no depender de MAUI. Las implementaciones en MAUI hacen el cast explícito.
 
 ---
 
@@ -195,25 +196,30 @@ Un `ToolbarItem` en el `AppShell` permite cambiar entre español, inglés y suec
 
 ### 5.1 Registro actual
 
-Todos los servicios están registrados como **Singleton** en `MauiProgram.cs` e inyectados por DI.
+Todos los servicios están registrados en `MauiProgram.cs` e inyectados por DI.
 
-| Interfaz | Implementación | Ubicación | Responsabilidad |
-|----------|---------------|-----------|-----------------|
-| `ILanguageService` | `LanguageService` | Core interfaces / MAUI impl | Localización, cambio de idioma, persistencia en `Preferences` |
-| `IThemeService` | `ThemeService` | Core interfaces / MAUI impl | Tema oscuro/claro, persistencia, status bar (Android) |
-| `IDeviceStatusService` | `DeviceStatusService` | Core interfaces / MAUI impl | Nivel de batería y almacenamiento disponible |
-| `IMetronomeService` | `MetronomeService` | MAUI interfaces / MAUI impl | Metrónomo con `System.Timers.Timer` y reproducción de audio |
-| `IInstrumentAudioService` | `InstrumentAudioService` | MAUI interfaces / MAUI impl | Configuración de cuerdas, reproducción de audio, vibración de UI |
+| Interfaz (Core) | Implementación (MAUI) | Lifetime | Responsabilidad |
+|-----------------|----------------------|----------|-----------------|
+| `ILanguageService` | `LanguageService` | Singleton | Localización, cambio de idioma, persistencia en `Preferences` |
+| `IThemeService` | `ThemeService` | Singleton | Tema oscuro/claro, persistencia, status bar (Android) |
+| `IDeviceStatusService` | `DeviceStatusService` | Singleton | Nivel de batería y almacenamiento disponible |
+| `INavigationService` | `NavigationService` | Singleton | Navegación Shell (`PushAsync`, `GoToAsync`, `DisplayAlertAsync`) |
+| `IMetronomeService` | `MetronomeService` | Singleton | Metrónomo con `System.Timers.Timer` y reproducción de audio |
+| `IInstrumentAudioService` | `InstrumentAudioService` | Singleton | Configuración de cuerdas, reproducción de audio, vibración de UI |
+
+**ViewModels**: Todos registrados como **Transient** (cada navegación obtiene una nueva instancia, evitando estado residual).
 
 ### 5.2 Lifetime de servicios
 
-| Servicio | Lifetime recomendado | Justificación |
-|----------|---------------------|---------------|
+| Servicio | Lifetime | Justificación |
+|----------|----------|---------------|
 | `LanguageService` | Singleton | Sin estado persistente en memoria, seguro como Singleton |
 | `ThemeService` | Singleton | Sin estado mutable |
 | `DeviceStatusService` | Singleton | Lee datos en cada llamada, sin estado |
+| `NavigationService` | Singleton | Stateless, resuelve páginas desde DI |
 | `MetronomeService` | Singleton | Mantiene referencia a MediaElement y timer; requiere Stop() al salir |
 | `InstrumentAudioService` | Singleton | Mantiene `_borderAudioMap` y `_mediaElement`; requiere ClearAllBorders() al salir |
+| **Todos los ViewModels** | **Transient** | Cada navegación obtiene nueva instancia; evita estado residual entre sesiones |
 
 ---
 
@@ -286,6 +292,8 @@ Sistema de localización custom basado en archivos `.resx`:
 
 ## 8. Modelos de datos
 
+Ubicados en `NavajaSuiza.Core/Models/`:
+
 ### `InstrumentStringData`
 ```csharp
 public class InstrumentStringData
@@ -299,6 +307,9 @@ public class InstrumentStringData
 
 ### `SupportedLanguages`
 Constantes estáticas para códigos de idioma: `"es"`, `"en"`, `"sv"`.
+
+### `AppConstants`
+Constantes centralizadas agrupadas por dominio (Metronome, Framing, Instruments).
 
 ---
 
@@ -382,34 +393,41 @@ Constantes estáticas para códigos de idioma: `"es"`, `"en"`, `"sv"`.
 | 4 | `ImageProcessingService.ProcessImageAsync` lanza `NotImplementedException` | `ImageProcessingService.cs` | Media | ✅ Completado (servicio eliminado) |
 | 5 | Código muerto/comentado en múltiples archivos | Varios | Baja | ✅ Completado |
 | 6 | Carpeta `Behaviors/` vacía | `.csproj` | Baja | ✅ Completado |
-| 7 | ViewModels Singleton → Transient | `MauiProgram.cs` + ViewModels | Alta | ⏸️ Pendiente (requiere test completo) |
+| 7 | ViewModels Singleton → Transient | `MauiProgram.cs` + ViewModels | Alta | ✅ Completado |
 | 8 | `InstrumentStringComponent` resuelve DI manualmente | `InstrumentStringComponent.xaml.cs` | Media | ✅ Completado (AudioService via BindableProperty) |
-| 9 | `MetronomeService` usa `System.Timers.Timer` | `MetronomeService.cs` | Baja | 🔜 Siguiente |
+| 9 | `MetronomeService` usa `System.Timers.Timer` | `MetronomeService.cs` | Baja | ✅ Completado (migrado a PeriodicTimer) |
 | 10 | `B_00_B0.wav` no referenciado | `InstrumentAudioService.cs` | Baja | Pendiente |
 
 ### Fase B — Documentación
 
 | # | Tarea | Archivo | Estado |
 |---|-------|---------|--------|
-| 11 | Actualizar `README.md` con estructura real y objetivo | `README.md` | Pendiente |
+| 11 | Actualizar `README.md` con estructura real | `README.md` | ✅ Completado |
 
 ### Fase C — Separación Core + MAUI
 
 | # | Tarea | Archivo | Estado |
 |---|-------|---------|--------|
 | 12 | Crear proyecto `NavajaSuiza.Core` (Class Library) | `.csproj` + estructura | ✅ Completado |
-| 13 | Migrar interfaces compartidas (`ILanguageService`, `IThemeService`, `IDeviceStatusService`) | Core | ✅ Completado |
+| 13 | Migrar interfaces compartidas | Core | ✅ Completado |
 | 14 | Migrar `SupportedLanguages` a Core | Core/Models | ✅ Completado |
 | 15 | Migrar `BaseViewModel` a Core | Core/ViewModels | ✅ Completado |
 | 16 | Eliminar duplicados en MAUI | MAUI/Services/Interfaces | ✅ Completado |
 | 17 | Actualizar referencias en proyecto MAUI | `.csproj` + usings | ✅ Completado |
 | 18 | Verificar build completo | `dotnet build` | ✅ Completado (0 errores) |
+| 19 | Migrar ViewModels testables a Core | Core/ViewModels | ✅ Completado (12 ViewModels) |
+| 20 | Crear INavigationService en Core | Core/Interfaces | ✅ Completado |
+| 21 | Migrar IInstrumentAudioService/IMetronomeService a Core | Core/Interfaces | ✅ Completado (abstracted con object) |
+| 22 | Migrar InstrumentStringData a Core | Core/Models | ✅ Completado |
+| 23 | Crear AppConstants centralizado | Core | ✅ Completado |
+| 24 | Crear NavigationService en MAUI | MAUI/Services | ✅ Completado |
+| 25 | Crear proyecto de tests | NavajaSuiza.Test | ✅ Completado (29 tests) |
 
 ### Fase D — Enriquecimiento de SKILL.md
 
 | # | Tarea | Archivo | Estado |
 |---|-------|---------|--------|
-| 19 | Agregar sección MAUI completa al SKILL (transversal) | `SKILL.md` | Pendiente |
+| 26 | Agregar sección MAUI completa al SKILL (transversal) | `SKILL.md` | ✅ Completado |
 
 ---
 
@@ -430,10 +448,9 @@ Constantes estáticas para códigos de idioma: `"es"`, `"en"`, `"sv"`.
 
 ### 15.2 Issues pendientes
 
-1. **Singleton → Transient (Issue #7)**: ViewModels con estado (MetronomeViewModel, InstrumentNylonViewModel, etc.) deberían ser Transient para evitar estado residual entre navegaciones. Pendiente de test completo.
-2. **`MetronomeService` usa `System.Timers.Timer`**: Requiere `MainThread.BeginInvokeOnMainThread` para tocar la UI. Podría reemplazarse por `PeriodicTimer` o `DispatcherTimer`.
-3. **`B_00_B0.wav` no referenciado**: Archivo de audio del bajo que no está en la configuración de cuerdas.
-4. **`TestingPage`/`TestingViewModel` vacíos**: Página de pruebas sin implementación.
+1. **`B_00_B0.wav` no referenciado**: Archivo de audio del bajo que no está en la configuración de cuerdas.
+2. **`TestingPage`/`TestingViewModel` vacíos**: Página de pruebas sin implementación.
+3. **AboutPage navigation crash**: `GoToAsync("//AboutPage")` causa `JavaProxyThrowable` en Android. Root cause: Singleton DI + ShellContent conflict.
 
 ---
 

@@ -26,95 +26,75 @@ Navaja suiza digital — app multiplataforma (.NET MAUI) con herramientas de uso
 ```
 NavajaSuiza_.NET10.sln
 │
-├── NavajaSuiza.Core/                    # Class Library (net10.0)
+├── NavajaSuiza.Core/                    # Class Library (net10.0 puro, sin dependencias MAUI)
 │   ├── Interfaces/
 │   │   ├── IDeviceStatusService.cs
 │   │   ├── ILanguageService.cs
-│   │   └── IThemeService.cs
+│   │   ├── IThemeService.cs
+│   │   ├── INavigationService.cs
+│   │   ├── IInstrumentAudioService.cs    # Abstracted con object
+│   │   └── IMetronomeService.cs          # Abstracted con object
 │   ├── Models/
-│   │   └── SupportedLanguages.cs
-│   └── ViewModels/
-│       └── BaseViewModel.cs
+│   │   ├── SupportedLanguages.cs
+│   │   └── InstrumentStringData.cs
+│   ├── ViewModels/
+│   │   ├── BaseViewModel.cs
+│   │   ├── AboutViewModel.cs
+│   │   ├── MenuViewModel.cs
+│   │   ├── MetronomeViewModel.cs
+│   │   ├── TunerViewModel.cs
+│   │   ├── ManualViewModel.cs
+│   │   ├── TestingViewModel.cs
+│   │   ├── InstrumentViewModelBase.cs
+│   │   ├── InstrumentBassViewModel.cs
+│   │   ├── InstrumentCharangoViewModel.cs
+│   │   ├── InstrumentNylonViewModel.cs
+│   │   ├── InstrumentSteelViewModel.cs
+│   │   ├── InstrumentUkuleleViewModel.cs
+│   │   └── InstrumentViolinViewModel.cs
+│   └── AppConstants.cs
 │
-└── NavajaSuiza_.NET10/                  # Proyecto MAUI
-    ├── Converters/
-    │   ├── InvertedBoolConverter.cs
-    │   └── StringNotEmptyToBoolConverter.cs
-    ├── Extensions/
-    │   ├── LocalizationResourceManager.cs
-    │   └── TranslateExtension.cs
-    ├── Models/
-    │   └── InstrumentStringData.cs
-    ├── Pages/
-    │   ├── Components/
-    │   │   ├── InstrumentBody.xaml/cs
-    │   │   ├── InstrumentStringComponent.xaml/cs
-    │   │   └── LoadingComponent.xaml/cs
-    │   ├── AboutPage.xaml/cs
-    │   ├── CompassPage.xaml/cs
-    │   ├── FlashlightPage.xaml/cs
-    │   ├── FramingPage.xaml/cs
-    │   ├── InstrumentBassPage.xaml/cs
-    │   ├── InstrumentCharangoPage.xaml/cs
-    │   ├── InstrumentNylonPage.xaml/cs
-    │   ├── InstrumentSteelPage.xaml/cs
-    │   ├── InstrumentUkulelePage.xaml/cs
-    │   ├── InstrumentViolinPage.xaml/cs
-    │   ├── ManualPage.xaml/cs
-    │   ├── MenuPage.xaml/cs
-    │   ├── MetronomePage.xaml/cs
-    │   ├── ScreenLightPage.xaml/cs
-    │   ├── TestingPage.xaml/cs
-    │   └── TunerPage.xaml/cs
-    ├── Platforms/
-    │   ├── Android/
-    │   ├── iOS/
-    │   ├── MacCatalyst/
-    │   └── Windows/
-    ├── Resources/
-    │   ├── AppIcon/
-    │   ├── Fonts/
-    │   ├── Images/
-    │   ├── Languages/
-    │   │   ├── AppResources.resx       # Default (es-CL)
-    │   │   ├── AppResources.en.resx    # Inglés
-    │   │   └── AppResources.sv.resx    # Sueco
-    │   ├── Raw/                        # Assets de audio WAV
-    │   ├── Splash/
-    │   └── Styles/
-    │       ├── Colors.xaml
-    │       └── Styles.xaml
-    ├── Services/
-    │   ├── Implementations/
-    │   │   ├── DeviceStatusService.cs
-    │   │   ├── InstrumentAudioService.cs
-    │   │   ├── LanguageService.cs
-    │   │   ├── MetronomeService.cs
-    │   │   └── ThemeService.cs
-    │   └── Interfaces/
-    │       ├── IInstrumentAudioService.cs
-    │       └── IMetronomeService.cs
-    ├── ViewModels/
-    │   ├── AboutViewModel.cs
-    │   ├── CompassViewModel.cs
-    │   ├── FlashlightViewModel.cs
-    │   ├── FramingViewModel.cs
-    │   ├── InstrumentBassViewModel.cs
-    │   ├── InstrumentCharangoViewModel.cs
-    │   ├── InstrumentNylonViewModel.cs
-    │   ├── InstrumentSteelViewModel.cs
-    │   ├── InstrumentUkuleleViewModel.cs
-    │   ├── InstrumentViewModelBase.cs
-    │   ├── InstrumentViolinViewModel.cs
-    │   ├── ManualViewModel.cs
-    │   ├── MenuViewModel.cs
-    │   ├── MetronomeViewModel.cs
-    │   ├── ScreenLightViewModel.cs
-    │   ├── TestingViewModel.cs
-    │   └── TunerViewModel.cs
-    ├── App.xaml/cs
-    ├── AppShell.xaml/cs
-    └── MauiProgram.cs
+├── NavajaSuiza_.NET10/                  # Proyecto MAUI
+│   ├── Pages/
+│   │   ├── Components/
+│   │   │   ├── InstrumentBody.xaml/cs
+│   │   │   ├── InstrumentStringComponent.xaml/cs
+│   │   │   └── LoadingComponent.xaml/cs
+│   │   └── *.xaml/cs
+│   ├── ViewModels/                       # Solo ViewModels con APIs de plataforma
+│   │   ├── CompassViewModel.cs
+│   │   ├── FlashlightViewModel.cs
+│   │   ├── FramingViewModel.cs
+│   │   └── ScreenLightViewModel.cs
+│   ├── Services/
+│   │   └── Implementations/
+│   │       ├── DeviceStatusService.cs
+│   │       ├── InstrumentAudioService.cs
+│   │       ├── LanguageService.cs
+│   │       ├── MetronomeService.cs
+│   │       ├── NavigationService.cs
+│   │       └── ThemeService.cs
+│   ├── Converters/
+│   ├── Extensions/
+│   ├── Resources/
+│   │   ├── Languages/
+│   │   │   ├── AppResources.resx       # Default (es-CL)
+│   │   │   ├── AppResources.en.resx    # Inglés
+│   │   │   └── AppResources.sv.resx    # Sueco
+│   │   ├── Raw/                        # Assets de audio WAV
+│   │   └── Styles/
+│   ├── Platforms/
+│   ├── App.xaml/cs
+│   ├── AppShell.xaml/cs
+│   └── MauiProgram.cs
+│
+└── NavajaSuiza.Test/                    # Proyecto de tests (net10.0 puro)
+    ├── BaseViewModelTests.cs
+    ├── AboutViewModelTests.cs
+    ├── MetronomeViewModelTests.cs
+    ├── MenuViewModelTests.cs
+    ├── AppConstantsTests.cs
+    └── InstrumentStringDataTests.cs
 ```
 
 ## Release App
