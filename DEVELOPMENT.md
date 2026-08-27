@@ -283,6 +283,10 @@ Todos los servicios están registrados en `MauiProgram.cs` e inyectados por DI.
 - Dirección cardinal en 16 puntos (N, N-NE, NE, etc.).
 - Indicador de inclinación del dispositivo (pitch/roll via quaternion).
 - Navega hacia atrás si los sensores no son soportados.
+- **Suavizado de ángulo**: Filtro exponencial (α=0.3) para lectura estable sin fluctuaciones rápidas. Maneja wrap-around 360°/0° correctamente.
+- **Eficiencia de batería**: `SensorSpeed.UI` en vez de `SensorSpeed.Fastest`. Suficiente para actualización de UI, menor consumo.
+- **Calibración manual**: Botón "Calibrar Brújula" que ejecuta flujo de 7 segundos (instrucción → calibrando → completado) con texto localizado. No se ejecuta automáticamente al entrar.
+- **Protección contra crashes**: `OnNavigatedTo` síncrono con fire-and-forget seguro (try/catch). Unsubscribe antes de Stop() para evitar eventos post-limpieza.
 
 ### 6.6 Encuadre de imagen (`FramingPage`)
 - Relaciones de aspecto: 1:1, 4:5, 9:16, 16:9.
@@ -429,6 +433,8 @@ Constantes centralizadas agrupadas por dominio (Metronome, Framing, Instruments)
 | 8 | `InstrumentStringComponent` resuelve DI manualmente | `InstrumentStringComponent.xaml.cs` | Media | ✅ Completado (AudioService via BindableProperty) |
 | 9 | `MetronomeService` usa `System.Timers.Timer` | `MetronomeService.cs` | Baja | ✅ Completado (migrado a PeriodicTimer) |
 | 10 | `B_00_B0.wav` no referenciado | `InstrumentAudioService.cs` | Baja | Pendiente |
+| 16 | CompassPage crash Android | `CompassPage.xaml.cs`, `CompassViewModel.cs` | Alta | ✅ Completado |
+| 17 | Compass calibración automática | `CompassViewModel.cs`, `CompassPage.xaml` | Media | ✅ Completado |
 
 ### Fase B — Documentación
 
@@ -482,11 +488,14 @@ Constantes centralizadas agrupadas por dominio (Metronome, Framing, Instruments)
 13. **NavigationService null warnings**: CS8602/CS8604 por desreferencias posiblemente null. Separado en dos pasos con null checks explícitos.
 14. **TunerPage re-entrancy**: Clicks rápidos en botones de instrumentos creaban múltiples instancias. Solucionado con guard `IsBusy` + `InvertedBoolConverter` para deshabilitar botones durante navegación.
 15. **FlashlightStateService sin thread-safety**: Agregado `lock` para proteger acceso concurrente a `IsFlashOn`.
+16. **CompassPage crash en Android**: Navegar desde brújula a About y volver a Menú causaba `JavaProxyThrowable`. Causa: `async void OnNavigatedTo` con `await` de sensores + suscripciones duplicadas a eventos de sensores. Solución: `OnNavigatedTo` síncrono con fire-and-forget seguro, VM cacheado, unsubscribe antes de Stop().
+17. **Compass calibración automática innecesaria**: Calibración se ejecutaba cada vez que se abría la brújula con `Task.Delay` de 7 segundos, causando UX deficiente. Solución: calibración manual con botón + feedback visual con mensajes localizados.
 
 ### 15.2 Issues pendientes
 
 1. **`TestingPage`/`TestingViewModel` vacíos**: Página de pruebas sin implementación.
 2. **AboutPage navigation crash**: `GoToAsync("//AboutPage")` causa `JavaProxyThrowable` en Android. Botón oculto por `IsDevelopment`, no es bug visible. Documentado en `MenuViewModel.cs`.
+3. **`B_00_B0.wav` no referenciado**: Archivo de audio sin uso en instrumentos.
 
 ---
 

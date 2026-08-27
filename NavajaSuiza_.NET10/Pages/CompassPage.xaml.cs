@@ -5,6 +5,7 @@ namespace NavajaSuiza_.NET10.Pages;
 public partial class CompassPage : ContentPage
 {
     private readonly IServiceProvider _serviceProvider;
+    private CompassViewModel? _viewModel;
 
     public CompassPage(IServiceProvider serviceProvider)
     {
@@ -12,23 +13,40 @@ public partial class CompassPage : ContentPage
         _serviceProvider = serviceProvider;
     }
 
-    protected override async void OnNavigatedTo(NavigatedToEventArgs args)
+    protected override void OnNavigatedTo(NavigatedToEventArgs args)
     {
         base.OnNavigatedTo(args);
-        BindingContext = _serviceProvider.GetRequiredService<CompassViewModel>();
 
-        if (BindingContext is CompassViewModel viewModel)
+        if (_viewModel is null)
         {
-            await viewModel.StartSensorsAsync();
+            _viewModel = _serviceProvider.GetRequiredService<CompassViewModel>();
+            BindingContext = _viewModel;
+        }
+
+        _ = StartSensorsSafeAsync();
+    }
+
+    private async Task StartSensorsSafeAsync()
+    {
+        if (_viewModel is null) return;
+        try
+        {
+            await _viewModel.StartSensorsAsync();
+        }
+        catch (Exception)
+        {
         }
     }
 
     protected override void OnDisappearing()
     {
         base.OnDisappearing();
-        if (BindingContext is CompassViewModel viewModel)
+        try
         {
-            viewModel.StopSensors();
+            _viewModel?.StopSensors();
+        }
+        catch (Exception)
+        {
         }
     }
 }

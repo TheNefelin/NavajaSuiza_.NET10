@@ -318,6 +318,21 @@
   <data name="CompassCardinalNorthWestText" xml:space="preserve">
     <value>NORTHWEST</value>
   </data>
+  <data name="CompassCalibrationStartText" xml:space="preserve">
+    <value>Move the device in a figure-8 pattern</value>
+  </data>
+  <data name="CompassCalibrationMiddleText" xml:space="preserve">
+    <value>Calibrating...</value>
+  </data>
+  <data name="CompassCalibrationEndText" xml:space="preserve">
+    <value>Calibration complete</value>
+  </data>
+  <data name="CompassCalibrationIconText" xml:space="preserve">
+    <value>🧭</value>
+  </data>
+  <data name="CompassCalibrateButtonText" xml:space="preserve">
+    <value>Calibrate Compass</value>
+  </data>
   <data name="MenuWelcomeText" xml:space="preserve">
     <value>What do you need today?</value>
   </data>

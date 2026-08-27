@@ -463,6 +463,8 @@ Las mismas reglas de C# y seguridad aplican al frontend MAUI. Anti-patrones que 
 | ViewModel Singleton con estado global compartido | Estado corrupto entre páginas | ViewModel Transiente, servicios como singletons |
 | DataTriggers para estado visual binario | No revierten estilo base en MAUI | `IValueConverter` con Binding directo |
 | Clicks rápidos en navegación crean múltiples instancias | Re-entrancy en `PushAsync` | Guard `IsBusy` + `InvertedBoolConverter` en `IsEnabled` de botones |
+| `async void OnNavigatedTo` con `await` de sensores | Crash al navegar fuera durante el `await` | `OnNavigatedTo` síncrono + fire-and-forget seguro con try/catch |
+| Suscripciones duplicadas a eventos de sensores Singleton | Event handlers apuntando a VMs destruidas → crash | Unsubscribe antes de Subscribe + antes de Stop() en cleanup |
 
 ### Reglas MAUI senior
 - **MVVM**: ViewModel por página, `partial properties` con `[ObservableProperty]` (requiere `<LangVersion>preview</LangVersion>` en csproj), `[RelayCommand]`.
@@ -824,6 +826,8 @@ Para estado visual binario (on/off, active/inactive), usar `IValueConverter` con
 - [ ] MAUI: `PeriodicTimer` en vez de `System.Timers.Timer`.
 - [ ] MAUI: `IValueConverter` con Binding directo en vez de DataTriggers para estado visual.
 - [ ] MAUI: Guard `IsBusy` en comandos de navegación para prevenir re-entrancy.
+- [ ] MAUI: `OnNavigatedTo` síncrono; fire-and-forget con try/catch si hay async, nunca `async void`.
+- [ ] MAUI: Unsubscribe de eventos de sensores antes de Stop() y en cleanup para evitar callbacks post-destrucción.
 
 ---
 
@@ -839,6 +843,7 @@ Para estado visual binario (on/off, active/inactive), usar `IValueConverter` con
 | `AllowAnyOrigin` / `SetIsOriginAllowed(_=>true)` | Allow-list explícita |
 | Hash sin salt o MD5/SHA para contraseñas | PBKDF2 con salt (KDF) |
 | Fire-and-forget / `async void` | `async Task` + manejo central |
+| `async void OnNavigatedTo` con await de sensores | Síncrono + fire-and-forget con try/catch |
 | `catch {}` vacío | Log + estado visible en UI |
 | `HttpClient` nuevo por llamada | Singleton inyectado |
 | SSL bypass en el cliente | Trust del SO; nunca `_ => true` |

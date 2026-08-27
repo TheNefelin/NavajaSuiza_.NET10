@@ -11,7 +11,7 @@ public class CompassSensorService : ICompassService
     public void Start(double speed, bool applyLowPassFilter)
     {
         Compass.Default.ReadingChanged += OnReadingChanged;
-        Compass.Default.Start((SensorSpeed)(int)speed, applyLowPassFilter);
+        Compass.Default.Start(SensorSpeed.UI, applyLowPassFilter);
     }
 
     public void Stop()

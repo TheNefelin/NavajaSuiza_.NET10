@@ -14,6 +14,10 @@ public partial class CompassViewModel : BaseViewModel
     private readonly ICompassService _compassService;
     private readonly IOrientationService _orientationService;
 
+    private const double SmoothingFactor = 0.3;
+    private double _smoothedHeading = -1;
+    private CancellationTokenSource? _calibrationCts;
+
     [ObservableProperty]
     public partial string StatusText { get; set; } = "...";
 
@@ -25,6 +29,12 @@ public partial class CompassViewModel : BaseViewModel
 
     [ObservableProperty]
     public partial double CompassDialRotation { get; set; } = 0.0f;
+
+    [ObservableProperty]
+    public partial bool IsCalibrating { get; set; }
+
+    [ObservableProperty]
+    public partial string CalibrationText { get; set; } = "...";
 
     public CompassViewModel(
         ILogger<CompassViewModel> logger,
@@ -51,29 +61,83 @@ public partial class CompassViewModel : BaseViewModel
             return;
         }
 
+        _compassService.ReadingChanged -= OnCompassReadingChanged;
         _compassService.ReadingChanged += OnCompassReadingChanged;
         _compassService.Start(1, true);
 
+        _orientationService.ReadingChanged -= OnOrientationReadingChanged;
         _orientationService.ReadingChanged += OnOrientationReadingChanged;
         _orientationService.Start(1);
     }
 
     [RelayCommand]
+    private async Task CalibrateAsync()
+    {
+        if (IsCalibrating) return;
+
+        _calibrationCts?.Cancel();
+        _calibrationCts = new CancellationTokenSource();
+        var token = _calibrationCts.Token;
+
+        IsCalibrating = true;
+
+        try
+        {
+            CalibrationText = _languageService.GetString("CompassCalibrationStartText") ?? "Mover el dispositivo en forma de 8";
+            await Task.Delay(3000, token);
+
+            if (token.IsCancellationRequested) return;
+
+            CalibrationText = _languageService.GetString("CompassCalibrationMiddleText") ?? "Calibrando...";
+            await Task.Delay(3000, token);
+
+            if (token.IsCancellationRequested) return;
+
+            CalibrationText = _languageService.GetString("CompassCalibrationEndText") ?? "Calibración completada";
+            await Task.Delay(1000, token);
+
+            IsCalibrating = false;
+        }
+        catch (TaskCanceledException)
+        {
+            IsCalibrating = false;
+        }
+    }
+
+    [RelayCommand]
     public void StopSensors()
     {
-        _compassService.Stop();
-        _compassService.ReadingChanged -= OnCompassReadingChanged;
+        _calibrationCts?.Cancel();
+        IsCalibrating = false;
+        _smoothedHeading = -1;
 
-        _orientationService.Stop();
+        _compassService.ReadingChanged -= OnCompassReadingChanged;
+        _compassService.Stop();
+
         _orientationService.ReadingChanged -= OnOrientationReadingChanged;
+        _orientationService.Stop();
     }
 
     private void OnCompassReadingChanged(object? sender, CompassReadingChangedEventArgs e)
     {
         var angle = e.HeadingMagneticNorth;
-        AngleText = $"{angle:F0}°";
-        CompassDialRotation = 360 - angle;
-        CardinalDirection = GetCardinalDirection(angle);
+
+        if (_smoothedHeading < 0)
+        {
+            _smoothedHeading = angle;
+        }
+        else
+        {
+            double delta = angle - _smoothedHeading;
+            if (delta > 180) delta -= 360;
+            if (delta < -180) delta += 360;
+            _smoothedHeading += SmoothingFactor * delta;
+            _smoothedHeading = (_smoothedHeading % 360 + 360) % 360;
+        }
+
+        AngleText = $"{_smoothedHeading:F0}°";
+        CompassDialRotation = 360 - _smoothedHeading;
+        CardinalDirection = GetCardinalDirection(_smoothedHeading);
     }
 
     private void OnOrientationReadingChanged(object? sender, OrientationReadingChangedEventArgs e)

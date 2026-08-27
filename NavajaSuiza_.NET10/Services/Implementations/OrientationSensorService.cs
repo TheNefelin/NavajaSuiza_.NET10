@@ -11,7 +11,7 @@ public class OrientationSensorService : IOrientationService
     public void Start(double speed)
     {
         OrientationSensor.Default.ReadingChanged += OnReadingChanged;
-        OrientationSensor.Default.Start((SensorSpeed)(int)speed);
+        OrientationSensor.Default.Start(SensorSpeed.UI);
     }
 
     public void Stop()

@@ -318,6 +318,21 @@
   <data name="CompassCardinalNorthWestText" xml:space="preserve">
     <value>NORDVÄST</value>
   </data>
+  <data name="CompassCalibrationStartText" xml:space="preserve">
+    <value>Röra enheten i ett 8-mönster</value>
+  </data>
+  <data name="CompassCalibrationMiddleText" xml:space="preserve">
+    <value>Kalibrerar...</value>
+  </data>
+  <data name="CompassCalibrationEndText" xml:space="preserve">
+    <value>Kalibrering klar</value>
+  </data>
+  <data name="CompassCalibrationIconText" xml:space="preserve">
+    <value>🧭</value>
+  </data>
+  <data name="CompassCalibrateButtonText" xml:space="preserve">
+    <value>Kalibrera kompass</value>
+  </data>
   <data name="MenuWelcomeText" xml:space="preserve">
     <value>Vad behöver du idag?</value>
   </data>
