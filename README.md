@@ -1,4 +1,4 @@
-﻿# NavajaSuiza .NET10
+# NavajaSuiza .NET10
 
 Navaja suiza digital — app multiplataforma (.NET MAUI) con herramientas de uso diario: linterna, luz de pantalla, afinador de instrumentos, metrónomo, brújula, encuadre de imagen y más.
 
@@ -136,6 +136,29 @@ NavajaSuiza_.NET10.sln
    bin/Release/net10.0-android/android-arm64/
    ```
 
+> Si no tenés un keystore, crearlo primero con:
+> `keytool -genkey -v -keystore filename.keystore -alias keystore.alias -keyalg RSA -keysize 2048 -validity 10000`
+
+- Otra forma de hacerlo
+1. Cambiar configuración de **Debug** a **Release**
+2. Click derecho al proyecto `NavajaSuiza_.NET10` → **Properties**
+3. Id a Android → Options y seleccionar en Formato de paquete Android .apk
+4. Click derecho al proyecto `NavajaSuiza_.NET10` → **Publish**
+5. Cuando termine ir a Distribute... y hacer click en Ad Hoc
+6. Click en el + y crear la KEY:         
+    - Alias: Key
+    - Password: ******
+    - Validity: 30
+    - Name: MyName
+    - Organizational Unit: Dev
+    - Organization: MyCompany
+    - City or Location: Valparaíso
+    - State or Province: Valparaíso
+    - Country Code: CL
+7. Seleccionar la llave y Save As
+8. Guardar la llave
+9. Ingresar contraseña, y al terminar de compilar hacer click en Open distribution
+ 
 ### Windows
 
 1. Cambiar a **Release**
