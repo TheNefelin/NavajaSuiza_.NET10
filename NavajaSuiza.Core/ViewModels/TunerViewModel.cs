@@ -18,20 +18,56 @@ public partial class TunerViewModel : BaseViewModel
     }
 
     [RelayCommand]
-    private async Task NavigateToNylon() => await _navigationService.PushAsync("InstrumentNylonPage");
+    private async Task NavigateToNylon()
+    {
+        if (IsBusy) return;
+        IsBusy = true;
+        try { await _navigationService.PushAsync("InstrumentNylonPage"); }
+        finally { IsBusy = false; }
+    }
 
     [RelayCommand]
-    private async Task NavigateToSteel() => await _navigationService.PushAsync("InstrumentSteelPage");
+    private async Task NavigateToSteel()
+    {
+        if (IsBusy) return;
+        IsBusy = true;
+        try { await _navigationService.PushAsync("InstrumentSteelPage"); }
+        finally { IsBusy = false; }
+    }
 
     [RelayCommand]
-    private async Task NavigateToBass() => await _navigationService.PushAsync("InstrumentBassPage");
+    private async Task NavigateToBass()
+    {
+        if (IsBusy) return;
+        IsBusy = true;
+        try { await _navigationService.PushAsync("InstrumentBassPage"); }
+        finally { IsBusy = false; }
+    }
 
     [RelayCommand]
-    private async Task NavigateToUkelele() => await _navigationService.PushAsync("InstrumentUkulelePage");
+    private async Task NavigateToUkelele()
+    {
+        if (IsBusy) return;
+        IsBusy = true;
+        try { await _navigationService.PushAsync("InstrumentUkulelePage"); }
+        finally { IsBusy = false; }
+    }
 
     [RelayCommand]
-    private async Task NavigateToViolin() => await _navigationService.PushAsync("InstrumentViolinPage");
+    private async Task NavigateToViolin()
+    {
+        if (IsBusy) return;
+        IsBusy = true;
+        try { await _navigationService.PushAsync("InstrumentViolinPage"); }
+        finally { IsBusy = false; }
+    }
 
     [RelayCommand]
-    private async Task NavigateToCharango() => await _navigationService.PushAsync("InstrumentCharangoPage");
+    private async Task NavigateToCharango()
+    {
+        if (IsBusy) return;
+        IsBusy = true;
+        try { await _navigationService.PushAsync("InstrumentCharangoPage"); }
+        finally { IsBusy = false; }
+    }
 }

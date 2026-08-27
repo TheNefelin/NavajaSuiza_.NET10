@@ -6,11 +6,12 @@ public class NavigationService : INavigationService
 {
     public async Task PushAsync(string pageName)
     {
-        var page = Shell.Current.Handler.MauiContext?.Services.GetService(
-            Type.GetType($"NavajaSuiza_.NET10.Pages.{pageName}, NavajaSuiza_.NET10"))
-            as Page;
+        var pageType = Type.GetType($"NavajaSuiza_.NET10.Pages.{pageName}, NavajaSuiza_.NET10");
+        if (pageType is null)
+            return;
 
-        if (page != null)
+        var page = Shell.Current.Handler?.MauiContext?.Services.GetService(pageType) as Page;
+        if (page is not null)
             await Shell.Current.Navigation.PushAsync(page);
     }
 

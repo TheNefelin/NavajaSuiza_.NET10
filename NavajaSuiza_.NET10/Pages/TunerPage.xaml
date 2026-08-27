@@ -2,8 +2,13 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
              xmlns:extensions="clr-namespace:NavajaSuiza_.NET10.Extensions"
+             xmlns:converters="clr-namespace:NavajaSuiza_.NET10.Converters"
              x:Class="NavajaSuiza_.NET10.Pages.TunerPage"
              Title="{extensions:Translate TunerText}">
+
+    <ContentPage.Resources>
+        <converters:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+    </ContentPage.Resources>
 
     <ScrollView>
         <VerticalStackLayout 
@@ -42,8 +47,8 @@
                     Margin="8,0,8,16"
                     Padding="25,15,25,10"
                     WidthRequest="120" 
-                    HeightRequest="120" 
-                />
+                    HeightRequest="120"
+                    IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}" />
 
                 <Button
                     Text="{extensions:Translate TunerSteelText}"
@@ -54,8 +59,8 @@
                     Margin="8,0,8,16"
                     Padding="25,15,25,10"
                     WidthRequest="120" 
-                    HeightRequest="120" 
-                />
+                    HeightRequest="120"
+                    IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}" />
 
                 <Button
                     Text="{extensions:Translate TunerBassText}"
@@ -66,8 +71,8 @@
                     Margin="8,0,8,16"
                     Padding="25,15,25,10"
                     WidthRequest="120" 
-                    HeightRequest="120" 
-                />
+                    HeightRequest="120"
+                    IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}" />
 
                 <Button
                     Text="{extensions:Translate TunerUkeleleText}"
@@ -78,8 +83,8 @@
                     Margin="8,0,8,16"
                     Padding="25,15,25,10"
                     WidthRequest="120" 
-                    HeightRequest="120" 
-                />
+                    HeightRequest="120"
+                    IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}" />
 
                 <Button
                     Text="{extensions:Translate TunerViolinText}"
@@ -90,8 +95,8 @@
                     Margin="8,0,8,16"
                     Padding="25,15,25,10"
                     WidthRequest="120" 
-                    HeightRequest="120" 
-                />
+                    HeightRequest="120"
+                    IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}" />
 
                 <Button
                     Text="{extensions:Translate TunerCharangoText}"
@@ -102,8 +107,8 @@
                     Margin="8,0,8,16"
                     Padding="25,15,25,10"
                     WidthRequest="120" 
-                    HeightRequest="120" 
-                />
+                    HeightRequest="120"
+                    IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}" />
             </FlexLayout>
         </VerticalStackLayout>
     </ScrollView>

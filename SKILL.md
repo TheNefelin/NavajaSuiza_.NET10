@@ -462,6 +462,7 @@ Las mismas reglas de C# y seguridad aplican al frontend MAUI. Anti-patrones que 
 | `System.Timers.Timer` tocando la UI desde otro hilo | Race conditions / crashes de UI | `PeriodicTimer` (async) o `MainThread.InvokeOnMainThreadAsync` |
 | ViewModel Singleton con estado global compartido | Estado corrupto entre páginas | ViewModel Transiente, servicios como singletons |
 | DataTriggers para estado visual binario | No revierten estilo base en MAUI | `IValueConverter` con Binding directo |
+| Clicks rápidos en navegación crean múltiples instancias | Re-entrancy en `PushAsync` | Guard `IsBusy` + `InvertedBoolConverter` en `IsEnabled` de botones |
 
 ### Reglas MAUI senior
 - **MVVM**: ViewModel por página, `partial properties` con `[ObservableProperty]` (requiere `<LangVersion>preview</LangVersion>` en csproj), `[RelayCommand]`.
@@ -822,6 +823,7 @@ Para estado visual binario (on/off, active/inactive), usar `IValueConverter` con
 - [ ] MAUI: Components con BindableProperty, nunca Service Locator.
 - [ ] MAUI: `PeriodicTimer` en vez de `System.Timers.Timer`.
 - [ ] MAUI: `IValueConverter` con Binding directo en vez de DataTriggers para estado visual.
+- [ ] MAUI: Guard `IsBusy` en comandos de navegación para prevenir re-entrancy.
 
 ---
 

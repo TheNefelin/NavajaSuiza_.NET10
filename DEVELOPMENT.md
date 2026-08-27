@@ -218,14 +218,14 @@ Todos los servicios están registrados en `MauiProgram.cs` e inyectados por DI.
 | `ILanguageService` | `LanguageService` | Singleton | Localización, cambio de idioma, persistencia en `Preferences` |
 | `IThemeService` | `ThemeService` | Singleton | Tema oscuro/claro, persistencia, status bar (Android) |
 | `IDeviceStatusService` | `DeviceStatusService` | Singleton | Nivel de batería y almacenamiento disponible |
-| `INavigationService` | `NavigationService` | Transient | Navegación Shell (`PushAsync`, `GoToAsync`, `DisplayAlertAsync`) |
+| `INavigationService` | `NavigationService` | Transient | Navegación Shell (`PushAsync`, `GoToAsync`, `DisplayAlertAsync`), null-safe |
 | `ICompassService` | `CompassSensorService` | Singleton | Lectura de brújula (`Compass.Default`) |
 | `IOrientationService` | `OrientationSensorService` | Singleton | Lectura de orientación (`OrientationSensor.Default`) |
 | `IFlashlightService` | `FlashlightService` | Singleton | Control de flash (`Flashlight.Default`) |
 | `IDeviceDisplayService` | `DeviceDisplayService` | Singleton | Control de brillo y `KeepScreenOn` |
 | `IImagePickerService` | `ImagePickerService` | Singleton | Selección de imagen (`FilePicker`) |
 | `IScreenBrightnessService` | `ScreenBrightnessService` | Singleton | Brillo de pantalla nativo (Android) |
-| `IFlashlightStateService` | `FlashlightStateService` (Core) | Singleton | Persistencia de estado flash entre recreaciones de VM |
+| `IFlashlightStateService` | `FlashlightStateService` (Core) | Singleton | Persistencia de estado flash entre recreaciones de VM, thread-safe con lock |
 | `IMetronomeService` | `MetronomeService` | Transient | Metrónomo con `PeriodicTimer` y reproducción de audio |
 | `IInstrumentAudioService` | `InstrumentAudioService` | Transient | Configuración de cuerdas, reproducción de audio, vibración |
 
@@ -360,6 +360,7 @@ Constantes centralizadas agrupadas por dominio (Metronome, Framing, Instruments)
 |-----------|---------|
 | `BoolToLocalizedStringConverter` | Convierte `bool` a string localizado (TrueResourceKey/FalseResourceKey) |
 | `BoolToColorConverter` | Convierte `bool` a color (TrueColor/FalseColor). Soporta `FalseColorLight`/`FalseColorDark` para theme-aware |
+| `InvertedBoolConverter` | Invierte `bool` (true→false, false→true). Usado para `!IsBusy` en bindings de IsEnabled |
 
 ---
 
@@ -478,6 +479,9 @@ Constantes centralizadas agrupadas por dominio (Metronome, Framing, Instruments)
 10. **UTF-8 encoding corregido** en archivos que tenían caracteres corruptos.
 11. **FlashlightPage DataTrigger stuck**: DataTriggers no revertían estilo base al desactivarse. Reemplazados por `BoolToColorConverter` con Binding directo y soporte theme-aware (`FalseColorLight`/`FalseColorDark`).
 12. **FlashlightViewModel Transient sin persistencia**: `IFlashlightStateService` (Singleton) ahora persiste estado `IsFlashOn` entre recreaciones de VM.
+13. **NavigationService null warnings**: CS8602/CS8604 por desreferencias posiblemente null. Separado en dos pasos con null checks explícitos.
+14. **TunerPage re-entrancy**: Clicks rápidos en botones de instrumentos creaban múltiples instancias. Solucionado con guard `IsBusy` + `InvertedBoolConverter` para deshabilitar botones durante navegación.
+15. **FlashlightStateService sin thread-safety**: Agregado `lock` para proteger acceso concurrente a `IsFlashOn`.
 
 ### 15.2 Issues pendientes
 
