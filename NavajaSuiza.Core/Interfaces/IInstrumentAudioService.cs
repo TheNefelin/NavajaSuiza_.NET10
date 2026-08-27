@@ -1,8 +1,7 @@
-﻿using CommunityToolkit.Maui.Views;
-using NavajaSuiza_.NET10.Models;
 using System.Collections.ObjectModel;
+using NavajaSuiza.Core.Models;
 
-namespace NavajaSuiza_.NET10.Services.Interfaces;
+namespace NavajaSuiza.Core.Interfaces;
 
 public interface IInstrumentAudioService
 {
@@ -12,9 +11,9 @@ public interface IInstrumentAudioService
     ObservableCollection<InstrumentStringData> GetUkeleleStringConfig();
     ObservableCollection<InstrumentStringData> GetViolinStringConfig();
     ObservableCollection<InstrumentStringData> GetCharangoStringConfig();
-    void RegisterMediaElement(MediaElement mediaElement);
-    void RegisterStringBorder(Border border, string audioName);
-    Task StringTappedAsync(Border border);
+    void RegisterMediaElement(object mediaElement);
+    void RegisterStringBorder(object border, string audioName);
+    Task StringTappedAsync(object border);
     Task StopAllStringAsync();
     void ClearAllBorders();
 }

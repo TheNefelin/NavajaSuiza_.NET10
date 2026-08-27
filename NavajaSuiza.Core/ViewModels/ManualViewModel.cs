@@ -1,12 +1,14 @@
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
-using NavajaSuiza.Core.ViewModels;
+using NavajaSuiza.Core.Interfaces;
 
-namespace NavajaSuiza_.NET10.ViewModels;
+namespace NavajaSuiza.Core.ViewModels;
 
 public partial class ManualViewModel : BaseViewModel
 {
     private readonly ILogger<ManualViewModel> _logger;
-    
+
     public ManualViewModel(
         ILogger<ManualViewModel> logger)
     {

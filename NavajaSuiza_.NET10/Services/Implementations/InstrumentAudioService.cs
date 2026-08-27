@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Maui.Views;
 using Microsoft.Extensions.Logging;
-using NavajaSuiza_.NET10.Models;
-using NavajaSuiza_.NET10.Services.Interfaces;
+using NavajaSuiza.Core.Interfaces;
+using NavajaSuiza.Core.Models;
 using System.Collections.ObjectModel;
 
 namespace NavajaSuiza_.NET10.Services.Implementations;
@@ -73,7 +73,7 @@ public class InstrumentAudioService : IInstrumentAudioService
         return new ObservableCollection<InstrumentStringData>()
         {
             new InstrumentStringData { Note = "G3", AudioName = "V_01_G3.wav", Description = "196.00 Hz", Thickness = 1 },
-            new InstrumentStringData { Note = "D4", AudioName = "V_02_D4.wav", Description = "293.66 Hz", Thickness = 1 },
+            new InstrumentStringData { Note = "D4", AudioName = "V_02_D3.wav", Description = "293.66 Hz", Thickness = 1 },
             new InstrumentStringData { Note = "A4", AudioName = "V_03_A4.wav", Description = "440.00 Hz", Thickness = 1 },
             new InstrumentStringData { Note = "E5", AudioName = "V_04_E5.wav", Description = "659.26 Hz", Thickness = 1 }
         };
@@ -87,27 +87,30 @@ public class InstrumentAudioService : IInstrumentAudioService
             new InstrumentStringData { Note = "C5", AudioName = "C_02_C5.wav", Description = "x2", Thickness = 2 },
             new InstrumentStringData { Note = "E5", AudioName = "C_03_E5.wav", Description = "659.26 Hz", Thickness = 1 },
             new InstrumentStringData { Note = "E4", AudioName = "C_04_E4.wav", Description = "329.63 Hz", Thickness = 5 },
-            new InstrumentStringData { Note = "A4", AudioName = "C_05_A4.wav", Description = "x2", Thickness = 4 },
-            new InstrumentStringData { Note = "E5", AudioName = "C_06_E5.wav", Description = "x2", Thickness = 1 }
+            new InstrumentStringData { Note = "A4", AudioName = "C_05_A5.wav", Description = "x2", Thickness = 4 },
+            new InstrumentStringData { Note = "E5", AudioName = "C_06_E6.wav", Description = "x2", Thickness = 1 }
         };
     }
 
-    public void RegisterMediaElement(MediaElement mediaElement)
+    public void RegisterMediaElement(object mediaElement)
     {
-        _mediaElement = mediaElement;
+        _mediaElement = mediaElement as MediaElement;
     }
 
-    public void RegisterStringBorder(Border border, string audioName)
+    public void RegisterStringBorder(object border, string audioName)
     {
-        _borderAudioMap[border] = audioName;
-        _logger.LogInformation("Registered border with audio {AudioName}", audioName);
-    }
-
-    public async Task StringTappedAsync(Border border)
-    {
-        if (_borderAudioMap.TryGetValue(border, out var audioName))
+        if (border is Border b)
         {
-            StartVibration(border);
+            _borderAudioMap[b] = audioName;
+            _logger.LogInformation("Registered border with audio {AudioName}", audioName);
+        }
+    }
+
+    public async Task StringTappedAsync(object border)
+    {
+        if (border is Border b && _borderAudioMap.TryGetValue(b, out var audioName))
+        {
+            StartVibration(b);
             await PlayAudioAsync(audioName);
         }
         else
@@ -118,8 +121,10 @@ public class InstrumentAudioService : IInstrumentAudioService
 
     public async Task StopAllStringAsync()
     {
-        StopVibration(_currentlyVibrating!);
+        if (_currentlyVibrating != null)
+            StopVibration(_currentlyVibrating);
         StopAudio();
+        await Task.CompletedTask;
     }
 
     public void ClearAllBorders()
@@ -132,10 +137,9 @@ public class InstrumentAudioService : IInstrumentAudioService
     {
         try
         {
-            // Detener vibración anterior
             if (_currentlyVibrating != null)
             {
-        StopVibration(_currentlyVibrating!);
+                StopVibration(_currentlyVibrating);
             }
 
             _currentlyVibrating = border;

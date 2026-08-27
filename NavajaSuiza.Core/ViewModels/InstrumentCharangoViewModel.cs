@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Logging;
-using NavajaSuiza_.NET10.Services.Interfaces;
+using NavajaSuiza.Core.Interfaces;
 
-namespace NavajaSuiza_.NET10.ViewModels;
+namespace NavajaSuiza.Core.ViewModels;
 
 public partial class InstrumentCharangoViewModel : InstrumentViewModelBase
 {

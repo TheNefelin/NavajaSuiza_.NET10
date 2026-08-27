@@ -1,8 +1,9 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using Microsoft.Extensions.Logging;
 using NavajaSuiza.Core.Interfaces;
-using NavajaSuiza.Core.ViewModels;
 
-namespace NavajaSuiza_.NET10.ViewModels;
+namespace NavajaSuiza.Core.ViewModels;
 
 public partial class AboutViewModel : BaseViewModel
 {

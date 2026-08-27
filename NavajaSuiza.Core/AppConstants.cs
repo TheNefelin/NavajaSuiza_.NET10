@@ -1,4 +1,4 @@
-namespace NavajaSuiza_.NET10;
+namespace NavajaSuiza.Core;
 
 public static class AppConstants
 {

@@ -1,5 +1,5 @@
 ﻿using CommunityToolkit.Maui.Views;
-using NavajaSuiza_.NET10.Services.Interfaces;
+using NavajaSuiza.Core.Interfaces;
 
 namespace NavajaSuiza_.NET10.Services.Implementations;
 
@@ -11,15 +11,15 @@ public class MetronomeService : IMetronomeService
     private MediaElement? _accentMediaElement;
     private MediaElement? _normalMediaElement;
 
-    public void SetMediaElement(
-        MediaElement accentMediaElement,
-        MediaElement normalMediaElement)
+    public void SetMediaElement(object accentMediaElement, object normalMediaElement)
     {
-        _accentMediaElement = accentMediaElement;
-        _normalMediaElement = normalMediaElement;
+        _accentMediaElement = accentMediaElement as MediaElement;
+        _normalMediaElement = normalMediaElement as MediaElement;
 
-        _accentMediaElement.Source = MediaSource.FromResource("tik_50ms_1000hz.wav");
-        _normalMediaElement.Source = MediaSource.FromResource("tik_50ms_800hz.wav");
+        if (_accentMediaElement != null)
+            _accentMediaElement.Source = MediaSource.FromResource("tik_50ms_1000hz.wav");
+        if (_normalMediaElement != null)
+            _normalMediaElement.Source = MediaSource.FromResource("tik_50ms_800hz.wav");
     }
 
     public void Start(int currentBPM, string selectedTimeSignature)

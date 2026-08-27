@@ -1,13 +1,11 @@
-using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
-using NavajaSuiza_.NET10.Models;
-using NavajaSuiza_.NET10.Services.Interfaces;
-using NavajaSuiza.Core.ViewModels;
+using NavajaSuiza.Core.Interfaces;
+using NavajaSuiza.Core.Models;
 using System.Collections.ObjectModel;
 
-namespace NavajaSuiza_.NET10.ViewModels;
+namespace NavajaSuiza.Core.ViewModels;
 
 public abstract partial class InstrumentViewModelBase : BaseViewModel
 {
@@ -42,7 +40,7 @@ public abstract partial class InstrumentViewModelBase : BaseViewModel
         IsBusy = true;
     }
 
-    public void RegisterMediaElement(MediaElement mediaElement)
+    public void RegisterMediaElement(object mediaElement)
     {
         _logger.LogInformation("Registering MediaElement in {InstrumentName}", GetType().Name);
         InstrumentAudioService.RegisterMediaElement(mediaElement);

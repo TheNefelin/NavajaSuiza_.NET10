@@ -1,3 +1,4 @@
+using NavajaSuiza.Core.ViewModels;
 using NavajaSuiza_.NET10.ViewModels;
 
 namespace NavajaSuiza_.NET10.Pages;

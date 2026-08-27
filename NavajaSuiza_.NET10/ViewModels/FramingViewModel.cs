@@ -1,6 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
+using NavajaSuiza.Core;
 using NavajaSuiza.Core.Interfaces;
 using NavajaSuiza.Core.ViewModels;
 
@@ -8,11 +9,6 @@ namespace NavajaSuiza_.NET10.ViewModels;
 
 public partial class FramingViewModel : BaseViewModel
 {
-    // 1:1 (cuadrado) BtnSquare
-    // 4:5 (vertical) Portrait
-    // 9:16 (vertical stories) Stories
-    // 16:9 (horizontal) Landscape
-
     private readonly ILogger<FramingViewModel> _logger;
     private readonly ILanguageService _languageService;
 
@@ -39,8 +35,6 @@ public partial class FramingViewModel : BaseViewModel
 
     [ObservableProperty]
     public partial double CanvasHeight { get; set; }
-
-    private const double MAX_CANVAS_WIDTH = 500;
 
     [ObservableProperty]
     public partial int BlurIntensity { get; set; } = AppConstants.Framing.DefaultBlurIntensity;
@@ -88,7 +82,7 @@ public partial class FramingViewModel : BaseViewModel
     {
         CanvasWidth = width;
         CanvasHeight = width;
-    }      
+    }
 
     [RelayCommand]
     private void SetAspectRatio(string ratio)
@@ -96,7 +90,6 @@ public partial class FramingViewModel : BaseViewModel
         AspectRatio = ratio;
         UpdateAspectRatioName(ratio);
 
-        // Calcular nueva altura
         if (_aspectRatios.TryGetValue(ratio, out var heightMultiplier))
         {
             CanvasHeight = CanvasWidth * heightMultiplier;
@@ -117,12 +110,12 @@ public partial class FramingViewModel : BaseViewModel
         if (background == AppConstants.Framing.DefaultCanvasBackground)
         {
             CanvasBackgroundColor = "Transparent";
-            CanvasBackgroundOpacity = 1.0f;
-        } 
+            CanvasBackgroundOpacity = AppConstants.Framing.DefaultCanvasBackgroundOpacity;
+        }
         else
         {
             CanvasBackgroundColor = CanvasBackground;
-            CanvasBackgroundOpacity = 0.0f;
+            CanvasBackgroundOpacity = 0.0;
         }
     }
 
@@ -136,7 +129,7 @@ public partial class FramingViewModel : BaseViewModel
         });
 
         if (result == null) return;
-        
+
         LoadedImage = ImageSource.FromFile(result.FullPath);
     }
 }

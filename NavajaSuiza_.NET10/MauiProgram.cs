@@ -1,10 +1,10 @@
 using CommunityToolkit.Maui;
 using Microsoft.Extensions.Logging;
 using NavajaSuiza_.NET10.Pages;
-using NavajaSuiza_.NET10.ViewModels;
 using NavajaSuiza_.NET10.Services.Implementations;
+using NavajaSuiza_.NET10.ViewModels;
 using NavajaSuiza.Core.Interfaces;
-using NavajaSuiza_.NET10.Services.Interfaces;
+using NavajaSuiza.Core.ViewModels;
 using Syncfusion.Maui.Toolkit.Hosting;
 
 namespace NavajaSuiza_.NET10;
@@ -35,7 +35,6 @@ public static class MauiProgram
                 .AddDebug()
                 .SetMinimumLevel(LogLevel.Trace));
 #else
-    // En Release también queremos logs
     builder.Services.AddLogging(configure =>
         configure
             .AddDebug()
@@ -53,6 +52,7 @@ public static class MauiProgram
             .AddSingleton<IDeviceStatusService, DeviceStatusService>()
             .AddTransient<IInstrumentAudioService, InstrumentAudioService>()
             .AddTransient<IMetronomeService, MetronomeService>()
+            .AddTransient<INavigationService, NavigationService>()
             ;
 
         builder.Services

@@ -10,6 +10,7 @@ public partial class CompassViewModel : BaseViewModel
 {
     private readonly ILogger<CompassViewModel> _logger;
     private readonly ILanguageService _languageService;
+    private readonly INavigationService _navigationService;
 
     [ObservableProperty]
     public partial string StatusText { get; set; } = "...";
@@ -25,10 +26,12 @@ public partial class CompassViewModel : BaseViewModel
 
     public CompassViewModel(
         ILogger<CompassViewModel> logger,
-        ILanguageService languageService)
+        ILanguageService languageService,
+        INavigationService navigationService)
     {
         _logger = logger;
         _languageService = languageService;
+        _navigationService = navigationService;
     }
 
     [RelayCommand]
@@ -37,8 +40,8 @@ public partial class CompassViewModel : BaseViewModel
         if (!Compass.Default.IsSupported || !OrientationSensor.Default.IsSupported)
         {
             _logger.LogWarning("Navigating back due to unsupported sensors");
-            await Shell.Current.DisplayAlertAsync("Error", "Los sensores necesarios no son soportados en este dispositivo.", "OK");
-            await Shell.Current.GoToAsync("..");
+            await _navigationService.DisplayAlertAsync("Error", "Los sensores necesarios no son soportados en este dispositivo.", "OK");
+            await _navigationService.GoToAsync("..");
             return;
         }
 
@@ -73,21 +76,17 @@ public partial class CompassViewModel : BaseViewModel
     {
         var reading = e.Reading;
 
-        // Método PRECISO usando Quaternion
         double q0 = reading.Orientation.W;
         double q1 = reading.Orientation.X;
         double q2 = reading.Orientation.Y;
         double q3 = reading.Orientation.Z;
 
-        // Calcular pitch (inclinación frontal) y roll (inclinación lateral)
         double pitch = Math.Asin(2 * (q0 * q2 - q3 * q1));
         double roll = Math.Atan2(2 * (q0 * q1 + q2 * q3), 1 - 2 * (q1 * q1 + q2 * q2));
 
-        // Convertir a grados y tomar valor absoluto
         pitch = Math.Abs(pitch * (180.0 / Math.PI));
         roll = Math.Abs(roll * (180.0 / Math.PI));
 
-        // La inclinación total es el máximo de pitch y roll
         double tiltDegrees = Math.Max(pitch, roll);
 
         StatusText = GetTiltStatus(tiltDegrees);
@@ -98,22 +97,22 @@ public partial class CompassViewModel : BaseViewModel
         heading = (heading % 360 + 360) % 360;
 
         string[] directions = {
-            _languageService.GetString("CompassCardinalNorthText"), //N
-            $"{_languageService.GetString("CompassCardinalNorthText")}-{_languageService.GetString("CompassCardinalNorthEastText")}", //N-NE
-            _languageService.GetString("CompassCardinalNorthEastText"), //NE
-            $"{_languageService.GetString("CompassCardinalEastText")}-{_languageService.GetString("CompassCardinalNorthEastText")}", //E-NE
-            _languageService.GetString("CompassCardinalEastText"), //E
-            $"{_languageService.GetString("CompassCardinalEastText")}-{_languageService.GetString("CompassCardinalSouthEastText")}", //E-SE
-            _languageService.GetString("CompassCardinalSouthEastText"), //SE
-            $"{_languageService.GetString("CompassCardinalSouthText")}-{_languageService.GetString("CompassCardinalSouthEastText")}", //S-SE
-            _languageService.GetString("CompassCardinalSouthText"), //S
-            $"{_languageService.GetString("CompassCardinalSouthText")}-{_languageService.GetString("CompassCardinalSouthWestText")}", //S-SW
-            _languageService.GetString("CompassCardinalSouthWestText"), //SW
-            $"{_languageService.GetString("CompassCardinalWestText")}-{_languageService.GetString("CompassCardinalSouthWestText")}", //W-SW
-            _languageService.GetString("CompassCardinalWestText"), //W
-            $"{_languageService.GetString("CompassCardinalWestText")}-{_languageService.GetString("CompassCardinalNorthWestText")}", //W-NW
-            _languageService.GetString("CompassCardinalNorthWestText"), //NW
-            $"{_languageService.GetString("CompassCardinalNorthText")}-{_languageService.GetString("CompassCardinalNorthWestText")}" //N-NW
+            _languageService.GetString("CompassCardinalNorthText"),
+            $"{_languageService.GetString("CompassCardinalNorthText")}-{_languageService.GetString("CompassCardinalNorthEastText")}",
+            _languageService.GetString("CompassCardinalNorthEastText"),
+            $"{_languageService.GetString("CompassCardinalEastText")}-{_languageService.GetString("CompassCardinalNorthEastText")}",
+            _languageService.GetString("CompassCardinalEastText"),
+            $"{_languageService.GetString("CompassCardinalEastText")}-{_languageService.GetString("CompassCardinalSouthEastText")}",
+            _languageService.GetString("CompassCardinalSouthEastText"),
+            $"{_languageService.GetString("CompassCardinalSouthText")}-{_languageService.GetString("CompassCardinalSouthEastText")}",
+            _languageService.GetString("CompassCardinalSouthText"),
+            $"{_languageService.GetString("CompassCardinalSouthText")}-{_languageService.GetString("CompassCardinalSouthWestText")}",
+            _languageService.GetString("CompassCardinalSouthWestText"),
+            $"{_languageService.GetString("CompassCardinalWestText")}-{_languageService.GetString("CompassCardinalSouthWestText")}",
+            _languageService.GetString("CompassCardinalWestText"),
+            $"{_languageService.GetString("CompassCardinalWestText")}-{_languageService.GetString("CompassCardinalNorthWestText")}",
+            _languageService.GetString("CompassCardinalNorthWestText"),
+            $"{_languageService.GetString("CompassCardinalNorthText")}-{_languageService.GetString("CompassCardinalNorthWestText")}"
         };
 
         int index = (int)Math.Round(heading / 22.5) % 16;
@@ -121,7 +120,7 @@ public partial class CompassViewModel : BaseViewModel
     }
 
     private string GetTiltStatus(double tiltDegrees)
-    {        
+    {
         if (tiltDegrees < 10) return _languageService.GetString("CompassStatusAText");
         if (tiltDegrees < 25) return _languageService.GetString("CompassStatusBText");
         if (tiltDegrees < 45) return _languageService.GetString("CompassStatusCText");

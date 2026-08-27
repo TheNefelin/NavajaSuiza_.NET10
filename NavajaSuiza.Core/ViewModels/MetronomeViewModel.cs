@@ -1,11 +1,9 @@
-using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
-using NavajaSuiza_.NET10.Services.Interfaces;
-using NavajaSuiza.Core.ViewModels;
+using NavajaSuiza.Core.Interfaces;
 
-namespace NavajaSuiza_.NET10.ViewModels;
+namespace NavajaSuiza.Core.ViewModels;
 
 public partial class MetronomeViewModel : BaseViewModel
 {
@@ -29,7 +27,7 @@ public partial class MetronomeViewModel : BaseViewModel
         _metronomeService = metronomeService;
     }
 
-    public void RegisterMediaElement(MediaElement accentMediaElement, MediaElement normalMediaElement)
+    public void RegisterMediaElement(object accentMediaElement, object normalMediaElement)
     {
         _metronomeService.SetMediaElement(accentMediaElement, normalMediaElement);
     }

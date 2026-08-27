@@ -1,4 +1,4 @@
-﻿namespace NavajaSuiza_.NET10.Models;
+namespace NavajaSuiza.Core.Models;
 
 public class InstrumentStringData
 {

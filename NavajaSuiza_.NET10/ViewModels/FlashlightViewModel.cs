@@ -1,6 +1,5 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using NavajaSuiza_.NET10.Pages;
 using NavajaSuiza.Core.Interfaces;
 using NavajaSuiza.Core.ViewModels;
 
@@ -8,7 +7,7 @@ namespace NavajaSuiza_.NET10.ViewModels;
 
 public partial class FlashlightViewModel : BaseViewModel
 {
-    private readonly IServiceProvider _serviceProvider;
+    private readonly INavigationService _navigationService;
     private readonly ILanguageService _languageService;
 
     [ObservableProperty]
@@ -21,12 +20,11 @@ public partial class FlashlightViewModel : BaseViewModel
     public partial bool IsLightOn { get; set; }
 
     public FlashlightViewModel(
-        IServiceProvider serviceProvider,
+        INavigationService navigationService,
         ILanguageService languageService)
     {
-        _serviceProvider = serviceProvider;
+        _navigationService = navigationService;
         _languageService = languageService;
-        // Suscríbete a cambios de idioma
         _languageService.LanguageChanged += OnLanguageChanged;
     }
 
@@ -59,10 +57,10 @@ public partial class FlashlightViewModel : BaseViewModel
         }
         catch (Exception)
         {
-            IsFlashOn = !IsFlashOn; // Revierte el cambio si falla
+            IsFlashOn = !IsFlashOn;
         }
     }
-  
+
     [RelayCommand]
     private async Task ClickScreen()
     {
@@ -72,8 +70,7 @@ public partial class FlashlightViewModel : BaseViewModel
         {
             if (IsScreenOn)
             {
-                var screenLightPage = _serviceProvider.GetRequiredService<ScreenLightPage>();
-                await Shell.Current.Navigation.PushAsync(screenLightPage);
+                await _navigationService.PushAsync("ScreenLightPage");
                 IsScreenOn = false;
             }
             else
