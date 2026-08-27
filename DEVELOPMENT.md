@@ -227,7 +227,7 @@ Todos los servicios están registrados en `MauiProgram.cs` e inyectados por DI.
 | `IScreenBrightnessService` | `ScreenBrightnessService` | Singleton | Brillo de pantalla nativo (Android) |
 | `IFlashlightStateService` | `FlashlightStateService` (Core) | Singleton | Persistencia de estado flash entre recreaciones de VM, thread-safe con lock |
 | `IMetronomeService` | `MetronomeService` | Transient | Metrónomo con `PeriodicTimer` y reproducción de audio |
-| `IInstrumentAudioService` | `InstrumentAudioService` | Transient | Configuración de cuerdas, reproducción de audio, vibración |
+| `IInstrumentAudioService` | `InstrumentAudioService` | Singleton | Administra audio e interpolación de vibración de instrumentos. Singleton necesario para control centralizado del MediaElement y parada garantizada al cambiar de tab. |
 
 **ViewModels**: Todos registrados como **Transient** (cada navegación obtiene una nueva instancia, evitando estado residual).
 
@@ -247,7 +247,7 @@ Todos los servicios están registrados en `MauiProgram.cs` e inyectados por DI.
 | `ScreenBrightnessService` | Singleton | Control de brillo nativo Android |
 | `FlashlightStateService` | Singleton | Persiste estado flash entre recreaciones de VM |
 | `MetronomeService` | Transient | Timer y estado por instancia |
-| `InstrumentAudioService` | Transient | Estado de audio por instancia |
+| `InstrumentAudioService` | Singleton | Control centralizado del MediaElement y audio |
 | **Todos los ViewModels** | **Transient** | Cada navegación obtiene nueva instancia; evita estado residual entre sesiones |
 
 ---
@@ -435,6 +435,7 @@ Constantes centralizadas agrupadas por dominio (Metronome, Framing, Instruments)
 | 10 | `B_00_B0.wav` no referenciado | `InstrumentAudioService.cs` | Baja | Pendiente |
 | 16 | CompassPage crash Android | `CompassPage.xaml.cs`, `CompassViewModel.cs` | Alta | ✅ Completado |
 | 17 | Compass calibración automática | `CompassViewModel.cs`, `CompassPage.xaml` | Media | ✅ Completado |
+| 18 | Audio de instrumento no se detiene al navegar fuera | `Instrument*Page.xaml.cs` | Alta | ✅ Completado |
 
 ### Fase B — Documentación
 
@@ -490,6 +491,7 @@ Constantes centralizadas agrupadas por dominio (Metronome, Framing, Instruments)
 15. **FlashlightStateService sin thread-safety**: Agregado `lock` para proteger acceso concurrente a `IsFlashOn`.
 16. **CompassPage crash en Android**: Navegar desde brújula a About y volver a Menú causaba `JavaProxyThrowable`. Causa: `async void OnNavigatedTo` con `await` de sensores + suscripciones duplicadas a eventos de sensores. Solución: `OnNavigatedTo` síncrono con fire-and-forget seguro, VM cacheado, unsubscribe antes de Stop().
 17. **Compass calibración automática innecesaria**: Calibración se ejecutaba cada vez que se abría la brújula con `Task.Delay` de 7 segundos, causando UX deficiente. Solución: calibración manual con botón + feedback visual con mensajes localizados.
+18. **Audio de instrumento persiste al cambiar de tab Shell**: `InstrumentAudioService` era Transient y el `MediaElement` del Page Singleton no se detenía correctamente al cambiar de pestaña. Cuando el usuario cambiaba de tab (e.g., Menu → Instrumento → About), el audio continuaba. Causa: el Service Transient guardaba referencia a MediaElement que persistía, pero al cambiar de tab el OnDisappearing no garantizaba el stop inmediato. **Solución**: Cambiar `InstrumentAudioService` a Singleton + llamada explícita a `StopAllStringAsync()` en `OnDisappearing` de cada página de instrumento. Esto asegura que el singleton global administre el MediaElement y detenga el audio al navegar fuera.
 
 ### 15.2 Issues pendientes
 

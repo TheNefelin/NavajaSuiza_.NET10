@@ -15,6 +15,7 @@ public partial class InstrumentViolinPage : ContentPage
     protected override void OnNavigatedTo(NavigatedToEventArgs args)
     {
         base.OnNavigatedTo(args);
+        TunerMediaElement.Stop();
         BindingContext = _serviceProvider.GetRequiredService<InstrumentViolinViewModel>();
 
         if (BindingContext is InstrumentViolinViewModel viewModel)
@@ -27,6 +28,8 @@ public partial class InstrumentViolinPage : ContentPage
     protected override void OnDisappearing()
     {
         base.OnDisappearing();
+        TunerMediaElement.Stop();
+        
         if (BindingContext is InstrumentViolinViewModel viewModel)
         {
             _ = viewModel.StopAllStringAsync();

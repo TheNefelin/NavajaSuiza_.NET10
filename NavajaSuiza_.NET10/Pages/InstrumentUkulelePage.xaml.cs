@@ -15,6 +15,7 @@ public partial class InstrumentUkulelePage : ContentPage
     protected override void OnNavigatedTo(NavigatedToEventArgs args)
     {
         base.OnNavigatedTo(args);
+        TunerMediaElement.Stop();
         BindingContext = _serviceProvider.GetRequiredService<InstrumentUkuleleViewModel>();
 
         if (BindingContext is InstrumentUkuleleViewModel viewModel)
@@ -27,6 +28,8 @@ public partial class InstrumentUkulelePage : ContentPage
     protected override void OnDisappearing()
     {
         base.OnDisappearing();
+        TunerMediaElement.Stop();
+        
         if (BindingContext is InstrumentUkuleleViewModel viewModel)
         {
             _ = viewModel.StopAllStringAsync();

@@ -31,6 +31,17 @@ dotnet_naming_rule.private_fields_should_begin_with_underscore.symbols = private
 dotnet_naming_rule.private_fields_should_begin_with_underscore.style = begins_with_underscore
 dotnet_naming_symbols.private_fields.applicable_kinds = field
 dotnet_naming_symbols.private_fields.applicable_accessibilities = private
+dotnet_naming_symbols.private_fields.required_modifiers = (none)
+
+dotnet_naming_rule.constants_must_be_uppercase.severity = error
+dotnet_naming_rule.constants_must_be_uppercase.symbols = constants
+dotnet_naming_rule.constants_must_be_uppercase.style = uppercase_style
+
+dotnet_naming_symbols.constants.applicable_kinds = field
+dotnet_naming_symbols.constants.required_modifiers = const
+
+dotnet_naming_style.uppercase_style.required_prefix = 
+dotnet_naming_style.uppercase_style.capitalization = upper_case
 dotnet_naming_style.begins_with_underscore.required_prefix = _
 dotnet_naming_style.begins_with_underscore.capitalization = camel_case
 

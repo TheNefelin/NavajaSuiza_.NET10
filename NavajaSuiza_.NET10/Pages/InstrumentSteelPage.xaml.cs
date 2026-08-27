@@ -15,6 +15,7 @@ public partial class InstrumentSteelPage : ContentPage
     protected override void OnNavigatedTo(NavigatedToEventArgs args)
     {
         base.OnNavigatedTo(args);
+        TunerMediaElement.Stop();
         BindingContext = _serviceProvider.GetRequiredService<InstrumentSteelViewModel>();
 
         if (BindingContext is InstrumentSteelViewModel viewModel)
@@ -27,6 +28,8 @@ public partial class InstrumentSteelPage : ContentPage
     protected override void OnDisappearing()
     {
         base.OnDisappearing();
+        TunerMediaElement.Stop();
+        
         if (BindingContext is InstrumentSteelViewModel viewModel)
         {
             _ = viewModel.StopAllStringAsync();

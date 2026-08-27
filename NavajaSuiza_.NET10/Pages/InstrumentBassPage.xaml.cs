@@ -15,6 +15,7 @@ public partial class InstrumentBassPage : ContentPage
     protected override void OnNavigatedTo(NavigatedToEventArgs args)
     {
         base.OnNavigatedTo(args);
+        TunerMediaElement.Stop();
         BindingContext = _serviceProvider.GetRequiredService<InstrumentBassViewModel>();
 
         if (BindingContext is InstrumentBassViewModel viewModel)
@@ -27,6 +28,8 @@ public partial class InstrumentBassPage : ContentPage
     protected override void OnDisappearing()
     {
         base.OnDisappearing();
+        TunerMediaElement.Stop();
+        
         if (BindingContext is InstrumentBassViewModel viewModel)
         {
             _ = viewModel.StopAllStringAsync();
