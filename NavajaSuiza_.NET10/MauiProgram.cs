@@ -59,12 +59,7 @@ public static class MauiProgram
             .AddSingleton<IDeviceDisplayService, DeviceDisplayService>()
             .AddSingleton<IImagePickerService, ImagePickerService>()
             .AddSingleton<IScreenBrightnessService, ScreenBrightnessService>()
-            .AddSingleton<IFlashlightStateService, FlashlightStateService>()
-            ;
-
-        builder.Services
-            .AddTransient<TestingViewModel>()
-            .AddSingleton<TestingPage>()
+.AddSingleton<IFlashlightStateService, FlashlightStateService>()
             ;
 
         builder.Services

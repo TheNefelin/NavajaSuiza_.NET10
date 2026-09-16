@@ -22,28 +22,28 @@ public class FramingViewModelTests
     public void DefaultAspectRatio_Is11()
     {
         var vm = CreateSut();
-        Assert.Equal(AppConstants.Framing.DefaultAspectRatio, vm.AspectRatio);
+        Assert.Equal(AppConstants.Framing.DEFAULT_ASPECT_RATIO, vm.AspectRatio);
     }
 
     [Fact]
     public void DefaultAspectMode_IsAspectFill()
     {
         var vm = CreateSut();
-        Assert.Equal(AppConstants.Framing.DefaultAspectMode, vm.AspectMode);
+        Assert.Equal(AppConstants.Framing.DEFAULT_ASPECT_MODE, vm.AspectMode);
     }
 
     [Fact]
     public void DefaultCanvasBackground_IsBlur()
     {
         var vm = CreateSut();
-        Assert.Equal(AppConstants.Framing.DefaultCanvasBackground, vm.CanvasBackground);
+        Assert.Equal(AppConstants.Framing.DEFAULT_CANVAS_BACKGROUND, vm.CanvasBackground);
     }
 
     [Fact]
     public void DefaultBlurIntensity_Is13()
     {
         var vm = CreateSut();
-        Assert.Equal(AppConstants.Framing.DefaultBlurIntensity, vm.BlurIntensity);
+        Assert.Equal(AppConstants.Framing.DEFAULT_BLUR_INTENSITY, vm.BlurIntensity);
     }
 
     [Fact]
@@ -75,7 +75,7 @@ public class FramingViewModelTests
     public void SetCanvasBackground_WhenBlur_SetsTransparent()
     {
         var vm = CreateSut();
-        vm.SetCanvasBackgroundCommand.Execute(AppConstants.Framing.DefaultCanvasBackground);
+        vm.SetCanvasBackgroundCommand.Execute(AppConstants.Framing.DEFAULT_CANVAS_BACKGROUND);
         Assert.Equal("Transparent", vm.CanvasBackgroundColor);
     }
 

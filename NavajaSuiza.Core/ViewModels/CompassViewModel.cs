@@ -14,7 +14,7 @@ public partial class CompassViewModel : BaseViewModel
     private readonly ICompassService _compassService;
     private readonly IOrientationService _orientationService;
 
-    private const double SmoothingFactor = 0.3;
+    private const double SMOOTHING_FACTOR = 0.3;
     private double _smoothedHeading = -1;
     private CancellationTokenSource? _calibrationCts;
 
@@ -131,7 +131,7 @@ public partial class CompassViewModel : BaseViewModel
             double delta = angle - _smoothedHeading;
             if (delta > 180) delta -= 360;
             if (delta < -180) delta += 360;
-            _smoothedHeading += SmoothingFactor * delta;
+            _smoothedHeading += SMOOTHING_FACTOR * delta;
             _smoothedHeading = (_smoothedHeading % 360 + 360) % 360;
         }
 

@@ -511,7 +511,8 @@ protected override void OnAppearing()
 
 | Componente | Lifetime correcto | Justificación |
 |------------|-------------------|---------------|
-| **Services** (servicios de negocio) | Singleton | Comparten estado (audio, tema, idioma) entre páginas |
+| **Services stateless** (wrappers de APIs de plataforma, sensores, idioma) | Singleton | Sin estado mutable persistente; seguros de compartir |
+| **Services con estado por instancia** (audio de instrumentos, metrónomo) | Transient | Estado aislado por ViewModel/página; evita estado residual entre navegaciones |
 | **ViewModels** | Transient | Fresh instance en cada navegación, sin estado residual |
 | **Pages** | Singleton (Shell) | Shell cachea las ShellContent pages |
 | **AppShell** | Singleton | Shell infrastructure |

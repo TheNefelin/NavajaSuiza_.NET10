@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using NavajaSuiza_.NET10.Extensions;
 using NavajaSuiza.Core.Interfaces;
+using NavajaSuiza.Core.Models;
 using System.Globalization;
 
 namespace NavajaSuiza_.NET10.Services.Implementations;
@@ -69,9 +70,9 @@ public class LanguageService : ILanguageService
     {
         var code = selection switch
         {
-            "🇬🇧 UK - English" => SupportedLanguages.English,
-            "🇸🇪 SE - Svenska" => SupportedLanguages.Swedish,
-            _ => SupportedLanguages.Spanish
+            "🇬🇧 UK - English" => SupportedLanguages.ENGLISH,
+            "🇸🇪 SE - Svenska" => SupportedLanguages.SWEDISH,
+            _ => SupportedLanguages.SPANISH
         };
 
         _logger.LogInformation("[LanguageService] - Extracted code: {Code}", code);

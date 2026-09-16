@@ -34,7 +34,7 @@ public abstract partial class InstrumentViewModelBase : BaseViewModel
         IsLoading = true;
         IsBusy = false;
 
-        await Task.Delay(AppConstants.Instruments.LoadingDelayMs);
+        await Task.Delay(AppConstants.Instruments.LOADING_DELAY_MS);
 
         IsLoading = false;
         IsBusy = true;

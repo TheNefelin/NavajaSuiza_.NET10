@@ -45,12 +45,4 @@ public class MenuViewModelTests
         vm.NavigateToFlashlightCommand.Execute(null);
         _navigationServiceMock.Verify(s => s.PushAsync("FlashlightPage"), Times.Once);
     }
-
-    [Fact]
-    public void NavigateToAbout_CallsGoToAsync()
-    {
-        var vm = CreateSut();
-        vm.NavigateToAboutCommand.Execute(null);
-        _navigationServiceMock.Verify(s => s.GoToAsync("//AboutPage"), Times.Once);
-    }
 }

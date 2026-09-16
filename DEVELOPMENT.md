@@ -227,7 +227,7 @@ Todos los servicios están registrados en `MauiProgram.cs` e inyectados por DI.
 | `IScreenBrightnessService` | `ScreenBrightnessService` | Singleton | Brillo de pantalla nativo (Android) |
 | `IFlashlightStateService` | `FlashlightStateService` (Core) | Singleton | Persistencia de estado flash entre recreaciones de VM, thread-safe con lock |
 | `IMetronomeService` | `MetronomeService` | Transient | Metrónomo con `PeriodicTimer` y reproducción de audio |
-| `IInstrumentAudioService` | `InstrumentAudioService` | Singleton | Administra audio e interpolación de vibración de instrumentos. Singleton necesario para control centralizado del MediaElement y parada garantizada al cambiar de tab. |
+| `IInstrumentAudioService` | `InstrumentAudioService` | Transient | Configuración de cuerdas, reproducción de audio, vibración |
 
 **ViewModels**: Todos registrados como **Transient** (cada navegación obtiene una nueva instancia, evitando estado residual).
 
@@ -247,7 +247,7 @@ Todos los servicios están registrados en `MauiProgram.cs` e inyectados por DI.
 | `ScreenBrightnessService` | Singleton | Control de brillo nativo Android |
 | `FlashlightStateService` | Singleton | Persiste estado flash entre recreaciones de VM |
 | `MetronomeService` | Transient | Timer y estado por instancia |
-| `InstrumentAudioService` | Singleton | Control centralizado del MediaElement y audio |
+| `InstrumentAudioService` | Transient | Estado de audio y vibración por instancia, aislado por ViewModel |
 | **Todos los ViewModels** | **Transient** | Cada navegación obtiene nueva instancia; evita estado residual entre sesiones |
 
 ---
@@ -410,7 +410,7 @@ Constantes centralizadas agrupadas por dominio (Metronome, Framing, Instruments)
 | MVVM con CommunityToolkit | Ecosistema MAUI estándar, source generators para boilerplate |
 | Shell navigation | Navegación nativa MAUI con soporte para rutas y TabBar |
 | Core + MAUI (separación) | Interfaces compartidas en Class Library, implementaciones en MAUI |
-| Servicios como Singleton | Compartir estado de audio (MediaElement) entre páginas |
+| Servicios Singleton vs Transient | Singleton para servicios sin estado mutable persistente (sensores, wrappers de APIs de plataforma); Transient para servicios con estado por instancia (audio de instrumentos, metrónomo, ViewModels) |
 | Localización por .resx | Mecanismo nativo .NET, soporte XAML y C#, fallback automático |
 | Audio via MediaElement | Componente nativo del CommunityToolkit.Maui con soporte multiplataforma |
 
@@ -432,7 +432,7 @@ Constantes centralizadas agrupadas por dominio (Metronome, Framing, Instruments)
 | 7 | ViewModels Singleton → Transient | `MauiProgram.cs` + ViewModels | Alta | ✅ Completado |
 | 8 | `InstrumentStringComponent` resuelve DI manualmente | `InstrumentStringComponent.xaml.cs` | Media | ✅ Completado (AudioService via BindableProperty) |
 | 9 | `MetronomeService` usa `System.Timers.Timer` | `MetronomeService.cs` | Baja | ✅ Completado (migrado a PeriodicTimer) |
-| 10 | `B_00_B0.wav` no referenciado | `InstrumentAudioService.cs` | Baja | Pendiente |
+| 10 | `B_00_B0.wav` eliminado | `Resources/Raw/` | Baja | ✅ Completado (commit 7248906) |
 | 16 | CompassPage crash Android | `CompassPage.xaml.cs`, `CompassViewModel.cs` | Alta | ✅ Completado |
 | 17 | Compass calibración automática | `CompassViewModel.cs`, `CompassPage.xaml` | Media | ✅ Completado |
 | 18 | Audio de instrumento no se detiene al navegar fuera | `Instrument*Page.xaml.cs` | Alta | ✅ Completado |
@@ -491,13 +491,15 @@ Constantes centralizadas agrupadas por dominio (Metronome, Framing, Instruments)
 15. **FlashlightStateService sin thread-safety**: Agregado `lock` para proteger acceso concurrente a `IsFlashOn`.
 16. **CompassPage crash en Android**: Navegar desde brújula a About y volver a Menú causaba `JavaProxyThrowable`. Causa: `async void OnNavigatedTo` con `await` de sensores + suscripciones duplicadas a eventos de sensores. Solución: `OnNavigatedTo` síncrono con fire-and-forget seguro, VM cacheado, unsubscribe antes de Stop().
 17. **Compass calibración automática innecesaria**: Calibración se ejecutaba cada vez que se abría la brújula con `Task.Delay` de 7 segundos, causando UX deficiente. Solución: calibración manual con botón + feedback visual con mensajes localizados.
-18. **Audio de instrumento persiste al cambiar de tab Shell**: `InstrumentAudioService` era Transient y el `MediaElement` del Page Singleton no se detenía correctamente al cambiar de pestaña. Cuando el usuario cambiaba de tab (e.g., Menu → Instrumento → About), el audio continuaba. Causa: el Service Transient guardaba referencia a MediaElement que persistía, pero al cambiar de tab el OnDisappearing no garantizaba el stop inmediato. **Solución**: Cambiar `InstrumentAudioService` a Singleton + llamada explícita a `StopAllStringAsync()` en `OnDisappearing` de cada página de instrumento. Esto asegura que el singleton global administre el MediaElement y detenga el audio al navegar fuera.
+18. **Audio de instrumento no se detiene al navegar/cambiar de tab**: El `MediaElement` del Page Singleton podía retener audio al cambiar de tab Shell o al re-navegar a un instrumento. Se evaluó cambiar `InstrumentAudioService` a Singleton, pero se descartó (rompe el aislamiento de estado por instancia). **Solución final**: llamada a `TunerMediaElement.Stop()` en `OnNavigatedTo` de cada página de instrumento (antes de registrar el nuevo MediaElement) + limpieza en `OnDisappearing` (`StopAllStringAsync`, `ClearStringBorders`). El servicio permanece **Transient**.
+
+19. **AboutPage navigation crash en Android**: `GoToAsync("//AboutPage")` causaba `JavaProxyThrowable` en Android. El botón interno del menú era redundante con el tab inferior. Se eliminó el botón, `NavigateToAboutCommand` y el workaround `IsDevelopment` asociado. El acceso a About queda por el tab inferior del TabBar.
+
+20. **`TestingPage`/`TestingViewModel` vacíos**: Página de pruebas sin implementación, botón TEST oculto por `IsDevelopment`. Eliminada junto con sus registros DI, entry de `.csproj` y botón de menú.
 
 ### 15.2 Issues pendientes
 
-1. **`TestingPage`/`TestingViewModel` vacíos**: Página de pruebas sin implementación.
-2. **AboutPage navigation crash**: `GoToAsync("//AboutPage")` causa `JavaProxyThrowable` en Android. Botón oculto por `IsDevelopment`, no es bug visible. Documentado en `MenuViewModel.cs`.
-3. **`B_00_B0.wav` no referenciado**: Archivo de audio sin uso en instrumentos.
+- Ninguno por el momento.
 
 ---
 

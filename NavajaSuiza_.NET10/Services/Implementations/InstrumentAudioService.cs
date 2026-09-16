@@ -51,7 +51,7 @@ public class InstrumentAudioService : IInstrumentAudioService
         return new ObservableCollection<InstrumentStringData>()
         {
             new InstrumentStringData { Note = "E1", AudioName = "B_01_E1.wav", Description = "41.20 Hz", Thickness = 6 },
-            new InstrumentStringData { Note = "A1", AudioName = "B_02_A1.wav", Description = "55.00 Hz Hz", Thickness = 5 },
+            new InstrumentStringData { Note = "A1", AudioName = "B_02_A1.wav", Description = "55.00 Hz", Thickness = 5 },
             new InstrumentStringData { Note = "D2", AudioName = "B_03_D2.wav", Description = "73.41 Hz", Thickness = 4 },
             new InstrumentStringData { Note = "G2", AudioName = "B_04_G2.wav", Description = "97.99 Hz", Thickness = 3 }
         };

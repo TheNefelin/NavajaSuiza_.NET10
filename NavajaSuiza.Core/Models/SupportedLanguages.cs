@@ -2,7 +2,7 @@ namespace NavajaSuiza.Core.Models;
 
 public static class SupportedLanguages
 {
-    public const string Spanish = "es";
-    public const string English = "en";
-    public const string Swedish = "sv";
+    public const string SPANISH = "es";
+    public const string ENGLISH = "en";
+    public const string SWEDISH = "sv";
 }
