@@ -718,7 +718,7 @@ NavajaSuiza.Core/              # Class Library (net10.0)
 │   └── InstrumentStringData.cs
 ├── Services/                  # Servicios puros (sin APIs de plataforma)
 │   └── FlashlightStateService.cs
-└── ViewModels/                # 18 ViewModels (todas testables, sin dependencias MAUI)
+└── ViewModels/                # 17 ViewModels (todas testables, sin dependencias MAUI)
 
 NavajaSuiza_.NET10/            # Proyecto MAUI
 ├── Services/

@@ -46,7 +46,7 @@ NavajaSuiza_.NET10.sln
 │   │   └── InstrumentStringData.cs
 │   ├── Services/
 │   │   └── FlashlightStateService.cs
-│   ├── ViewModels/                       # 18 ViewModels (testables, sin dependencias MAUI)
+│   ├── ViewModels/                       # 17 ViewModels (testables, sin dependencias MAUI)
 │   │   ├── BaseViewModel.cs
 │   │   ├── AboutViewModel.cs
 │   │   ├── CompassViewModel.cs
@@ -56,7 +56,6 @@ NavajaSuiza_.NET10.sln
 │   │   ├── MetronomeViewModel.cs
 │   │   ├── ManualViewModel.cs
 │   │   ├── ScreenLightViewModel.cs
-│   │   ├── TestingViewModel.cs
 │   │   ├── TunerViewModel.cs
 │   │   ├── InstrumentViewModelBase.cs
 │   │   ├── InstrumentBassViewModel.cs

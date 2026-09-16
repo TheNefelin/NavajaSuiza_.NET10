@@ -92,14 +92,13 @@ NavajaSuiza_.NET10/                   # Solution
 │   ├── Services/
 │   │   └── FlashlightStateService.cs   # Singleton: persiste estado flash entre VM recreations
 │   ├── AppConstants.cs
-│   └── ViewModels/                     # 18 ViewModels (todas testables, sin dependencias MAUI)
+│   └── ViewModels/                     # 17 ViewModels (todas testables, sin dependencias MAUI)
 │       ├── BaseViewModel.cs
 │       ├── AboutViewModel.cs
 │       ├── MenuViewModel.cs
 │       ├── MetronomeViewModel.cs
 │       ├── TunerViewModel.cs
 │       ├── ManualViewModel.cs
-│       ├── TestingViewModel.cs
 │       ├── CompassViewModel.cs
 │       ├── FlashlightViewModel.cs
 │       ├── FramingViewModel.cs
