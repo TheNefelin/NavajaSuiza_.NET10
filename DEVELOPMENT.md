@@ -459,13 +459,26 @@ Constantes centralizadas agrupadas por dominio (Metronome, Framing, Instruments)
 | 22 | Migrar InstrumentStringData a Core | Core/Models | ✅ Completado |
 | 23 | Crear AppConstants centralizado | Core | ✅ Completado |
 | 24 | Crear NavigationService en MAUI | MAUI/Services | ✅ Completado |
-| 25 | Crear proyecto de tests | NavajaSuiza.Test | ✅ Completado (62 tests) |
+| 25 | Crear proyecto de tests | NavajaSuiza.Test | ✅ Completado (81 tests) |
 
 ### Fase D — Enriquecimiento de SKILL.md
 
 | # | Tarea | Archivo | Estado |
 |---|-------|---------|--------|
 | 26 | Agregar sección MAUI completa al SKILL (transversal) | `SKILL.md` | ✅ Completado |
+
+### Fase E — Cierre de optimización
+
+| # | Tarea | Archivo(s) | Estado |
+|---|-------|-----------|--------|
+| 27 | Renombrar constantes a UPPER_SNAKE y alinear `.editorconfig` | Core + tests | ✅ Completado |
+| 28 | Consolidar `SupportedLanguages` en Core (eliminar duplicado MAUI) | Core/Models + MAUI | ✅ Completado |
+| 29 | Eliminar dead code (asset `test.png`, botones Notes/Weather sin Command, typo "Hz Hz", botón TEST, botón "Acerca de" del menú) | Varios | ✅ Completado |
+| 30 | Ampliar tests a servicios y ViewModels de instrumentos/tuner (`FlashlightStateService`, `Instrument*ViewModel`, `TunerViewModel`) | `NavajaSuiza.Test` | ✅ Completado (81 tests) |
+| 31 | Corregir CI: rama disparadora `main` → `master` + ejecutar solo tests (build MAUI no viable en Windows) + actions `@v5` | `.github/workflows/build.yml` | ✅ Completado (run verde 81/81) |
+| 32 | Alinear documentación con el código (lifetimes, conteo de ViewModels, bug #18/19) | `DEVELOPMENT.md`, `README.md`, `SKILL.md` | ✅ Completado |
+
+**Cierre**: La fase de optimización del proyecto queda cerrada. Deuda técnica conocida y documentada: los servicios MAUI (`LanguageService`, `MetronomeService`, `InstrumentAudioService`, etc.) no tienen tests automatizados de forma deliberada (requeriría un test project MAUI de costo elevado para una app de este alcance). La verificación runtime fue realizada por el usuario en dispositivo y validada por los tests automatizados en CI.
 
 ---
 
@@ -506,5 +519,5 @@ Constantes centralizadas agrupadas por dominio (Metronome, Framing, Instruments)
 
 - **SKILL.md**: Guía transversal de patrones .NET Senior (APIs REST + MAUI).
 - **AGENTS.md**: Reglas de operación para OpenCode en este proyecto.
-- **README.md**: Documentación general del proyecto (pendiente de actualización).
+- **README.md**: Documentación general del proyecto (estructura, arquitectura y uso).
 - **NavajaSuiza.Core**: Class Library con interfaces y modelos compartidos.
