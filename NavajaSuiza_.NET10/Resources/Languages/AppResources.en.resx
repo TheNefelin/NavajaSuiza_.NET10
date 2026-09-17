@@ -186,6 +186,9 @@
   <data name="MetronomeText" xml:space="preserve">
     <value>Metronome</value>
   </data>
+  <data name="MetronomeOptionsText" xml:space="preserve">
+    <value>Select the Tempo, Speed and Play</value>
+  </data>
   <data name="TunerOptionsText" xml:space="preserve">
     <value>Select an Instrument</value>
   </data>

@@ -26,77 +26,57 @@
             TrueResourceKey="FlashlightActionOffText"
             FalseResourceKey="FlashlightActionOnText" />        
     </ContentPage.Resources>
-    
+
     <ScrollView>
-        <VerticalStackLayout
-            Padding="0,20">
-            
-            <!-- Header -->
-            <HorizontalStackLayout 
-                HorizontalOptions="Center"
-                Padding="20"
-                Spacing="5">
+        <VerticalStackLayout 
+            HorizontalOptions="Center" 
+            Padding="0,20,0,0">
 
-                <Image Source="icon_flashlight.png" WidthRequest="50" />
+            <Label 
+                Text="{extensions:Translate FlashlightOptionsText}"
+                HorizontalTextAlignment="Center"
+                Opacity="0.6" 
+                Padding="10"/>
 
-                <Label 
-                    Text="{extensions:Translate FlashlightText}" 
-                    FontSize="32" 
+            <Label 
+               Text="{extensions:Translate FlashlightNoteText}"
+               FontSize="12"
+               HorizontalTextAlignment="Center"
+               Opacity="0.6"
+               Padding="10" />
+
+            <FlexLayout
+                Wrap="Wrap"
+                JustifyContent="Center"
+                Padding="20">
+
+                <Button
+                    Command="{Binding ClickFlashCommand}"                    
+                    Text="{extensions:Translate FlashlightOpFlashText}"
+                    ImageSource="icon_flash.png"
                     FontAttributes="Bold"
-                    TextColor="{StaticResource MyAccentBlue}" />
-            </HorizontalStackLayout>
+                    ContentLayout="Top, 0" 
+                    Margin="8,0,8,16"
+                    Padding="25,15,25,10"
+                    WidthRequest="120" 
+                    HeightRequest="120"
+                    BackgroundColor="{Binding IsFlashOn, Converter={StaticResource FlashOnConverter}}"
+                    TextColor="{Binding IsFlashOn, Converter={StaticResource FlashTextOnConverter}}" />
 
-            <VerticalStackLayout
-                VerticalOptions="Center">
+                <Button
+                    Command="{Binding ClickScreenCommand}"          
+                    Text="{extensions:Translate FlashlightOpScreenText}"                  
+                    ImageSource="icon_screen.png"
+                    FontAttributes="Bold"
+                    ContentLayout="Top, 0" 
+                    Margin="8,0,8,16"
+                    Padding="33,15,33,0"
+                    WidthRequest="120" 
+                    HeightRequest="120"
+                    BackgroundColor="{Binding IsScreenOn, Converter={StaticResource FlashOnConverter}}"
+                    TextColor="{Binding IsScreenOn, Converter={StaticResource FlashTextOnConverter}}" />
+            </FlexLayout>
 
-                <Label 
-                    Text="{extensions:Translate FlashlightOptionsText}"
-                    HorizontalTextAlignment="Center"
-                    Opacity="0.6" 
-                    Padding="10"/>
-
-                <FlexLayout
-                    Wrap="Wrap"
-                    Padding="20"
-                    HorizontalOptions="Center">
-
-                    <Button
-                        Grid.Column="0"
-                        Command="{Binding ClickFlashCommand}"
-                        Text="{extensions:Translate FlashlightOpFlashText}"
-                        ImageSource="icon_flash.png"
-                        FontAttributes="Bold"
-                        ContentLayout="Top, 0" 
-                        Margin="8"
-                        Padding="25,15,25,10"
-                        WidthRequest="120" 
-                        HeightRequest="120"
-                        BackgroundColor="{Binding IsFlashOn, Converter={StaticResource FlashOnConverter}}"
-                        TextColor="{Binding IsFlashOn, Converter={StaticResource FlashTextOnConverter}}" />
-
-                    <Button
-                        Grid.Column="1"
-                        Command="{Binding ClickScreenCommand}"          
-                        Text="{extensions:Translate FlashlightOpScreenText}"                  
-                        ImageSource="icon_screen.png"
-                        FontAttributes="Bold"
-                        ContentLayout="Top, 0" 
-                        Padding="33,15,33,10"
-                        Margin="8"
-                        WidthRequest="120" 
-                        HeightRequest="120"
-                        BackgroundColor="{Binding IsScreenOn, Converter={StaticResource FlashOnConverter}}"
-                        TextColor="{Binding IsScreenOn, Converter={StaticResource FlashTextOnConverter}}" />
-                </FlexLayout>
-
-                <Label 
-                    Text="{extensions:Translate FlashlightNoteText}"
-                    FontSize="12"
-                    HorizontalTextAlignment="Center"
-                    Opacity="0.6"
-                    Padding="10" />
-            </VerticalStackLayout>
-            
         </VerticalStackLayout>
     </ScrollView>
     

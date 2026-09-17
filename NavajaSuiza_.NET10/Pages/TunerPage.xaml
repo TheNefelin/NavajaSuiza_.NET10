@@ -15,23 +15,11 @@
             HorizontalOptions="Center" 
             Padding="0,20,0,0">
 
-            <!-- Header -->
-            <HorizontalStackLayout Spacing="5" HorizontalOptions="Center" Padding="0,20">
-                <Image Source="icon_tuner.png" WidthRequest="50" />
-
-                <Label 
-                    Text="{extensions:Translate TunerText}" 
-                    FontSize="32" 
-                    FontAttributes="Bold"
-                    HorizontalTextAlignment="Center"
-                    TextColor="{StaticResource MyAccentBlue}" />
-            </HorizontalStackLayout>
-
             <Label 
                 Text="{extensions:Translate TunerOptionsText}"
                 HorizontalTextAlignment="Center"
                 Opacity="0.6" 
-                Padding="15"/>
+                Padding="10"/>
 
             <FlexLayout
                 Wrap="Wrap"

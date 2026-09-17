@@ -15,17 +15,6 @@
             Padding="0,20"
             Spacing="20">
 
-            <!-- Header -->
-            <HorizontalStackLayout Spacing="5" HorizontalOptions="Center" Padding="0,20">
-                <Image Source="icon_compass.png" WidthRequest="50" />
-                <Label 
-                    Text="{extensions:Translate CompassText}" 
-                    FontSize="32" 
-                    FontAttributes="Bold"
-                    HorizontalTextAlignment="Center"
-                    TextColor="{StaticResource MyAccentBlue}" />
-            </HorizontalStackLayout>
-
             <!-- DIAL DE LA BRÚJULA (GIRA) -->
             <Grid 
                 x:Name="CompassDial"
