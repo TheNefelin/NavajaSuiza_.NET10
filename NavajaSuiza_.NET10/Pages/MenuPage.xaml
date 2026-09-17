@@ -63,6 +63,17 @@
                     HeightRequest="120" />
 
                 <Button
+                    Command="{Binding NavigateToNotesCommand}"                    
+                    Text="{extensions:Translate NotesText}"
+                    ImageSource="icon_notebook.png"                    
+                    FontAttributes="Bold"
+                    ContentLayout="Top, 0" 
+                    Margin="8,0,8,16"
+                    Padding="25,15,25,10"
+                    WidthRequest="120" 
+                    HeightRequest="120" />
+
+                <Button
                     IsVisible="{Binding IsDevelopment}"
                     Command="{Binding NavigateToFramingCommand}"
                     Text="{extensions:Translate FramingText}"

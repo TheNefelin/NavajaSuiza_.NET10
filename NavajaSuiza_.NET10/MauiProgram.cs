@@ -52,7 +52,7 @@ public static class MauiProgram
             .AddSingleton<IDeviceStatusService, DeviceStatusService>()
             .AddTransient<IInstrumentAudioService, InstrumentAudioService>()
             .AddTransient<IMetronomeService, MetronomeService>()
-            .AddTransient<INavigationService, NavigationService>()
+            .AddSingleton<INavigationService, NavigationService>()
             .AddSingleton<ICompassService, CompassSensorService>()
             .AddSingleton<IOrientationService, OrientationSensorService>()
             .AddSingleton<IFlashlightService, FlashlightService>()
@@ -60,6 +60,7 @@ public static class MauiProgram
             .AddSingleton<IImagePickerService, ImagePickerService>()
             .AddSingleton<IScreenBrightnessService, ScreenBrightnessService>()
 .AddSingleton<IFlashlightStateService, FlashlightStateService>()
+            .AddSingleton<INotesRepository, SqliteNotesRepository>()
             ;
 
         builder.Services
@@ -92,8 +93,12 @@ public static class MauiProgram
             .AddSingleton<MetronomePage>()
             .AddTransient<FramingViewModel>()
             .AddSingleton<FramingPage>()
-            .AddTransient<CompassViewModel>()
+.AddTransient<CompassViewModel>()
             .AddSingleton<CompassPage>()
+            .AddTransient<NotesViewModel>()
+            .AddSingleton<NotesPage>()
+            .AddTransient<NoteEditorViewModel>()
+            .AddSingleton<NoteEditorPage>()
             ;
 
         return builder;

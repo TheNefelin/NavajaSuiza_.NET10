@@ -162,6 +162,57 @@
   <data name="NotesText" xml:space="preserve">
     <value>Noteringar</value>
   </data>
+  <data name="NotesSearchPlaceholderText" xml:space="preserve">
+    <value>Sök anteckning...</value>
+  </data>
+  <data name="NotesTitlePlaceholderText" xml:space="preserve">
+    <value>Titel</value>
+  </data>
+  <data name="NotesContentPlaceholderText" xml:space="preserve">
+    <value>Innehåll</value>
+  </data>
+  <data name="NotesSaveText" xml:space="preserve">
+    <value>Spara</value>
+  </data>
+  <data name="NotesNewText" xml:space="preserve">
+    <value>Ny</value>
+  </data>
+  <data name="NotesNewTitleText" xml:space="preserve">
+    <value>Ny anteckning</value>
+  </data>
+  <data name="NotesEditTitleText" xml:space="preserve">
+    <value>Redigera anteckning</value>
+  </data>
+  <data name="NotesEmptyText" xml:space="preserve">
+    <value>Inga anteckningar ännu. Tryck på "Ny" för att skapa en.</value>
+  </data>
+  <data name="NotesDeleteTitleText" xml:space="preserve">
+    <value>Ta bort anteckning</value>
+  </data>
+  <data name="NotesDeleteConfirmationText" xml:space="preserve">
+    <value>Är du säker på att du vill ta bort denna anteckning?</value>
+  </data>
+  <data name="NotesErrorTitleText" xml:space="preserve">
+    <value>Fel</value>
+  </data>
+  <data name="NotesErrorLoadText" xml:space="preserve">
+    <value>Kunde inte ladda anteckningarna.</value>
+  </data>
+  <data name="NotesErrorSaveText" xml:space="preserve">
+    <value>Kunde inte spara anteckningen.</value>
+  </data>
+  <data name="NotesErrorDeleteText" xml:space="preserve">
+    <value>Kunde inte ta bort anteckningen.</value>
+  </data>
+  <data name="CommonOkText" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="CommonYesText" xml:space="preserve">
+    <value>Ja</value>
+  </data>
+  <data name="CommonNoText" xml:space="preserve">
+    <value>Nej</value>
+  </data>
   <data name="SelectLanguageText" xml:space="preserve">
     <value>Välj språk</value>
   </data>

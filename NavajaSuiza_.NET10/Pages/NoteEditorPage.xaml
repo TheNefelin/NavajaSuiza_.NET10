@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:converters="clr-namespace:NavajaSuiza_.NET10.Converters"
+             xmlns:extensions="clr-namespace:NavajaSuiza_.NET10.Extensions"
+             x:Name="NoteEditorPageRoot"
+             x:Class="NavajaSuiza_.NET10.Pages.NoteEditorPage"
+             Title="{Binding PageTitle}">
+
+    <ContentPage.Resources>
+        <converters:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto,Auto,*,Auto"
+          Padding="20,10"
+          RowSpacing="12">
+
+        <Entry Grid.Row="0"
+               Text="{Binding TitleText}"
+               Placeholder="{extensions:Translate NotesTitlePlaceholderText}"
+               FontAttributes="Bold"
+               FontSize="18"
+               BackgroundColor="Transparent" />
+
+        <BoxView Grid.Row="1"
+                 HeightRequest="1"
+                 Color="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray600}}" />
+
+        <Editor Grid.Row="2"
+                Text="{Binding ContentText}"
+                Placeholder="{extensions:Translate NotesContentPlaceholderText}"
+                AutoSize="TextChanges"
+                VerticalOptions="Fill"
+                BackgroundColor="Transparent" />
+
+        <Button Grid.Row="3"
+                Text="{extensions:Translate NotesSaveText}"
+                Command="{Binding SaveCommand}"
+                BackgroundColor="{StaticResource MyAccentBlue}"
+                TextColor="White"
+                FontSize="16"
+                HeightRequest="48"
+                CornerRadius="12"
+                IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}" />
+    </Grid>
+
+</ContentPage>

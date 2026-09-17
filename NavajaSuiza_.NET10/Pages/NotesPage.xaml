@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:converters="clr-namespace:NavajaSuiza_.NET10.Converters"
+             xmlns:extensions="clr-namespace:NavajaSuiza_.NET10.Extensions"
+             x:Name="NotesPageRoot"
+             x:Class="NavajaSuiza_.NET10.Pages.NotesPage"
+             Title="{extensions:Translate NotesText}">
+
+    <ContentPage.Resources>
+        <converters:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+
+        <Style x:Key="ActionButton" TargetType="Button">
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Padding" Value="12,6" />
+            <Setter Property="MinimumHeightRequest" Value="40" />
+            <Setter Property="BorderWidth" Value="0" />
+        </Style>
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto,*"
+          Padding="0,10"
+          RowSpacing="10">
+
+        <!-- Búsqueda -->
+        <Border Grid.Row="0"
+                Margin="15,0"
+                Padding="8,0"
+                StrokeThickness="1"
+                Stroke="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray600}}"
+                StrokeShape="RoundRectangle 24"
+                BackgroundColor="{AppThemeBinding Light={StaticResource MyPrimaryLight}, Dark={StaticResource MyPrimaryDark}}">
+            <SearchBar
+                Text="{Binding SearchText}"
+                Placeholder="{extensions:Translate NotesSearchPlaceholderText}"
+                BackgroundColor="Transparent"
+                FontSize="14" />
+        </Border>
+
+        <Grid Grid.Row="1" RowDefinitions="*,*">
+
+            <!-- Estado vacío -->
+            <Label Grid.Row="0"
+                   Grid.RowSpan="2"
+                   Text="{extensions:Translate NotesEmptyText}"
+                   IsVisible="{Binding HasNotes, Converter={StaticResource InvertedBoolConverter}}"
+                   HorizontalTextAlignment="Center"
+                   Opacity="0.6"
+                   Padding="20,40" />
+
+            <!-- Lista de notas -->
+            <CollectionView Grid.Row="0"
+                            Grid.RowSpan="2"
+                            ItemsSource="{Binding Notes}"
+                            IsVisible="{Binding HasNotes}"
+                            SelectionMode="None">
+
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Border StrokeShape="RoundRectangle 12"
+                                StrokeThickness="1"
+                                Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}"
+                                BackgroundColor="{AppThemeBinding Light={StaticResource MyPrimaryLight}, Dark={StaticResource MyPrimaryDark}}"
+                                Margin="15,3"
+                                Padding="12,10">
+
+                            <Border.Shadow>
+                                <Shadow Radius="10"
+                                        Opacity="0.15"
+                                        Brush="{StaticResource Black}"
+                                        Offset="0,2" />
+                            </Border.Shadow>
+
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding BindingContext.NavigateToEditNoteCommand, Source={x:Reference NotesPageRoot}}"
+                                                      CommandParameter="{Binding .}" />
+                            </Border.GestureRecognizers>
+
+                            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10" RowDefinitions="Auto,Auto" RowSpacing="2">
+
+                                <Label Grid.Row="0" Grid.Column="0"
+                                       Text="{Binding Title}"
+                                       FontAttributes="Bold"
+                                       FontSize="16"
+                                       LineBreakMode="TailTruncation" />
+
+                                <Label Grid.Row="1" Grid.Column="0"
+                                       Text="{Binding Content}"
+                                       FontSize="13"
+                                       Opacity="0.7"
+                                       MaxLines="2"
+                                       LineBreakMode="TailTruncation" />
+
+                                <StackLayout Grid.Row="0" Grid.Column="1"
+                                             Grid.RowSpan="2"
+                                             Orientation="Vertical"
+                                             VerticalOptions="Center"
+                                             Spacing="4">
+
+                                    <Button
+                                        Text="🗑"
+                                        Padding="10,6"
+                                        TextColor="White"
+                                        BackgroundColor="{StaticResource MyAccentOrange}"
+                                        CornerRadius="8"
+                                        BorderWidth="0"
+                                        MinimumHeightRequest="40"
+                                        MinimumWidthRequest="44"
+                                        Command="{Binding BindingContext.DeleteNoteCommand, Source={x:Reference NotesPageRoot}}"
+                                        CommandParameter="{Binding .}" />
+                                </StackLayout>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <!-- Botón flotante Nueva -->
+            <Button Grid.Row="1"
+                    Text="{extensions:Translate NotesNewText}"
+                    Command="{Binding NavigateToNewNoteCommand}"
+                    BackgroundColor="{StaticResource MyAccentBlue}"
+                    TextColor="White"
+                    FontSize="16"
+                    HeightRequest="52"
+                    Padding="22,0"
+                    CornerRadius="26"
+                    HorizontalOptions="End"
+                    VerticalOptions="End"
+                    Margin="0,0,20,20">
+                <Button.Shadow>
+                    <Shadow Radius="10"
+                            Opacity="0.3"
+                            Brush="{StaticResource Black}"
+                            Offset="0,3" />
+                </Button.Shadow>
+            </Button>
+        </Grid>
+    </Grid>
+
+</ContentPage>

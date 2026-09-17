@@ -162,6 +162,57 @@
   <data name="NotesText" xml:space="preserve">
     <value>Notes</value>
   </data>
+  <data name="NotesSearchPlaceholderText" xml:space="preserve">
+    <value>Search note...</value>
+  </data>
+  <data name="NotesTitlePlaceholderText" xml:space="preserve">
+    <value>Title</value>
+  </data>
+  <data name="NotesContentPlaceholderText" xml:space="preserve">
+    <value>Content</value>
+  </data>
+  <data name="NotesSaveText" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="NotesNewText" xml:space="preserve">
+    <value>New</value>
+  </data>
+  <data name="NotesNewTitleText" xml:space="preserve">
+    <value>New note</value>
+  </data>
+  <data name="NotesEditTitleText" xml:space="preserve">
+    <value>Edit note</value>
+  </data>
+  <data name="NotesEmptyText" xml:space="preserve">
+    <value>No notes yet. Tap "New" to create one.</value>
+  </data>
+  <data name="NotesDeleteTitleText" xml:space="preserve">
+    <value>Delete note</value>
+  </data>
+  <data name="NotesDeleteConfirmationText" xml:space="preserve">
+    <value>Are you sure you want to delete this note?</value>
+  </data>
+  <data name="NotesErrorTitleText" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="NotesErrorLoadText" xml:space="preserve">
+    <value>Could not load notes.</value>
+  </data>
+  <data name="NotesErrorSaveText" xml:space="preserve">
+    <value>Could not save the note.</value>
+  </data>
+  <data name="NotesErrorDeleteText" xml:space="preserve">
+    <value>Could not delete the note.</value>
+  </data>
+  <data name="CommonOkText" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="CommonYesText" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="CommonNoText" xml:space="preserve">
+    <value>No</value>
+  </data>
   <data name="SelectLanguageText" xml:space="preserve">
     <value>Select Language</value>
   </data>

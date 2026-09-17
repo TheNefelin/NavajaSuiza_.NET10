@@ -48,5 +48,8 @@ public partial class MenuViewModel : BaseViewModel
     private async Task NavigateToCompass() => await _navigationService.PushAsync("CompassPage");
 
     [RelayCommand]
+    private async Task NavigateToNotes() => await _navigationService.PushAsync("NotesPage");
+
+    [RelayCommand]
     private async Task NavigateToManual() => await _navigationService.PushAsync("ManualPage");
 }
