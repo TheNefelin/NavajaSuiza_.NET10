@@ -97,15 +97,14 @@
                                              VerticalOptions="Center"
                                              Spacing="4">
 
-                                    <Button
-                                        Text="🗑"
-                                        Padding="10,6"
-                                        TextColor="White"
-                                        BackgroundColor="{StaticResource MyAccentOrange}"
+<Button
+                                        ImageSource="icon_delete.png"
+                                        BackgroundColor="{StaticResource MyOn}"
                                         CornerRadius="8"
                                         BorderWidth="0"
-                                        MinimumHeightRequest="40"
-                                        MinimumWidthRequest="44"
+                                        WidthRequest="50"
+                                        HeightRequest="50"
+                                        SemanticProperties.Description="{extensions:Translate NotesDeleteTitleText}"
                                         Command="{Binding BindingContext.DeleteNoteCommand, Source={x:Reference NotesPageRoot}}"
                                         CommandParameter="{Binding .}" />
                                 </StackLayout>
@@ -116,15 +115,16 @@
             </CollectionView>
 
             <!-- Botón flotante Nueva -->
-            <Button Grid.Row="1"
-                    Text="{extensions:Translate NotesNewText}"
+<Button Grid.Row="1"
+                    Text="+"
+                    SemanticProperties.Description="{extensions:Translate NotesNewTitleText}"
                     Command="{Binding NavigateToNewNoteCommand}"
                     BackgroundColor="{StaticResource MyAccentBlue}"
                     TextColor="White"
-                    FontSize="16"
-                    HeightRequest="52"
-                    Padding="22,0"
-                    CornerRadius="26"
+                    FontSize="30"
+                    HeightRequest="60"
+                    WidthRequest="60"
+                    CornerRadius="50"
                     HorizontalOptions="End"
                     VerticalOptions="End"
                     Margin="0,0,20,20">

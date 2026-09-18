@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <ResourceDictionary 
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
@@ -20,7 +20,7 @@
 
     <Color x:Key="MyAccent">#B0FFFA</Color>
     <Color x:Key="MyAccentOrange">#FF990A</Color>
-    <Color x:Key="MyAccentBlue">#00D9FF</Color>
+    <Color x:Key="MyAccentBlue">#2196F3</Color>
     <Color x:Key="MyAccentGreen">#7AA894</Color>
     
     <Color x:Key="MyOn">#FF0000</Color>

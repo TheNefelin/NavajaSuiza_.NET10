@@ -12,7 +12,7 @@
     </ContentPage.Resources>
 
     <Grid RowDefinitions="Auto,Auto,*,Auto"
-          Padding="20,10"
+          Padding="20"
           RowSpacing="12">
 
         <Entry Grid.Row="0"

@@ -174,9 +174,6 @@
   <data name="NotesSaveText" xml:space="preserve">
     <value>Guardar</value>
   </data>
-  <data name="NotesNewText" xml:space="preserve">
-    <value>Nueva</value>
-  </data>
   <data name="NotesNewTitleText" xml:space="preserve">
     <value>Nueva nota</value>
   </data>
