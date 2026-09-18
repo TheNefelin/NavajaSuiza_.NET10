@@ -531,9 +531,11 @@ Constantes centralizadas agrupadas por dominio (Metronome, Framing, Instruments)
 
 20. **`TestingPage`/`TestingViewModel` vacíos**: Página de pruebas sin implementación, botón TEST oculto por `IsDevelopment`. Eliminada junto con sus registros DI, entry de `.csproj` y botón de menú.
 
-### 15.2 Issues pendientes
+### 15.2 Issues pendientes (Backlog)
 
-- Ninguno por el momento.
+- **Metrónomo — audio de baja latencia**: el clic usa `MediaElement` + `PeriodicTimer` con salto al UI thread (jitter y deriva acumulada). Plan: refactor a servicio `MetronomeClickService` por plataforma (Android `SoundPool`, iOS `AudioToolbox.SystemSound`) + scheduler con tiempos absolutos (`Stopwatch`) para eliminar deriva. **Sin dependencias nuevas.** Referencia: jfversluis/Plugin.Maui.Audio#89 documenta latencia de 150-200 ms incluso con player precargado.
+- **Weather — módulo del clima**: evaluar Open-Meteo (gratis, sin API key) cuando se implemente.
+- **Biblioteca de componentes MAUI**: la planificación se extrae a un proyecto independiente (no entra en el alcance de esta app). Ver `Plan-Biblioteca-Componentes-MAUI.md`.
 
 ---
 
