@@ -16,9 +16,8 @@ public class ThemeService : IThemeService
         }
         else
         {
-            var isDarkMode = true;
-            ApplyTheme(isDarkMode);
-            return isDarkMode;
+            SaveThemePreference(true);
+            return true;
         }
     }
 

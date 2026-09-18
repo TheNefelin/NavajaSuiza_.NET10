@@ -41,8 +41,25 @@
             </Border>
 
             <VerticalStackLayout Grid.Row="1" Spacing="10">
-                <Image Source="logo.svg" HeightRequest="100"/>
-                <Label Text="Beta: v1.0.0" HorizontalOptions="Center"/>
+                <Image Source="logo.svg" HeightRequest="100" HorizontalOptions="Center"/>
+                <Label Text="{Binding VersionText}" HorizontalTextAlignment="Center" Opacity="0.7"/>
+
+                <Label
+                    Text="© 2026 | francisco-dev.cl"
+                    HorizontalTextAlignment="Center">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding OpenWebsiteCommand}" />
+                    </Label.GestureRecognizers>
+                </Label>
+
+                <Button
+                    Text="{extensions:Translate AboutDonationText}"
+                    Command="{Binding OpenDonationCommand}"
+                    IsVisible="{Binding HasDonationUrl}"
+                    Margin="20,6,20,0"
+                    CornerRadius="8"
+                    BackgroundColor="{StaticResource MyAccentBlue}"
+                    TextColor="White" />
             </VerticalStackLayout>
 
         </Grid>

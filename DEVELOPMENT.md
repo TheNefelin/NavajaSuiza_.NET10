@@ -303,7 +303,11 @@ Todos los servicios están registrados en `MauiProgram.cs` e inyectados por DI.
 - Página informativa estática.
 
 ### 6.8 Acerca de (`AboutPage`)
-- Toggle de tema oscuro/claro con persistencia.
+- Toggle de tema oscuro/claro con persistencia. En el **primer arranque** se aplica y persiste el tema oscuro (`ThemeService.ApplySavedTheme()` llama `SaveThemePreference(true)` cuando no hay preferencia guardada).
+- **Versión** leída en runtime vía `IAppInfoService` (`AppInfo.Current`); única fuente de verdad: el `.csproj` (`ApplicationDisplayVersion`/`ApplicationVersion`). No duplicar versión en constantes.
+- **Enlaces**: URLs centralizadas en `AppConstants.About` (Core) y abiertas con `ILauncherService` (`Launcher.Default`). El botón de donación solo se muestra si `DonationUrl` está configurada; el botón de repositorio fue eliminado.
+- **Sitio web**: línea `© 2026 | francisco-dev.cl` completa como hipervínculo (un solo label con `TapGestureRecognizer`) hacia `AppConstants.About.WebsiteUrl`, con el color de texto del sistema (compatible tema claro/oscuro), igual que el label de versión (sin subrayado ni opacidad).
+- **Versión 3 partes**: `ApplicationDisplayVersion=1.0.1` (texto libre válido en Android/iOS) y `ApplicationVersion=3` como build interno.
 
 ### 6.9 Cronómetro (`StopwatchPage`)
 - Iniciar/pausar/reiniciar con display `HH:mm:ss.mmm` (3 decimales) y **registro de marcas (vueltas)**.
@@ -313,8 +317,8 @@ Todos los servicios están registrados en `MauiProgram.cs` e inyectados por DI.
 - **Detención instantánea**: el ticker verifica cancelación antes de cada emisión y `Stop()` cancela antes de resetear, evitando que un tick residual "siga contando" tras pausar/reiniciar.
 - **Nota**: las marcas viven en el ViewModel (Transient), por lo que se pierden al salir de la página; el tiempo transcurrido sí persiste (servicio Singleton).
 - **Estado persistente entre navegaciones**: al salir de la página el conteo continúa (patrón `FlashlightStateService`); `StopwatchViewModel.Initialize()` resincroniza al volver.
-- **Icono**: el botón de iniciar alterna `icon_play.png`/`icon_stop.png` vía `DataTrigger` sobre `IsRunning`; el botón de reset usa `icon_stopwatch.png`. Falta agregar el asset `icon_stopwatch.png` en `Resources/Images/`.
-- **Nota de threading**: el `Tick` se dispara desde hilo background; se asume que .NET MAUI marshalea los cambios de propiedades bindables al hilo UI. Verificación runtime pendiente (riesgo a validar en dispositivo).
+- **Iconos**: botones fijos `icon_play.png` (Play/Marca) y `icon_stop.png` (Stop/Reset), sin `DataTrigger`. El asset `icon_stopwatch.png` se usa como icono del ítem del cronómetro en `MenuPage`.
+- **Nota de threading**: el `Tick` se dispara desde hilo background; validado en dispositivo, .NET MAUI refleja correctamente los cambios de propiedades bindables en la UI.
 
 ---
 

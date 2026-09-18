@@ -120,6 +120,9 @@
   <data name="AboutText" xml:space="preserve">
     <value>About</value>
   </data>
+  <data name="AboutDonationText" xml:space="preserve">
+    <value>Donate</value>
+  </data>
   <data name="CancelText" xml:space="preserve">
     <value>Cancel</value>
   </data>

@@ -36,4 +36,10 @@ public static class AppConstants
     {
         public const int LOADING_DELAY_MS = 500;
     }
+
+    public static class About
+    {
+        public const string DonationUrl = "";
+        public const string WebsiteUrl = "https://francisco-dev.cl";
+    }
 }
