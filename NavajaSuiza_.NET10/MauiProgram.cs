@@ -60,6 +60,7 @@ public static class MauiProgram
             .AddSingleton<IImagePickerService, ImagePickerService>()
             .AddSingleton<IScreenBrightnessService, ScreenBrightnessService>()
 .AddSingleton<IFlashlightStateService, FlashlightStateService>()
+            .AddSingleton<IStopwatchService, StopwatchService>()
             .AddSingleton<INotesRepository, SqliteNotesRepository>()
             ;
 
@@ -89,8 +90,10 @@ public static class MauiProgram
             .AddSingleton<InstrumentUkulelePage>()
             .AddTransient<InstrumentCharangoViewModel>()
             .AddSingleton<InstrumentCharangoPage>()
-            .AddTransient<MetronomeViewModel>()
+.AddTransient<MetronomeViewModel>()
             .AddSingleton<MetronomePage>()
+            .AddTransient<StopwatchViewModel>()
+            .AddSingleton<StopwatchPage>()
             .AddTransient<FramingViewModel>()
             .AddSingleton<FramingPage>()
 .AddTransient<CompassViewModel>()

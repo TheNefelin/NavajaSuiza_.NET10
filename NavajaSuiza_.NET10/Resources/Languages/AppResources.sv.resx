@@ -237,6 +237,15 @@
   <data name="MetronomeText" xml:space="preserve">
     <value>Metronom</value>
   </data>
+  <data name="StopwatchText" xml:space="preserve">
+    <value>Tidtagarur</value>
+  </data>
+  <data name="StopwatchElapsedText" xml:space="preserve">
+    <value>Förfluten tid</value>
+  </data>
+  <data name="LapText" xml:space="preserve">
+    <value>Varv</value>
+  </data>
   <data name="MetronomeOptionsText" xml:space="preserve">
     <value>Välj Tempo, Hastighet och Uppspelning</value>
   </data>

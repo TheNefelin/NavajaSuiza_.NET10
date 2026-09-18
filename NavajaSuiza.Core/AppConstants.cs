@@ -8,6 +8,11 @@ public static class AppConstants
         public const string DEFAULT_TIME_SIGNATURE = "4/4";
     }
 
+    public static class Stopwatch
+    {
+        public const int TICK_INTERVAL_MS = 10;
+    }
+
     public static class Framing
     {
         public const double MAX_CANVAS_WIDTH = 500;

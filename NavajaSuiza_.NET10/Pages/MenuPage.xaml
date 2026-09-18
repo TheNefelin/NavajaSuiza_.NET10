@@ -41,6 +41,17 @@
                     HeightRequest="120" />
 
                 <Button
+                    Text="{extensions:Translate StopwatchText}"
+                    Command="{Binding NavigateToStopwatchCommand}"
+                    ImageSource="icon_stopwatch.png"                    
+                    FontAttributes="Bold"
+                    ContentLayout="Top, 0" 
+                    Margin="8,0,8,16"
+                    Padding="25,15,25,10"
+                    WidthRequest="120" 
+                    HeightRequest="120" />
+
+                <Button
                     Command="{Binding NavigateToFlashlightCommand}"
                     Text="{extensions:Translate FlashlightText}"
                     ImageSource="icon_flashlight.png"

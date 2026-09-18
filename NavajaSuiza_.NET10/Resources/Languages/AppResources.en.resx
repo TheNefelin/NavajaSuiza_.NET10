@@ -237,6 +237,15 @@
   <data name="MetronomeText" xml:space="preserve">
     <value>Metronome</value>
   </data>
+  <data name="StopwatchText" xml:space="preserve">
+    <value>Stopwatch</value>
+  </data>
+  <data name="StopwatchElapsedText" xml:space="preserve">
+    <value>Elapsed Time</value>
+  </data>
+  <data name="LapText" xml:space="preserve">
+    <value>Laps</value>
+  </data>
   <data name="MetronomeOptionsText" xml:space="preserve">
     <value>Select the Tempo, Speed and Play</value>
   </data>

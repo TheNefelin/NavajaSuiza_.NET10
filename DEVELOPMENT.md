@@ -72,7 +72,7 @@ La aplicación sigue el patrón **MVVM** (Model-View-ViewModel) utilizing el Com
 ```
 NavajaSuiza_.NET10/                   # Solution
 ├── NavajaSuiza.Core/                 # Class Library (net10.0 puro, sin dependencias MAUI)
-│   ├── Interfaces/                   # 13 interfaces
+│   ├── Interfaces/                   # 14 interfaces
 │   │   ├── ILanguageService.cs
 │   │   ├── IThemeService.cs
 │   │   ├── IDeviceStatusService.cs
@@ -85,18 +85,21 @@ NavajaSuiza_.NET10/                   # Solution
 │   │   ├── IDeviceDisplayService.cs
 │   │   ├── IImagePickerService.cs
 │   │   ├── IScreenBrightnessService.cs
-│   │   └── IFlashlightStateService.cs
+│   │   ├── IFlashlightStateService.cs
+│   │   └── IStopwatchService.cs
 │   ├── Models/
 │   │   ├── SupportedLanguages.cs
 │   │   └── InstrumentStringData.cs
 │   ├── Services/
-│   │   └── FlashlightStateService.cs   # Singleton: persiste estado flash entre VM recreations
+│   │   ├── FlashlightStateService.cs   # Singleton: persiste estado flash entre VM recreations
+│   │   └── StopwatchService.cs         # Singleton: cronómetro (Stopwatch + PeriodicTimer), thread-safe
 │   ├── AppConstants.cs
-│   └── ViewModels/                     # 17 ViewModels (todas testables, sin dependencias MAUI)
+│   └── ViewModels/                     # 19 ViewModels (todas testables, sin dependencias MAUI)
 │       ├── BaseViewModel.cs
 │       ├── AboutViewModel.cs
 │       ├── MenuViewModel.cs
 │       ├── MetronomeViewModel.cs
+│       ├── StopwatchViewModel.cs
 │       ├── TunerViewModel.cs
 │       ├── ManualViewModel.cs
 │       ├── CompassViewModel.cs
@@ -145,7 +148,7 @@ NavajaSuiza_.NET10/                   # Solution
 │   └── MauiProgram.cs
 │
 └── NavajaSuiza.Test/                # Proyecto de tests (net10.0 puro)
-    └── *Tests.cs                     # xUnit + Moq, 62 tests
+    └── *Tests.cs                     # xUnit + Moq, 110 tests
 ```
 
 #### Regla de separación Core vs MAUI
@@ -153,7 +156,7 @@ NavajaSuiza_.NET10/                   # Solution
 | Va a Core (reutilizable, net10.0 puro) | Se queda en MAUI (depende de APIs de plataforma) |
 |----------------------------------------|--------------------------------------------------|
 | `BaseViewModel` | `NavigationService` (usa `Shell.Current`) |
-| Todos los ViewModels (18) | `LanguageService` (usa `Preferences`, `CultureInfo`) |
+| Todos los ViewModels (19) | `LanguageService` (usa `Preferences`, `CultureInfo`) |
 | `ICompassService`, `IOrientationService` | `ThemeService` (usa `Application.Current`, Android Window) |
 | `IFlashlightService`, `IFlashlightStateService` | `DeviceStatusService` (usa `Battery.Default`, Android APIs) |
 | `IDeviceDisplayService`, `IImagePickerService` | `CompassSensorService` (usa `Compass.Default`, `OrientationSensor`) |
@@ -163,7 +166,7 @@ NavajaSuiza_.NET10/                   # Solution
 | `InstrumentStringData`, `SupportedLanguages` | `ImagePickerService` (usa `FilePicker`) |
 | `AppConstants` | `ScreenBrightnessService` (usa Android brightness APIs) |
 | `FlashlightStateService` (Core.Services) | `InstrumentAudioService` (usa `MediaElement`, `Border`) |
-| | `MetronomeService` (usa `MediaElement`) |
+| `StopwatchService` (Core.Services) | `MetronomeService` (usa `MediaElement`) |
 
 **Patrón para desacoplar MAUI types en interfaces Core**: Las interfaces `IInstrumentAudioService` e `IMetronomeService` usan `object` en lugar de `MediaElement`/`Border` para no depender de MAUI. Las implementaciones en MAUI hacen el cast explícito.
 
@@ -195,6 +198,7 @@ MenuPage
 │   ├── InstrumentViolinPage
 │   └── InstrumentCharangoPage
 ├── MetronomePage
+├── StopwatchPage
 ├── CompassPage
 ├── ManualPage
 └── AboutPage (también en TabBar)
@@ -225,6 +229,7 @@ Todos los servicios están registrados en `MauiProgram.cs` e inyectados por DI.
 | `IImagePickerService` | `ImagePickerService` | Singleton | Selección de imagen (`FilePicker`) |
 | `IScreenBrightnessService` | `ScreenBrightnessService` | Singleton | Brillo de pantalla nativo (Android) |
 | `IFlashlightStateService` | `FlashlightStateService` (Core) | Singleton | Persistencia de estado flash entre recreaciones de VM, thread-safe con lock |
+| `IStopwatchService` | `StopwatchService` (Core) | Singleton | Cronómetro con `Stopwatch` + `PeriodicTimer`, thread-safe con lock |
 | `IMetronomeService` | `MetronomeService` | Transient | Metrónomo con `PeriodicTimer` y reproducción de audio |
 | `IInstrumentAudioService` | `InstrumentAudioService` | Transient | Configuración de cuerdas, reproducción de audio, vibración |
 
@@ -245,6 +250,7 @@ Todos los servicios están registrados en `MauiProgram.cs` e inyectados por DI.
 | `ImagePickerService` | Singleton | Wrapper de `FilePicker` |
 | `ScreenBrightnessService` | Singleton | Control de brillo nativo Android |
 | `FlashlightStateService` | Singleton | Persiste estado flash entre recreaciones de VM |
+| `StopwatchService` | Singleton | Persiste el estado del cronómetro (corriendo/pausado) entre recreaciones de VM |
 | `MetronomeService` | Transient | Timer y estado por instancia |
 | `InstrumentAudioService` | Transient | Estado de audio y vibración por instancia, aislado por ViewModel |
 | **Todos los ViewModels** | **Transient** | Cada navegación obtiene nueva instancia; evita estado residual entre sesiones |
@@ -298,6 +304,17 @@ Todos los servicios están registrados en `MauiProgram.cs` e inyectados por DI.
 
 ### 6.8 Acerca de (`AboutPage`)
 - Toggle de tema oscuro/claro con persistencia.
+
+### 6.9 Cronómetro (`StopwatchPage`)
+- Iniciar/pausar/reiniciar con display `HH:mm:ss.mmm` (3 decimales) y **registro de marcas (vueltas)**.
+- **Botones fijos** (no intercambian icono): `Play` (arranca; si ya corre, agrega una marca a la lista sin detener) y `Stop` (detiene; oprimido de nuevo limpia el cronómetro y la lista, dejando `00:00:00.000`).
+- **Marcas**: `StopwatchLap` (Number, Split, Delta) en `ObservableCollection`; cada marca guarda el tiempo acumulado y la diferencia con la anterior, mostradas en una lista.
+- **Servicio Singleton en Core**: `StopwatchService` usa `System.Diagnostics.Stopwatch` + `PeriodicTimer` (intervalo 10 ms), thread-safe con lock. La UI se actualiza por evento `Tick` con `TimeSpan`.
+- **Detención instantánea**: el ticker verifica cancelación antes de cada emisión y `Stop()` cancela antes de resetear, evitando que un tick residual "siga contando" tras pausar/reiniciar.
+- **Nota**: las marcas viven en el ViewModel (Transient), por lo que se pierden al salir de la página; el tiempo transcurrido sí persiste (servicio Singleton).
+- **Estado persistente entre navegaciones**: al salir de la página el conteo continúa (patrón `FlashlightStateService`); `StopwatchViewModel.Initialize()` resincroniza al volver.
+- **Icono**: el botón de iniciar alterna `icon_play.png`/`icon_stop.png` vía `DataTrigger` sobre `IsRunning`; el botón de reset usa `icon_stopwatch.png`. Falta agregar el asset `icon_stopwatch.png` en `Resources/Images/`.
+- **Nota de threading**: el `Tick` se dispara desde hilo background; se asume que .NET MAUI marshalea los cambios de propiedades bindables al hilo UI. Verificación runtime pendiente (riesgo a validar en dispositivo).
 
 ---
 
@@ -412,6 +429,7 @@ Constantes centralizadas agrupadas por dominio (Metronome, Framing, Instruments)
 | Servicios Singleton vs Transient | Singleton para servicios sin estado mutable persistente (sensores, wrappers de APIs de plataforma); Transient para servicios con estado por instancia (audio de instrumentos, metrónomo, ViewModels) |
 | Localización por .resx | Mecanismo nativo .NET, soporte XAML y C#, fallback automático |
 | Audio via MediaElement | Componente nativo del CommunityToolkit.Maui con soporte multiplataforma |
+| `StopwatchService` Singleton + UI por evento `Tick` | Lógica de cronómetro 100% pura (testeable) en Core; la VM Transient se suscribe/resincroniza en cada navegación |
 
 ---
 

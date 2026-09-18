@@ -45,6 +45,9 @@ public partial class MenuViewModel : BaseViewModel
     private async Task NavigateToMetronome() => await _navigationService.PushAsync("MetronomePage");
 
     [RelayCommand]
+    private async Task NavigateToStopwatch() => await _navigationService.PushAsync("StopwatchPage");
+
+    [RelayCommand]
     private async Task NavigateToCompass() => await _navigationService.PushAsync("CompassPage");
 
     [RelayCommand]
