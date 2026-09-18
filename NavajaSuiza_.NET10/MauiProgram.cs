@@ -61,6 +61,7 @@ public static class MauiProgram
             .AddSingleton<IScreenBrightnessService, ScreenBrightnessService>()
 .AddSingleton<IFlashlightStateService, FlashlightStateService>()
             .AddSingleton<IStopwatchService, StopwatchService>()
+            .AddTransient<IMorseSignalService, MorseSignalService>()
             .AddSingleton<INotesRepository, SqliteNotesRepository>()
             ;
 

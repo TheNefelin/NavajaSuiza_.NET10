@@ -132,6 +132,9 @@
   <data name="FlashlightNoteText" xml:space="preserve">
     <value>Nota: La pantalla usará el máximo brillo para simular luz</value>
   </data>
+  <data name="FlashlightEmergencyText" xml:space="preserve">
+    <value>Emergencia</value>
+  </data>
   <data name="FlashlightOpFlashText" xml:space="preserve">
     <value>Flash</value>
   </data>

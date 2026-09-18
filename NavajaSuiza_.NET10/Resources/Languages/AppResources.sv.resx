@@ -132,6 +132,9 @@
   <data name="FlashlightNoteText" xml:space="preserve">
     <value>Obs: Skärmen använder maximal ljusstyrka för att simulera ljus.</value>
   </data>
+  <data name="FlashlightEmergencyText" xml:space="preserve">
+    <value>Nödsignal</value>
+  </data>
   <data name="FlashlightOpFlashText" xml:space="preserve">
     <value>Flash</value>
   </data>

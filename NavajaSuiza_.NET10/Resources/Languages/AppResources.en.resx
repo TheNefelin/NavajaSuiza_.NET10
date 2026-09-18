@@ -132,6 +132,9 @@
   <data name="FlashlightNoteText" xml:space="preserve">
     <value>Note: The screen will use maximum brightness to simulate light.</value>
   </data>
+  <data name="FlashlightEmergencyText" xml:space="preserve">
+    <value>Emergency</value>
+  </data>
   <data name="FlashlightOpFlashText" xml:space="preserve">
     <value>Flash</value>
   </data>

@@ -24,7 +24,15 @@
         <converters:BoolToLocalizedStringConverter 
             x:Key="BoolToActionText"
             TrueResourceKey="FlashlightActionOffText"
-            FalseResourceKey="FlashlightActionOnText" />        
+            FalseResourceKey="FlashlightActionOnText" />
+        <converters:BoolToColorConverter
+            x:Key="MorseButtonColor"
+            TrueColor="{StaticResource MyAccent}"
+            FalseColor="{StaticResource MyAccentOrange}" />
+        <converters:BoolToColorConverter
+            x:Key="MorseButtonTextColor"
+            TrueColor="{StaticResource MyPrimaryDark}"
+            FalseColor="White" />        
     </ContentPage.Resources>
 
     <ScrollView>
@@ -63,7 +71,7 @@
                     BackgroundColor="{Binding IsFlashOn, Converter={StaticResource FlashOnConverter}}"
                     TextColor="{Binding IsFlashOn, Converter={StaticResource FlashTextOnConverter}}" />
 
-                <Button
+<Button
                     Command="{Binding ClickScreenCommand}"          
                     Text="{extensions:Translate FlashlightOpScreenText}"                  
                     ImageSource="icon_screen.png"
@@ -75,6 +83,41 @@
                     HeightRequest="120"
                     BackgroundColor="{Binding IsScreenOn, Converter={StaticResource FlashOnConverter}}"
                     TextColor="{Binding IsScreenOn, Converter={StaticResource FlashTextOnConverter}}" />
+            </FlexLayout>
+
+            <Label 
+                Text="{extensions:Translate FlashlightEmergencyText}"
+                HorizontalTextAlignment="Center"
+                Opacity="0.6" 
+                Padding="10"
+                Margin="0,10,0,0" />
+
+            <FlexLayout
+                Wrap="Wrap"
+                JustifyContent="Center"
+                Padding="20">
+
+                <Button
+                    Command="{Binding SendSosCommand}"
+                    Text="SOS"
+                    FontAttributes="Bold"
+                    FontSize="24"
+                    Margin="8,0,8,16"
+                    WidthRequest="120"
+                    HeightRequest="120"
+                    BackgroundColor="{Binding IsSosActive, Converter={StaticResource MorseButtonColor}}"
+                    TextColor="{Binding IsSosActive, Converter={StaticResource MorseButtonTextColor}}" />
+
+                <Button
+                    Command="{Binding SendHelpCommand}"
+                    Text="HELP"
+                    FontAttributes="Bold"
+                    FontSize="24"
+                    Margin="8,0,8,16"
+                    WidthRequest="120"
+                    HeightRequest="120"
+                    BackgroundColor="{Binding IsHelpActive, Converter={StaticResource MorseButtonColor}}"
+                    TextColor="{Binding IsHelpActive, Converter={StaticResource MorseButtonTextColor}}" />
             </FlexLayout>
 
         </VerticalStackLayout>
