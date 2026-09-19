@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
+using NavajaSuiza.Core.Interfaces;
 using NavajaSuiza.Core.Models;
 
 namespace NavajaSuiza.Core.ViewModels;
@@ -13,6 +14,7 @@ public partial class PizarraViewModel : BaseViewModel
     private const string LightBoardPenHex = "#1F1F1F";
 
     private readonly ILogger<PizarraViewModel> _logger;
+    private readonly IPizarraImageExporter _exporter;
 
     public ObservableCollection<PizarraStroke> Strokes { get; } = new();
 
@@ -28,11 +30,14 @@ public partial class PizarraViewModel : BaseViewModel
     [ObservableProperty]
     public partial bool IsColorPickerVisible { get; set; }
 
+    public PizarraExportResult LastExportResult { get; private set; } = PizarraExportResult.Saved;
+
     public event Action? CanvasChanged;
 
-    public PizarraViewModel(ILogger<PizarraViewModel> logger)
+    public PizarraViewModel(ILogger<PizarraViewModel> logger, IPizarraImageExporter exporter)
     {
         _logger = logger;
+        _exporter = exporter;
     }
 
     public void StartStroke(float x, float y)
@@ -145,6 +150,19 @@ public partial class PizarraViewModel : BaseViewModel
         Strokes.RemoveAt(Strokes.Count - 1);
         RaiseCanvasChanged();
         _logger.LogInformation("Pizarra: trazo deshecho");
+    }
+
+    [RelayCommand]
+    private async Task Save()
+    {
+        if (Strokes.Count == 0)
+        {
+            LastExportResult = PizarraExportResult.Failed;
+            return;
+        }
+
+        LastExportResult = await _exporter.ExportAsync(Strokes.ToArray(), BoardColor);
+        _logger.LogInformation("Export de pizarra: {Result}", LastExportResult);
     }
 
     private void RaiseCanvasChanged() => CanvasChanged?.Invoke();

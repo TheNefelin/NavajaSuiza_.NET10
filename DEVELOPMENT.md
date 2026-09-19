@@ -148,7 +148,7 @@ NavajaSuiza_.NET10/                   # Solution
 │   └── MauiProgram.cs
 │
 └── NavajaSuiza.Test/                # Proyecto de tests (net10.0 puro)
-    └── *Tests.cs                     # xUnit + Moq, 166 tests
+    └── *Tests.cs                     # xUnit + Moq, 170 tests
 ```
 
 #### Regla de separación Core vs MAUI
@@ -592,7 +592,7 @@ Pasos 1–2 completados; 3–6 según el plan §14 Fase F.
 
 ### 18.1 Pizarra (dibujo)
 
-Estado: **Fase 1 implementada y verificada** (22/09/2026; 166 tests; builds Android/Windows 0 errores). Fase 2 (persistencia/export y goma) pendiente de autorización.
+Estado: **Fases 1 y 2 implementadas y verificadas** (170 tests; builds Android/Windows 0 errores). Fase 2 = export WebP a galería (verificado en emulador). Goma queda como Fase 3 (pendiente).
 
 Entregado (Fase 1):
 - Lienzo a máximo espacio (`Grid` `Auto,Auto,*`), **sin `ScrollView`** (interceptaba los gestos verticales del dibujo).
@@ -603,15 +603,20 @@ Entregado (Fase 1):
 - `PizarraStroke`/`PizarraPoint` y `PizarraViewModel` en Core (comandos testables: `Clear`, `Undo`, `SetBoardColor`, `OpenColorPicker`/`CloseColorPicker`/`SelectColor`); `StrokeDrawable` (`IDrawable`) y `PizarraPage` en MAUI.
 - Ruta `"PizarraPage"`, ítem de menú con `icon_pizarra.png`, localización es/en/sv.
 
-Pendiente (Fase 2):
-- **Persistencia del dibujo solo si el usuario decide guardar**: trazos serializados a JSON local (privacidad respaldada por `allowBackup=false` ya vigente). Botón "Guardar".
-- **Goma**.
-- **Exportar imagen** WebP en Android / PNG en el resto, re-rasterizando desde el modelo a galería/compartir.
+Entregado (Fase 2 — Guardar/export a galería):
+- **Decisión**: se descartó la persistencia JSON propuesta originalmente (generaba archivos grandes y opacos para el usuario; "no todos saben qué es un JSON"). `Guardar` **exporta el dibujo como imagen WebP a la galería** (comprensible y borrable por el usuario). La pizarra **abre siempre en blanco** (sin restauración).
+- `IPizarraImageExporter` (Core) + `PizarraImageExporter` (MAUI): rasterización en memoria con `Bitmap`/`Canvas`/`Paint` de Android (mismo estilo que `StrokeDrawable`: caps/joins redondos), escalado a máx. 2048px, insertado vía `MediaStore.Images` → `Pictures/pizarra.webp`.
+- **Permisos**: API 29+ sin permiso; API 21–28 pide `WRITE_EXTERNAL_STORAGE` en runtime (declarado en manifest con `maxSdkVersion="28"`, patrón aceptado por Play; es solo Android 5–9).
+- Windows/iOS: `PizarraExportResult.NotAvailable` con mensaje localizado "solo disponible en Android".
+- El VM expone `PizarraExportResult` (`Saved`/`NotAvailable`/`Failed`) y la página muestra el mensaje correspondiente (resx ×3).
+
+Pendiente (Fase 3):
+- **Goma** (borrado de trazos por proximidad/toque).
+- **Compartir** desde la app (además de galería) y **PNG en resto de plataformas** (requeriría rasterizador por plataforma o dependencia nueva en Windows).
 
 Enfoque técnico de export (referencia):
-- **MAUI no exporta `GraphicsView` a archivo**: se re-rasterizan los trazos desde el modelo sobre canvas de plataforma (Android `Bitmap`/`Canvas` + `CompressFormat.Webp`; el resto PNG).
-- Galería/compartir vía servicio nuevo en `NavajaSuiza.Services/Implementations` (patrón existente).
-- Pendiente de definir: alcance del guardado/export (galería vs compartir).
+- **MAUI no exporta `GraphicsView` a archivo**: se re-rasterizan los trazos desde el modelo sobre canvas de plataforma (Android `Bitmap`/`Canvas` + `CompressFormat.Webp`).
+- **`MediaSaver`/`FileSaver` de CommunityToolkit no existen en v15.0.1** (verificado en el cache del paquete), por lo que se usó `MediaStore` nativo sin dependencias nuevas.
 
 ### 18.2 Contador de pasos
 

@@ -1,5 +1,7 @@
 using Microsoft.Extensions.Logging;
 using Moq;
+using NavajaSuiza.Core.Interfaces;
+using NavajaSuiza.Core.Models;
 using NavajaSuiza.Core.ViewModels;
 
 namespace NavajaSuiza.Test;
@@ -7,8 +9,9 @@ namespace NavajaSuiza.Test;
 public class PizarraViewModelTests
 {
     private readonly Mock<ILogger<PizarraViewModel>> _loggerMock = new();
+    private readonly Mock<IPizarraImageExporter> _exporterMock = new();
 
-    private PizarraViewModel CreateSut() => new(_loggerMock.Object);
+    private PizarraViewModel CreateSut() => new(_loggerMock.Object, _exporterMock.Object);
 
     [Fact]
     public void Strokes_StartsEmpty()
@@ -229,5 +232,65 @@ public class PizarraViewModelTests
         vm.AddPoint(10f, 20f);
 
         Assert.Equal(0, fired);
+    }
+
+    [Fact]
+    public async Task SaveCommand_ExportsStrokesAndBoardColor()
+    {
+        _exporterMock.Setup(e => e.ExportAsync(It.IsAny<IReadOnlyList<PizarraStroke>>(), It.IsAny<string>()))
+            .ReturnsAsync(PizarraExportResult.Saved);
+
+        var vm = CreateSut();
+        vm.SetBoardColorCommand.Execute("#17171B");
+        vm.StartStroke(10f, 20f);
+        vm.AddPoint(30f, 40f);
+
+        await vm.SaveCommand.ExecuteAsync(null);
+
+        _exporterMock.Verify(e => e.ExportAsync(
+            It.Is<IReadOnlyList<PizarraStroke>>(s => s.Count == 1 && s[0].Points.Count == 2),
+            "#17171B"), Times.Once);
+        Assert.Equal(PizarraExportResult.Saved, vm.LastExportResult);
+    }
+
+    [Fact]
+    public async Task SaveCommand_OnEmptyBoard_DoesNotExportAndFlagsFailed()
+    {
+        _exporterMock.Setup(e => e.ExportAsync(It.IsAny<IReadOnlyList<PizarraStroke>>(), It.IsAny<string>()))
+            .ReturnsAsync(PizarraExportResult.Saved);
+
+        var vm = CreateSut();
+        await vm.SaveCommand.ExecuteAsync(null);
+
+        _exporterMock.Verify(e => e.ExportAsync(It.IsAny<IReadOnlyList<PizarraStroke>>(), It.IsAny<string>()), Times.Never);
+        Assert.Equal(PizarraExportResult.Failed, vm.LastExportResult);
+    }
+
+    [Fact]
+    public async Task SaveCommand_WhenExporterUnavailable_SetsNotAvailable()
+    {
+        _exporterMock.Setup(e => e.ExportAsync(It.IsAny<IReadOnlyList<PizarraStroke>>(), It.IsAny<string>()))
+            .ReturnsAsync(PizarraExportResult.NotAvailable);
+
+        var vm = CreateSut();
+        vm.StartStroke(10f, 20f);
+
+        await vm.SaveCommand.ExecuteAsync(null);
+
+        Assert.Equal(PizarraExportResult.NotAvailable, vm.LastExportResult);
+    }
+
+    [Fact]
+    public async Task SaveCommand_WhenExporterFails_SetsFailed()
+    {
+        _exporterMock.Setup(e => e.ExportAsync(It.IsAny<IReadOnlyList<PizarraStroke>>(), It.IsAny<string>()))
+            .ReturnsAsync(PizarraExportResult.Failed);
+
+        var vm = CreateSut();
+        vm.StartStroke(10f, 20f);
+
+        await vm.SaveCommand.ExecuteAsync(null);
+
+        Assert.Equal(PizarraExportResult.Failed, vm.LastExportResult);
     }
 }

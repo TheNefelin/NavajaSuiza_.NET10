@@ -65,6 +65,7 @@ public static class MauiProgram
             .AddSingleton<IAppInfoService, AppInfoService>()
             .AddSingleton<ILauncherService, LauncherService>()
             .AddSingleton<INotesRepository, SqliteNotesRepository>()
+            .AddSingleton<IPizarraImageExporter, PizarraImageExporter>()
             ;
 
         builder.Services

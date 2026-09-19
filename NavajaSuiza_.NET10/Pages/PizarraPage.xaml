@@ -40,6 +40,14 @@
                 Padding="6,0"
                 HeightRequest="42"
                 HorizontalOptions="FillAndExpand" />
+
+            <Button
+                Text="{extensions:Translate PizarraSaveText}"
+                Clicked="OnSaveClicked"
+                FontSize="13"
+                Padding="6,0"
+                HeightRequest="42"
+                HorizontalOptions="FillAndExpand" />
         </HorizontalStackLayout>
 
         <VerticalStackLayout Grid.Row="1" Spacing="4">

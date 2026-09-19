@@ -192,6 +192,18 @@
   <data name="PizarraWidthText" xml:space="preserve">
     <value>Tjocklek</value>
   </data>
+  <data name="PizarraSaveText" xml:space="preserve">
+    <value>Spara</value>
+  </data>
+  <data name="PizarraSavedConfirmText" xml:space="preserve">
+    <value>Ritningen sparad i galleriet</value>
+  </data>
+  <data name="PizarraExportUnavailableText" xml:space="preserve">
+    <value>Bildexport är endast tillgängligt på Android</value>
+  </data>
+  <data name="PizarraExportFailedText" xml:space="preserve">
+    <value>Det gick inte att spara bilden</value>
+  </data>
   <data name="NotesSearchPlaceholderText" xml:space="preserve">
     <value>Sök anteckning...</value>
   </data>

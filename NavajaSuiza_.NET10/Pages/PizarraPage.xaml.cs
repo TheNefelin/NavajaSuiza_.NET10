@@ -1,6 +1,7 @@
 using Microsoft.Maui.Graphics;
 using NavajaSuiza_.NET10.Components;
 using NavajaSuiza_.NET10.Extensions;
+using NavajaSuiza.Core.Interfaces;
 using NavajaSuiza.Core.ViewModels;
 
 namespace NavajaSuiza_.NET10.Pages;
@@ -56,6 +57,30 @@ public partial class PizarraPage : ContentPage
     private void OnColorPickerScrimTapped(object? sender, TappedEventArgs e)
     {
         _viewModel?.CloseColorPickerCommand.Execute(null);
+    }
+
+    private async void OnSaveClicked(object? sender, EventArgs e)
+    {
+        var viewModel = _viewModel;
+        if (viewModel is null)
+            return;
+
+        await viewModel.SaveCommand.ExecuteAsync(null);
+
+        var local = LocalizationResourceManager.Instance;
+
+        var messageKey = viewModel.LastExportResult switch
+        {
+            PizarraExportResult.NotAvailable => "PizarraExportUnavailableText",
+            PizarraExportResult.Failed => "PizarraExportFailedText",
+            _ => "PizarraSavedConfirmText"
+        };
+
+        var title = local["PizarraText"]?.ToString() ?? string.Empty;
+        var message = local[messageKey]?.ToString() ?? string.Empty;
+        var okText = local["CommonOkText"]?.ToString() ?? string.Empty;
+
+        await DisplayAlertAsync(title, message, okText);
     }
 
     private async Task ShowBoardPickerAsync()

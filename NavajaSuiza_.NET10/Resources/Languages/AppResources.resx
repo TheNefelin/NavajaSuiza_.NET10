@@ -192,6 +192,18 @@
   <data name="PizarraWidthText" xml:space="preserve">
     <value>Grosor</value>
   </data>
+  <data name="PizarraSaveText" xml:space="preserve">
+    <value>Guardar</value>
+  </data>
+  <data name="PizarraSavedConfirmText" xml:space="preserve">
+    <value>Dibujo guardado en la galería</value>
+  </data>
+  <data name="PizarraExportUnavailableText" xml:space="preserve">
+    <value>El export de imagen solo está disponible en Android</value>
+  </data>
+  <data name="PizarraExportFailedText" xml:space="preserve">
+    <value>No se pudo guardar la imagen</value>
+  </data>
   <data name="NotesSearchPlaceholderText" xml:space="preserve">
     <value>Buscar nota...</value>
   </data>
