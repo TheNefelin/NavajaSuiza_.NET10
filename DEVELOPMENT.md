@@ -443,6 +443,7 @@ MAUI `Battery.Default` en Android exige `BATTERY_STATS` (permiso protegido `sign
 | Localización por .resx | Mecanismo nativo .NET, soporte XAML y C#, fallback automático |
 | Audio via MediaElement | Componente nativo del CommunityToolkit.Maui con soporte multiplataforma |
 | `StopwatchService` Singleton + UI por evento `Tick` | Lógica de cronómetro 100% pura (testeable) en Core; la VM Transient se suscribe/resincroniza en cada navegación |
+| `allowBackup="false"` en Android | Las Notas son datos locales sensibles; sin respaldo automático ni transmisión (formulario Data Safety simple). Evaluado SQLCipher para cifrado en reposo, descartado por ahora: cifrar sin poder exportar la clave impide restaurar notas en otro dispositivo; respaldar la clave anula la protección |
 
 ---
 
@@ -520,7 +521,7 @@ MAUI `Battery.Default` en Android exige `BATTERY_STATS` (permiso protegido `sign
 | 35 | Batería sin `BATTERY_STATS` vía `BatteryManager` (Android) | `DeviceStatusService.cs` | ✅ Completado |
 | 36 | Cronómetro: marcas persisten entre navegaciones (servicio Singleton) | Core (`Stopwatch*`) + tests | ✅ Completado (144 tests) |
 
-**Pendiente de release**: Privacy Policy + formulario Data Safety de Play (decidir `allowBackup=true` de las Notas → transmisión a Google Drive), validar target SDK del AAB (targetSdk 36 cumple), assets de tienda (icono adaptativo 512, splash, screenshots, listing trilingüe ES/EN/SV), Release AAB firmado + internal/closed testing → producción.
+**Pendiente de release**: Privacy Policy **publicada** en `https://www.francisco-dev.cl/navaja-suiza/privacy-policy` (fuente en `PRIVACY_POLICY.md`, trilingüe + bloque Astro) y **`allowBackup=false` decidido** (Notas solo locales, sin transmisión). Resta: pegar la URL en el listing de Play Console, completar el formulario Data Safety, validar target SDK del AAB (targetSdk 36 cumple), assets de tienda (icono adaptativo 512, splash, screenshots, listing trilingüe ES/EN/SV), Release AAB firmado + internal/closed testing → producción.
 
 ---
 
@@ -569,3 +570,59 @@ MAUI `Battery.Default` en Android exige `BATTERY_STATS` (permiso protegido `sign
 - **AGENTS.md**: Reglas de operación para OpenCode en este proyecto.
 - **README.md**: Documentación general del proyecto (estructura, arquitectura y uso).
 - **NavajaSuiza.Core**: Class Library con interfaces y modelos compartidos.
+
+---
+
+## 17. Publicación en Google Play
+
+Pasos para publicar `NavajaSuiza` en Google Play (proceso de mantenedor, no documentación de usuario):
+
+1. **Redactar la política de privacidad**: texto trilingüe (es/en/sv) en `PRIVACY_POLICY.md`. **`allowBackup=false` decidido** (19/09/2026): las Notas solo viven en el dispositivo; no hay transmisión que declarar por respaldo. Hacer lo mismo para Data Safety.**✅ Hecho**
+2. **Publicar la política en la web**: subir el texto a una página pública de `francisco-dev.cl` (ej. `.../privacy-policy`) y obtener la URL. **✅ Publicado en `https://www.francisco-dev.cl/navaja-suiza/privacy-policy`**
+3. **Pegar la URL en Play Console**: en el listing, campo "Política de privacidad" → la URL pública (Play solo recibe el link, no archivos).
+4. **Completar el formulario Data Safety**: dentro de Play Console, responder casillas coherentes con el comportamiento real (Notas = datos del usuario solo locales; cámara = solo linterna, sin captura; batería/sensores = lectura local; sin anuncios/analytics/servidores).
+5. **Subir assets del listing**: ícono 512×512, screenshots (mín. 2, recomendado 6–8), textos trilingües ES/EN/SV.
+6. **Cargar el Release AAB firmado**: subir el `.aab` (ver README §Release) → Internal testing → Closed testing → Production.
+
+Pasos 1–2 completados; 3–6 según el plan §14 Fase F.
+
+---
+
+## 18. Features planadas (backlog de desarrollo)
+
+### 18.1 Pizarra (dibujo)
+
+Estado: **planificada** — requisitos y enfoque acordados (19/09/2026); pendiente de implementar cuando el usuario lo autorice.
+
+Requisitos funcionales:
+- Lienzo cuyo fondo sigue el tema claro/oscuro de la app **y** selector de color de pizarra no excluyente (gris claro casi blanco / gris oscuro casi negro).
+- Herramientas por fases de abordaje: lápiz + paleta de colores + grosor → goma + limpiar todo → deshacer (undo).
+- Persistencia del dibujo **solo si el usuario decide guardar**: trazos serializados a JSON local (privacidad respaldada por `allowBackup=false` ya vigente).
+- Exportar imagen **WebP en Android** (formato liviano) y PNG en el resto de plataformas, opcional, a galería/compartir.
+
+Enfoque técnico:
+- `GraphicsView` + `IDrawable` (nativo MAUI, **sin dependencias nuevas**), eventos táctiles `StartInteraction`/`DragInteraction`/`EndInteraction`.
+- Modelo de trazos (polilíneas) en Core → ViewModel testeable; las herramientas son operaciones sobre la lista de trazos.
+- **MAUI no exporta `GraphicsView` a archivo**: la exportación re-rasteriza los trazos desde el modelo sobre canvas de plataforma (Android `Bitmap`/`Canvas` + `CompressFormat.Webp`; el resto PNG).
+- Exportación a galería/compartir vía servicio nuevo en `NavajaSuiza.Services/Implementations` (patrón existente).
+
+Pendiente de definir: alcance del guardado/export (galería vs compartir).
+
+### 18.2 Contador de pasos
+
+Estado: **planificada** — enfoque definido; pendiente confirmar alcance y autorización para implementar.
+
+Referencia de cómo funciona (contexto técnico):
+- El conteo real **no usa GPS**; usa sensores inerciales:
+  - **Android `TYPE_STEP_COUNTER`** (API 19+): el SoC/coprocesador de movimiento detecta pasos; entrega cuenta acumulada desde el último reboot. **Sin permiso** y batería mínima; funciona con la app cerrada (lo usan Google Fit/Samsung Health).
+  - Base del mecanismo: acelerómetro con detección de picos de la marcha (~1–3 Hz) filtrada con umbrales/suavizado.
+  - **iOS:** `CMPedometer`/HealthKit sobre el coprocesador de movimiento; requiere `NSMotionUsageDescription`.
+  - **Windows:** sin sensor de pasos nativo → mostrar "no disponible".
+- Precisión: buena con sensor dedicado; el error sube con heurísticas (brazos, vehículo).
+
+Enfoque en esta app:
+- Servicio interno primero (patrón `Core/Interfaces` + `Services/Implementations`), Android `STEP_COUNTER` como primera iteración; iOS `CMPedometer` después.
+- Respaldo del conteo en `Preferences`/JSON local (permite conteo diario con `allowBackup=false`).
+- **No crear NuGet por ahora**: el paquete comunitario sería un proyecto aparte (nuevo), solo tras validar el servicio en dispositivos reales (decisión en §13).
+
+Pendiente de definir: ¿conteo solo en primer plano o en segundo plano/cerrada?; ¿historial de días?; ¿reset a medianoche?; ¿dónde se muestra (página propia o dentro de otra)?
