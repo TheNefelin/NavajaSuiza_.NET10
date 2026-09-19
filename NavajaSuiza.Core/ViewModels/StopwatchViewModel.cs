@@ -33,6 +33,16 @@ public partial class StopwatchViewModel : BaseViewModel
         _stopwatchService.Tick += OnTick;
         ElapsedText = FormatTimeSpan(_stopwatchService.Elapsed);
         IsRunning = _stopwatchService.IsRunning;
+        RestoreLaps();
+    }
+
+    private void RestoreLaps()
+    {
+        Laps.Clear();
+        foreach (var lap in _stopwatchService.Laps)
+        {
+            Laps.Add(lap);
+        }
     }
 
     public override void Cleanup()
@@ -73,6 +83,7 @@ public partial class StopwatchViewModel : BaseViewModel
         else
         {
             _stopwatchService.Stop();
+            _stopwatchService.ClearLaps();
             Laps.Clear();
             ElapsedText = FormatTimeSpan(TimeSpan.Zero);
             _logger.LogInformation("Stopwatch reset");
@@ -86,12 +97,15 @@ public partial class StopwatchViewModel : BaseViewModel
         var split = _stopwatchService.Elapsed;
         var previous = Laps.Count > 0 ? Laps[0].Split : TimeSpan.Zero;
 
-        Laps.Insert(0, new StopwatchLap
+        var lap = new StopwatchLap
         {
             Number = Laps.Count + 1,
             Split = split,
             Delta = split - previous
-        });
+        };
+
+        Laps.Insert(0, lap);
+        _stopwatchService.AddLap(lap);
 
         _logger.LogInformation("Lap {Number} recorded at {Split}", Laps[0].Number, split);
     }

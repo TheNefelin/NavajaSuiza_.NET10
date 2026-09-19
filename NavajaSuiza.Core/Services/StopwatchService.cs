@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using NavajaSuiza.Core.Interfaces;
+using NavajaSuiza.Core.Models;
 
 namespace NavajaSuiza.Core.Services;
 
@@ -7,6 +8,7 @@ public class StopwatchService : IStopwatchService
 {
     private readonly object _lock = new();
     private readonly Stopwatch _stopwatch = new();
+    private readonly List<StopwatchLap> _laps = new();
     private CancellationTokenSource? _cts;
     private bool _isRunning;
 
@@ -20,6 +22,27 @@ public class StopwatchService : IStopwatchService
     public TimeSpan Elapsed
     {
         get { lock (_lock) { return _stopwatch.Elapsed; } }
+    }
+
+    public IReadOnlyList<StopwatchLap> Laps
+    {
+        get { lock (_lock) { return _laps.ToArray(); } }
+    }
+
+    public void AddLap(StopwatchLap lap)
+    {
+        lock (_lock)
+        {
+            _laps.Insert(0, lap);
+        }
+    }
+
+    public void ClearLaps()
+    {
+        lock (_lock)
+        {
+            _laps.Clear();
+        }
     }
 
     public void Start()

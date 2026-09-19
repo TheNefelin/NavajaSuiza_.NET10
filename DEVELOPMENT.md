@@ -148,7 +148,7 @@ NavajaSuiza_.NET10/                   # Solution
 │   └── MauiProgram.cs
 │
 └── NavajaSuiza.Test/                # Proyecto de tests (net10.0 puro)
-    └── *Tests.cs                     # xUnit + Moq, 110 tests
+    └── *Tests.cs                     # xUnit + Moq, 144 tests
 ```
 
 #### Regla de separación Core vs MAUI
@@ -229,7 +229,7 @@ Todos los servicios están registrados en `MauiProgram.cs` e inyectados por DI.
 | `IImagePickerService` | `ImagePickerService` | Singleton | Selección de imagen (`FilePicker`) |
 | `IScreenBrightnessService` | `ScreenBrightnessService` | Singleton | Brillo de pantalla nativo (Android) |
 | `IFlashlightStateService` | `FlashlightStateService` (Core) | Singleton | Persistencia de estado flash entre recreaciones de VM, thread-safe con lock |
-| `IStopwatchService` | `StopwatchService` (Core) | Singleton | Cronómetro con `Stopwatch` + `PeriodicTimer`, thread-safe con lock |
+| `IStopwatchService` | `StopwatchService` (Core) | Singleton | Cronómetro con `Stopwatch` + `PeriodicTimer`, thread-safe con lock; persiste tiempo y marcas |
 | `IMetronomeService` | `MetronomeService` | Transient | Metrónomo con `PeriodicTimer` y reproducción de audio |
 | `IInstrumentAudioService` | `InstrumentAudioService` | Transient | Configuración de cuerdas, reproducción de audio, vibración |
 
@@ -250,7 +250,7 @@ Todos los servicios están registrados en `MauiProgram.cs` e inyectados por DI.
 | `ImagePickerService` | Singleton | Wrapper de `FilePicker` |
 | `ScreenBrightnessService` | Singleton | Control de brillo nativo Android |
 | `FlashlightStateService` | Singleton | Persiste estado flash entre recreaciones de VM |
-| `StopwatchService` | Singleton | Persiste el estado del cronómetro (corriendo/pausado) entre recreaciones de VM |
+| `StopwatchService` | Singleton | Persiste el estado del cronómetro (corriendo/pausado) y las marcas entre recreaciones de VM |
 | `MetronomeService` | Transient | Timer y estado por instancia |
 | `InstrumentAudioService` | Transient | Estado de audio y vibración por instancia, aislado por ViewModel |
 | **Todos los ViewModels** | **Transient** | Cada navegación obtiene nueva instancia; evita estado residual entre sesiones |
@@ -312,10 +312,10 @@ Todos los servicios están registrados en `MauiProgram.cs` e inyectados por DI.
 ### 6.9 Cronómetro (`StopwatchPage`)
 - Iniciar/pausar/reiniciar con display `HH:mm:ss.mmm` (3 decimales) y **registro de marcas (vueltas)**.
 - **Botones fijos** (no intercambian icono): `Play` (arranca; si ya corre, agrega una marca a la lista sin detener) y `Stop` (detiene; oprimido de nuevo limpia el cronómetro y la lista, dejando `00:00:00.000`).
-- **Marcas**: `StopwatchLap` (Number, Split, Delta) en `ObservableCollection`; cada marca guarda el tiempo acumulado y la diferencia con la anterior, mostradas en una lista.
+- **Marcas**: `StopwatchLap` (Number, Split, Delta) en `ObservableCollection`; cada marca guarda el tiempo acumulado y la diferencia con la anterior, mostradas en una lista. Las marcas viven en `StopwatchService` (Singleton) y el VM las refleja en `Initialize()`.
 - **Servicio Singleton en Core**: `StopwatchService` usa `System.Diagnostics.Stopwatch` + `PeriodicTimer` (intervalo 10 ms), thread-safe con lock. La UI se actualiza por evento `Tick` con `TimeSpan`.
 - **Detención instantánea**: el ticker verifica cancelación antes de cada emisión y `Stop()` cancela antes de resetear, evitando que un tick residual "siga contando" tras pausar/reiniciar.
-- **Nota**: las marcas viven en el ViewModel (Transient), por lo que se pierden al salir de la página; el tiempo transcurrido sí persiste (servicio Singleton).
+- **Marcas persistentes**: viven en el servicio Singleton (no en el VM Transient), por lo que persisten al salir y volver a la página y se limpian únicamente con el reset (segundo toque de Stop).
 - **Estado persistente entre navegaciones**: al salir de la página el conteo continúa (patrón `FlashlightStateService`); `StopwatchViewModel.Initialize()` resincroniza al volver.
 - **Iconos**: botones fijos `icon_play.png` (Play/Marca) y `icon_stop.png` (Stop/Reset), sin `DataTrigger`. El asset `icon_stopwatch.png` se usa como icono del ítem del cronómetro en `MenuPage`.
 - **Nota de threading**: el `Tick` se dispara desde hilo background; validado en dispositivo, .NET MAUI refleja correctamente los cambios de propiedades bindables en la UI.
@@ -407,11 +407,20 @@ Constantes centralizadas agrupadas por dominio (Metronome, Framing, Instruments)
 ## 12. Plataformas y permisos
 
 ### Permisos Android (`AndroidManifest`)
-- `BATTERY_STATUS`
 - `CAMERA`
 - `FLASHLIGHT`
-- `ACCESS_COARSE_LOCATION`
-- `ACCESS_FINE_LOCATION`
+
+**`INTERNET`**: lo re-inyecta `CommunityToolkit.Maui` en el manifest fusionado (`obj/.../AndroidManifest.xml`); permiso *normal*, se conserva.
+
+**No declarados** (principio de mínimo privilegio, eliminados): `BATTERY_STATS` (protegido, no se usa; ver batería abajo), `ACCESS_FINE_LOCATION`, `ACCESS_COARSE_LOCATION`, `ACCESS_NETWORK_STATE`, `INTERNET` (en el manifest fuente).
+
+### Lectura de batería sin permisos
+MAUI `Battery.Default` en Android exige `BATTERY_STATS` (permiso protegido `signature|privileged`, red flag en Play). `DeviceStatusService.GetBatteryLevel()` en Android usa `BatteryManager.GetIntProperty(Android.OS.BatteryProperty.Capacity)` (API 21+, síncrono, sin permiso); `Battery.Default` queda como fallback en otras plataformas.
+
+### ABIs / empaquetado Android (`RuntimeIdentifiers`)
+- `AndroidSupportedAbis` quedó **obsoleta** (warning XA0036) en .NET 10 / Android SDK 36; se reemplazó por `RuntimeIdentifiers` condicionados al target Android: `android-arm;android-arm64;android-x64` → `armeabi-v7a` (32-bit), `arm64-v8a`, `x86_64`. Un solo APK cubre todos los dispositivos; Play usará AAB.
+- Dispositivos budget pueden correr Android **solo 32-bit** (caso real: Galaxy A11 `SM-A115M`, Android 12, `ro.product.cpu.abi=armeabi-v7a`); un APK sin `armeabi-v7a` falla con "app no compatible" (`INSTALL_FAILED_NO_MATCHING_ABIS`).
+- Los builds **Debug** de MAUI apuntan a `x86_64` (emulador): no instalar en teléfonos reales. Validar ABI con `adb shell getprop ro.product.cpu.abi`.
 
 ### Soporte mínimo por plataforma
 | Plataforma | Versión mínima |
@@ -502,6 +511,17 @@ Constantes centralizadas agrupadas por dominio (Metronome, Framing, Instruments)
 
 **Cierre**: La fase de optimización del proyecto queda cerrada. Deuda técnica conocida y documentada: los servicios MAUI (`LanguageService`, `MetronomeService`, `InstrumentAudioService`, etc.) no tienen tests automatizados de forma deliberada (requeriría un test project MAUI de costo elevado para una app de este alcance). La verificación runtime fue realizada por el usuario en dispositivo y validada por los tests automatizados en CI.
 
+### Fase F — Play Store readiness (release)
+
+| # | Tarea | Archivo(s) | Estado |
+|---|-------|-----------|--------|
+| 33 | Reducir permisos Android a mínimo (quitar `BATTERY_STATS`, location, network, `INTERNET` del source) | `Platforms/Android/AndroidManifest.xml` | ✅ Completado (manifest fusionado verificado) |
+| 34 | Empaquetado multirarquitectura (RIDs arm/arm64/x64; A11 32-bit compatible) | `NavajaSuiza_.NET10.csproj` | ✅ Completado (APK Release fat 57,9 MB, 3 ABIs) |
+| 35 | Batería sin `BATTERY_STATS` vía `BatteryManager` (Android) | `DeviceStatusService.cs` | ✅ Completado |
+| 36 | Cronómetro: marcas persisten entre navegaciones (servicio Singleton) | Core (`Stopwatch*`) + tests | ✅ Completado (144 tests) |
+
+**Pendiente de release**: Privacy Policy + formulario Data Safety de Play (decidir `allowBackup=true` de las Notas → transmisión a Google Drive), validar target SDK del AAB (targetSdk 36 cumple), assets de tienda (icono adaptativo 512, splash, screenshots, listing trilingüe ES/EN/SV), Release AAB firmado + internal/closed testing → producción.
+
 ---
 
 ## 15. Hallazgos y deuda técnica
@@ -531,11 +551,15 @@ Constantes centralizadas agrupadas por dominio (Metronome, Framing, Instruments)
 
 20. **`TestingPage`/`TestingViewModel` vacíos**: Página de pruebas sin implementación, botón TEST oculto por `IsDevelopment`. Eliminada junto con sus registros DI, entry de `.csproj` y botón de menú.
 
+21. **Batería no visible tras la limpieza de permisos**: MAUI `Battery.Default` exige `BATTERY_STATS` en Android. Solución: lectura con `BatteryManager.GetIntProperty(BatteryProperty.Capacity)` (sin permiso). `BATTERY_STATS` NO se re-agrega (permiso protegido, red flag en Play).
+
+22. **Cronómetro: las marcas se perdían al navegar**: `Laps` vivía en el ViewModel (Transient). Solución: persistencia en `StopwatchService` (Singleton); las marcas se limpian únicamente con el reset (segundo toque de Stop).
+
 ### 15.2 Issues pendientes (Backlog)
 
 - **Metrónomo — audio de baja latencia**: el clic usa `MediaElement` + `PeriodicTimer` con salto al UI thread (jitter y deriva acumulada). Plan: refactor a servicio `MetronomeClickService` por plataforma (Android `SoundPool`, iOS `AudioToolbox.SystemSound`) + scheduler con tiempos absolutos (`Stopwatch`) para eliminar deriva. **Sin dependencias nuevas.** Referencia: jfversluis/Plugin.Maui.Audio#89 documenta latencia de 150-200 ms incluso con player precargado.
 - **Weather — módulo del clima**: evaluar Open-Meteo (gratis, sin API key) cuando se implemente.
-- **Biblioteca de componentes MAUI**: la planificación se extrae a un proyecto independiente (no entra en el alcance de esta app). Ver `Plan-Biblioteca-Componentes-MAUI.md`.
+- **Biblioteca de componentes MAUI**: la planificación se extrae a un proyecto independiente (no entra en el alcance de esta app). El documento de planificación se movió fuera del repositorio.
 
 ---
 

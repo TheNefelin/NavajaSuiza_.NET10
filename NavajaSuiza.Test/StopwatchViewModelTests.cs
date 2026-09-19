@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Logging;
 using Moq;
 using NavajaSuiza.Core.Interfaces;
+using NavajaSuiza.Core.Models;
 using NavajaSuiza.Core.ViewModels;
 
 namespace NavajaSuiza.Test;
@@ -12,6 +13,7 @@ public class StopwatchViewModelTests
     private (StopwatchViewModel Vm, Mock<IStopwatchService> Service, Action<TimeSpan> SetElapsed) CreateSut(bool running = false)
     {
         var elapsed = TimeSpan.Zero;
+        var laps = new List<StopwatchLap>();
         var service = new Mock<IStopwatchService>();
         service.Setup(s => s.IsRunning).Returns(() => running);
         service.Setup(s => s.Elapsed).Returns(() => elapsed);
@@ -22,6 +24,9 @@ public class StopwatchViewModelTests
             running = false;
             elapsed = TimeSpan.Zero;
         });
+        service.Setup(s => s.Laps).Returns(() => laps.ToArray());
+        service.Setup(s => s.AddLap(It.IsAny<StopwatchLap>())).Callback<StopwatchLap>(lap => laps.Insert(0, lap));
+        service.Setup(s => s.ClearLaps()).Callback(() => laps.Clear());
 
         var vm = new StopwatchViewModel(_loggerMock.Object, service.Object);
         return (vm, service, value => elapsed = value);
@@ -160,5 +165,23 @@ public class StopwatchViewModelTests
         Assert.False(vm.IsRunning);
         Assert.Empty(vm.Laps);
         Assert.Equal("00:00:00.000", vm.ElapsedText);
+    }
+
+    [Fact]
+    public void Initialize_RestoresLapsFromService_AfterNewViewModel()
+    {
+        var (_, service, setElapsed) = CreateSut(running: true);
+        var vm = new StopwatchViewModel(_loggerMock.Object, service.Object);
+        vm.Initialize();
+        setElapsed(TimeSpan.FromSeconds(10));
+        vm.StartLapCommand.Execute(null);
+        vm.Cleanup();
+
+        var vm2 = new StopwatchViewModel(_loggerMock.Object, service.Object);
+        vm2.Initialize();
+
+        var lap = Assert.Single(vm2.Laps);
+        Assert.Equal(1, lap.Number);
+        Assert.Equal(TimeSpan.FromSeconds(10), lap.Split);
     }
 }

@@ -472,7 +472,7 @@ Las mismas reglas de C# y seguridad aplican al frontend MAUI. Anti-patrones que 
 - **Nunca** lógica de negocio en `code-behind`; solo eventos de UI delegando a comandos.
 - **HttpClient singleton + auth** con handlers que agregan JWT/ApiKey.
 - Tratar la migración/refactor como un **proyecto de auditoría**: leer el análisis previo (por ejemplo `ANALISIS_V1.md`) y corregir los hallazgos uno a uno con aprobación del usuario (regla de issues).
-- Localización por resx + markup `{extensions:Translate}` (§11.9), versionado solo en `.csproj` (§11.10), audio elegido por caso de uso (§11.11) y colores con `AppThemeBinding` (§11.12).
+- Localización por resx + markup `{extensions:Translate}` (§11.9), versionado solo en `.csproj` (§11.10), audio elegido por caso de uso (§11.11), colores con `AppThemeBinding` (§11.12), permisos Android por mínimo privilegio con APIs sin permisos protegidos (§11.13) y empaquetado Android por `RuntimeIdentifiers` (§11.14).
 
 ### 11.1 Lifecycle de MAUI Shell
 
@@ -646,7 +646,7 @@ public partial class MyPage : ContentPage
 }
 ```
 
-**Opción B es válida cuando** el VM delega estado a un servicio Singleton (como `IStateService`) que persiste entre recreaciones de VM. El VM sigue siendo Transient, pero su estado sobrevive en el servicio.
+**Opción B es válida cuando** el VM delega estado a un servicio Singleton (como `IStateService`) que persiste entre recreaciones de VM. El VM sigue siendo Transient, pero su estado sobrevive en el servicio. El estado mutable de dominio que debe sobrevivir a la navegación (p. ej. marcas de cronómetro, lecturas de sensores) vive en el servicio Singleton; el VM Transient lo refleja en su `Initialize()`.
 
 **Regla**: si el VM necesita Cleanup() al salir, usar Opción A. Si el estado vive en un servicio Singleton, Opción B es suficiente.
 
@@ -881,6 +881,35 @@ public partial class MetronomeClickService : IMetronomeClickService
 - **Componentes autocontenidos** (1 control = 1 archivo + partial class si requiere código) con inyección por `BindableProperty` (§11.5), nunca Service Locator.
 - Si hay 3+ apps MAUI que comparten estilos/converters/localización/servicios wrapper, extraerlos a una **librería compartida** (`Toolkit.Core` maUI-free + `Toolkit.Maui`) consumida por referencia de proyecto; recién evaluar NuGet cuando la distribución lo justifique.
 
+### 11.13 Permisos Android: mínimo privilegio y APIs sin permisos protegidos
+
+- Declarar en el manifest **solo lo mínimo**; verificar siempre el manifest **fusionado** (`obj/.../AndroidManifest.xml`) porque NuGets inyectan permisos por su cuenta (p. ej. `CommunityToolkit.Maui` agrega `INTERNET`). Para permisos *normal* (no proteger la vida del usuario ni datos), no vale la pena pelear el merge de Gradle.
+- **Gotcha**: `Battery.Default` de MAUI exige en Android el permiso **`BATTERY_STATS`** (protegido `signature|privileged`, red flag en el review de Play y rechazado en políticas). No se re-agrega el permiso: se lee la API de plataforma que no lo requiere.
+- Patrón de lectura sin permisos (síncrono, API 21+, `#if ANDROID` + fallback MAUI en otras plataformas):
+
+```csharp
+public static int GetBatteryLevel(Android.Content.Context ctx) =>
+    ctx.GetSystemService(Android.Content.Context.BatteryService) is Android.OS.BatteryManager bm
+        ? bm.GetIntProperty((int)Android.OS.BatteryProperty.Capacity)
+        : -1;
+```
+
+  Compatibilidad: contra API obsoletas, el compilador suele sugerir el reemplazo (p. ej. `BatteryProperty` enum en vez de `BatteryManager.BatteryPropertyCapacity`).
+
+### 11.14 Empaquetado Android: ABIs con `RuntimeIdentifiers`
+
+- `AndroidSupportedAbis` quedó **obsoleta** en .NET 10 / Android SDK 36 (warning XA0036): no aplica los ABIs. Reemplazo: `RuntimeIdentifiers` (RID → ABI) limitados al target Android para no afectar Windows/MacCatalyst.
+
+```xml
+<PropertyGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
+  <RuntimeIdentifiers>android-arm;android-arm64;android-x64</RuntimeIdentifiers>
+</PropertyGroup>
+```
+
+- RID → ABI: `android-arm` = `armeabi-v7a` (32-bit), `android-arm64` = `arm64-v8a`, `android-x64` = `x86_64`. Un single APK cubre todos los dispositivos; Play entrega AAB y genera el APK por dispositivo.
+- Validar en dispositivo real: `adb shell getprop ro.product.cpu.abi`. Dispositivos budget pueden correr **solo 32-bit** (caso real: Galaxy A11 `SM-A115M`, Android 12, `armeabi-v7a`); un APK sin ese ABI falla con "app no compatible" (`INSTALL_FAILED_NO_MATCHING_ABIS`).
+- Los builds **Debug** de MAUI apuntan a `x86_64` (emulador): no instalar en teléfonos reales; firmar y probar un APK **Release**.
+
 ---
 
 ## 12. Tests
@@ -923,6 +952,8 @@ public partial class MetronomeClickService : IMetronomeClickService
 - [ ] MAUI: Versión solo en `.csproj` (Display + Build); leída con `AppInfo`; subir `ApplicationVersion` en cada publicación.
 - [ ] MAUI: Audio — efectos/clics por APIs de baja latencia (SoundPool/SystemSound); música por `MediaElement`.
 - [ ] MAUI: Colores y estilos con `AppThemeBinding` (claro/oscuro desde el origen).
+- [ ] MAUI: Permisos Android mínimos; usar APIs de plataforma sin permisos protegidos (batería con `BatteryManager`/`BatteryProperty`, no con `Battery.Default` + `BATTERY_STATS`); revisar el manifest fusionado.
+- [ ] MAUI: Empaquetado Android con `RuntimeIdentifiers` (`AndroidSupportedAbis` obsoleta en .NET 10); validar ABI en dispositivo real con `ro.product.cpu.abi` (cuidado con 32-bit).
 
 ---
 

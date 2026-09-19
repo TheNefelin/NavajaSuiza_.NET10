@@ -1,3 +1,4 @@
+using NavajaSuiza.Core.Models;
 using NavajaSuiza.Core.Services;
 
 namespace NavajaSuiza.Test;
@@ -114,5 +115,44 @@ public class StopwatchServiceTests
 
         Assert.NotNull(received);
         Assert.Equal(TimeSpan.Zero, received);
+    }
+
+    [Fact]
+    public void Laps_DefaultsToEmpty()
+    {
+        var service = new StopwatchService();
+        Assert.Empty(service.Laps);
+    }
+
+    [Fact]
+    public void AddLap_AddsLapOnTop()
+    {
+        var service = new StopwatchService();
+        service.AddLap(new StopwatchLap { Number = 1, Split = TimeSpan.FromSeconds(1), Delta = TimeSpan.FromSeconds(1) });
+        service.AddLap(new StopwatchLap { Number = 2, Split = TimeSpan.FromSeconds(3), Delta = TimeSpan.FromSeconds(2) });
+
+        Assert.Equal(2, service.Laps.Count);
+        Assert.Equal(2, service.Laps[0].Number);
+        Assert.Equal(1, service.Laps[1].Number);
+    }
+
+    [Fact]
+    public void AddLap_IsNotMutableThroughReadOnlyList()
+    {
+        var service = new StopwatchService();
+        service.AddLap(new StopwatchLap { Number = 1, Split = TimeSpan.Zero, Delta = TimeSpan.Zero });
+
+        Assert.IsAssignableFrom<IReadOnlyList<StopwatchLap>>(service.Laps);
+    }
+
+    [Fact]
+    public void ClearLaps_RemovesAllLaps()
+    {
+        var service = new StopwatchService();
+        service.AddLap(new StopwatchLap { Number = 1, Split = TimeSpan.Zero, Delta = TimeSpan.Zero });
+
+        service.ClearLaps();
+
+        Assert.Empty(service.Laps);
     }
 }

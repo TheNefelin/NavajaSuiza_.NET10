@@ -8,13 +8,22 @@ public class DeviceStatusService : IDeviceStatusService
     {
         try
         {
-            int level = (int)(Battery.Default.ChargeLevel * 100);
-            return $"{level}%";
+#if ANDROID
+            var batteryManager = Android.App.Application.Context.GetSystemService(Android.Content.Context.BatteryService) as Android.OS.BatteryManager;
+            var capacity = batteryManager?.GetIntProperty((int)Android.OS.BatteryProperty.Capacity);
+            if (capacity is >= 0 and <= 100)
+                return $"{capacity}%";
+#endif
+            double level = Battery.Default.ChargeLevel;
+            if (level > 0 && level <= 1)
+                return $"{(int)(level * 100)}%";
         }
         catch
         {
             return "N/A";
         }
+
+        return "N/A";
     }
 
     public string GetAvailableStorage()

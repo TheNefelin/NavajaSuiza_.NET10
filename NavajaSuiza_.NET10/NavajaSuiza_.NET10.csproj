@@ -11,8 +11,8 @@
 		either BOTH runtimes must be indicated or ONLY macatalyst-x64. -->
 		<!-- For example: <RuntimeIdentifiers>maccatalyst-x64;maccatalyst-arm64</RuntimeIdentifiers> -->
 
-		<!--Compatibilidad con otras arquitecturas de android-->
-		<!--<RuntimeIdentifiers>android-arm;android-arm64</RuntimeIdentifiers>-->
+		<!--RIDs Android: android-arm (32-bit, ej. Galaxy A11), android-arm64 (teléfonos modernos), android-x64 (emulador)-->
+		<RuntimeIdentifiers Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">android-arm;android-arm64;android-x64</RuntimeIdentifiers>
 		
 		<OutputType>Exe</OutputType>
 		<RootNamespace>NavajaSuiza_.NET10</RootNamespace>
