@@ -168,6 +168,30 @@
   <data name="NotesText" xml:space="preserve">
     <value>Noteringar</value>
   </data>
+  <data name="PizarraText" xml:space="preserve">
+    <value>Whiteboard</value>
+  </data>
+  <data name="PizarraClearText" xml:space="preserve">
+    <value>Rensa</value>
+  </data>
+  <data name="PizarraUndoText" xml:space="preserve">
+    <value>Ångra</value>
+  </data>
+  <data name="PizarraBoardShortText" xml:space="preserve">
+    <value>Tavla</value>
+  </data>
+  <data name="PizarraBoardLightText" xml:space="preserve">
+    <value>Ljus tavla</value>
+  </data>
+  <data name="PizarraBoardDarkText" xml:space="preserve">
+    <value>Mörk tavla</value>
+  </data>
+  <data name="PizarraColorsText" xml:space="preserve">
+    <value>Färger</value>
+  </data>
+  <data name="PizarraWidthText" xml:space="preserve">
+    <value>Tjocklek</value>
+  </data>
   <data name="NotesSearchPlaceholderText" xml:space="preserve">
     <value>Sök anteckning...</value>
   </data>

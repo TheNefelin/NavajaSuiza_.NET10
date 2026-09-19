@@ -168,6 +168,30 @@
   <data name="NotesText" xml:space="preserve">
     <value>Notes</value>
   </data>
+  <data name="PizarraText" xml:space="preserve">
+    <value>Whiteboard</value>
+  </data>
+  <data name="PizarraClearText" xml:space="preserve">
+    <value>Clear</value>
+  </data>
+  <data name="PizarraUndoText" xml:space="preserve">
+    <value>Undo</value>
+  </data>
+  <data name="PizarraBoardShortText" xml:space="preserve">
+    <value>Board</value>
+  </data>
+  <data name="PizarraBoardLightText" xml:space="preserve">
+    <value>Light board</value>
+  </data>
+  <data name="PizarraBoardDarkText" xml:space="preserve">
+    <value>Dark board</value>
+  </data>
+  <data name="PizarraColorsText" xml:space="preserve">
+    <value>Colors</value>
+  </data>
+  <data name="PizarraWidthText" xml:space="preserve">
+    <value>Width</value>
+  </data>
   <data name="NotesSearchPlaceholderText" xml:space="preserve">
     <value>Search note...</value>
   </data>

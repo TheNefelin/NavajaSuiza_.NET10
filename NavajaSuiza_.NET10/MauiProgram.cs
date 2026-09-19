@@ -105,6 +105,8 @@ public static class MauiProgram
             .AddSingleton<NotesPage>()
             .AddTransient<NoteEditorViewModel>()
             .AddSingleton<NoteEditorPage>()
+            .AddTransient<PizarraViewModel>()
+            .AddSingleton<PizarraPage>()
             ;
 
         return builder;

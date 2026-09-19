@@ -148,7 +148,7 @@ NavajaSuiza_.NET10/                   # Solution
 │   └── MauiProgram.cs
 │
 └── NavajaSuiza.Test/                # Proyecto de tests (net10.0 puro)
-    └── *Tests.cs                     # xUnit + Moq, 144 tests
+    └── *Tests.cs                     # xUnit + Moq, 166 tests
 ```
 
 #### Regla de separación Core vs MAUI
@@ -592,21 +592,26 @@ Pasos 1–2 completados; 3–6 según el plan §14 Fase F.
 
 ### 18.1 Pizarra (dibujo)
 
-Estado: **planificada** — requisitos y enfoque acordados (19/09/2026); pendiente de implementar cuando el usuario lo autorice.
+Estado: **Fase 1 implementada y verificada** (22/09/2026; 166 tests; builds Android/Windows 0 errores). Fase 2 (persistencia/export y goma) pendiente de autorización.
 
-Requisitos funcionales:
-- Lienzo cuyo fondo sigue el tema claro/oscuro de la app **y** selector de color de pizarra no excluyente (gris claro casi blanco / gris oscuro casi negro).
-- Herramientas por fases de abordaje: lápiz + paleta de colores + grosor → goma + limpiar todo → deshacer (undo).
-- Persistencia del dibujo **solo si el usuario decide guardar**: trazos serializados a JSON local (privacidad respaldada por `allowBackup=false` ya vigente).
-- Exportar imagen **WebP en Android** (formato liviano) y PNG en el resto de plataformas, opcional, a galería/compartir.
+Entregado (Fase 1):
+- Lienzo a máximo espacio (`Grid` `Auto,Auto,*`), **sin `ScrollView`** (interceptaba los gestos verticales del dibujo).
+- Herramientas: lápiz con grosor inline (slider 1–18), **limpiar todo** y **deshacer** (botones en fila junto a Colores/Pizarra).
+- **Paleta de 9 colores en diálogo** overlay (sin fila inline → sin overflow de su ancho), abierto desde el botón "Colores".
+- Selector de fondo de pizarra **Dark/Light** (action sheet) desde el botón "Pizarra".
+- **Adaptación automática de contraste del lápiz** al cambiar de pizarra (WCAG ≥ 2.5:1): negro sobre oscura → amarillo; blanco sobre clara → negro; rojo (default) se conserva visible en ambas.
+- `PizarraStroke`/`PizarraPoint` y `PizarraViewModel` en Core (comandos testables: `Clear`, `Undo`, `SetBoardColor`, `OpenColorPicker`/`CloseColorPicker`/`SelectColor`); `StrokeDrawable` (`IDrawable`) y `PizarraPage` en MAUI.
+- Ruta `"PizarraPage"`, ítem de menú con `icon_pizarra.png`, localización es/en/sv.
 
-Enfoque técnico:
-- `GraphicsView` + `IDrawable` (nativo MAUI, **sin dependencias nuevas**), eventos táctiles `StartInteraction`/`DragInteraction`/`EndInteraction`.
-- Modelo de trazos (polilíneas) en Core → ViewModel testeable; las herramientas son operaciones sobre la lista de trazos.
-- **MAUI no exporta `GraphicsView` a archivo**: la exportación re-rasteriza los trazos desde el modelo sobre canvas de plataforma (Android `Bitmap`/`Canvas` + `CompressFormat.Webp`; el resto PNG).
-- Exportación a galería/compartir vía servicio nuevo en `NavajaSuiza.Services/Implementations` (patrón existente).
+Pendiente (Fase 2):
+- **Persistencia del dibujo solo si el usuario decide guardar**: trazos serializados a JSON local (privacidad respaldada por `allowBackup=false` ya vigente). Botón "Guardar".
+- **Goma**.
+- **Exportar imagen** WebP en Android / PNG en el resto, re-rasterizando desde el modelo a galería/compartir.
 
-Pendiente de definir: alcance del guardado/export (galería vs compartir).
+Enfoque técnico de export (referencia):
+- **MAUI no exporta `GraphicsView` a archivo**: se re-rasterizan los trazos desde el modelo sobre canvas de plataforma (Android `Bitmap`/`Canvas` + `CompressFormat.Webp`; el resto PNG).
+- Galería/compartir vía servicio nuevo en `NavajaSuiza.Services/Implementations` (patrón existente).
+- Pendiente de definir: alcance del guardado/export (galería vs compartir).
 
 ### 18.2 Contador de pasos
 

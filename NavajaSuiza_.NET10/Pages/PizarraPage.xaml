@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:extensions="clr-namespace:NavajaSuiza_.NET10.Extensions"
+             x:Class="NavajaSuiza_.NET10.Pages.PizarraPage"
+             Title="{extensions:Translate PizarraText}">
+
+    <Grid RowDefinitions="Auto,Auto,*" Padding="16,16,16,20" RowSpacing="10">
+
+        <HorizontalStackLayout Grid.Row="0" Spacing="8">
+
+            <Button
+                Text="{extensions:Translate PizarraClearText}"
+                Command="{Binding ClearCommand}"
+                FontSize="13"
+                Padding="6,0"
+                HeightRequest="42"
+                HorizontalOptions="FillAndExpand" />
+
+            <Button
+                Text="{extensions:Translate PizarraUndoText}"
+                Command="{Binding UndoCommand}"
+                FontSize="13"
+                Padding="6,0"
+                HeightRequest="42"
+                HorizontalOptions="FillAndExpand" />
+
+            <Button
+                Text="{extensions:Translate PizarraColorsText}"
+                Command="{Binding OpenColorPickerCommand}"
+                FontSize="13"
+                Padding="6,0"
+                HeightRequest="42"
+                HorizontalOptions="FillAndExpand" />
+
+            <Button
+                Text="{extensions:Translate PizarraBoardShortText}"
+                Clicked="OnBoardClicked"
+                FontSize="13"
+                Padding="6,0"
+                HeightRequest="42"
+                HorizontalOptions="FillAndExpand" />
+        </HorizontalStackLayout>
+
+        <VerticalStackLayout Grid.Row="1" Spacing="4">
+
+            <Label
+                Text="{extensions:Translate PizarraWidthText}"
+                FontSize="14"
+                FontAttributes="Bold"
+                Opacity="0.7" />
+
+            <Slider
+                Minimum="1"
+                Maximum="18"
+                Value="{Binding StrokeWidth}" />
+        </VerticalStackLayout>
+
+        <Border
+            Grid.Row="2"
+            Stroke="{StaticResource MyAccentBlue}"
+            StrokeThickness="2"
+            StrokeShape="RoundRectangle 16">
+
+            <GraphicsView
+                x:Name="DrawingSurface"
+                HorizontalOptions="Fill"
+                VerticalOptions="Fill"
+                StartInteraction="OnStartInteraction"
+                DragInteraction="OnDragInteraction"
+                EndInteraction="OnEndInteraction"
+                CancelInteraction="OnCancelInteraction" />
+        </Border>
+
+        <Grid
+            Grid.RowSpan="3"
+            IsVisible="{Binding IsColorPickerVisible}">
+
+            <Grid
+                BackgroundColor="#80000000">
+                <Grid.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnColorPickerScrimTapped" />
+                </Grid.GestureRecognizers>
+            </Grid>
+
+            <Border
+                HorizontalOptions="Center"
+                VerticalOptions="Center"
+                Padding="22"
+                Stroke="{StaticResource MyAccentBlue}"
+                StrokeThickness="2"
+                StrokeShape="RoundRectangle 20">
+
+                <VerticalStackLayout Spacing="16">
+
+                    <Label
+                        Text="{extensions:Translate PizarraColorsText}"
+                        FontSize="18"
+                        FontAttributes="Bold"
+                        HorizontalTextAlignment="Center" />
+
+                    <Grid
+                        ColumnDefinitions="Auto,Auto,Auto"
+                        RowDefinitions="Auto,Auto,Auto"
+                        ColumnSpacing="14"
+                        RowSpacing="14">
+
+                        <Button Grid.Row="0" Grid.Column="0"
+                                BackgroundColor="#1F1F1F"
+                                BorderColor="#9E9E9E" BorderWidth="1"
+                                Command="{Binding SelectColorCommand}"
+                                CommandParameter="#1F1F1F"
+                                WidthRequest="52" HeightRequest="52"
+                                CornerRadius="26" Padding="0" />
+
+                        <Button Grid.Row="0" Grid.Column="1"
+                                BackgroundColor="#E53935"
+                                BorderColor="#9E9E9E" BorderWidth="1"
+                                Command="{Binding SelectColorCommand}"
+                                CommandParameter="#E53935"
+                                WidthRequest="52" HeightRequest="52"
+                                CornerRadius="26" Padding="0" />
+
+                        <Button Grid.Row="0" Grid.Column="2"
+                                BackgroundColor="#FB8C00"
+                                BorderColor="#9E9E9E" BorderWidth="1"
+                                Command="{Binding SelectColorCommand}"
+                                CommandParameter="#FB8C00"
+                                WidthRequest="52" HeightRequest="52"
+                                CornerRadius="26" Padding="0" />
+
+                        <Button Grid.Row="1" Grid.Column="0"
+                                BackgroundColor="#FDD835"
+                                BorderColor="#9E9E9E" BorderWidth="1"
+                                Command="{Binding SelectColorCommand}"
+                                CommandParameter="#FDD835"
+                                WidthRequest="52" HeightRequest="52"
+                                CornerRadius="26" Padding="0" />
+
+                        <Button Grid.Row="1" Grid.Column="1"
+                                BackgroundColor="#43A047"
+                                BorderColor="#9E9E9E" BorderWidth="1"
+                                Command="{Binding SelectColorCommand}"
+                                CommandParameter="#43A047"
+                                WidthRequest="52" HeightRequest="52"
+                                CornerRadius="26" Padding="0" />
+
+                        <Button Grid.Row="1" Grid.Column="2"
+                                BackgroundColor="#1E88E5"
+                                BorderColor="#9E9E9E" BorderWidth="1"
+                                Command="{Binding SelectColorCommand}"
+                                CommandParameter="#1E88E5"
+                                WidthRequest="52" HeightRequest="52"
+                                CornerRadius="26" Padding="0" />
+
+                        <Button Grid.Row="2" Grid.Column="0"
+                                BackgroundColor="#8E24AA"
+                                BorderColor="#9E9E9E" BorderWidth="1"
+                                Command="{Binding SelectColorCommand}"
+                                CommandParameter="#8E24AA"
+                                WidthRequest="52" HeightRequest="52"
+                                CornerRadius="26" Padding="0" />
+
+                        <Button Grid.Row="2" Grid.Column="1"
+                                BackgroundColor="#9E9E9E"
+                                BorderColor="#9E9E9E" BorderWidth="1"
+                                Command="{Binding SelectColorCommand}"
+                                CommandParameter="#9E9E9E"
+                                WidthRequest="52" HeightRequest="52"
+                                CornerRadius="26" Padding="0" />
+
+                        <Button Grid.Row="2" Grid.Column="2"
+                                BackgroundColor="#FFFFFF"
+                                BorderColor="#9E9E9E" BorderWidth="1"
+                                Command="{Binding SelectColorCommand}"
+                                CommandParameter="#FFFFFF"
+                                WidthRequest="52" HeightRequest="52"
+                                CornerRadius="26" Padding="0" />
+                    </Grid>
+
+                    <Button
+                        Text="{extensions:Translate CancelText}"
+                        Command="{Binding CloseColorPickerCommand}"
+                        HeightRequest="40" />
+                </VerticalStackLayout>
+            </Border>
+        </Grid>
+    </Grid>
+
+</ContentPage>
