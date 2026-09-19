@@ -592,7 +592,7 @@ Pasos 1–2 completados; 3–6 según el plan §14 Fase F.
 
 ### 18.1 Pizarra (dibujo)
 
-Estado: **Fases 1 y 2 implementadas y verificadas** (170 tests; builds Android/Windows 0 errores). Fase 2 = export WebP a galería (verificado en emulador). Goma queda como Fase 3 (pendiente).
+Estado: **Fases 1 y 2 implementadas y verificadas** (170 tests; builds Android/Windows 0 errores). Fase 2 = export WebP a galería, ahora **transversal vía SkiaSharp** (verificado en emulador Android y en Windows). **Goma descartada**: Deshacer (LIFO) + Limpiar cubren el caso de esta app.
 
 Entregado (Fase 1):
 - Lienzo a máximo espacio (`Grid` `Auto,Auto,*`), **sin `ScrollView`** (interceptaba los gestos verticales del dibujo).
@@ -605,18 +605,20 @@ Entregado (Fase 1):
 
 Entregado (Fase 2 — Guardar/export a galería):
 - **Decisión**: se descartó la persistencia JSON propuesta originalmente (generaba archivos grandes y opacos para el usuario; "no todos saben qué es un JSON"). `Guardar` **exporta el dibujo como imagen WebP a la galería** (comprensible y borrable por el usuario). La pizarra **abre siempre en blanco** (sin restauración).
-- `IPizarraImageExporter` (Core) + `PizarraImageExporter` (MAUI): rasterización en memoria con `Bitmap`/`Canvas`/`Paint` de Android (mismo estilo que `StrokeDrawable`: caps/joins redondos), escalado a máx. 2048px, insertado vía `MediaStore.Images` → `Pictures/pizarra.webp`.
-- **Permisos**: API 29+ sin permiso; API 21–28 pide `WRITE_EXTERNAL_STORAGE` en runtime (declarado en manifest con `maxSdkVersion="28"`, patrón aceptado por Play; es solo Android 5–9).
-- Windows/iOS: `PizarraExportResult.NotAvailable` con mensaje localizado "solo disponible en Android".
+- **SkiaSharp 4.152.1** (única dependencia nueva, instalada por el usuario): `IPizarraImageExporter` (Core) + `PizarraImageExporter` (MAUI) con **raster + encode transversal** — una sola implementación para todas las plataformas usando `SKBitmap`/`SKCanvas`/`SKPathBuilder`/`SKPaint` (caps/joins redondos, antialias, mismo estilo que `StrokeDrawable`) y `SKImage.Encode(Webp, 95)`. Reemplaza el raster nativo de Android (`Bitmap`/`Canvas`/`Paint`) y corrige de paso un bug: las coordenadas de trazo ahora **se escalan** junto con el grosor (antes solo se escalaba el grosor).
+- Layout de la imagen: máx. 2048px con margen (padding 40 + media anchura de trazo), `scale ≤ 1` (downscale si el contenido excede; sin upscale para no degradar).
+- Guardado por plataforma: **Android** vía `MediaStore.Images` → `Pictures/pizarra.webp` (API 29+ sin permiso; API 21–28 pide `WRITE_EXTERNAL_STORAGE` en runtime, declarado en manifest con `maxSdkVersion="28"`); **Windows** → archivo WebP en Carpeta de imágenes (nombre único con fecha+guid); iOS/MacCatalyst `NotAvailable`.
 - El VM expone `PizarraExportResult` (`Saved`/`NotAvailable`/`Failed`) y la página muestra el mensaje correspondiente (resx ×3).
 
 Pendiente (Fase 3):
-- **Goma** (borrado de trazos por proximidad/toque).
-- **Compartir** desde la app (además de galería) y **PNG en resto de plataformas** (requeriría rasterizador por plataforma o dependencia nueva en Windows).
+- **Compartir** la imagen exportada desde la app (Share API de MAUI).
+- **iOS**: guardado en Photos (requeriría `NSPhotoLibraryAddUsageDescription` en el Info.plist).
+- La **goma quedó descartada** (Deshacer/ Limpiar cubren el caso; Deshacer es LIFO y Limpiar total — ver estado).
 
 Enfoque técnico de export (referencia):
-- **MAUI no exporta `GraphicsView` a archivo**: se re-rasterizan los trazos desde el modelo sobre canvas de plataforma (Android `Bitmap`/`Canvas` + `CompressFormat.Webp`).
-- **`MediaSaver`/`FileSaver` de CommunityToolkit no existen en v15.0.1** (verificado en el cache del paquete), por lo que se usó `MediaStore` nativo sin dependencias nuevas.
+- **MAUI no exporta `GraphicsView` a archivo**: se re-rasterizan los trazos desde el modelo. Ahora con **SkiaSharp** (una dependencia, raster + WebP transversal para todas las plataformas). Se evaluó un rasterizador propio en Core + encoder PNG (0 dependencias) pero se descartó: más líneas de gráficas que mantener y se perdía el WebP liviano.
+- **`MediaSaver`/`FileSaver` de CommunityToolkit no existen en v15.0.1** (verificado en el cache del paquete), por lo que la escritura a galería usa `MediaStore` nativo (solo esa parte es de plataforma).
+- SkiaSharp habilita además: export a imagen de futuros dibujos, herramientas de figuras/texto en la Pizarra y gráficos propios (ej. historial del Contador de pasos).
 
 ### 18.2 Contador de pasos
 

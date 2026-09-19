@@ -9,9 +9,11 @@ Navaja suiza digital — app multiplataforma (.NET MAUI) con herramientas de uso
 | CommunityToolkit.Maui | 15.0.1 |
 | CommunityToolkit.Maui.MediaElement | 10.0.0 |
 | CommunityToolkit.Mvvm | 8.4.2 |
-| Microsoft.Extensions.Logging.Debug | 10.0.11 |
-| Microsoft.Maui.Controls | 10.0.100 |
-| Syncfusion.Maui.Toolkit | 1.0.10 |
+| Microsoft.Extensions.Logging.Debug | 10.0.12 |
+| Microsoft.Maui.Controls | 10.0.101 |
+| SkiaSharp | 4.152.1 |
+| sqlite-net-pcl | 1.11.285 |
+| Syncfusion.Maui.Toolkit | 1.0.11 |
 
 ## Permisos Android (AndroidManifest)
 
@@ -26,7 +28,7 @@ Navaja suiza digital — app multiplataforma (.NET MAUI) con herramientas de uso
 NavajaSuiza_.NET10.sln
 │
 ├── NavajaSuiza.Core/                    # Class Library (net10.0 puro, sin dependencias MAUI)
-│   ├── Interfaces/                      # 14 interfaces
+│   ├── Interfaces/                      # 15 interfaces
 │   │   ├── ICompassService.cs
 │   │   ├── IDeviceDisplayService.cs
 │   │   ├── IDeviceStatusService.cs
@@ -38,17 +40,19 @@ NavajaSuiza_.NET10.sln
 │   │   ├── IMetronomeService.cs
 │   │   ├── INavigationService.cs
 │   │   ├── IOrientationService.cs
+│   │   ├── IPizarraImageExporter.cs
 │   │   ├── IScreenBrightnessService.cs
 │   │   ├── IStopwatchService.cs
 │   │   └── IThemeService.cs
 │   ├── Models/
 │   │   ├── SupportedLanguages.cs
 │   │   ├── InstrumentStringData.cs
+│   │   ├── PizarraStroke.cs
 │   │   └── StopwatchLap.cs
 │   ├── Services/
 │   │   ├── FlashlightStateService.cs
 │   │   └── StopwatchService.cs
-│   ├── ViewModels/                       # 18 ViewModels (testables, sin dependencias MAUI)
+│   ├── ViewModels/                       # 19 ViewModels (testables, sin dependencias MAUI)
 │   │   ├── BaseViewModel.cs
 │   │   ├── AboutViewModel.cs
 │   │   ├── CompassViewModel.cs
@@ -57,6 +61,7 @@ NavajaSuiza_.NET10.sln
 │   │   ├── MenuViewModel.cs
 │   │   ├── MetronomeViewModel.cs
 │   │   ├── ManualViewModel.cs
+│   │   ├── PizarraViewModel.cs
 │   │   ├── ScreenLightViewModel.cs
 │   │   ├── StopwatchViewModel.cs
 │   │   ├── TunerViewModel.cs
@@ -78,7 +83,7 @@ NavajaSuiza_.NET10.sln
 │   │   └── *.xaml/cs
 │   ├── ViewModels/                       # Vacío — todas las VMs están en Core
 │   ├── Services/
-│   │   └── Implementations/             # 12 implementaciones (solo APIs de plataforma)
+│   │   └── Implementations/             # 13 implementaciones (solo APIs de plataforma)
 │   │       ├── CompassSensorService.cs
 │   │       ├── DeviceDisplayService.cs
 │   │       ├── DeviceStatusService.cs
@@ -89,6 +94,7 @@ NavajaSuiza_.NET10.sln
 │   │       ├── MetronomeService.cs
 │   │       ├── NavigationService.cs
 │   │       ├── OrientationSensorService.cs
+│   │       ├── PizarraImageExporter.cs
 │   │       ├── ScreenBrightnessService.cs
 │   │       └── ThemeService.cs
 │   ├── Converters/
@@ -115,6 +121,7 @@ NavajaSuiza_.NET10.sln
 │   ├── InstrumentStringDataTests.cs
 │   ├── MenuViewModelTests.cs
 │   ├── MetronomeViewModelTests.cs
+│   ├── PizarraViewModelTests.cs
 │   ├── ScreenLightViewModelTests.cs
 │   ├── StopwatchServiceTests.cs
 │   └── StopwatchViewModelTests.cs

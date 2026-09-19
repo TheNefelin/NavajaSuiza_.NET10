@@ -1,12 +1,13 @@
 using Microsoft.Extensions.Logging;
 using NavajaSuiza.Core.Interfaces;
 using NavajaSuiza.Core.Models;
+using SkiaSharp;
 
 namespace NavajaSuiza_.NET10.Services.Implementations;
 
-public class PizarraImageExporter : IPizarraImageExporter
+public sealed class PizarraImageExporter : IPizarraImageExporter
 {
-    private const string FileName = "pizarra.webp";
+    private const string FileNamePrefix = "pizarra";
     private const string WebpMimeType = "image/webp";
     private const int MaxDimension = 2048;
     private const int LayoutPadding = 40;
@@ -24,37 +25,81 @@ public class PizarraImageExporter : IPizarraImageExporter
         if (strokes.Count == 0)
             return PizarraExportResult.Failed;
 
-#if ANDROID
         try
         {
-            var (width, height, renderedStrokes) = BuildLayout(strokes);
-
-            var webpBytes = RenderWebP(width, height, boardColorHex, renderedStrokes);
+            var webpBytes = RenderWebP(strokes, boardColorHex);
             if (webpBytes is null)
                 return PizarraExportResult.Failed;
 
-            if (Android.OS.Build.VERSION.SdkInt < Android.OS.BuildVersionCodes.Q)
-            {
-                var status = await Permissions.RequestAsync<Permissions.StorageWrite>();
-                if (status != PermissionStatus.Granted)
-                    return PizarraExportResult.Failed;
-            }
-
-            return InsertToGallery(webpBytes) ? PizarraExportResult.Saved : PizarraExportResult.Failed;
+            return await SaveAsync(webpBytes).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error al exportar la pizarra a la galería");
+            _logger.LogError(ex, "Error al exportar la pizarra");
             return PizarraExportResult.Failed;
         }
-#else
-        _logger.LogInformation("Export de pizarra no disponible en esta plataforma");
-        return PizarraExportResult.NotAvailable;
-#endif
     }
 
-#if ANDROID
-    private static (int Width, int Height, List<RenderedStroke> Strokes) BuildLayout(IReadOnlyList<PizarraStroke> strokes)
+    private static byte[]? RenderWebP(IReadOnlyList<PizarraStroke> strokes, string boardColorHex)
+    {
+        using var bitmap = RenderBitmap(strokes, boardColorHex);
+        if (bitmap is null)
+            return null;
+
+        using var image = SKImage.FromBitmap(bitmap);
+        using var data = image.Encode(SKEncodedImageFormat.Webp, WebpQuality);
+        if (data is null || data.IsEmpty)
+            return null;
+
+        return data.ToArray();
+    }
+
+    private static SKBitmap? RenderBitmap(IReadOnlyList<PizarraStroke> strokes, string boardColorHex)
+    {
+        if (!TryComputeLayout(strokes, out var width, out var height, out var offsetX, out var offsetY, out var scale))
+            return null;
+
+        var bitmap = new SKBitmap(width, height);
+        using var canvas = new SKCanvas(bitmap);
+        canvas.Clear(SKColor.Parse(boardColorHex));
+
+        foreach (var stroke in strokes)
+        {
+            if (stroke.Points.Count < 2)
+                continue;
+
+            using var paint = new SKPaint
+            {
+                IsAntialias = true,
+                StrokeCap = SKStrokeCap.Round,
+                StrokeJoin = SKStrokeJoin.Round,
+                Style = SKPaintStyle.Stroke,
+                StrokeWidth = Math.Max(1f, stroke.Width * scale),
+                Color = SKColor.Parse(stroke.ColorHex)
+            };
+
+            using var builder = new SKPathBuilder();
+
+            for (var i = 0; i < stroke.Points.Count; i++)
+            {
+                var point = stroke.Points[i];
+                var x = (point.X + offsetX) * scale;
+                var y = (point.Y + offsetY) * scale;
+
+                if (i == 0)
+                    builder.MoveTo(x, y);
+                else
+                    builder.LineTo(x, y);
+            }
+
+            using var path = builder.Detach();
+            canvas.DrawPath(path, paint);
+        }
+
+        return bitmap;
+    }
+
+    private static bool TryComputeLayout(IReadOnlyList<PizarraStroke> strokes, out int width, out int height, out float offsetX, out float offsetY, out float scale)
     {
         var minX = float.MaxValue;
         var minY = float.MaxValue;
@@ -75,95 +120,39 @@ public class PizarraImageExporter : IPizarraImageExporter
             }
         }
 
-        var boundsWidth = (maxX - minX) + (2f * maxHalfWidth) + (2f * LayoutPadding);
-        var boundsHeight = (maxY - minY) + (2f * maxHalfWidth) + (2f * LayoutPadding);
-        var scale = (double)MaxDimension / Math.Max(boundsWidth, boundsHeight);
-
-        var width = (int)Math.Clamp(Math.Ceiling(boundsWidth * scale), 1, MaxDimension);
-        var height = (int)Math.Clamp(Math.Ceiling(boundsHeight * scale), 1, MaxDimension);
-
-        var offsetX = maxHalfWidth + LayoutPadding - minX;
-        var offsetY = maxHalfWidth + LayoutPadding - minY;
-
-        var rendered = new List<RenderedStroke>(strokes.Count);
-
-        foreach (var stroke in strokes)
+        if (maxX < minX || maxY < minY)
         {
-            var target = new RenderedStroke
-            {
-                ColorHex = stroke.ColorHex,
-                Thickness = Math.Max(1f, (float)(stroke.Width * scale))
-            };
-
-            foreach (var point in stroke.Points)
-                target.Points.Add((point.X + offsetX, point.Y + offsetY));
-
-            rendered.Add(target);
+            width = 0;
+            height = 0;
+            offsetX = 0f;
+            offsetY = 0f;
+            scale = 0f;
+            return false;
         }
 
-        return (width, height, rendered);
+        var contentWidth = (maxX - minX) + (2f * maxHalfWidth) + (2f * LayoutPadding);
+        var contentHeight = (maxY - minY) + (2f * maxHalfWidth) + (2f * LayoutPadding);
+        scale = Math.Min(1f, MaxDimension / Math.Max(contentWidth, contentHeight));
+
+        width = Math.Clamp((int)Math.Ceiling(contentWidth * scale), 1, MaxDimension);
+        height = Math.Clamp((int)Math.Ceiling(contentHeight * scale), 1, MaxDimension);
+
+        offsetX = maxHalfWidth + LayoutPadding - minX;
+        offsetY = maxHalfWidth + LayoutPadding - minY;
+        return true;
     }
 
-    private static byte[]? RenderWebP(int width, int height, string boardColorHex, List<RenderedStroke> strokes)
+    #if ANDROID
+    private async Task<PizarraExportResult> SaveAsync(byte[] webpBytes)
     {
-        Android.Graphics.Bitmap? bitmap = null;
-
-        try
+        if (Android.OS.Build.VERSION.SdkInt < Android.OS.BuildVersionCodes.Q)
         {
-            var bitmapConfig = Android.Graphics.Bitmap.Config.Argb8888!;
-            bitmap = Android.Graphics.Bitmap.CreateBitmap(width, height, bitmapConfig);
-            var canvas = new Android.Graphics.Canvas(bitmap);
-
-            using var backgroundPaint = new Android.Graphics.Paint
-            {
-                Color = Android.Graphics.Color.ParseColor(boardColorHex),
-                AntiAlias = true
-            };
-            canvas.DrawRect(0, 0, width, height, backgroundPaint);
-
-            foreach (var stroke in strokes)
-            {
-                if (stroke.Points.Count < 2)
-                    continue;
-
-                using var paint = new Android.Graphics.Paint
-                {
-                    Color = Android.Graphics.Color.ParseColor(stroke.ColorHex),
-                    StrokeWidth = stroke.Thickness,
-                    StrokeCap = Android.Graphics.Paint.Cap.Round,
-                    StrokeJoin = Android.Graphics.Paint.Join.Round,
-                    AntiAlias = true
-                };
-                paint.SetStyle(Android.Graphics.Paint.Style.Stroke);
-
-                using var path = new Android.Graphics.Path();
-                path.MoveTo(stroke.Points[0].Item1, stroke.Points[0].Item2);
-
-                for (var i = 1; i < stroke.Points.Count; i++)
-                    path.LineTo(stroke.Points[i].Item1, stroke.Points[i].Item2);
-
-                canvas.DrawPath(path, paint);
-            }
-
-            canvas.Dispose();
-
-            using var stream = new MemoryStream();
-#pragma warning disable CA1422 // CompressFormat.Webp marcado obsoleto en API 30+, sigue siendo funcional
-            var format = Android.Graphics.Bitmap.CompressFormat.Webp!;
-#pragma warning restore CA1422
-            if (!bitmap.Compress(format, WebpQuality, stream))
-                return null;
-
-            return stream.ToArray();
+            var status = await Permissions.RequestAsync<Permissions.StorageWrite>().ConfigureAwait(false);
+            if (status != PermissionStatus.Granted)
+                return PizarraExportResult.Failed;
         }
-        catch
-        {
-            return null;
-        }
-        finally
-        {
-            bitmap?.Recycle();
-        }
+
+        return InsertToGallery(webpBytes) ? PizarraExportResult.Saved : PizarraExportResult.Failed;
     }
 
     private static bool InsertToGallery(byte[] webpBytes)
@@ -177,7 +166,7 @@ public class PizarraImageExporter : IPizarraImageExporter
             return false;
 
         var values = new Android.Content.ContentValues();
-        values.Put(Android.Provider.MediaStore.IMediaColumns.DisplayName, FileName);
+        values.Put(Android.Provider.MediaStore.IMediaColumns.DisplayName, $"{FileNamePrefix}.webp");
         values.Put(Android.Provider.MediaStore.IMediaColumns.MimeType, WebpMimeType);
 
 #pragma warning disable CA1416 // MediaStore RelativePath solo existe en API 29+; la llamada está protegida por el chequeo de SDK
@@ -196,14 +185,33 @@ public class PizarraImageExporter : IPizarraImageExporter
         outputStream.Write(webpBytes, 0, webpBytes.Length);
         return true;
     }
-
-    private sealed class RenderedStroke
+#elif WINDOWS
+    private Task<PizarraExportResult> SaveAsync(byte[] webpBytes)
     {
-        public string ColorHex { get; init; } = string.Empty;
+        try
+        {
+            var picturesPath = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
+            if (string.IsNullOrEmpty(picturesPath))
+                return Task.FromResult(PizarraExportResult.Failed);
 
-        public float Thickness { get; init; }
+            Directory.CreateDirectory(picturesPath);
 
-        public List<(float Item1, float Item2)> Points { get; } = new();
+            var fileName = $"{FileNamePrefix}_{DateTime.Now:yyyyMMddHHmmss}_{Guid.NewGuid():N}.webp";
+            var filePath = Path.Combine(picturesPath, fileName);
+            File.WriteAllBytes(filePath, webpBytes);
+            return Task.FromResult(PizarraExportResult.Saved);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error al guardar la pizarra en Carpeta de imágenes");
+            return Task.FromResult(PizarraExportResult.Failed);
+        }
+    }
+#else
+    private Task<PizarraExportResult> SaveAsync(byte[] webpBytes)
+    {
+        _logger.LogInformation("Export de pizarra a galería no disponible en esta plataforma");
+        return Task.FromResult(PizarraExportResult.NotAvailable);
     }
 #endif
 }
