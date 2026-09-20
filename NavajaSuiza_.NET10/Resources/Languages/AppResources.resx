@@ -204,6 +204,27 @@
   <data name="PizarraExportFailedText" xml:space="preserve">
     <value>No se pudo guardar la imagen</value>
   </data>
+  <data name="DocumentReaderText" xml:space="preserve">
+    <value>Lector de archivos</value>
+  </data>
+  <data name="DocumentReaderPickerTitleText" xml:space="preserve">
+    <value>Selecciona un archivo TXT o CSV</value>
+  </data>
+  <data name="OpenDocumentButtonText" xml:space="preserve">
+    <value>Abrir archivo</value>
+  </data>
+  <data name="DocumentReaderEmptyHintText" xml:space="preserve">
+    <value>Selecciona un archivo TXT o CSV para ver su contenido.</value>
+  </data>
+  <data name="DocumentReaderOpenErrorText" xml:space="preserve">
+    <value>No se pudo abrir el archivo.</value>
+  </data>
+  <data name="DocumentReaderEmptyText" xml:space="preserve">
+    <value>El archivo está vacío.</value>
+  </data>
+  <data name="DocumentReaderCsvRowsColumnsText" xml:space="preserve">
+    <value>Filas: {0} · Columnas: {1}</value>
+  </data>
   <data name="NotesSearchPlaceholderText" xml:space="preserve">
     <value>Buscar nota...</value>
   </data>

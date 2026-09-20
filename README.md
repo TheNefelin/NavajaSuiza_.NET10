@@ -28,10 +28,11 @@ Navaja suiza digital — app multiplataforma (.NET MAUI) con herramientas de uso
 NavajaSuiza_.NET10.sln
 │
 ├── NavajaSuiza.Core/                    # Class Library (net10.0 puro, sin dependencias MAUI)
-│   ├── Interfaces/                      # 15 interfaces
+│   ├── Interfaces/                      # 16 interfaces
 │   │   ├── ICompassService.cs
 │   │   ├── IDeviceDisplayService.cs
 │   │   ├── IDeviceStatusService.cs
+│   │   ├── IFilePickerService.cs
 │   │   ├── IFlashlightService.cs
 │   │   ├── IFlashlightStateService.cs
 │   │   ├── IImagePickerService.cs
@@ -52,10 +53,11 @@ NavajaSuiza_.NET10.sln
 │   ├── Services/
 │   │   ├── FlashlightStateService.cs
 │   │   └── StopwatchService.cs
-│   ├── ViewModels/                       # 19 ViewModels (testables, sin dependencias MAUI)
+│   ├── ViewModels/                       # 20 ViewModels (testables, sin dependencias MAUI)
 │   │   ├── BaseViewModel.cs
 │   │   ├── AboutViewModel.cs
 │   │   ├── CompassViewModel.cs
+│   │   ├── DocumentReaderViewModel.cs
 │   │   ├── FlashlightViewModel.cs
 │   │   ├── FramingViewModel.cs
 │   │   ├── MenuViewModel.cs
@@ -83,10 +85,11 @@ NavajaSuiza_.NET10.sln
 │   │   └── *.xaml/cs
 │   ├── ViewModels/                       # Vacío — todas las VMs están en Core
 │   ├── Services/
-│   │   └── Implementations/             # 13 implementaciones (solo APIs de plataforma)
+│   │   └── Implementations/             # 14 implementaciones (solo APIs de plataforma)
 │   │       ├── CompassSensorService.cs
 │   │       ├── DeviceDisplayService.cs
 │   │       ├── DeviceStatusService.cs
+│   │       ├── FilePickerService.cs
 │   │       ├── FlashlightService.cs
 │   │       ├── ImagePickerService.cs
 │   │       ├── InstrumentAudioService.cs
@@ -116,6 +119,8 @@ NavajaSuiza_.NET10.sln
 │   ├── AppConstantsTests.cs
 │   ├── BaseViewModelTests.cs
 │   ├── CompassViewModelTests.cs
+│   ├── CsvParserTests.cs
+│   ├── DocumentReaderViewModelTests.cs
 │   ├── FlashlightViewModelTests.cs
 │   ├── FramingViewModelTests.cs
 │   ├── InstrumentStringDataTests.cs
@@ -124,7 +129,8 @@ NavajaSuiza_.NET10.sln
 │   ├── PizarraViewModelTests.cs
 │   ├── ScreenLightViewModelTests.cs
 │   ├── StopwatchServiceTests.cs
-│   └── StopwatchViewModelTests.cs
+│   ├── StopwatchViewModelTests.cs
+│   └── TextFileDecoderTests.cs
 │
 ├── .editorconfig                        # Convenciones de código
 └── .github/workflows/build.yml          # CI/CD: build + test en push/PR

@@ -66,6 +66,7 @@ public static class MauiProgram
             .AddSingleton<ILauncherService, LauncherService>()
             .AddSingleton<INotesRepository, SqliteNotesRepository>()
             .AddSingleton<IPizarraImageExporter, PizarraImageExporter>()
+            .AddSingleton<IFilePickerService, FilePickerService>()
             ;
 
         builder.Services
@@ -108,6 +109,8 @@ public static class MauiProgram
             .AddSingleton<NoteEditorPage>()
             .AddTransient<PizarraViewModel>()
             .AddSingleton<PizarraPage>()
+            .AddTransient<DocumentReaderViewModel>()
+            .AddSingleton<DocumentReaderPage>()
             ;
 
         return builder;

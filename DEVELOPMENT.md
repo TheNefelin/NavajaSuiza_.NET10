@@ -148,7 +148,7 @@ NavajaSuiza_.NET10/                   # Solution
 │   └── MauiProgram.cs
 │
 └── NavajaSuiza.Test/                # Proyecto de tests (net10.0 puro)
-    └── *Tests.cs                     # xUnit + Moq, 170 tests
+    └── *Tests.cs                     # xUnit + Moq, 193 tests
 ```
 
 #### Regla de separación Core vs MAUI
@@ -638,3 +638,20 @@ Enfoque en esta app:
 - **No crear NuGet por ahora**: el paquete comunitario sería un proyecto aparte (nuevo), solo tras validar el servicio en dispositivos reales (decisión en §13).
 
 Pendiente de definir: ¿conteo solo en primer plano o en segundo plano/cerrada?; ¿historial de días?; ¿reset a medianoche?; ¿dónde se muestra (página propia o dentro de otra)?
+
+### 18.3 Lector de archivos (TXT/CSV)
+
+Estado: **Fase 1 implementada y verificada** (TXT + CSV; 193 tests; builds Android/Windows 0 errores). Verificación runtime pendiente en dispositivo/emulador.
+
+Decisión de alcance:
+- **Fase 1 (hecha)**: lectura de **TXT** y **CSV** con `FilePicker` (MAUI, sin dependencias nuevas). Se descartó de entrada XLSX/DOCX por complejidad y XLS/PDF/DOC porque requerirían una librería externa (instalada por el usuario) o un parser propio muy costoso.
+- **Fase 2 (propuesta)**: XLSX/DOCX con BCL (`System.IO.Compression` + XML, sin paquetes); XLS/PDF/DOC → decisión de librería o mensaje "no soportado".
+
+Entregado (Fase 1):
+- Core: `IFilePickerService` (devuelve `string?` ruta, patrón espejo de `IImagePickerService`), `TextFileDecoder` (detección de BOM UTF-8/UTF-16LE/UTF-16BE, UTF-8 estricto, fallback **Latin-1** sin dependencias; `CodePages` no se usó para no agregar el paquete `System.Text.Encoding.CodePages`), `CsvParser` (RFC-ish: comillas, comas y saltos de línea dentro de comillas, `""` escapado, CRLF/LF, filas vacías omitidas) y `DocumentReaderViewModel` (abrir → decodear → parsear por extensión; CSV muestra filas formateadas ` | ` + "Filas: {0} · Columnas: {1}").
+- MAUI: `FilePickerService` con tipos TXT/CSV por plataforma (Android MIME, WinUI `.txt`/`.csv`, iOS/MacCatalyst UTIs), `DocumentReaderPage` (Editor de solo lectura para scroll/selección), ítem de menú con `icon_documents.png` generado (script PowerShell + System.Drawing, 300x300, estilo plano), navegación `DocumentReaderPage`, DI (servicio Singleton, VM Transient, página Singleton) y resx ×3 (7 claves `DocumentReader*`).
+- Tests: `CsvParserTests` (10), `TextFileDecoderTests` (7), `DocumentReaderViewModelTests` (6) → total 193.
+
+Pendiente:
+- Verificación runtime en Android/Windows (selección de archivo y rendering del contenido).
+- Fase 2: XLSX/DOCX (BCL).
