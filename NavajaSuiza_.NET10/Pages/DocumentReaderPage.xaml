@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:syncgrid="clr-namespace:Syncfusion.Maui.DataGrid;assembly=Syncfusion.Maui.DataGrid"
+             xmlns:syncpdf="clr-namespace:Syncfusion.Maui.PdfViewer;assembly=Syncfusion.Maui.PdfViewer"
              xmlns:converters="clr-namespace:NavajaSuiza_.NET10.Converters"
              xmlns:extensions="clr-namespace:NavajaSuiza_.NET10.Extensions"
              x:Class="NavajaSuiza_.NET10.Pages.DocumentReaderPage"
@@ -33,9 +35,19 @@
                FontSize="15"
                IsVisible="{Binding IsFileLoaded, Converter={StaticResource InvertBool}}" />
 
-        <Editor Grid.Row="4"
-                Text="{Binding ContentText}"
-                IsReadOnly="True"
-                AutoSize="Disabled" />
+        <Grid Grid.Row="4">
+            <Editor Text="{Binding ContentText}"
+                    IsReadOnly="True"
+                    AutoSize="Disabled"
+                    IsVisible="{Binding IsText}" />
+
+            <syncgrid:SfDataGrid x:Name="CsvGrid"
+                                 ItemsSource="{Binding CsvTable}"
+                                 IsVisible="{Binding IsCsv}" />
+
+            <syncpdf:SfPdfViewer x:Name="PdfViewer"
+                                 DocumentSource="{Binding PdfDocumentStream}"
+                                 IsVisible="{Binding IsPdf}" />
+        </Grid>
     </Grid>
 </ContentPage>

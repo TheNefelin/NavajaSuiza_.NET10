@@ -17,7 +17,7 @@ public static class MauiProgram
     {
         // Reemplaza el placeholder por tu clave de licencia de Syncfusion (Community License, gratuita:
         // https://www.syncfusion.com/products/communitylicense). No compartas la clave en repositorios públicos.
-        SyncfusionLicenseProvider.RegisterLicense("REEMPLAZAR_CON_CLAVE_DE_SYNC_FUSION");
+        SyncfusionLicenseProvider.RegisterLicense("CLAVE_LICENCIA_SYNCFUSION");
 
         var builder = MauiApp.CreateBuilder();
 #pragma warning disable CA1416 // CommunityToolkit.Maui.MediaElement requires Android 26+; min SDK stays at 21 for broader device support
@@ -74,6 +74,7 @@ public static class MauiProgram
             .AddSingleton<INotesRepository, SqliteNotesRepository>()
             .AddSingleton<IPizarraImageExporter, PizarraImageExporter>()
             .AddSingleton<IFilePickerService, FilePickerService>()
+            .AddSingleton<IDocumentPdfConverter, DocumentPdfConverter>()
             ;
 
         builder.Services
@@ -117,9 +118,9 @@ public static class MauiProgram
             .AddTransient<PizarraViewModel>()
             .AddSingleton<PizarraPage>()
             .AddTransient<DocumentReaderViewModel>()
-            .AddSingleton<DocumentReaderPage>()
+            .AddTransient<DocumentReaderPage>()
             .AddTransient<PdfReaderViewModel>()
-            .AddSingleton<PdfReaderPage>()
+            .AddTransient<PdfReaderPage>()
             ;
 
         return builder;

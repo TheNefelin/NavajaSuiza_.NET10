@@ -227,6 +227,8 @@ Todos los servicios están registrados en `MauiProgram.cs` e inyectados por DI.
 | `IFlashlightService` | `FlashlightService` | Singleton | Control de flash (`Flashlight.Default`) |
 | `IDeviceDisplayService` | `DeviceDisplayService` | Singleton | Control de brillo y `KeepScreenOn` |
 | `IImagePickerService` | `ImagePickerService` | Singleton | Selección de imagen (`FilePicker`) |
+| `IFilePickerService` | `FilePickerService` | Singleton | Selección de archivos (TXT/CSV/DOCX/XLSX) |
+| `IDocumentPdfConverter` | `DocumentPdfConverter` (Core) | Singleton | Conversión DOCX/XLSX a PDF (Syncfusion `DocIORenderer`/`XlsIORenderer`) |
 | `IScreenBrightnessService` | `ScreenBrightnessService` | Singleton | Brillo de pantalla nativo (Android) |
 | `IFlashlightStateService` | `FlashlightStateService` (Core) | Singleton | Persistencia de estado flash entre recreaciones de VM, thread-safe con lock |
 | `IStopwatchService` | `StopwatchService` (Core) | Singleton | Cronómetro con `Stopwatch` + `PeriodicTimer`, thread-safe con lock; persiste tiempo y marcas |
@@ -561,6 +563,9 @@ MAUI `Battery.Default` en Android exige `BATTERY_STATS` (permiso protegido `sign
 - **Metrónomo — audio de baja latencia**: el clic usa `MediaElement` + `PeriodicTimer` con salto al UI thread (jitter y deriva acumulada). Plan: refactor a servicio `MetronomeClickService` por plataforma (Android `SoundPool`, iOS `AudioToolbox.SystemSound`) + scheduler con tiempos absolutos (`Stopwatch`) para eliminar deriva. **Sin dependencias nuevas.** Referencia: jfversluis/Plugin.Maui.Audio#89 documenta latencia de 150-200 ms incluso con player precargado.
 - **Weather — módulo del clima**: evaluar Open-Meteo (gratis, sin API key) cuando se implemente.
 - **Biblioteca de componentes MAUI**: la planificación se extrae a un proyecto independiente (no entra en el alcance de esta app). El documento de planificación se movió fuera del repositorio.
+- **FilePicker Android — cuelgue al cancelar la selección (Lector/PDF)**: ver §18.4. Bug de MAUI (dotnet/maui #33706; fix PR #33888 no presente en MAUI 10.0.100). Fix propuesto: guarda de timeout en `FilePickerService` (`Task.WhenAny`, sin dependencias nuevas). Estado: hipótesis sin confirmar, sin implementar.
+- **Lector — XLSX falla en runtime Android (emulador)**: la conversión XLSX→PDF falla en Android (docx sí funciona). El test de conversión pasa en Windows. Pendiente capturar la excepción real en logcat; hipótesis: limitación de plataforma de `XlsIORenderer` en Android. Posibles caminos si se confirma: limitar el picker a DOCX en Android, o fallback a extracción de valores + render propio de grid.
+- **Deploy Android automatizado falla ("No se pudo obtener el id. de proceso para 'com.nefelin.navajasuiza'")**: la app se instala y arranca bien manualmente (`adb shell am start`), pero el lanzador/depurador expira esperando el pid (arranque en frío ~6 s + Fast Deployment; log `monodroid-debug: Not starting the debugger as the timeout value has been reached`). Operativo: `adb` **no está en PATH** (ruta `C:\Program Files (x86)\Android\android-sdk\platform-tools\adb.exe`); si el Run falla, probar `adb uninstall com.nefelin.navajasuiza` y reintentar, y si persiste reiniciar el emulador.
 
 ---
 
@@ -639,38 +644,44 @@ Enfoque en esta app:
 
 Pendiente de definir: ¿conteo solo en primer plano o en segundo plano/cerrada?; ¿historial de días?; ¿reset a medianoche?; ¿dónde se muestra (página propia o dentro de otra)?
 
-### 18.3 Lector de archivos (TXT/CSV)
+### 18.3 Lector de archivos (TXT/CSV/DOCX/XLSX)
 
-Estado: **implementada y verificada** (TXT, CSV; tests del suite en total 197; builds Android/Windows 0 errores). Verificación runtime pendiente en dispositivo/emulador.
+Estado: **implementada y verificada a nivel de build/tests** (builds Android/Windows 0 errores; tests del suite en total **204**). Verificación runtime parcial: TXT/CSV y **DOCX** funcionan en dispositivo/emulador; **XLSX falla en runtime Android** (ver pendientes y §15.2).
 
 Decisión de alcance:
-- Lectura de **TXT** y **CSV** con `FilePicker` (MAUI, sin dependencias nuevas). El picker solo ofrece esos tipos.
-- **La Fase 2 (XLSX/DOCX) se implementó y luego se ELIMINÓ por decisión del usuario tras probarla en dispositivo**: el extractor perdía el layout/vista (sin estilos, anchos de columna, celdas combinadas, fórmulas ni renderizado) y "se pierde mucho de la vista". El **Visor de PDF (§18.4) asume el rol de visor** de la app; el Lector queda solo para texto plano/CSV.
+- Lectura con `FilePicker` de **TXT** (texto plano), **CSV** (grid) y **DOCX/XLSX** (convertidos a PDF y mostrados en `SfPdfViewer`, §18.4). La fase XLSX/DOCX original se había eliminado porque el extractor perdía el layout; se **reintrodujo cambiando el enfoque**: en lugar de extraer texto, el documento se **convierte a PDF** con Syncfusion (`DocIORenderer.NET`/`XlsIORenderer.NET`) y se renderiza con el visor real, preservando el layout.
+- CSV se muestra como **tabla** (`SfDataGrid`, `Syncfusion.Maui.DataGrid` 34.2.8) construida desde un `DataTable`. **Encabezado**: con ≥2 filas la primera es encabezado aunque las filas sean irregulares; las columnas toman el nombre del header y las sobrantes "Columna N"; las filas más cortas se rellenan con celdas vacías.
 
 Entregado:
-- Core: `IFilePickerService` (devuelve `string?` ruta, patrón espejo de `IImagePickerService`), `TextFileDecoder` (detección de BOM UTF-8/UTF-16LE/UTF-16BE, UTF-8 estricto, fallback **Latin-1** sin dependencias; `CodePages` no se usó para no agregar el paquete `System.Text.Encoding.CodePages`), `CsvParser` (RFC-ish: comillas, comas y saltos de línea dentro de comillas, `""` escapado, CRLF/LF, filas vacías omitidas) y `DocumentReaderViewModel` (abrir → decodear → parsear por extensión; CSV muestra filas formateadas ` | ` + "Filas: {0} · Columnas: {1}").
-- MAUI: `FilePickerService` con tipos TXT/CSV por plataforma (Android MIME, WinUI `.txt`/`.csv`, iOS/MacCatalyst UTIs), `DocumentReaderPage` (Editor de solo lectura para scroll/selección), ítem de menú con `icon_documents.png` generado (script PowerShell + System.Drawing, 300x300, estilo plano), navegación `DocumentReaderPage`, DI (servicio Singleton, VM Transient, página Singleton) y resx ×3 (claves `DocumentReader*`).
-- Tests: `CsvParserTests` (10), `TextFileDecoderTests` (7) y `DocumentReaderViewModelTests` (6).
+- Core: `IFilePickerService` (ruta `string?`, tipos por extensión), `TextFileDecoder` (BOM UTF-8/UTF-16LE/UTF-16BE, UTF-8 estricto, fallback **Latin-1** sin dependencias), `CsvParser` (RFC-ish: comillas, comas/saltos de línea dentro de comillas, `""` escapado, CRLF/LF, filas vacías omitidas), `DocumentReaderViewModel` (decodificar/parsear/convertir por extensión; `DataTable` para CSV; `PdfDocumentStream` para DOCX/XLSX) e **`IDocumentPdfConverter`/`DocumentPdfConverter`** (DOCX/XLSX → PDF en `Task.Run`, devuelve `MemoryStream`).
+- MAUI: `FilePickerService` con MIME `.txt/.csv/.docx/.xlsx` por plataforma, `DocumentReaderPage` con **3 vistas según tipo** (Editor para texto, `SfDataGrid` para CSV, `SfPdfViewer` para PDF/DOCX/XLSX), **`OnDisappearing`** → `PdfViewer.UnloadDocument()` + `viewModel.Unload()`, DI (**página Transient** — ver §18.4, problema del visor en blanco; VM Transient; `FilePickerService` y `DocumentPdfConverter` Singleton), ítem de menú `icon_documents.png` y resx ×3 actualizados.
+- Tests: `CsvParserTests` (10), `TextFileDecoderTests` (7), `DocumentReaderViewModelTests` (texto, CSV→`DataTable` con header, ragged rows con header+padding, DOCX→PDF mock, converter nulo→error, cancelación) y `DocumentPdfConverterTests` (4) → suite total **204**.
 
-Pendiente:
-- Verificación runtime en Android/Windows (selección de archivo y rendering del contenido).
+Pendientes (ver §15.2):
+- **XLSX en Android/emulador**: la conversión falla en runtime (docx sí funciona). El test de conversión XLSX pasa en Windows; hipótesis pendiente de confirmar con la excepción real (logcat): limitación de plataforma de `XlsIORenderer` en Android.
+- Verificación runtime restante: Windows (docx/xlsx) y flujo PDF completo.
 
 ### 18.4 Visor de PDF (Syncfusion SfPdfViewer)
 
-Estado: **implementada y verificada a nivel de build/tests** (Android/Windows 0/0; tests del suite en total 197). Verificación runtime pendiente en dispositivo/emulador.
+Estado: **implementada y verificada a nivel de build/tests** (Android/Windows 0/0; tests del suite en total 204). Verificación runtime pendiente en dispositivo/emulador.
 
 Decisión de alcance:
 - **Visor real de PDF mediante Syncfusion `SfPdfViewer`** (paquetes `Syncfusion.Maui.PdfViewer` 34.2.8 + `Syncfusion.Licensing` 34.2.8). Sustituye al visor propio con `#if ANDROID`/`#if WINDOWS` (`Android.Graphics.Pdf.PdfRenderer` + `Windows.Data.Pdf`) que se implementó antes y luego se **descartó por decisión del usuario tras probarla en emulador (sept 2026)**: no se comportaba como un visor real (scroll discreto por página rasterizada, sin búsqueda ni selección de texto).
-- **Licencia**: componente comercial; aplica la **Community License** gratuita (empresas y personas: organizaciones <US$1M de ingresos anuales, ≤5 desarrolladores, ≤10 empleados). Requiere `SyncfusionLicenseProvider.RegisterLicense(clave)` con la clave comunitaria que se obtiene en syncfusion.com. En `MauiProgram.cs` quedó un *placeholder* (`REEMPLAZAR_CON_CLAVE_DE_SYNC_FUSION`); **no commitear la clave real**. El `Syncfusion.Maui.Toolkit` 1.0.11 ya presente es un producto distinto (free) y coexiste sin conflicto.
+- **Licencia**: componente comercial; aplica la **Community License** gratuita (empresas y personas: organizaciones <US$1M de ingresos anuales, ≤5 desarrolladores, ≤10 empleados). Requiere `SyncfusionLicenseProvider.RegisterLicense(clave)` con la clave comunitaria que se obtiene en syncfusion.com; la clave se registra en `MauiProgram.cs` (gestionarla con cuidado: mantenerla fuera de repositorios públicos/logs). El `Syncfusion.Maui.Toolkit` 1.0.11 ya presente es un producto distinto (free) y coexiste sin conflicto.
 - El control cubre las 4 TFMs del csproj: Android, iOS, MacCatalyst y Windows (net10); build verificado en Android y Windows; iOS/MacCatalyst pendientes (requieren Mac).
 
 Entregado:
 - Core: `PdfReaderViewModel` simplificado — `PdfDocumentStream` (FileStream del archivo elegido), `FileName`, `HintText`, `IsFileLoaded`; `OpenDocumentCommand` → `IFilePickerService.PickPdfAsync` + apertura del stream; `Unload()` libera el stream y resetea el estado. Se eliminaron del pipeline anterior: `IPdfRendererService`, `PdfRendererService`, `PdfPageItem`, batching/`RenderPixelWidth` y los gestos de zoom propios.
 - MAUI: `PdfReaderPage.xaml` con `<syncfusion:SfPdfViewer>` (`DocumentSource="{Binding PdfDocumentStream}"`; el control aporta toolbar, navegación, zoom, búsqueda y selección de texto) + Label de hint cuando no hay documento; `PdfReaderPage.xaml.cs` resuelve el VM en `OnNavigatedTo` y en **`OnDisappearing`** llama `PdfViewer.UnloadDocument()` + `viewModel.Unload()` para liberar memoria del documento. `MauiProgram.cs`: `ConfigureSyncfusionCore()` + `RegisterLicense`; se quitó el DI del servicio de render. resx ×3 (4 claves `PdfReader*`; se eliminaron `PdfReaderEmptyText` y `PdfReaderPageCountText` por quedar sin uso).
-- Tests: `PdfReaderViewModelTests` (4: carga OK con archivo temporal, cancelación del picker, error al abrir, `Unload`) → suite total 197.
+- Tests: `PdfReaderViewModelTests` (4: carga OK con archivo temporal, cancelación del picker, error al abrir, `Unload`) → suite total 204.
 
 Límites conocidos (no resueltos a propósito):
 - Sin clave de licencia válida, Syncfusion puede mostrar advertencia de licencia trial en runtime.
 - Documentos muy grandes: carga y memoria las maneja el control; validar comportamiento en emulador/dispositivo.
 - iOS/MacCatalyst: implementación presente por el control, pero compilación no verificada (requiere Mac).
 - El visor se unload automáticamente al salir de la página (`OnDisappearing`): al volver hay que volver a abrir el archivo.
+
+#### Problemas detectados en runtime (emulador Android, sept 2026)
+
+- **PDF en blanco al volver a la página**: con las páginas registradas como **Singleton**, salir a cargar otro documento (`OnDisappearing` → `PdfViewer.UnloadDocument()` + `viewModel.Unload()`) y volver/reabrir dejaba el visor en blanco. Referencia: Syncfusion Feedback #59237 / Foro de Syncfusion #189392 (reutilizar una instancia de `SfPdfViewer` tras `UnloadDocument` no soporta cargar documentos posteriores). **Fix aplicado (build 0 errores)**: `DocumentReaderPage` y `PdfReaderPage` ahora son **Transient** (página y control `SfPdfViewer` nuevos por navegación; los VMs ya eran Transient y se resuelven en `OnNavigatedTo`). **Verificación runtime pendiente** (flujo: abrir PDF → menú → reabrir PDF).
+- **App congelada al cancelar el picker (Lector/Visor de PDF)**: al pulsar "cargar archivo" y cerrar el picker sin elegir, la app queda sin respuesta y hay que matar el proceso. Hipótesis principal: bug de MAUI en Android — el `IntermediateActivity` del picker se destruye sin `OnActivityResult` cuando la `MainActivity` se recrea mientras el picker está abierto, dejando el `TaskCompletionSource` de `FilePicker.PickAsync()` sin resolver para siempre (dotnet/maui #33706; fix en PR #33888, **no incluido en MAUI 10.0.100**). El emulador (arranque en frío ~6 s, poca memoria) favorece esa recreación. **Fix propuesto (sin dependencias nuevas)**: guarda con `Task.WhenAny` + timeout (~20 s) + captura de cancelación en `FilePickerService.PickDocumentAsync`/`PickPdfAsync`. **Pendiente**: confirmar la reproducción vía logcat y autorización para implementarlo (ver backlog §15.2).

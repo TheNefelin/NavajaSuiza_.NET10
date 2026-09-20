@@ -208,13 +208,13 @@
     <value>File reader</value>
   </data>
   <data name="DocumentReaderPickerTitleText" xml:space="preserve">
-    <value>Select a file (TXT or CSV)</value>
+    <value>Select a file (TXT, CSV, DOCX or XLSX)</value>
   </data>
   <data name="OpenDocumentButtonText" xml:space="preserve">
     <value>Open file</value>
   </data>
   <data name="DocumentReaderEmptyHintText" xml:space="preserve">
-    <value>Select a TXT or CSV file to view its contents.</value>
+    <value>Select a TXT, CSV, DOCX or XLSX file to view its contents.</value>
   </data>
   <data name="DocumentReaderOpenErrorText" xml:space="preserve">
     <value>Could not open the file.</value>

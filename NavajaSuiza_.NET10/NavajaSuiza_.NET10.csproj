@@ -75,6 +75,7 @@
 		<PackageReference Include="SkiaSharp" Version="4.152.1" />
 		<PackageReference Include="sqlite-net-pcl" Version="1.11.285" />
 		<PackageReference Include="Syncfusion.Licensing" Version="34.2.8" />
+		<PackageReference Include="Syncfusion.Maui.DataGrid" Version="34.2.8" />
 		<PackageReference Include="Syncfusion.Maui.PdfViewer" Version="34.2.8" />
 		<PackageReference Include="Syncfusion.Maui.Toolkit" Version="1.0.11" />
 	</ItemGroup>

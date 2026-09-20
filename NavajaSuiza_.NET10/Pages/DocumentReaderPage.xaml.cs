@@ -6,6 +6,7 @@ namespace NavajaSuiza_.NET10.Pages;
 public partial class DocumentReaderPage : ContentPage
 {
     private readonly IServiceProvider _serviceProvider;
+    private DocumentReaderViewModel? _viewModel;
 
     public DocumentReaderPage(IServiceProvider serviceProvider)
     {
@@ -16,6 +17,14 @@ public partial class DocumentReaderPage : ContentPage
     protected override void OnNavigatedTo(NavigatedToEventArgs args)
     {
         base.OnNavigatedTo(args);
-        BindingContext = _serviceProvider.GetRequiredService<DocumentReaderViewModel>();
+        _viewModel = _serviceProvider.GetRequiredService<DocumentReaderViewModel>();
+        BindingContext = _viewModel;
+    }
+
+    protected override void OnDisappearing()
+    {
+        base.OnDisappearing();
+        PdfViewer.UnloadDocument();
+        _viewModel?.Unload();
     }
 }

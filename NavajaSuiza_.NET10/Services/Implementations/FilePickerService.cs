@@ -8,12 +8,16 @@ public class FilePickerService : IFilePickerService
         new Dictionary<DevicePlatform, IEnumerable<string>>
         {
             { DevicePlatform.Android, new[] {
-                "text/plain", "text/csv", "application/csv", "text/comma-separated-values" } },
-            { DevicePlatform.WinUI, new[] { ".txt", ".csv" } },
+                "text/plain", "text/csv", "application/csv", "text/comma-separated-values",
+                "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" } },
+            { DevicePlatform.WinUI, new[] { ".txt", ".csv", ".docx", ".xlsx" } },
             { DevicePlatform.iOS, new[] {
-                "public.plain-text", "public.delimited-values-text", "public.comma-separated-values-text" } },
+                "public.plain-text", "public.delimited-values-text", "public.comma-separated-values-text",
+                "org.openxmlformats.wordprocessingml.document", "org.openxmlformats.spreadsheetml.sheet" } },
             { DevicePlatform.MacCatalyst, new[] {
-                "public.plain-text", "public.delimited-values-text", "public.comma-separated-values-text" } }
+                "public.plain-text", "public.delimited-values-text", "public.comma-separated-values-text",
+                "org.openxmlformats.wordprocessingml.document", "org.openxmlformats.spreadsheetml.sheet" } }
         });
 
     public async Task<string?> PickDocumentAsync(string title)
