@@ -5,6 +5,8 @@ using NavajaSuiza_.NET10.Services.Implementations;
 using NavajaSuiza.Core.Interfaces;
 using NavajaSuiza.Core.Services;
 using NavajaSuiza.Core.ViewModels;
+using Syncfusion.Licensing;
+using Syncfusion.Maui.Core.Hosting;
 using Syncfusion.Maui.Toolkit.Hosting;
 
 namespace NavajaSuiza_.NET10;
@@ -13,6 +15,10 @@ public static class MauiProgram
 {
     public static MauiApp CreateMauiApp()
     {
+        // Reemplaza el placeholder por tu clave de licencia de Syncfusion (Community License, gratuita:
+        // https://www.syncfusion.com/products/communitylicense). No compartas la clave en repositorios públicos.
+        SyncfusionLicenseProvider.RegisterLicense("REEMPLAZAR_CON_CLAVE_DE_SYNC_FUSION");
+
         var builder = MauiApp.CreateBuilder();
 #pragma warning disable CA1416 // CommunityToolkit.Maui.MediaElement requires Android 26+; min SDK stays at 21 for broader device support
         builder
@@ -20,6 +26,7 @@ public static class MauiProgram
             .UseMauiCommunityToolkit()
             .UseMauiCommunityToolkitMediaElement(false)
             .ConfigureSyncfusionToolkit()
+            .ConfigureSyncfusionCore()
 #pragma warning restore CA1416
             .ConfigureFonts(fonts =>
             {
@@ -111,6 +118,8 @@ public static class MauiProgram
             .AddSingleton<PizarraPage>()
             .AddTransient<DocumentReaderViewModel>()
             .AddSingleton<DocumentReaderPage>()
+            .AddTransient<PdfReaderViewModel>()
+            .AddSingleton<PdfReaderPage>()
             ;
 
         return builder;

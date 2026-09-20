@@ -60,5 +60,8 @@ public partial class MenuViewModel : BaseViewModel
     private async Task NavigateToDocumentReader() => await _navigationService.PushAsync("DocumentReaderPage");
 
     [RelayCommand]
+    private async Task NavigateToPdfReader() => await _navigationService.PushAsync("PdfReaderPage");
+
+    [RelayCommand]
     private async Task NavigateToManual() => await _navigationService.PushAsync("ManualPage");
 }

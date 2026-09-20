@@ -208,7 +208,7 @@
     <value>File reader</value>
   </data>
   <data name="DocumentReaderPickerTitleText" xml:space="preserve">
-    <value>Select a TXT or CSV file</value>
+    <value>Select a file (TXT or CSV)</value>
   </data>
   <data name="OpenDocumentButtonText" xml:space="preserve">
     <value>Open file</value>
@@ -224,6 +224,18 @@
   </data>
   <data name="DocumentReaderCsvRowsColumnsText" xml:space="preserve">
     <value>Rows: {0} · Columns: {1}</value>
+  </data>
+  <data name="PdfReaderText" xml:space="preserve">
+    <value>PDF viewer</value>
+  </data>
+  <data name="PdfReaderPickerTitleText" xml:space="preserve">
+    <value>Select a PDF file</value>
+  </data>
+  <data name="PdfReaderEmptyHintText" xml:space="preserve">
+    <value>Select a PDF file to view its pages.</value>
+  </data>
+  <data name="PdfReaderOpenErrorText" xml:space="preserve">
+    <value>Could not open the PDF.</value>
   </data>
   <data name="NotesSearchPlaceholderText" xml:space="preserve">
     <value>Search note...</value>

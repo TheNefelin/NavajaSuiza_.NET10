@@ -208,7 +208,7 @@
     <value>Filläsare</value>
   </data>
   <data name="DocumentReaderPickerTitleText" xml:space="preserve">
-    <value>Välj en TXT- eller CSV-fil</value>
+    <value>Välj en fil (TXT eller CSV)</value>
   </data>
   <data name="OpenDocumentButtonText" xml:space="preserve">
     <value>Öppna fil</value>
@@ -224,6 +224,18 @@
   </data>
   <data name="DocumentReaderCsvRowsColumnsText" xml:space="preserve">
     <value>Rader: {0} · Kolumner: {1}</value>
+  </data>
+  <data name="PdfReaderText" xml:space="preserve">
+    <value>PDF-läsare</value>
+  </data>
+  <data name="PdfReaderPickerTitleText" xml:space="preserve">
+    <value>Välj en PDF-fil</value>
+  </data>
+  <data name="PdfReaderEmptyHintText" xml:space="preserve">
+    <value>Välj en PDF-fil för att visa sidorna.</value>
+  </data>
+  <data name="PdfReaderOpenErrorText" xml:space="preserve">
+    <value>Det gick inte att öppna PDF-filen.</value>
   </data>
   <data name="NotesSearchPlaceholderText" xml:space="preserve">
     <value>Sök anteckning...</value>

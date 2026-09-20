@@ -49,31 +49,17 @@ public partial class DocumentReaderViewModel : BaseViewModel
 
         try
         {
-            var text = await TextFileDecoder.ReadTextAsync(path).ConfigureAwait(true);
-
             FileName = Path.GetFileName(path);
+            var extension = Path.GetExtension(path);
 
-            if (string.Equals(Path.GetExtension(path), CsvExtension, StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(extension, CsvExtension, StringComparison.OrdinalIgnoreCase))
             {
-                var rows = CsvParser.Parse(text);
-
-                if (rows.Count == 0)
-                {
-                    DetailText = _languageService.GetString("DocumentReaderEmptyText");
-                    ContentText = string.Empty;
-                }
-                else
-                {
-                    var maxColumns = rows.Max(row => row.Length);
-                    DetailText = string.Format(
-                        _languageService.GetString("DocumentReaderCsvRowsColumnsText"),
-                        rows.Count,
-                        maxColumns);
-                    ContentText = string.Join(Environment.NewLine, rows.Select(row => string.Join(" | ", row)));
-                }
+                var text = await TextFileDecoder.ReadTextAsync(path).ConfigureAwait(true);
+                LoadCsv(text);
             }
             else
             {
+                var text = await TextFileDecoder.ReadTextAsync(path).ConfigureAwait(true);
                 DetailText = string.Empty;
                 ContentText = text;
             }
@@ -90,5 +76,24 @@ public partial class DocumentReaderViewModel : BaseViewModel
             HintText = _languageService.GetString("DocumentReaderOpenErrorText");
             IsFileLoaded = false;
         }
+    }
+
+    private void LoadCsv(string text)
+    {
+        var rows = CsvParser.Parse(text);
+
+        if (rows.Count == 0)
+        {
+            DetailText = _languageService.GetString("DocumentReaderEmptyText");
+            ContentText = string.Empty;
+            return;
+        }
+
+        var maxColumns = rows.Max(row => row.Length);
+        DetailText = string.Format(
+            _languageService.GetString("DocumentReaderCsvRowsColumnsText"),
+            rows.Count,
+            maxColumns);
+        ContentText = string.Join(Environment.NewLine, rows.Select(row => string.Join(" | ", row)));
     }
 }

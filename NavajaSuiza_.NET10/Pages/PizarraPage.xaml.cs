@@ -129,7 +129,7 @@ public partial class PizarraPage : ContentPage
         _viewModel?.EndStroke();
     }
 
-    private void OnCancelInteraction(object? sender, TouchEventArgs e)
+    private void OnCancelInteraction(object? sender, EventArgs e)
     {
         _viewModel?.EndStroke();
     }

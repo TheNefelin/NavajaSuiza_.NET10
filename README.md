@@ -53,7 +53,7 @@ NavajaSuiza_.NET10.sln
 │   ├── Services/
 │   │   ├── FlashlightStateService.cs
 │   │   └── StopwatchService.cs
-│   ├── ViewModels/                       # 20 ViewModels (testables, sin dependencias MAUI)
+│   ├── ViewModels/                       # 21 archivos (testables, sin dependencias MAUI)
 │   │   ├── BaseViewModel.cs
 │   │   ├── AboutViewModel.cs
 │   │   ├── CompassViewModel.cs
@@ -63,6 +63,7 @@ NavajaSuiza_.NET10.sln
 │   │   ├── MenuViewModel.cs
 │   │   ├── MetronomeViewModel.cs
 │   │   ├── ManualViewModel.cs
+│   │   ├── PdfReaderViewModel.cs
 │   │   ├── PizarraViewModel.cs
 │   │   ├── ScreenLightViewModel.cs
 │   │   ├── StopwatchViewModel.cs
@@ -126,11 +127,12 @@ NavajaSuiza_.NET10.sln
 │   ├── InstrumentStringDataTests.cs
 │   ├── MenuViewModelTests.cs
 │   ├── MetronomeViewModelTests.cs
+│   ├── PdfReaderViewModelTests.cs
 │   ├── PizarraViewModelTests.cs
 │   ├── ScreenLightViewModelTests.cs
 │   ├── StopwatchServiceTests.cs
 │   ├── StopwatchViewModelTests.cs
-│   └── TextFileDecoderTests.cs
+│   ├── TextFileDecoderTests.cs
 │
 ├── .editorconfig                        # Convenciones de código
 └── .github/workflows/build.yml          # CI/CD: build + test en push/PR

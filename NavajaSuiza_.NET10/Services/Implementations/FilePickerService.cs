@@ -7,10 +7,13 @@ public class FilePickerService : IFilePickerService
     private static readonly FilePickerFileType TextDocuments = new(
         new Dictionary<DevicePlatform, IEnumerable<string>>
         {
-            { DevicePlatform.Android, new[] { "text/plain", "text/csv", "application/csv", "text/comma-separated-values" } },
+            { DevicePlatform.Android, new[] {
+                "text/plain", "text/csv", "application/csv", "text/comma-separated-values" } },
             { DevicePlatform.WinUI, new[] { ".txt", ".csv" } },
-            { DevicePlatform.iOS, new[] { "public.plain-text", "public.delimited-values-text", "public.comma-separated-values-text" } },
-            { DevicePlatform.MacCatalyst, new[] { "public.plain-text", "public.delimited-values-text", "public.comma-separated-values-text" } }
+            { DevicePlatform.iOS, new[] {
+                "public.plain-text", "public.delimited-values-text", "public.comma-separated-values-text" } },
+            { DevicePlatform.MacCatalyst, new[] {
+                "public.plain-text", "public.delimited-values-text", "public.comma-separated-values-text" } }
         });
 
     public async Task<string?> PickDocumentAsync(string title)
@@ -23,4 +26,24 @@ public class FilePickerService : IFilePickerService
 
         return result?.FullPath;
     }
+
+    public async Task<string?> PickPdfAsync(string title)
+    {
+        var result = await FilePicker.PickAsync(new PickOptions
+        {
+            PickerTitle = title,
+            FileTypes = PdfDocuments
+        }).ConfigureAwait(false);
+
+        return result?.FullPath;
+    }
+
+    private static readonly FilePickerFileType PdfDocuments = new(
+        new Dictionary<DevicePlatform, IEnumerable<string>>
+        {
+            { DevicePlatform.Android, new[] { "application/pdf" } },
+            { DevicePlatform.WinUI, new[] { ".pdf" } },
+            { DevicePlatform.iOS, new[] { "com.adobe.pdf" } },
+            { DevicePlatform.MacCatalyst, new[] { "com.adobe.pdf" } }
+        });
 }

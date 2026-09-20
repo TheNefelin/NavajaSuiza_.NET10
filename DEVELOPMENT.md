@@ -641,17 +641,36 @@ Pendiente de definir: ¿conteo solo en primer plano o en segundo plano/cerrada?;
 
 ### 18.3 Lector de archivos (TXT/CSV)
 
-Estado: **Fase 1 implementada y verificada** (TXT + CSV; 193 tests; builds Android/Windows 0 errores). Verificación runtime pendiente en dispositivo/emulador.
+Estado: **implementada y verificada** (TXT, CSV; tests del suite en total 197; builds Android/Windows 0 errores). Verificación runtime pendiente en dispositivo/emulador.
 
 Decisión de alcance:
-- **Fase 1 (hecha)**: lectura de **TXT** y **CSV** con `FilePicker` (MAUI, sin dependencias nuevas). Se descartó de entrada XLSX/DOCX por complejidad y XLS/PDF/DOC porque requerirían una librería externa (instalada por el usuario) o un parser propio muy costoso.
-- **Fase 2 (propuesta)**: XLSX/DOCX con BCL (`System.IO.Compression` + XML, sin paquetes); XLS/PDF/DOC → decisión de librería o mensaje "no soportado".
+- Lectura de **TXT** y **CSV** con `FilePicker` (MAUI, sin dependencias nuevas). El picker solo ofrece esos tipos.
+- **La Fase 2 (XLSX/DOCX) se implementó y luego se ELIMINÓ por decisión del usuario tras probarla en dispositivo**: el extractor perdía el layout/vista (sin estilos, anchos de columna, celdas combinadas, fórmulas ni renderizado) y "se pierde mucho de la vista". El **Visor de PDF (§18.4) asume el rol de visor** de la app; el Lector queda solo para texto plano/CSV.
 
-Entregado (Fase 1):
+Entregado:
 - Core: `IFilePickerService` (devuelve `string?` ruta, patrón espejo de `IImagePickerService`), `TextFileDecoder` (detección de BOM UTF-8/UTF-16LE/UTF-16BE, UTF-8 estricto, fallback **Latin-1** sin dependencias; `CodePages` no se usó para no agregar el paquete `System.Text.Encoding.CodePages`), `CsvParser` (RFC-ish: comillas, comas y saltos de línea dentro de comillas, `""` escapado, CRLF/LF, filas vacías omitidas) y `DocumentReaderViewModel` (abrir → decodear → parsear por extensión; CSV muestra filas formateadas ` | ` + "Filas: {0} · Columnas: {1}").
-- MAUI: `FilePickerService` con tipos TXT/CSV por plataforma (Android MIME, WinUI `.txt`/`.csv`, iOS/MacCatalyst UTIs), `DocumentReaderPage` (Editor de solo lectura para scroll/selección), ítem de menú con `icon_documents.png` generado (script PowerShell + System.Drawing, 300x300, estilo plano), navegación `DocumentReaderPage`, DI (servicio Singleton, VM Transient, página Singleton) y resx ×3 (7 claves `DocumentReader*`).
-- Tests: `CsvParserTests` (10), `TextFileDecoderTests` (7), `DocumentReaderViewModelTests` (6) → total 193.
+- MAUI: `FilePickerService` con tipos TXT/CSV por plataforma (Android MIME, WinUI `.txt`/`.csv`, iOS/MacCatalyst UTIs), `DocumentReaderPage` (Editor de solo lectura para scroll/selección), ítem de menú con `icon_documents.png` generado (script PowerShell + System.Drawing, 300x300, estilo plano), navegación `DocumentReaderPage`, DI (servicio Singleton, VM Transient, página Singleton) y resx ×3 (claves `DocumentReader*`).
+- Tests: `CsvParserTests` (10), `TextFileDecoderTests` (7) y `DocumentReaderViewModelTests` (6).
 
 Pendiente:
 - Verificación runtime en Android/Windows (selección de archivo y rendering del contenido).
-- Fase 2: XLSX/DOCX (BCL).
+
+### 18.4 Visor de PDF (Syncfusion SfPdfViewer)
+
+Estado: **implementada y verificada a nivel de build/tests** (Android/Windows 0/0; tests del suite en total 197). Verificación runtime pendiente en dispositivo/emulador.
+
+Decisión de alcance:
+- **Visor real de PDF mediante Syncfusion `SfPdfViewer`** (paquetes `Syncfusion.Maui.PdfViewer` 34.2.8 + `Syncfusion.Licensing` 34.2.8). Sustituye al visor propio con `#if ANDROID`/`#if WINDOWS` (`Android.Graphics.Pdf.PdfRenderer` + `Windows.Data.Pdf`) que se implementó antes y luego se **descartó por decisión del usuario tras probarla en emulador (sept 2026)**: no se comportaba como un visor real (scroll discreto por página rasterizada, sin búsqueda ni selección de texto).
+- **Licencia**: componente comercial; aplica la **Community License** gratuita (empresas y personas: organizaciones <US$1M de ingresos anuales, ≤5 desarrolladores, ≤10 empleados). Requiere `SyncfusionLicenseProvider.RegisterLicense(clave)` con la clave comunitaria que se obtiene en syncfusion.com. En `MauiProgram.cs` quedó un *placeholder* (`REEMPLAZAR_CON_CLAVE_DE_SYNC_FUSION`); **no commitear la clave real**. El `Syncfusion.Maui.Toolkit` 1.0.11 ya presente es un producto distinto (free) y coexiste sin conflicto.
+- El control cubre las 4 TFMs del csproj: Android, iOS, MacCatalyst y Windows (net10); build verificado en Android y Windows; iOS/MacCatalyst pendientes (requieren Mac).
+
+Entregado:
+- Core: `PdfReaderViewModel` simplificado — `PdfDocumentStream` (FileStream del archivo elegido), `FileName`, `HintText`, `IsFileLoaded`; `OpenDocumentCommand` → `IFilePickerService.PickPdfAsync` + apertura del stream; `Unload()` libera el stream y resetea el estado. Se eliminaron del pipeline anterior: `IPdfRendererService`, `PdfRendererService`, `PdfPageItem`, batching/`RenderPixelWidth` y los gestos de zoom propios.
+- MAUI: `PdfReaderPage.xaml` con `<syncfusion:SfPdfViewer>` (`DocumentSource="{Binding PdfDocumentStream}"`; el control aporta toolbar, navegación, zoom, búsqueda y selección de texto) + Label de hint cuando no hay documento; `PdfReaderPage.xaml.cs` resuelve el VM en `OnNavigatedTo` y en **`OnDisappearing`** llama `PdfViewer.UnloadDocument()` + `viewModel.Unload()` para liberar memoria del documento. `MauiProgram.cs`: `ConfigureSyncfusionCore()` + `RegisterLicense`; se quitó el DI del servicio de render. resx ×3 (4 claves `PdfReader*`; se eliminaron `PdfReaderEmptyText` y `PdfReaderPageCountText` por quedar sin uso).
+- Tests: `PdfReaderViewModelTests` (4: carga OK con archivo temporal, cancelación del picker, error al abrir, `Unload`) → suite total 197.
+
+Límites conocidos (no resueltos a propósito):
+- Sin clave de licencia válida, Syncfusion puede mostrar advertencia de licencia trial en runtime.
+- Documentos muy grandes: carga y memoria las maneja el control; validar comportamiento en emulador/dispositivo.
+- iOS/MacCatalyst: implementación presente por el control, pero compilación no verificada (requiere Mac).
+- El visor se unload automáticamente al salir de la página (`OnDisappearing`): al volver hay que volver a abrir el archivo.
