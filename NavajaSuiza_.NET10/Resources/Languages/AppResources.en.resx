@@ -226,7 +226,7 @@
     <value>Rows: {0} · Columns: {1}</value>
   </data>
   <data name="PdfReaderText" xml:space="preserve">
-    <value>PDF viewer</value>
+    <value>Viewer</value>
   </data>
   <data name="PdfReaderPickerTitleText" xml:space="preserve">
     <value>Select a PDF file</value>

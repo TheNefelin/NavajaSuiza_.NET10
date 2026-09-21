@@ -685,3 +685,23 @@ Límites conocidos (no resueltos a propósito):
 
 - **PDF en blanco al volver a la página**: con las páginas registradas como **Singleton**, salir a cargar otro documento (`OnDisappearing` → `PdfViewer.UnloadDocument()` + `viewModel.Unload()`) y volver/reabrir dejaba el visor en blanco. Referencia: Syncfusion Feedback #59237 / Foro de Syncfusion #189392 (reutilizar una instancia de `SfPdfViewer` tras `UnloadDocument` no soporta cargar documentos posteriores). **Fix aplicado (build 0 errores)**: `DocumentReaderPage` y `PdfReaderPage` ahora son **Transient** (página y control `SfPdfViewer` nuevos por navegación; los VMs ya eran Transient y se resuelven en `OnNavigatedTo`). **Verificación runtime pendiente** (flujo: abrir PDF → menú → reabrir PDF).
 - **App congelada al cancelar el picker (Lector/Visor de PDF)**: al pulsar "cargar archivo" y cerrar el picker sin elegir, la app queda sin respuesta y hay que matar el proceso. Hipótesis principal: bug de MAUI en Android — el `IntermediateActivity` del picker se destruye sin `OnActivityResult` cuando la `MainActivity` se recrea mientras el picker está abierto, dejando el `TaskCompletionSource` de `FilePicker.PickAsync()` sin resolver para siempre (dotnet/maui #33706; fix en PR #33888, **no incluido en MAUI 10.0.100**). El emulador (arranque en frío ~6 s, poca memoria) favorece esa recreación. **Fix propuesto (sin dependencias nuevas)**: guarda con `Task.WhenAny` + timeout (~20 s) + captura de cancelación en `FilePickerService.PickDocumentAsync`/`PickPdfAsync`. **Pendiente**: confirmar la reproducción vía logcat y autorización para implementarlo (ver backlog §15.2).
+
+### 18.4 Visor de PDF (rediseno 2026)
+
+- `MenuViewModel` ya no navega directamente: `NavigateToPdfReader` usa `IFilePickerService.PickPdfAsync` (titulo via `ILanguageService.GetString`) y solo navega a `PdfReaderPage` con el path como parametro si el usuario eligio un archivo.
+- `PdfReaderViewModel` no depende del picker: expone `Load(string path)` / `Unload()`, propiedades `PdfDocumentStream`, `FileName`, `IsFileLoaded`. Ctor: `(ILogger<PdfReaderViewModel>, INavigationService)`.
+- `PdfReaderPage` es full-screen (sin boton ni hint): en `OnNavigatedTo` toma `TakeNavigationParameter()` y llama a `Load`.
+- IDioma del picker: `PdfReaderPickerTitleText` (Visor/Viewer/Visare).
+### 18.4 Visor de PDF (PdfReader)
+- Reescrito: MenuViewModel usa IFilePickerService para elegir el archivo (titulo localizado via ILanguageService) y navega a PdfReaderPage con el path como parametro.
+- PdfReaderViewModel expone Load(path) / Unload() y propiedades PdfDocumentStream, FileName, IsFileLoaded. Ctor: ILogger + INavigationService.
+- PdfReaderPage es full-screen (sin boton ni hint); en OnNavigatedTo lee el parametro via TakeNavigationParameter() y llama a Load.
+- Tests: MenuViewModelTests y PdfReaderViewModelTests cubren picker, Load/Unload y estado.
+
+### 18.4 Visor de PDF (rediseno)
+- MenuViewModel usa IFilePickerService (IFilePickerService.PickPdfAsync con titulo de ILanguageService.GetString) y navega a PdfReaderPage con el path como parametro.
+- PdfReaderViewModel expone Load(path) / Unload() y propiedades PdfDocumentStream, FileName, IsFileLoaded. Ctor: ILogger + INavigationService (sin picker en el VM).
+- PdfReaderPage es full-screen sin boton ni hint: en OnNavigatedTo toma el path de TAKE_NAVIGATION_PARAMETER y llama a Load.
+- Tests: PdfReaderViewModelTests cubren Load valido, path inexistente (reset) y Unload (dispose + reset); MenuViewModelTests cubren picker ok y picker cancelado sin navegacion.
+
+- BUILD REAL: 0 errores / 0 advertencias; TEST REAL: 205/205 verdes (13s).

@@ -1,37 +1,13 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+<ContentPage x:Class="NavajaSuiza_.NET10.Pages.PdfReaderPage"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:syncfusion="clr-namespace:Syncfusion.Maui.PdfViewer;assembly=Syncfusion.Maui.PdfViewer"
-             xmlns:converters="clr-namespace:NavajaSuiza_.NET10.Converters"
              xmlns:extensions="clr-namespace:NavajaSuiza_.NET10.Extensions"
-             x:Class="NavajaSuiza_.NET10.Pages.PdfReaderPage"
+             xmlns:viewModels="clr-namespace:NavajaSuiza.Core.ViewModels;assembly=NavajaSuiza.Core"
+             x:DataType="viewModels:PdfReaderViewModel"
              Title="{extensions:Translate PdfReaderText}">
 
-    <ContentPage.Resources>
-        <converters:InvertedBoolConverter x:Key="InvertBool" />
-    </ContentPage.Resources>
-
-    <Grid RowDefinitions="Auto,Auto,*"
-          Padding="2,12,2,12"
-          RowSpacing="8">
-
-        <Button Grid.Row="0"
-                Text="{extensions:Translate OpenDocumentButtonText}"
-                Command="{Binding OpenDocumentCommand}" />
-
-        <Label Grid.Row="1"
-               Text="{Binding FileName}"
-               FontAttributes="Bold"
-               IsVisible="{Binding IsFileLoaded}" />
-
-        <Grid Grid.Row="2">
-            <syncfusion:SfPdfViewer x:Name="PdfViewer"
-                                    DocumentSource="{Binding PdfDocumentStream}" />
-            <Label Text="{Binding HintText}"
-                   FontSize="15"
-                   HorizontalOptions="Center"
-                   VerticalOptions="Center"
-                   IsVisible="{Binding IsFileLoaded, Converter={StaticResource InvertBool}}" />
-        </Grid>
-    </Grid>
+    <syncfusion:SfPdfViewer x:Name="PdfViewer"
+                            DocumentSource="{Binding PdfDocumentStream}" />
 </ContentPage>

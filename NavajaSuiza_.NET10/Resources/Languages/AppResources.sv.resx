@@ -226,7 +226,7 @@
     <value>Rader: {0} · Kolumner: {1}</value>
   </data>
   <data name="PdfReaderText" xml:space="preserve">
-    <value>PDF-läsare</value>
+    <value>Visare</value>
   </data>
   <data name="PdfReaderPickerTitleText" xml:space="preserve">
     <value>Välj en PDF-fil</value>

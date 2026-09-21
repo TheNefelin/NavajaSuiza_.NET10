@@ -1,110 +1,74 @@
 using Microsoft.Extensions.Logging;
 using Moq;
-using NavajaSuiza.Core.Interfaces;
 using NavajaSuiza.Core.ViewModels;
 
 namespace NavajaSuiza.Test;
 
 public class PdfReaderViewModelTests
 {
-    private const string TestString = "Test";
-
     private readonly Mock<ILogger<PdfReaderViewModel>> _loggerMock = new();
-    private readonly Mock<ILanguageService> _languageServiceMock = new();
-    private readonly Mock<IFilePickerService> _filePickerServiceMock = new();
 
-    private PdfReaderViewModel CreateSut()
-    {
-        _languageServiceMock.Setup(s => s.GetString(It.IsAny<string>())).Returns(TestString);
-        return new PdfReaderViewModel(
-            _loggerMock.Object,
-            _languageServiceMock.Object,
-            _filePickerServiceMock.Object);
-    }
+    private PdfReaderViewModel CreateSut() => new(_loggerMock.Object);
 
-    private static async Task<string> CreateTempPdfFileAsync()
+    private static string CreateTempPdfPath()
     {
-        var path = Path.Combine(Path.GetTempPath(), $"navaja-test-{Guid.NewGuid():N}.pdf");
-        await File.WriteAllBytesAsync(path, new byte[] { 0x25, 0x50, 0x44, 0x46 });
+        var name = Guid.NewGuid().ToString("N") + ".pdf";
+        var path = Path.Combine(Path.GetTempPath(), name);
+        File.WriteAllBytes(path, new byte[] { 0x25, 0x50, 0x44, 0x46 });
         return path;
     }
 
     [Fact]
-    public async Task OpenDocument_LoadsStreamAndFileName()
+    public void Load_ValidPath_LoadsStreamAndFileName()
     {
-        var path = await CreateTempPdfFileAsync();
-        PdfReaderViewModel vm = null!;
+        var path = CreateTempPdfPath();
+        var sut = CreateSut();
         try
         {
-            _filePickerServiceMock.Setup(s => s.PickPdfAsync(It.IsAny<string>())).ReturnsAsync(path);
+            sut.Load(path);
 
-            vm = CreateSut();
-            await vm.OpenDocumentCommand.ExecuteAsync(null);
-
-            Assert.True(vm.IsFileLoaded);
-            Assert.Equal(Path.GetFileName(path), vm.FileName);
-            Assert.NotNull(vm.PdfDocumentStream);
-            Assert.Equal(string.Empty, vm.HintText);
+            Assert.True(sut.IsFileLoaded);
+            Assert.Equal(Path.GetFileName(path), sut.FileName);
+            Assert.NotNull(sut.PdfDocumentStream);
         }
         finally
         {
-            if (vm is not null)
-                vm.Unload();
+            sut.Unload();
             File.Delete(path);
         }
     }
 
     [Fact]
-    public async Task OpenDocument_WhenCancelled_KeepsState()
+    public void Load_InvalidPath_ResetsState()
     {
-        _filePickerServiceMock.Setup(s => s.PickPdfAsync(It.IsAny<string>())).ReturnsAsync((string?)null);
+        var missing = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N") + ".pdf");
+        var sut = CreateSut();
 
-        var vm = CreateSut();
-        await vm.OpenDocumentCommand.ExecuteAsync(null);
+        sut.Load(missing);
 
-        Assert.False(vm.IsFileLoaded);
-        Assert.Equal(string.Empty, vm.FileName);
-        Assert.Null(vm.PdfDocumentStream);
-        Assert.Equal(TestString, vm.HintText);
+        Assert.False(sut.IsFileLoaded);
+        Assert.Equal(string.Empty, sut.FileName);
+        Assert.Null(sut.PdfDocumentStream);
     }
 
     [Fact]
-    public async Task OpenDocument_WhenFileNotReadable_SetsErrorHint()
+    public void Unload_DisposesStreamAndResetsState()
     {
-        _filePickerServiceMock.Setup(s => s.PickPdfAsync(It.IsAny<string>()))
-            .ReturnsAsync("ruta-inexistente.pdf");
-
-        var vm = CreateSut();
-        await vm.OpenDocumentCommand.ExecuteAsync(null);
-
-        Assert.False(vm.IsFileLoaded);
-        Assert.Equal(string.Empty, vm.FileName);
-        Assert.Null(vm.PdfDocumentStream);
-        Assert.Equal(TestString, vm.HintText);
-    }
-
-    [Fact]
-    public async Task Unload_DisposesStreamAndResetsState()
-    {
-        var path = await CreateTempPdfFileAsync();
+        var path = CreateTempPdfPath();
+        var sut = CreateSut();
         try
         {
-            _filePickerServiceMock.Setup(s => s.PickPdfAsync(It.IsAny<string>())).ReturnsAsync(path);
-
-            var vm = CreateSut();
-            await vm.OpenDocumentCommand.ExecuteAsync(null);
-            Assert.NotNull(vm.PdfDocumentStream);
-
-            vm.Unload();
-
-            Assert.False(vm.IsFileLoaded);
-            Assert.Equal(string.Empty, vm.FileName);
-            Assert.Null(vm.PdfDocumentStream);
-            Assert.Equal(TestString, vm.HintText);
+            sut.Load(path);
+            Assert.True(sut.IsFileLoaded);
         }
         finally
         {
+            sut.Unload();
             File.Delete(path);
         }
+
+        Assert.False(sut.IsFileLoaded);
+        Assert.Equal(string.Empty, sut.FileName);
+        Assert.Null(sut.PdfDocumentStream);
     }
 }

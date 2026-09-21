@@ -1,13 +1,18 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Extensions.Logging;
 using NavajaSuiza.Core.Interfaces;
+using NavajaSuiza.Core.Services;
 
 namespace NavajaSuiza.Core.ViewModels;
 
 public partial class MenuViewModel : BaseViewModel
 {
+    private readonly ILogger<MenuViewModel> _logger;
     private readonly INavigationService _navigationService;
     private readonly IDeviceStatusService _deviceStatusService;
+    private readonly IFilePickerService _filePickerService;
+    private readonly ILanguageService _languageService;
 
     [ObservableProperty]
     public partial string AvailableStorage { get; set; } = "0 GB";
@@ -19,11 +24,17 @@ public partial class MenuViewModel : BaseViewModel
     public partial bool IsDevelopment { get; set; }
 
     public MenuViewModel(
+        ILogger<MenuViewModel> logger,
         INavigationService navigationService,
-        IDeviceStatusService deviceStatusService)
+        IDeviceStatusService deviceStatusService,
+        IFilePickerService filePickerService,
+        ILanguageService languageService)
     {
+        _logger = logger;
         _navigationService = navigationService;
         _deviceStatusService = deviceStatusService;
+        _filePickerService = filePickerService;
+        _languageService = languageService;
     }
 
     public void OnPageAppearing()
@@ -36,19 +47,18 @@ public partial class MenuViewModel : BaseViewModel
     private async Task NavigateToFlashlight() => await _navigationService.PushAsync("FlashlightPage");
 
     [RelayCommand]
-    private async Task NavigateToFraming() => await _navigationService.PushAsync("FramingPage");
+    private async Task NavigateToPdfReader()
+    {
+        var path = await _filePickerService.PickPdfAsync(
+            _languageService.GetString("PdfReaderPickerTitleText"));
+        if (string.IsNullOrEmpty(path))
+            return;
+
+        await _navigationService.PushAsync("PdfReaderPage", path);
+    }
 
     [RelayCommand]
-    private async Task NavigateToTuner() => await _navigationService.PushAsync("TunerPage");
-
-    [RelayCommand]
-    private async Task NavigateToMetronome() => await _navigationService.PushAsync("MetronomePage");
-
-    [RelayCommand]
-    private async Task NavigateToStopwatch() => await _navigationService.PushAsync("StopwatchPage");
-
-    [RelayCommand]
-    private async Task NavigateToCompass() => await _navigationService.PushAsync("CompassPage");
+    private async Task NavigateToManual() => await _navigationService.PushAsync("ManualPage");
 
     [RelayCommand]
     private async Task NavigateToNotes() => await _navigationService.PushAsync("NotesPage");
@@ -58,10 +68,4 @@ public partial class MenuViewModel : BaseViewModel
 
     [RelayCommand]
     private async Task NavigateToDocumentReader() => await _navigationService.PushAsync("DocumentReaderPage");
-
-    [RelayCommand]
-    private async Task NavigateToPdfReader() => await _navigationService.PushAsync("PdfReaderPage");
-
-    [RelayCommand]
-    private async Task NavigateToManual() => await _navigationService.PushAsync("ManualPage");
 }
