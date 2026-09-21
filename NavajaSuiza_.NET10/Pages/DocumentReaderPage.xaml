@@ -3,39 +3,24 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:syncgrid="clr-namespace:Syncfusion.Maui.DataGrid;assembly=Syncfusion.Maui.DataGrid"
              xmlns:syncpdf="clr-namespace:Syncfusion.Maui.PdfViewer;assembly=Syncfusion.Maui.PdfViewer"
-             xmlns:converters="clr-namespace:NavajaSuiza_.NET10.Converters"
              xmlns:extensions="clr-namespace:NavajaSuiza_.NET10.Extensions"
              x:Class="NavajaSuiza_.NET10.Pages.DocumentReaderPage"
              Title="{extensions:Translate DocumentReaderText}">
 
-    <ContentPage.Resources>
-        <converters:InvertedBoolConverter x:Key="InvertBool" />
-    </ContentPage.Resources>
-
-    <Grid RowDefinitions="Auto,Auto,Auto,Auto,*"
+    <Grid RowDefinitions="Auto,*"
           Padding="16"
           RowSpacing="10">
 
-        <Button Grid.Row="0"
-                Text="{extensions:Translate OpenDocumentButtonText}"
-                Command="{Binding OpenDocumentCommand}" />
+        <VerticalStackLayout Grid.Row="0"
+                             Spacing="5"
+                             IsVisible="{Binding IsFileLoaded}">
+            <Label Text="{Binding FileName}"
+                   FontAttributes="Bold" />
+            <Label Text="{Binding DetailText}"
+                   FontSize="13" />
+        </VerticalStackLayout>
 
-        <Label Grid.Row="1"
-               Text="{Binding FileName}"
-               FontAttributes="Bold"
-               IsVisible="{Binding IsFileLoaded}" />
-
-        <Label Grid.Row="2"
-               Text="{Binding DetailText}"
-               FontSize="13"
-               IsVisible="{Binding IsFileLoaded}" />
-
-        <Label Grid.Row="3"
-               Text="{Binding HintText}"
-               FontSize="15"
-               IsVisible="{Binding IsFileLoaded, Converter={StaticResource InvertBool}}" />
-
-        <Grid Grid.Row="4">
+        <Grid Grid.Row="1">
             <Editor Text="{Binding ContentText}"
                     IsReadOnly="True"
                     AutoSize="Disabled"

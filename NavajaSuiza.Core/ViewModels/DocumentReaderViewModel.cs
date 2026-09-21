@@ -1,6 +1,5 @@
 using System.Data;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
 using NavajaSuiza.Core.Interfaces;
 using NavajaSuiza.Core.Services;
@@ -15,7 +14,6 @@ public partial class DocumentReaderViewModel : BaseViewModel
 
     private readonly ILogger<DocumentReaderViewModel> _logger;
     private readonly ILanguageService _languageService;
-    private readonly IFilePickerService _filePickerService;
     private readonly IDocumentPdfConverter _documentPdfConverter;
 
     [ObservableProperty]
@@ -26,9 +24,6 @@ public partial class DocumentReaderViewModel : BaseViewModel
 
     [ObservableProperty]
     public partial string ContentText { get; set; } = string.Empty;
-
-    [ObservableProperty]
-    public partial string HintText { get; set; } = string.Empty;
 
     [ObservableProperty]
     public partial bool IsFileLoaded { get; set; }
@@ -51,23 +46,15 @@ public partial class DocumentReaderViewModel : BaseViewModel
     public DocumentReaderViewModel(
         ILogger<DocumentReaderViewModel> logger,
         ILanguageService languageService,
-        IFilePickerService filePickerService,
         IDocumentPdfConverter documentPdfConverter)
     {
         _logger = logger;
         _languageService = languageService;
-        _filePickerService = filePickerService;
         _documentPdfConverter = documentPdfConverter;
-        HintText = _languageService.GetString("DocumentReaderEmptyHintText");
     }
 
-    [RelayCommand]
-    private async Task OpenDocument()
+    public async Task Load(string path)
     {
-        var path = await _filePickerService.PickDocumentAsync(_languageService.GetString("DocumentReaderPickerTitleText"));
-        if (string.IsNullOrEmpty(path))
-            return;
-
         try
         {
             FileName = Path.GetFileName(path);
@@ -78,7 +65,7 @@ public partial class DocumentReaderViewModel : BaseViewModel
                 var text = await TextFileDecoder.ReadTextAsync(path).ConfigureAwait(true);
                 LoadCsv(text);
             }
-            else if (string.Equals(extension, DocxExtension, StringComparison.OrdinalIgnoreCase)
+            else if (string.Equals(extension, DocxExtension, StringComparison.OrdinalIgnoreCase) 
                 || string.Equals(extension, XlsxExtension, StringComparison.OrdinalIgnoreCase))
             {
                 var pdf = await _documentPdfConverter.ConvertToPdfAsync(path).ConfigureAwait(true);
@@ -92,15 +79,12 @@ public partial class DocumentReaderViewModel : BaseViewModel
                 LoadText(text);
             }
 
-            HintText = string.Empty;
             IsFileLoaded = true;
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error al abrir el documento {Path}", path);
             ResetState();
-            HintText = _languageService.GetString("DocumentReaderOpenErrorText");
-            IsFileLoaded = false;
         }
     }
 
@@ -116,6 +100,7 @@ public partial class DocumentReaderViewModel : BaseViewModel
         DetailText = string.Empty;
         ContentText = string.Empty;
         CsvTable = null;
+        IsFileLoaded = false;
         IsText = false;
         IsCsv = false;
         IsPdf = false;
@@ -148,7 +133,8 @@ public partial class DocumentReaderViewModel : BaseViewModel
     {
         var rows = CsvParser.Parse(text);
 
-        if (rows.Count == 0)
+        var maxColumns = rows.Count == 0 ? 0 : rows.Max(row => row.Length);
+        if (maxColumns == 0)
         {
             DetailText = _languageService.GetString("DocumentReaderEmptyText");
             ContentText = string.Empty;
@@ -159,7 +145,6 @@ public partial class DocumentReaderViewModel : BaseViewModel
             return;
         }
 
-        var maxColumns = rows.Max(row => row.Length);
         var useHeader = rows.Count >= 2;
         var header = useHeader ? rows[0] : null;
 
