@@ -119,7 +119,7 @@ NavajaSuiza_.NET10.sln
 │   ├── AppConstantsTests.cs
 │   ├── BaseViewModelTests.cs
 │   ├── CompassViewModelTests.cs
-│   ├── CsvParserTests.cs
+│   ├── DocumentTypeDetectorTests.cs
 │   ├── FlashlightViewModelTests.cs
 │   ├── FramingViewModelTests.cs
 │   ├── InstrumentStringDataTests.cs
@@ -130,7 +130,6 @@ NavajaSuiza_.NET10.sln
 │   ├── ScreenLightViewModelTests.cs
 │   ├── StopwatchServiceTests.cs
 │   ├── StopwatchViewModelTests.cs
-│   ├── TextFileDecoderTests.cs
 │
 ├── .editorconfig                        # Convenciones de código
 └── .github/workflows/build.yml          # CI/CD: build + test en push/PR

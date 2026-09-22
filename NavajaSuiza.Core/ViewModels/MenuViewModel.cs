@@ -2,6 +2,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
 using NavajaSuiza.Core.Interfaces;
+using NavajaSuiza.Core.Models;
 using NavajaSuiza.Core.Services;
 
 namespace NavajaSuiza.Core.ViewModels;
@@ -13,6 +14,7 @@ public partial class MenuViewModel : BaseViewModel
     private readonly IDeviceStatusService _deviceStatusService;
     private readonly IFilePickerService _filePickerService;
     private readonly ILanguageService _languageService;
+    private readonly IDocumentPdfConverter _documentPdfConverter;
 
     [ObservableProperty]
     public partial string AvailableStorage { get; set; } = "0 GB";
@@ -23,18 +25,23 @@ public partial class MenuViewModel : BaseViewModel
     [ObservableProperty]
     public partial bool IsDevelopment { get; set; }
 
+    [ObservableProperty]
+    public partial bool IsConverting { get; set; }
+
     public MenuViewModel(
         ILogger<MenuViewModel> logger,
         INavigationService navigationService,
         IDeviceStatusService deviceStatusService,
         IFilePickerService filePickerService,
-        ILanguageService languageService)
+        ILanguageService languageService,
+        IDocumentPdfConverter documentPdfConverter)
     {
         _logger = logger;
         _navigationService = navigationService;
         _deviceStatusService = deviceStatusService;
         _filePickerService = filePickerService;
         _languageService = languageService;
+        _documentPdfConverter = documentPdfConverter;
     }
 
     public void OnPageAppearing()
@@ -49,12 +56,58 @@ public partial class MenuViewModel : BaseViewModel
     [RelayCommand]
     private async Task NavigateToPdfReader()
     {
-        var path = await _filePickerService.PickPdfAsync(
+        var path = await _filePickerService.PickDocumentAsync(
             _languageService.GetString("PdfReaderPickerTitleText"));
         if (string.IsNullOrEmpty(path))
             return;
 
-        await _navigationService.PushAsync("PdfReaderPage", path);
+        var documentType = DocumentTypeDetector.Detect(path);
+
+        PdfReaderPayload payload;
+        switch (documentType)
+        {
+            case DocumentType.Pdf:
+                payload = new PdfReaderPayload
+                {
+                    Path = path,
+                    FileName = Path.GetFileName(path)
+                };
+                break;
+
+            case DocumentType.Docx:
+            case DocumentType.Xlsx:
+                IsConverting = true;
+                try
+                {
+                    var stream = await _documentPdfConverter.ConvertToPdfAsync(documentType, path);
+                    payload = new PdfReaderPayload
+                    {
+                        Stream = stream,
+                        FileName = Path.GetFileName(path)
+                    };
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error al convertir {Type} a PDF: {Path}", documentType, path);
+                    await _navigationService.DisplayAlertAsync(
+                        string.Empty,
+                        _languageService.GetString("PdfReaderOpenErrorText"),
+                        _languageService.GetString("CommonOkText"));
+                    return;
+                }
+                finally
+                {
+                    IsConverting = false;
+                }
+
+                break;
+
+            default:
+                _logger.LogWarning("Formato no soportado: {Path}", path);
+                return;
+        }
+
+        await _navigationService.PushAsync("PdfReaderPage", payload);
     }
 
     [RelayCommand]

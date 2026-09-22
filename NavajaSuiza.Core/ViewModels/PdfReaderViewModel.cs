@@ -41,6 +41,24 @@ public partial class PdfReaderViewModel : BaseViewModel
         }
     }
 
+    public void Load(Stream stream, string fileName)
+    {
+        try
+        {
+            _logger.LogInformation("Abriendo PDF desde stream: {FileName} ({Bytes} bytes)", fileName, stream.Length);
+
+            Unload();
+            PdfDocumentStream = stream;
+            FileName = fileName;
+            IsFileLoaded = true;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error al abrir el PDF {FileName}", fileName);
+            Unload();
+        }
+    }
+
     public void Unload()
     {
         PdfDocumentStream?.Dispose();

@@ -6,10 +6,11 @@
              x:Class="NavajaSuiza_.NET10.Pages.MenuPage"
              Title="{extensions:Translate MenuText}">
 
-    <ScrollView>
-        <VerticalStackLayout
-            HorizontalOptions="Center"
-            Padding="0,20">
+    <Grid>
+        <ScrollView>
+            <VerticalStackLayout
+                HorizontalOptions="Center"
+                Padding="0,20">
 
             <Label Text="{extensions:Translate MenuWelcomeText}" FontAttributes="Bold" FontSize="20" Padding="10"/>
 
@@ -98,7 +99,7 @@
                 <Button
                     Command="{Binding NavigateToPdfReaderCommand}"
                     Text="{extensions:Translate PdfReaderText}"
-                    ImageSource="icon_pdf.png"
+                    ImageSource="icon_file.png"
                     FontAttributes="Bold"
                     ContentLayout="Top, 0"
                     Margin="8,0,8,16"
@@ -174,6 +175,37 @@
                 </Grid>
             </Border>
         </VerticalStackLayout>
-    </ScrollView>
-    
+        </ScrollView>
+
+        <Grid
+            Grid.Row="0"
+            IsVisible="{Binding IsConverting}"
+            BackgroundColor="#80000000"
+            InputTransparent="False">
+            <Border
+                Padding="32"
+                StrokeShape="16"
+                StrokeThickness="0"
+                BackgroundColor="White"
+                HorizontalOptions="Center"
+                VerticalOptions="Center">
+                <VerticalStackLayout Spacing="12" HorizontalOptions="Center">
+                    <ActivityIndicator
+                        IsRunning="{Binding IsConverting}"
+                        IsVisible="{Binding IsConverting}"
+                        Color="{StaticResource MyAccentBlue}"
+                        HeightRequest="48"
+                        WidthRequest="48"
+                        HorizontalOptions="Center"/>
+                    <Label
+                        Text="{extensions:Translate PdfReaderConvertingText}"
+                        FontSize="15"
+                        FontAttributes="Bold"
+                        TextColor="Black"
+                        HorizontalTextAlignment="Center"/>
+                </VerticalStackLayout>
+            </Border>
+        </Grid>
+    </Grid>
+
 </ContentPage>

@@ -20,7 +20,7 @@ Estas reglas priorizan:
 
 ## 2. Idioma
 
-- Toda comunicación con el usuario debe realizarse en español neutro latinoamericano.
+- Toda comunicación con el usuario debe realizarse en español neutro latinoamericano, usando la forma **"tú"** (no "vos", no voseo).
 - Se puede utilizar vocabulario técnico en inglés cuando sea el término estándar de la tecnología.
 - El código, nombres de variables, clases, métodos, interfaces, archivos y APIs deben respetar las convenciones propias de la tecnología utilizada.
 
@@ -271,6 +271,7 @@ Solo entonces puede modificar el proyecto dentro del alcance aprobado.
   4. Qué impacto puede tener agregarla.
   5. La versión recomendada, cuando corresponda.
 - Entregar los comandos exactos de instalación para que el usuario pueda ejecutarlos o autorizar su ejecución.
+- En este proyecto, la instalación, actualización, eliminación o modificación de paquetes/dependencias **la ejecuta siempre el usuario**, a menos que el usuario autorice explícitamente al agente a ejecutarla. El agente entrega los comandos exactos y **no los ejecuta** si no media esa autorización.
 - No ejecutar comandos como:
   - `npm install`
   - `npm add`
