@@ -686,22 +686,39 @@ Límites conocidos (no resueltos a propósito):
 - **PDF en blanco al volver a la página**: con las páginas registradas como **Singleton**, salir a cargar otro documento (`OnDisappearing` → `PdfViewer.UnloadDocument()` + `viewModel.Unload()`) y volver/reabrir dejaba el visor en blanco. Referencia: Syncfusion Feedback #59237 / Foro de Syncfusion #189392 (reutilizar una instancia de `SfPdfViewer` tras `UnloadDocument` no soporta cargar documentos posteriores). **Fix aplicado (build 0 errores)**: `DocumentReaderPage` y `PdfReaderPage` ahora son **Transient** (página y control `SfPdfViewer` nuevos por navegación; los VMs ya eran Transient y se resuelven en `OnNavigatedTo`). **Verificación runtime pendiente** (flujo: abrir PDF → menú → reabrir PDF).
 - **App congelada al cancelar el picker (Lector/Visor de PDF)**: al pulsar "cargar archivo" y cerrar el picker sin elegir, la app queda sin respuesta y hay que matar el proceso. Hipótesis principal: bug de MAUI en Android — el `IntermediateActivity` del picker se destruye sin `OnActivityResult` cuando la `MainActivity` se recrea mientras el picker está abierto, dejando el `TaskCompletionSource` de `FilePicker.PickAsync()` sin resolver para siempre (dotnet/maui #33706; fix en PR #33888, **no incluido en MAUI 10.0.100**). El emulador (arranque en frío ~6 s, poca memoria) favorece esa recreación. **Fix propuesto (sin dependencias nuevas)**: guarda con `Task.WhenAny` + timeout (~20 s) + captura de cancelación en `FilePickerService.PickDocumentAsync`/`PickPdfAsync`. **Pendiente**: confirmar la reproducción vía logcat y autorización para implementarlo (ver backlog §15.2).
 
-### 18.4 Visor de PDF (rediseno 2026)
+- BUILD REAL: 0 errores / 0 advertencias; TEST REAL: 192/192 verdes (13s).
+## 19. GUÍA de reconstrucción (build desde cero)
 
-- `MenuViewModel` ya no navega directamente: `NavigateToPdfReader` usa `IFilePickerService.PickPdfAsync` (titulo via `ILanguageService.GetString`) y solo navega a `PdfReaderPage` con el path como parametro si el usuario eligio un archivo.
-- `PdfReaderViewModel` no depende del picker: expone `Load(string path)` / `Unload()`, propiedades `PdfDocumentStream`, `FileName`, `IsFileLoaded`. Ctor: `(ILogger<PdfReaderViewModel>, INavigationService)`.
-- `PdfReaderPage` es full-screen (sin boton ni hint): en `OnNavigatedTo` toma `TakeNavigationParameter()` y llama a `Load`.
-- IDioma del picker: `PdfReaderPickerTitleText` (Visor/Viewer/Visare).
-### 18.4 Visor de PDF (PdfReader)
-- Reescrito: MenuViewModel usa IFilePickerService para elegir el archivo (titulo localizado via ILanguageService) y navega a PdfReaderPage con el path como parametro.
-- PdfReaderViewModel expone Load(path) / Unload() y propiedades PdfDocumentStream, FileName, IsFileLoaded. Ctor: ILogger + INavigationService.
-- PdfReaderPage es full-screen (sin boton ni hint); en OnNavigatedTo lee el parametro via TakeNavigationParameter() y llama a Load.
-- Tests: MenuViewModelTests y PdfReaderViewModelTests cubren picker, Load/Unload y estado.
+Repositorio real: D:\Repo\.NET\NavajaSuiza_.NET10 (sin tildes; git rev-parse y Test-Path OK - verificado §11.6-1).
+Convenciones de archivos:
+- Markdown planos en UTF-8. No usar oldString byte-exacto en líneas con acentos/CRLF (§11.5);
+  preferir anexar secciones al final o verificar por el canal git (§10.3).
+- Git: commits los hace el usuario (§11.2). No tocar Git, .env ni dependencias sin autorización (§10-14).
 
-### 18.4 Visor de PDF (rediseno)
-- MenuViewModel usa IFilePickerService (IFilePickerService.PickPdfAsync con titulo de ILanguageService.GetString) y navega a PdfReaderPage con el path como parametro.
-- PdfReaderViewModel expone Load(path) / Unload() y propiedades PdfDocumentStream, FileName, IsFileLoaded. Ctor: ILogger + INavigationService (sin picker en el VM).
-- PdfReaderPage es full-screen sin boton ni hint: en OnNavigatedTo toma el path de TAKE_NAVIGATION_PARAMETER y llama a Load.
-- Tests: PdfReaderViewModelTests cubren Load valido, path inexistente (reset) y Unload (dispose + reset); MenuViewModelTests cubren picker ok y picker cancelado sin navegacion.
+Prerrequisitos:
+- .NET 10 SDK con workload MAUI: dotnet workload install maui-android maui-windows
+- VS Community 2026 con cargas de trabajo .NET MAUI (Android + Windows)
+- Android SDK (API 35+ / JDK 17+) administrado por VS.
 
-- BUILD REAL: 0 errores / 0 advertencias; TEST REAL: 205/205 verdes (13s).
+Restaurar:
+  dotnet restore NavajaSuiza_.NET10/NavajaSuiza_.NET10.csproj
+
+Build (Android Debug):
+  dotnet build NavajaSuiza_.NET10/NavajaSuiza_.NET10.csproj -f net10.0-android -c Debug
+
+Suite de tests (esperado: 192 superados / 0 fallos):
+  dotnet test NavajaSuiza_.NET10/NavajaSuiza_.NET10.csproj
+
+Release Android (APK):
+  dotnet clean NavajaSuiza_.NET10/NavajaSuiza_.NET10.csproj -f net10.0-android -c Release
+  dotnet build NavajaSuiza_.NET10/NavajaSuiza_.NET10.csproj -f net10.0-android -c Release -p:AndroidPackageFormats=apk
+  Ante "Error de proceso de archivado" (lista de errores vacía): limpiar obj/bin y reconstruir;
+  no conservar builds previos con encoding dañado (§24).
+
+Release Windows:
+  dotnet build NavajaSuiza_.NET10/NavajaSuiza_.NET10.csproj -f net10.0-windows10.0.19041.0 -c Release
+
+Prueba en dispositivos físicos: instalar APK/MSIX, validar Visor de PDF (§18.4) y herramientas conservadas.
+Cuidado §16: no eliminar datos compartidos; aislamiento en tests.
+
+Nota de estado (§15.2): la sección §18.4 quedó deduplicada en esta fase (una sola ocurrencia; antes figuraba duplicada 4 veces).
