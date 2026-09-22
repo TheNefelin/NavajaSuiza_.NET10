@@ -29,8 +29,8 @@
 		<ApplicationId>com.companyname.navajasuiza_.net10</ApplicationId>
 
 		<!-- Versions -->
-		<ApplicationDisplayVersion>1.4.88</ApplicationDisplayVersion>
-		<ApplicationVersion>88</ApplicationVersion>
+		<ApplicationDisplayVersion>1.4.89</ApplicationDisplayVersion>
+		<ApplicationVersion>4</ApplicationVersion>
 
 		<!-- To develop, package, and publish an app to the Microsoft Store, see: https://aka.ms/MauiTemplateUnpackaged -->
 		<WindowsPackageType>None</WindowsPackageType>
@@ -70,14 +70,15 @@
 		<PackageReference Include="CommunityToolkit.Maui" Version="15.0.1" />
 		<PackageReference Include="CommunityToolkit.Maui.MediaElement" Version="10.0.0" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
-		<PackageReference Include="Microsoft.Maui.Controls" Version="10.0.101" />
+		<PackageReference Include="Microsoft.Maui.Controls" Version="10.0.110" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.12" />
 		<PackageReference Include="SkiaSharp" Version="4.152.1" />
 		<PackageReference Include="sqlite-net-pcl" Version="1.11.285" />
-		<PackageReference Include="Syncfusion.Licensing" Version="34.2.8" />
-		<PackageReference Include="Syncfusion.Maui.DataGrid" Version="34.2.8" />
-		<PackageReference Include="Syncfusion.Maui.PdfViewer" Version="34.2.8" />
+		<PackageReference Include="Syncfusion.DocIORenderer.Net.Core" Version="34.2.9" />
+		<PackageReference Include="Syncfusion.Licensing" Version="34.2.9" />
+		<PackageReference Include="Syncfusion.Maui.PdfViewer" Version="34.2.9" />
 		<PackageReference Include="Syncfusion.Maui.Toolkit" Version="1.0.11" />
+		<PackageReference Include="Syncfusion.XlsIORenderer.Net.Core" Version="34.2.9" />
 	</ItemGroup>
 
 	<ItemGroup>

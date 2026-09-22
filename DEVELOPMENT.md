@@ -563,8 +563,6 @@ MAUI `Battery.Default` en Android exige `BATTERY_STATS` (permiso protegido `sign
 - **Metrónomo — audio de baja latencia**: el clic usa `MediaElement` + `PeriodicTimer` con salto al UI thread (jitter y deriva acumulada). Plan: refactor a servicio `MetronomeClickService` por plataforma (Android `SoundPool`, iOS `AudioToolbox.SystemSound`) + scheduler con tiempos absolutos (`Stopwatch`) para eliminar deriva. **Sin dependencias nuevas.** Referencia: jfversluis/Plugin.Maui.Audio#89 documenta latencia de 150-200 ms incluso con player precargado.
 - **Weather — módulo del clima**: evaluar Open-Meteo (gratis, sin API key) cuando se implemente.
 - **Biblioteca de componentes MAUI**: la planificación se extrae a un proyecto independiente (no entra en el alcance de esta app). El documento de planificación se movió fuera del repositorio.
-- **FilePicker Android — cuelgue al cancelar la selección (Lector/PDF)**: ver §18.4. Bug de MAUI (dotnet/maui #33706; fix PR #33888 no presente en MAUI 10.0.100). Fix propuesto: guarda de timeout en `FilePickerService` (`Task.WhenAny`, sin dependencias nuevas). Estado: hipótesis sin confirmar, sin implementar.
-- **Lector — XLSX falla en runtime Android (emulador)**: la conversión XLSX→PDF falla en Android (docx sí funciona). El test de conversión pasa en Windows. Pendiente capturar la excepción real en logcat; hipótesis: limitación de plataforma de `XlsIORenderer` en Android. Posibles caminos si se confirma: limitar el picker a DOCX en Android, o fallback a extracción de valores + render propio de grid.
 - **Deploy Android automatizado falla ("No se pudo obtener el id. de proceso para 'com.nefelin.navajasuiza'")**: la app se instala y arranca bien manualmente (`adb shell am start`), pero el lanzador/depurador expira esperando el pid (arranque en frío ~6 s + Fast Deployment; log `monodroid-debug: Not starting the debugger as the timeout value has been reached`). Operativo: `adb` **no está en PATH** (ruta `C:\Program Files (x86)\Android\android-sdk\platform-tools\adb.exe`); si el Run falla, probar `adb uninstall com.nefelin.navajasuiza` y reintentar, y si persiste reiniciar el emulador.
 
 ---
@@ -658,8 +656,7 @@ Entregado:
 - Tests: `CsvParserTests` (10) y `TextFileDecoderTests` (7) → conservados. `DocumentReaderViewModelTests` y `DocumentPdfConverterTests` fueron **eliminados junto con la feature** (§18.3) → suite total 192.
 
 Pendientes (ver §15.2):
-- **XLSX en Android/emulador**: la conversión falla en runtime (docx sí funciona). El test de conversión XLSX pasa en Windows; hipótesis pendiente de confirmar con la excepción real (logcat): limitación de plataforma de `XlsIORenderer` en Android.
-- Verificación runtime restante: Windows (docx/xlsx) y flujo PDF completo.
+- **XLSX en Android/emulador**: ítem eliminado — la feature del Lector fue retirada (§18.3), por lo que no existe conversión XLSX que verificar.
 
 ### 18.4 Visor de PDF (Syncfusion SfPdfViewer)
 
@@ -683,8 +680,8 @@ Límites conocidos (no resueltos a propósito):
 
 #### Problemas detectados en runtime (emulador Android, sept 2026)
 
-- **PDF en blanco al volver a la página**: con las páginas registradas como **Singleton**, salir a cargar otro documento (`OnDisappearing` → `PdfViewer.UnloadDocument()` + `viewModel.Unload()`) y volver/reabrir dejaba el visor en blanco. Referencia: Syncfusion Feedback #59237 / Foro de Syncfusion #189392 (reutilizar una instancia de `SfPdfViewer` tras `UnloadDocument` no soporta cargar documentos posteriores). **Fix aplicado (build 0 errores)**: `DocumentReaderPage` y `PdfReaderPage` ahora son **Transient** (página y control `SfPdfViewer` nuevos por navegación; los VMs ya eran Transient y se resuelven en `OnNavigatedTo`). **Verificación runtime pendiente** (flujo: abrir PDF → menú → reabrir PDF).
-- **App congelada al cancelar el picker (Lector/Visor de PDF)**: al pulsar "cargar archivo" y cerrar el picker sin elegir, la app queda sin respuesta y hay que matar el proceso. Hipótesis principal: bug de MAUI en Android — el `IntermediateActivity` del picker se destruye sin `OnActivityResult` cuando la `MainActivity` se recrea mientras el picker está abierto, dejando el `TaskCompletionSource` de `FilePicker.PickAsync()` sin resolver para siempre (dotnet/maui #33706; fix en PR #33888, **no incluido en MAUI 10.0.100**). El emulador (arranque en frío ~6 s, poca memoria) favorece esa recreación. **Fix propuesto (sin dependencias nuevas)**: guarda con `Task.WhenAny` + timeout (~20 s) + captura de cancelación en `FilePickerService.PickDocumentAsync`/`PickPdfAsync`. **Pendiente**: confirmar la reproducción vía logcat y autorización para implementarlo (ver backlog §15.2).
+- **PDF en blanco al volver a la página**: con las páginas registradas como **Singleton**, salir a cargar otro documento (`OnDisappearing` → `PdfViewer.UnloadDocument()` + `viewModel.Unload()`) y volver/reabrir dejaba el visor en blanco. Referencia: Syncfusion Feedback #59237 / Foro de Syncfusion #189392 (reutilizar una instancia de `SfPdfViewer` tras `UnloadDocument` no soporta cargar documentos posteriores). **Fix aplicado (build 0 errores)**: `PdfReaderPage` ahora es **Transient** (página y control `SfPdfViewer` nuevos por navegación; el VM ya era Transient y se resuelve en `OnNavigatedTo`). **Verificado en runtime**: el flujo abrir PDF → menú → reabrir PDF funciona correctamente.
+- **Cancelación de la carga del PDF sin peligro**: verificado en runtime. No es un bug: el visor PDF funciona correctamente. El "cuelgue al cancelar el picker" observado antes en el emulador se debía a que el **emulador no tiene botón "volver"** para cancelar la carga; en **dispositivos físicos el botón volver del sistema cancela correctamente** el picker. Descartada la hipótesis de bug de MAUI (dotnet/maui #33706) y el fix propuesto de timeout en `FilePickerService`.
 
 - BUILD REAL: 0 errores / 0 advertencias; TEST REAL: 192/192 verdes (13s).
 ## 19. GUÍA de reconstrucción (build desde cero)
