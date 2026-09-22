@@ -228,7 +228,7 @@ Todos los servicios están registrados en `MauiProgram.cs` e inyectados por DI.
 | `IDeviceDisplayService` | `DeviceDisplayService` | Singleton | Control de brillo y `KeepScreenOn` |
 | `IImagePickerService` | `ImagePickerService` | Singleton | Selección de imagen (`FilePicker`) |
 | `IFilePickerService` | `FilePickerService` | Singleton | Selección de archivos (TXT/CSV/DOCX/XLSX) |
-| `IDocumentPdfConverter` | `DocumentPdfConverter` (Core) | Singleton | Conversión DOCX/XLSX a PDF (Syncfusion `DocIORenderer`/`XlsIORenderer`) |
+&lt;!-- DocumentPdfConverter eliminado --&gt;
 | `IScreenBrightnessService` | `ScreenBrightnessService` | Singleton | Brillo de pantalla nativo (Android) |
 | `IFlashlightStateService` | `FlashlightStateService` (Core) | Singleton | Persistencia de estado flash entre recreaciones de VM, thread-safe con lock |
 | `IStopwatchService` | `StopwatchService` (Core) | Singleton | Cronómetro con `Stopwatch` + `PeriodicTimer`, thread-safe con lock; persiste tiempo y marcas |
@@ -644,9 +644,9 @@ Enfoque en esta app:
 
 Pendiente de definir: ¿conteo solo en primer plano o en segundo plano/cerrada?; ¿historial de días?; ¿reset a medianoche?; ¿dónde se muestra (página propia o dentro de otra)?
 
-### 18.3 Lector de archivos (TXT/CSV/DOCX/XLSX)
+### 18.3 Lector de archivos (TXT/CSV/DOCX/XLSX) — ELIMINADO
 
-Estado: **implementada y verificada a nivel de build/tests** (builds Android/Windows 0 errores; tests del suite en total **204**). Verificación runtime parcial: TXT/CSV y **DOCX** funcionan en dispositivo/emulador; **XLSX falla en runtime Android** (ver pendientes y §15.2).
+Estado: **eliminada por decisión de alcance (2026)**. La feature "Lector de archivos/documentos" (TXT/CSV/DOCX/XLSX) fue retirada del proyecto: se eliminaron `DocumentReaderViewModel`, `DocumentReaderPage`, `IDocumentPdfConverter`/`DocumentPdfConverter` (DOCX/XLSX→PDF), `FilePickerService` con tipos adicionales y los tests `DocumentReaderViewModelTests`/`DocumentPdfConverterTests`. **Se conservó únicamente el visor de PDF** (§18.4) y su picker de `.pdf`. Tras el retiro, la suite queda en **192** tests.
 
 Decisión de alcance:
 - Lectura con `FilePicker` de **TXT** (texto plano), **CSV** (grid) y **DOCX/XLSX** (convertidos a PDF y mostrados en `SfPdfViewer`, §18.4). La fase XLSX/DOCX original se había eliminado porque el extractor perdía el layout; se **reintrodujo cambiando el enfoque**: en lugar de extraer texto, el documento se **convierte a PDF** con Syncfusion (`DocIORenderer.NET`/`XlsIORenderer.NET`) y se renderiza con el visor real, preservando el layout.
@@ -655,7 +655,7 @@ Decisión de alcance:
 Entregado:
 - Core: `IFilePickerService` (ruta `string?`, tipos por extensión), `TextFileDecoder` (BOM UTF-8/UTF-16LE/UTF-16BE, UTF-8 estricto, fallback **Latin-1** sin dependencias), `CsvParser` (RFC-ish: comillas, comas/saltos de línea dentro de comillas, `""` escapado, CRLF/LF, filas vacías omitidas), `DocumentReaderViewModel` (decodificar/parsear/convertir por extensión; `DataTable` para CSV; `PdfDocumentStream` para DOCX/XLSX) e **`IDocumentPdfConverter`/`DocumentPdfConverter`** (DOCX/XLSX → PDF en `Task.Run`, devuelve `MemoryStream`).
 - MAUI: `FilePickerService` con MIME `.txt/.csv/.docx/.xlsx` por plataforma, `DocumentReaderPage` con **3 vistas según tipo** (Editor para texto, `SfDataGrid` para CSV, `SfPdfViewer` para PDF/DOCX/XLSX), **`OnDisappearing`** → `PdfViewer.UnloadDocument()` + `viewModel.Unload()`, DI (**página Transient** — ver §18.4, problema del visor en blanco; VM Transient; `FilePickerService` y `DocumentPdfConverter` Singleton), ítem de menú `icon_documents.png` y resx ×3 actualizados.
-- Tests: `CsvParserTests` (10), `TextFileDecoderTests` (7), `DocumentReaderViewModelTests` (texto, CSV→`DataTable` con header, ragged rows con header+padding, DOCX→PDF mock, converter nulo→error, cancelación) y `DocumentPdfConverterTests` (4) → suite total **204**.
+- Tests: `CsvParserTests` (10) y `TextFileDecoderTests` (7) → conservados. `DocumentReaderViewModelTests` y `DocumentPdfConverterTests` fueron **eliminados junto con la feature** (§18.3) → suite total **192**.
 
 Pendientes (ver §15.2):
 - **XLSX en Android/emulador**: la conversión falla en runtime (docx sí funciona). El test de conversión XLSX pasa en Windows; hipótesis pendiente de confirmar con la excepción real (logcat): limitación de plataforma de `XlsIORenderer` en Android.

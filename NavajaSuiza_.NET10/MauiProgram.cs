@@ -74,7 +74,6 @@ public static class MauiProgram
             .AddSingleton<INotesRepository, SqliteNotesRepository>()
             .AddSingleton<IPizarraImageExporter, PizarraImageExporter>()
             .AddSingleton<IFilePickerService, FilePickerService>()
-            .AddSingleton<IDocumentPdfConverter, DocumentPdfConverter>()
             ;
 
         builder.Services
@@ -117,8 +116,6 @@ public static class MauiProgram
             .AddSingleton<NoteEditorPage>()
             .AddTransient<PizarraViewModel>()
             .AddSingleton<PizarraPage>()
-            .AddTransient<DocumentReaderViewModel>()
-            .AddTransient<DocumentReaderPage>()
             .AddTransient<PdfReaderViewModel>()
             .AddTransient<PdfReaderPage>()
             ;

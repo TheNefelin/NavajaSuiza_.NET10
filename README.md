@@ -57,7 +57,6 @@ NavajaSuiza_.NET10.sln
 │   │   ├── BaseViewModel.cs
 │   │   ├── AboutViewModel.cs
 │   │   ├── CompassViewModel.cs
-│   │   ├── DocumentReaderViewModel.cs
 │   │   ├── FlashlightViewModel.cs
 │   │   ├── FramingViewModel.cs
 │   │   ├── MenuViewModel.cs
@@ -121,7 +120,6 @@ NavajaSuiza_.NET10.sln
 │   ├── BaseViewModelTests.cs
 │   ├── CompassViewModelTests.cs
 │   ├── CsvParserTests.cs
-│   ├── DocumentReaderViewModelTests.cs
 │   ├── FlashlightViewModelTests.cs
 │   ├── FramingViewModelTests.cs
 │   ├── InstrumentStringDataTests.cs

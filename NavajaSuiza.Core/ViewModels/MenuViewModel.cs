@@ -67,13 +67,14 @@ public partial class MenuViewModel : BaseViewModel
     private async Task NavigateToPizarra() => await _navigationService.PushAsync("PizarraPage");
 
     [RelayCommand]
-    private async Task NavigateToDocumentReader()
-    {
-        var path = await _filePickerService.PickDocumentAsync(
-            _languageService.GetString("DocumentReaderPickerTitleText"));
-        if (string.IsNullOrEmpty(path))
-            return;
+    private async Task NavigateToTuner() => await _navigationService.PushAsync("TunerPage");
 
-        await _navigationService.PushAsync("DocumentReaderPage", path);
-    }
+    [RelayCommand]
+    private async Task NavigateToMetronome() => await _navigationService.PushAsync("MetronomePage");
+
+    [RelayCommand]
+    private async Task NavigateToStopwatch() => await _navigationService.PushAsync("StopwatchPage");
+
+    [RelayCommand]
+    private async Task NavigateToCompass() => await _navigationService.PushAsync("CompassPage");
 }
