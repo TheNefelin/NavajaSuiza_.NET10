@@ -655,7 +655,7 @@ Decisión de alcance:
 Entregado:
 - Core: `IFilePickerService` (ruta `string?`, tipos por extensión), `TextFileDecoder` (BOM UTF-8/UTF-16LE/UTF-16BE, UTF-8 estricto, fallback **Latin-1** sin dependencias), `CsvParser` (RFC-ish: comillas, comas/saltos de línea dentro de comillas, `""` escapado, CRLF/LF, filas vacías omitidas), `DocumentReaderViewModel` (decodificar/parsear/convertir por extensión; `DataTable` para CSV; `PdfDocumentStream` para DOCX/XLSX) e **`IDocumentPdfConverter`/`DocumentPdfConverter`** (DOCX/XLSX → PDF en `Task.Run`, devuelve `MemoryStream`).
 - MAUI: `FilePickerService` con MIME `.txt/.csv/.docx/.xlsx` por plataforma, `DocumentReaderPage` con **3 vistas según tipo** (Editor para texto, `SfDataGrid` para CSV, `SfPdfViewer` para PDF/DOCX/XLSX), **`OnDisappearing`** → `PdfViewer.UnloadDocument()` + `viewModel.Unload()`, DI (**página Transient** — ver §18.4, problema del visor en blanco; VM Transient; `FilePickerService` y `DocumentPdfConverter` Singleton), ítem de menú `icon_documents.png` y resx ×3 actualizados.
-- Tests: `CsvParserTests` (10) y `TextFileDecoderTests` (7) → conservados. `DocumentReaderViewModelTests` y `DocumentPdfConverterTests` fueron **eliminados junto con la feature** (§18.3) → suite total **192**.
+- Tests: `CsvParserTests` (10) y `TextFileDecoderTests` (7) → conservados. `DocumentReaderViewModelTests` y `DocumentPdfConverterTests` fueron **eliminados junto con la feature** (§18.3) → suite total 192.
 
 Pendientes (ver §15.2):
 - **XLSX en Android/emulador**: la conversión falla en runtime (docx sí funciona). El test de conversión XLSX pasa en Windows; hipótesis pendiente de confirmar con la excepción real (logcat): limitación de plataforma de `XlsIORenderer` en Android.
@@ -663,7 +663,7 @@ Pendientes (ver §15.2):
 
 ### 18.4 Visor de PDF (Syncfusion SfPdfViewer)
 
-Estado: **implementada y verificada a nivel de build/tests** (Android/Windows 0/0; tests del suite en total 204). Verificación runtime pendiente en dispositivo/emulador.
+Estado: **implementada y verificada a nivel de build/tests** (Android/Windows 0/0; tests del suite en total 192). Verificación runtime pendiente en dispositivo/emulador.
 
 Decisión de alcance:
 - **Visor real de PDF mediante Syncfusion `SfPdfViewer`** (paquetes `Syncfusion.Maui.PdfViewer` 34.2.8 + `Syncfusion.Licensing` 34.2.8). Sustituye al visor propio con `#if ANDROID`/`#if WINDOWS` (`Android.Graphics.Pdf.PdfRenderer` + `Windows.Data.Pdf`) que se implementó antes y luego se **descartó por decisión del usuario tras probarla en emulador (sept 2026)**: no se comportaba como un visor real (scroll discreto por página rasterizada, sin búsqueda ni selección de texto).
@@ -673,7 +673,7 @@ Decisión de alcance:
 Entregado:
 - Core: `PdfReaderViewModel` simplificado — `PdfDocumentStream` (FileStream del archivo elegido), `FileName`, `HintText`, `IsFileLoaded`; `OpenDocumentCommand` → `IFilePickerService.PickPdfAsync` + apertura del stream; `Unload()` libera el stream y resetea el estado. Se eliminaron del pipeline anterior: `IPdfRendererService`, `PdfRendererService`, `PdfPageItem`, batching/`RenderPixelWidth` y los gestos de zoom propios.
 - MAUI: `PdfReaderPage.xaml` con `<syncfusion:SfPdfViewer>` (`DocumentSource="{Binding PdfDocumentStream}"`; el control aporta toolbar, navegación, zoom, búsqueda y selección de texto) + Label de hint cuando no hay documento; `PdfReaderPage.xaml.cs` resuelve el VM en `OnNavigatedTo` y en **`OnDisappearing`** llama `PdfViewer.UnloadDocument()` + `viewModel.Unload()` para liberar memoria del documento. `MauiProgram.cs`: `ConfigureSyncfusionCore()` + `RegisterLicense`; se quitó el DI del servicio de render. resx ×3 (4 claves `PdfReader*`; se eliminaron `PdfReaderEmptyText` y `PdfReaderPageCountText` por quedar sin uso).
-- Tests: `PdfReaderViewModelTests` (4: carga OK con archivo temporal, cancelación del picker, error al abrir, `Unload`) → suite total 204.
+- Tests: `PdfReaderViewModelTests` (4: carga OK con archivo temporal, cancelación del picker, error al abrir, `Unload`) → suite total 192.
 
 Límites conocidos (no resueltos a propósito):
 - Sin clave de licencia válida, Syncfusion puede mostrar advertencia de licencia trial en runtime.
