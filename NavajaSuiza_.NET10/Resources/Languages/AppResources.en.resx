@@ -208,7 +208,7 @@
     <value>Viewer</value>
   </data>
   <data name="PdfReaderPickerTitleText" xml:space="preserve">
-    <value>Select a file (PDF, DOCX or XLSX)</value>
+    <value>Select a file (PDF, DOCX, XLSX, CSV or text)</value>
   </data>
   <data name="PdfReaderEmptyHintText" xml:space="preserve">
     <value>Select a file to view its content.</value>
@@ -218,6 +218,9 @@
   </data>
   <data name="PdfReaderConvertingText" xml:space="preserve">
     <value>Converting to PDF...</value>
+  </data>
+  <data name="TextReaderOpenErrorText" xml:space="preserve">
+    <value>Could not open the text file.</value>
   </data>
   <data name="NotesSearchPlaceholderText" xml:space="preserve">
     <value>Search note...</value>

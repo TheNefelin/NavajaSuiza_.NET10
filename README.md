@@ -53,7 +53,7 @@ NavajaSuiza_.NET10.sln
 │   ├── Services/
 │   │   ├── FlashlightStateService.cs
 │   │   └── StopwatchService.cs
-│   ├── ViewModels/                       # 21 archivos (testables, sin dependencias MAUI)
+│   ├── ViewModels/                       # 22 archivos (testables, sin dependencias MAUI)
 │   │   ├── BaseViewModel.cs
 │   │   ├── AboutViewModel.cs
 │   │   ├── CompassViewModel.cs
@@ -63,6 +63,7 @@ NavajaSuiza_.NET10.sln
 │   │   ├── MetronomeViewModel.cs
 │   │   ├── ManualViewModel.cs
 │   │   ├── PdfReaderViewModel.cs
+│   │   ├── TextReaderViewModel.cs
 │   │   ├── PizarraViewModel.cs
 │   │   ├── ScreenLightViewModel.cs
 │   │   ├── StopwatchViewModel.cs

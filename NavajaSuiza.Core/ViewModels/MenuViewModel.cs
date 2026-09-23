@@ -76,6 +76,7 @@ public partial class MenuViewModel : BaseViewModel
 
             case DocumentType.Docx:
             case DocumentType.Xlsx:
+            case DocumentType.Csv:
                 IsConverting = true;
                 try
                 {
@@ -101,6 +102,10 @@ public partial class MenuViewModel : BaseViewModel
                 }
 
                 break;
+
+            case DocumentType.Text:
+                await _navigationService.PushAsync("TextReaderPage", path);
+                return;
 
             default:
                 _logger.LogWarning("Formato no soportado: {Path}", path);

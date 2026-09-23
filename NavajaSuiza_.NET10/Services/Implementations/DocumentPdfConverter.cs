@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Logging;
 using NavajaSuiza.Core.Interfaces;
 using NavajaSuiza.Core.Models;
+using NavajaSuiza.Core.Services;
 using Syncfusion.DocIO;
 using Syncfusion.DocIO.DLS;
 using Syncfusion.DocIORenderer;
@@ -41,6 +42,9 @@ public class DocumentPdfConverter : IDocumentPdfConverter
                 case DocumentType.Xlsx:
                     ConvertExcelToPdf(input, output);
                     break;
+                case DocumentType.Csv:
+                    ConvertCsvToPdf(path, output);
+                    break;
                 default:
                     throw new NotSupportedException($"Tipo de documento no convertible: {documentType}");
             }
@@ -69,6 +73,19 @@ public class DocumentPdfConverter : IDocumentPdfConverter
         var application = engine.Excel;
         application.DefaultVersion = ExcelVersion.Xlsx;
         var workbook = application.Workbooks.Open(input);
+        using var renderer = new XlsIORenderer();
+        using var pdfDocument = renderer.ConvertToPDF(workbook);
+        pdfDocument.Save(output);
+    }
+
+    private static void ConvertCsvToPdf(string path, MemoryStream output)
+    {
+        var delimiter = DocumentTypeDetector.DetectDelimiter(path);
+
+        using var engine = new ExcelEngine();
+        var application = engine.Excel;
+        application.DefaultVersion = ExcelVersion.Xlsx;
+        var workbook = application.Workbooks.Open(path, delimiter.ToString());
         using var renderer = new XlsIORenderer();
         using var pdfDocument = renderer.ConvertToPDF(workbook);
         pdfDocument.Save(output);

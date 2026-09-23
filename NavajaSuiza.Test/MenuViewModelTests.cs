@@ -53,6 +53,13 @@ public class MenuViewModelTests
         return path;
     }
 
+    private static string CreateTempFileWithContent(string extension, string content)
+    {
+        var path = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N") + extension);
+        File.WriteAllText(path, content);
+        return path;
+    }
+
     [Fact]
     public void BatteryLevel_DefaultsToZero()
     {
@@ -199,5 +206,51 @@ public class MenuViewModelTests
 
         _filePickerServiceMock.Verify(s => s.PickDocumentAsync(TestString), Times.Once);
         _navigationServiceMock.Verify(s => s.PushAsync(It.IsAny<string>(), It.IsAny<PdfReaderPayload>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task NavigateToPdfReader_CsvConvertsAndNavigatesWithStream()
+    {
+        var path = CreateTempFileWithContent(".csv", "nombre,edad,ciudad\nAna,30,Madrid\nLuis,25,Bogota\n");
+        using var converted = new MemoryStream(new byte[] { 0x25, 0x50, 0x44, 0x46, 0x2D });
+        try
+        {
+            _filePickerServiceMock.Setup(s => s.PickDocumentAsync(It.IsAny<string>())).ReturnsAsync(path);
+            _documentPdfConverterMock
+                .Setup(s => s.ConvertToPdfAsync(DocumentType.Csv, path))
+                .ReturnsAsync(converted);
+
+            var vm = CreateSut();
+            await vm.NavigateToPdfReaderCommand.ExecuteAsync(null);
+
+            _documentPdfConverterMock.Verify(s => s.ConvertToPdfAsync(DocumentType.Csv, path), Times.Once);
+            _navigationServiceMock.Verify(
+                s => s.PushAsync("PdfReaderPage", It.Is<PdfReaderPayload>(p => p.Stream == converted)),
+                Times.Once);
+        }
+        finally
+        {
+            File.Delete(path);
+        }
+    }
+
+    [Fact]
+    public async Task NavigateToPdfReader_TextNavigatesWithPath()
+    {
+        var path = CreateTempFileWithContent(".txt", "archivo de texto plano");
+        try
+        {
+            _filePickerServiceMock.Setup(s => s.PickDocumentAsync(It.IsAny<string>())).ReturnsAsync(path);
+
+            var vm = CreateSut();
+            await vm.NavigateToPdfReaderCommand.ExecuteAsync(null);
+
+            _navigationServiceMock.Verify(s => s.PushAsync("TextReaderPage", path), Times.Once);
+            _documentPdfConverterMock.Verify(s => s.ConvertToPdfAsync(It.IsAny<DocumentType>(), It.IsAny<string>()), Times.Never);
+        }
+        finally
+        {
+            File.Delete(path);
+        }
     }
 }

@@ -208,7 +208,7 @@
     <value>Visare</value>
   </data>
   <data name="PdfReaderPickerTitleText" xml:space="preserve">
-    <value>Välj en fil (PDF, DOCX eller XLSX)</value>
+    <value>Välj en fil (PDF, DOCX, XLSX, CSV eller text)</value>
   </data>
   <data name="PdfReaderEmptyHintText" xml:space="preserve">
     <value>Välj en fil för att visa innehållet.</value>
@@ -218,6 +218,9 @@
   </data>
   <data name="PdfReaderConvertingText" xml:space="preserve">
     <value>Konverterar till PDF...</value>
+  </data>
+  <data name="TextReaderOpenErrorText" xml:space="preserve">
+    <value>Det gick inte att öppna textfilen.</value>
   </data>
   <data name="NotesSearchPlaceholderText" xml:space="preserve">
     <value>Sök anteckning...</value>

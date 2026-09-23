@@ -119,6 +119,8 @@ public static class MauiProgram
             .AddSingleton<PizarraPage>()
             .AddTransient<PdfReaderViewModel>()
             .AddTransient<PdfReaderPage>()
+            .AddTransient<TextReaderViewModel>()
+            .AddTransient<TextReaderPage>()
             ;
 
         return builder;

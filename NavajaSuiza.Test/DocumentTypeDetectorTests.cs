@@ -97,4 +97,92 @@ public class DocumentTypeDetectorTests
             File.Delete(path);
         }
     }
+
+    [Fact]
+    public void Detect_CsvCommaDelimited_ReturnsCsv()
+    {
+        using var stream = new MemoryStream("nombre,edad,ciudad\nAna,30,Madrid\nLuis,25,Bogota\n"u8.ToArray());
+
+        Assert.Equal(DocumentType.Csv, DocumentTypeDetector.Detect(stream));
+    }
+
+    [Fact]
+    public void Detect_CsvSemicolonDelimited_ReturnsCsv()
+    {
+        using var stream = new MemoryStream("nombre;edad;ciudad\nAna;30;Madrid\nLuis;25;Bogota\n"u8.ToArray());
+
+        Assert.Equal(DocumentType.Csv, DocumentTypeDetector.Detect(stream));
+    }
+
+    [Fact]
+    public void Detect_CsvTabDelimited_ReturnsCsv()
+    {
+        using var stream = new MemoryStream("nombre\tedad\tciudad\nAna\t30\tMadrid\nLuis\t25\tBogota\n"u8.ToArray());
+
+        Assert.Equal(DocumentType.Csv, DocumentTypeDetector.Detect(stream));
+    }
+
+    [Fact]
+    public void Detect_SingleLineCsv_ReturnsText()
+    {
+        using var stream = new MemoryStream("nombre,edad,ciudad"u8.ToArray());
+
+        Assert.Equal(DocumentType.Text, DocumentTypeDetector.Detect(stream));
+    }
+
+    [Fact]
+    public void Detect_PlainText_ReturnsText()
+    {
+        using var stream = new MemoryStream("Esto es un archivo de texto plano.\nSegunda linea."u8.ToArray());
+
+        Assert.Equal(DocumentType.Text, DocumentTypeDetector.Detect(stream));
+    }
+
+    [Fact]
+    public void Detect_CodeFile_ReturnsText()
+    {
+        using var stream = new MemoryStream("function sumar(a, b) {\n    return a + b;\n}\n"u8.ToArray());
+
+        Assert.Equal(DocumentType.Text, DocumentTypeDetector.Detect(stream));
+    }
+
+    [Fact]
+    public void Detect_OleSignature_ReturnsUnknown()
+    {
+        using var stream = new MemoryStream(new byte[] { 0xD0, 0xCF, 0x11, 0xE0, 0xA1, 0xB1, 0xC1, 0xD1 });
+
+        Assert.Equal(DocumentType.Unknown, DocumentTypeDetector.Detect(stream));
+    }
+
+    [Fact]
+    public void DetectDelimiter_Comma_ReturnsComma()
+    {
+        using var stream = new MemoryStream("nombre,edad,ciudad\nAna,30,Madrid\nLuis,25,Bogota\n"u8.ToArray());
+
+        Assert.Equal(',', DocumentTypeDetector.DetectDelimiter(stream));
+    }
+
+    [Fact]
+    public void DetectDelimiter_Semicolon_ReturnsSemicolon()
+    {
+        using var stream = new MemoryStream("nombre;edad;ciudad\nAna;30;Madrid\nLuis;25;Bogota\n"u8.ToArray());
+
+        Assert.Equal(';', DocumentTypeDetector.DetectDelimiter(stream));
+    }
+
+    [Fact]
+    public void DetectDelimiter_Tab_ReturnsTab()
+    {
+        using var stream = new MemoryStream("nombre\tedad\tciudad\nAna\t30\tMadrid\nLuis\t25\tBogota\n"u8.ToArray());
+
+        Assert.Equal('\t', DocumentTypeDetector.DetectDelimiter(stream));
+    }
+
+    [Fact]
+    public void DetectDelimiter_NoDelimiter_ReturnsCommaDefault()
+    {
+        using var stream = new MemoryStream("solo texto\nsin delimitadores consistentes\n"u8.ToArray());
+
+        Assert.Equal(',', DocumentTypeDetector.DetectDelimiter(stream));
+    }
 }

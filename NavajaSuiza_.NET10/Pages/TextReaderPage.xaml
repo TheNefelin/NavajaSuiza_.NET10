@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:converters="clr-namespace:NavajaSuiza_.NET10.Converters"
+             xmlns:extensions="clr-namespace:NavajaSuiza_.NET10.Extensions"
+             xmlns:viewModels="clr-namespace:NavajaSuiza.Core.ViewModels;assembly=NavajaSuiza.Core"
+             x:Class="NavajaSuiza_.NET10.Pages.TextReaderPage"
+             x:DataType="viewModels:TextReaderViewModel"
+             Title="{Binding FileName}">
+
+    <ContentPage.Resources>
+        <converters:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="*,Auto"
+          Padding="16"
+          RowSpacing="0">
+
+        <Editor Grid.Row="0"
+                Text="{Binding Content}"
+                IsReadOnly="True"
+                IsSpellCheckEnabled="False"
+                IsTextPredictionEnabled="False"
+                AutoSize="TextChanges"
+                VerticalOptions="Fill"
+                FontFamily="Courier New"
+                BackgroundColor="Transparent" />
+
+        <Label Grid.Row="1"
+               Text="{Binding Message}"
+               IsVisible="{Binding IsFileLoaded, Converter={StaticResource InvertedBoolConverter}}"
+               FontSize="14"
+               TextColor="{StaticResource MyOn}"
+               Margin="0,8,0,0" />
+    </Grid>
+
+</ContentPage>

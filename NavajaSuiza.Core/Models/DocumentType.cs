@@ -5,5 +5,7 @@ public enum DocumentType
     Unknown,
     Pdf,
     Docx,
-    Xlsx
+    Xlsx,
+    Csv,
+    Text
 }
