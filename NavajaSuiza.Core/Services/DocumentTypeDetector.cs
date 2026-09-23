@@ -19,7 +19,8 @@ public static class DocumentTypeDetector
     public static DocumentType Detect(string path)
     {
         using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
-        return Detect(stream);
+        var type = Detect(stream);
+        return type == DocumentType.Ole ? DetectOleByExtension(path) : type;
     }
 
     public static DocumentType Detect(Stream stream)
@@ -37,7 +38,7 @@ public static class DocumentTypeDetector
                 return DetectOoxml(stream);
 
             if (StartsWith(stream, OleSignature))
-                return DetectOle();
+                return DocumentType.Ole;
 
             return DetectTextOrCsv(stream);
         }
@@ -114,11 +115,14 @@ public static class DocumentTypeDetector
         return DocumentType.Unknown;
     }
 
-    private static DocumentType DetectOle()
+    private static DocumentType DetectOleByExtension(string path)
     {
-        // Contenedor OLE (Word/Excel/PPT legacy). Se deja como texto plano conocido;
-        // la distinción DOC vs XLS por los streams internos del OLE queda fuera de Fase 2.
-        return DocumentType.Unknown;
+        var extension = Path.GetExtension(path);
+        if (extension.Equals(".doc", StringComparison.OrdinalIgnoreCase))
+            return DocumentType.Doc;
+        if (extension.Equals(".xls", StringComparison.OrdinalIgnoreCase))
+            return DocumentType.Xls;
+        return DocumentType.Ole;
     }
 
     private static DocumentType DetectTextOrCsv(Stream stream)

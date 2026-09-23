@@ -148,7 +148,7 @@ NavajaSuiza_.NET10/                   # Solution
 │   └── MauiProgram.cs
 │
 └── NavajaSuiza.Test/                # Proyecto de tests (net10.0 puro)
-    └── *Tests.cs                     # xUnit + Moq, 199 tests
+    └── *Tests.cs                     # xUnit + Moq, 204 tests
 ```
 
 #### Regla de separación Core vs MAUI
@@ -643,7 +643,7 @@ Pendiente de definir: ¿conteo solo en primer plano o en segundo plano/cerrada?;
 
 ### 18.4 Visor de PDF (Syncfusion SfPdfViewer)
 
-Estado: **implementada y verificada** (Android/Windows 0/0; tests del suite en total 199; conversión DOCX/XLSX y PDF directo verificados en runtime en dispositivo; CSV→PDF y visor de texto verificados en build + tests, runtime pendiente).
+Estado: **implementada y verificada** (Android/Windows 0/0; tests del suite en total 204; conversión DOCX/XLSX y PDF directo verificados en runtime en dispositivo; CSV→PDF, visor de texto y DOC/XLS legacy verificados en build + tests, runtime pendiente).
 
 Decisión de alcance:
 - **Visor real de PDF mediante Syncfusion `SfPdfViewer`** (paquetes `Syncfusion.Maui.PdfViewer` 34.2.9 + `Syncfusion.Licensing` 34.2.9). Sustituye al visor propio con `#if ANDROID`/`#if WINDOWS` (`Android.Graphics.Pdf.PdfRenderer` + `Windows.Data.Pdf`) que se descartó por decisión del usuario tras probarla en emulador (sept 2026): no se comportaba como un visor real (scroll discreto por página rasterizada, sin búsqueda ni selección de texto).
@@ -651,10 +651,10 @@ Decisión de alcance:
 - El control cubre las 4 TFMs del csproj: Android, iOS, MacCatalyst y Windows (net10); build verificado en Android y Windows; iOS/MacCatalyst pendientes (requieren Mac).
 
 Entregado:
-- **Router multipropósito (botón único; Fase 1 + Fase 2)**: `MenuViewModel.NavigateToPdfReader` usa `IFilePickerService.PickDocumentAsync` (PDF/DOCX/XLSX/CSV/texto) y detecta el **tipo real por contenido** (`DocumentTypeDetector`: firma `%PDF-` → PDF; entradas ZIP canónicas `word/document.xml` vs `xl/workbook.xml` → DOCX/XLSX; firma OLE `D0CF11E0` → `Unknown`; si no hay firma, lee muestra UTF-8 y decide **CSV** si ≥90% de las líneas comparten el mismo conteo de delimitadores `,`, `;` o tab (`GetBestCsvDelimiter`) o **Texto plano** en caso contrario; presencia de byte de control → `Unknown`). El router enruta: **PDF** → se pasa el `path`; **DOCX/XLSX/CSV** → `IDocumentPdfConverter.ConvertToPdfAsync` (DocIO/XlsIO; para CSV `DocumentTypeDetector.DetectDelimiter(path)` detecta el separador real que se pasa a `Workbooks.Open(path, delimitador)`) y se pasa un `MemoryStream`; **Texto plano** → `PushAsync("TextReaderPage", path)` con el path como parámetro; formato no soportado → se ignora; error de conversión → alert localizado (`PdfReaderOpenErrorText` + `CommonOkText`). Navegación PDF mediante objeto `PdfReaderPayload` (`Path` o `Stream` + `FileName`). El botón usa el icono `icon_file.png`.
+- **Router multipropósito (botón único; Fases 1-3)**: `MenuViewModel.NavigateToPdfReader` usa `IFilePickerService.PickDocumentAsync` (PDF/DOCX/XLSX/DOC/XLS/CSV/texto) y detecta el **tipo real por contenido** (`DocumentTypeDetector`: firma `%PDF-` → PDF; entradas ZIP canónicas `word/document.xml` vs `xl/workbook.xml` → DOCX/XLSX; firma OLE `D0CF11E0` → contenedor legacy, resuelto **por extensión** `.doc`/`.xls` → DOC/XLS (Fase 3, límite documentado: renombrados no se detectan); si no hay firma, lee muestra UTF-8 y decide **CSV** si ≥90% de las líneas comparten el mismo conteo de delimitadores `,`, `;` o tab (`GetBestCsvDelimiter`) o **Texto plano** en caso contrario; presencia de byte de control → `Unknown`). El router enruta: **PDF** → se pasa el `path`; **DOCX/DOC/XLSX/XLS/CSV** → `IDocumentPdfConverter.ConvertToPdfAsync` (DocIO `FormatType.Docx`/`Doc`, XlsIO; para CSV `DocumentTypeDetector.DetectDelimiter(path)` detecta el separador real que se pasa a `Workbooks.Open(path, delimitador)`) y se pasa un `MemoryStream`; **Texto plano** → `PushAsync("TextReaderPage", path)` con el path como parámetro; formato no soportado (`Ole`, `Unknown`) → se ignora; error de conversión → alert localizado (`PdfReaderOpenErrorText` + `CommonOkText`). Navegación PDF mediante objeto `PdfReaderPayload` (`Path` o `Stream` + `FileName`). El botón usa el icono `icon_file.png`.
 - Core: `PdfReaderViewModel` — overloads `Load(path)` y `Load(Stream, fileName)`; `PdfDocumentStream`, `FileName`, `HintText`, `IsFileLoaded`; `Unload()` libera el stream y resetea el estado. `TextReaderViewModel` (Fase 2) — visor de texto plano: `Content`, `FileName`, `IsFileLoaded`, `Message`; `Load(path)` lee con StreamReader UTF-8 (hasta 2 MB por `MaxBytesToRead`), `Unload()` resetea el estado; error → `TextReaderOpenErrorText` localizado vía `ILanguageService`.
 - MAUI: `PdfReaderPage.xaml` con `<syncfusion:SfPdfViewer>` (`DocumentSource="{Binding PdfDocumentStream}"`; el control aporta toolbar, navegación, zoom, búsqueda y selección de texto) + Label de hint cuando no hay documento; `PdfReaderPage.xaml.cs` resuelve el VM en `OnNavigatedTo`, lee `PdfReaderPayload`, y en **`OnDisappearing`** llama `PdfViewer.UnloadDocument()` + `viewModel.Unload()` para liberar memoria del documento. `TextReaderPage.xaml` (Fase 2): `<Editor>` de solo lectura con `FontFamily="Courier New"` y mensaje de error visible cuando `IsFileLoaded=false`; `TextReaderPage.xaml.cs` resuelve el VM en `OnNavigatedTo` con el path como parámetro (`INavigationService.TakeNavigationParameter()` devuelve `string`), `OnDisappearing` → `Unload()`. `DocumentPdfConverter` y `TextReaderPage`/`TextReaderViewModel` registrados en DI. **Indicador de conversión**: `MenuViewModel.IsConverting` (observable) activa un overlay a pantalla completa en `MenuPage` con `ActivityIndicator` (color `MyAccentBlue` para visibilidad en tema claro/oscuro) + texto `PdfReaderConvertingText` ("Convirtiendo a PDF...") durante DOCX/XLSX/CSV; solo PDF y texto directos no lo activan. resx ×3 (claves `PdfReader*` y `TextReaderOpenErrorText`; se eliminaron `PdfReaderEmptyText` y `PdfReaderPageCountText` por quedar sin uso).
-- Tests: `PdfReaderViewModelTests` (4), `DocumentTypeDetectorTests` (15: firma PDF, DOCX/XLSX por entrada ZIP canónica, `Unknown` para ZIP sin entrada esperada/bytes inválidos/OLE/stream vacío, CSV coma/punto-y-coma/tab, texto de una línea→Texto, texto plano y código→Text, preserva posición, lectura por path, `DetectDelimiter` coma/punto-y-coma/tab/default), `MenuViewModelTests` con router (PDF directo, DOCX convertido, CSV convertido, texto→`TextReaderPage`, cancelación del picker, `IsConverting` activo durante la conversión y reseteado en éxito/error) → suite total 199.
+- Tests: `PdfReaderViewModelTests` (4), `DocumentTypeDetectorTests` (18: firma PDF, DOCX/XLSX por entrada ZIP canónica, `Unknown` para ZIP sin entrada esperada/bytes inválidos/stream vacío, OLE→`Ole` + por extensión `.doc`/`.xls`/otra, CSV coma/punto-y-coma/tab, texto de una línea→Texto, texto plano y código→Text, preserva posición, lectura por path, `DetectDelimiter` coma/punto-y-coma/tab/default), `MenuViewModelTests` con router (PDF directo, DOCX convertido, CSV convertido, DOC/XLS convertido, texto→`TextReaderPage`, cancelación del picker, `IsConverting` activo durante la conversión y reseteado en éxito/error) → suite total 204.
 
 Límites conocidos (no resueltos a propósito):
 - Sin clave de licencia válida, Syncfusion puede mostrar advertencia de licencia trial en runtime.
@@ -662,13 +662,14 @@ Límites conocidos (no resueltos a propósito):
 - iOS/MacCatalyst: implementación presente por el control, pero compilación no verificada (requiere Mac).
 - El visor se unload automáticamente al salir de la página (`OnDisappearing`): al volver hay que volver a abrir el archivo.
 - Visor de texto plano (Fase 2): sin resaltado de sintaxis; archivos >2 MB se rechazan con `TextReaderOpenErrorText`; CSV también es convertible a PDF, por lo que la detección prioriza CSV cuando hay alineación de columnas (texto libre de datos con comas puede clasificarse como CSV).
+- DOC/XLS legacy (Fase 3): la distinción DOC vs XLS usa la **extensión** del archivo una vez confirmado el contenedor OLE por contenido; un `.doc` o `.xls` mal nombrado (extensión distinta) no se detectaría. La conversión a PDF es la misma que DOCX/XLSX (DocIO `FormatType.Doc` / XlsIO).
 
 #### Problemas detectados en runtime (emulador Android, sept 2026)
 
 - **PDF en blanco al volver a la página**: con las páginas registradas como **Singleton**, salir a cargar otro documento (`OnDisappearing` → `PdfViewer.UnloadDocument()` + `viewModel.Unload()`) y volver/reabrir dejaba el visor en blanco. Referencia: Syncfusion Feedback #59237 / Foro de Syncfusion #189392 (reutilizar una instancia de `SfPdfViewer` tras `UnloadDocument` no soporta cargar documentos posteriores). **Fix aplicado (build 0 errores)**: `PdfReaderPage` ahora es **Transient** (página y control `SfPdfViewer` nuevos por navegación; el VM ya era Transient y se resuelve en `OnNavigatedTo`). **Verificado en runtime**: el flujo abrir PDF → menú → reabrir PDF funciona correctamente.
 - **Cancelación de la carga del PDF sin peligro**: verificado en runtime. No es un bug: el visor PDF funciona correctamente. El "cuelgue al cancelar el picker" observado antes en el emulador se debía a que el **emulador no tiene botón "volver"** para cancelar la carga; en **dispositivos físicos el botón volver del sistema cancela correctamente** el picker. Descartada la hipótesis de bug de MAUI (dotnet/maui #33706) y el fix propuesto de timeout en `FilePickerService`.
 
-- BUILD REAL: 0 errores / 0 advertencias; TEST REAL: 199/199 verdes.
+- BUILD REAL: 0 errores / 0 advertencias; TEST REAL: 204/204 verdes.
 ## 19. GUÍA de reconstrucción (build desde cero)
 
 Repositorio real: D:\Repo\.NET\NavajaSuiza_.NET10 (sin tildes; git rev-parse y Test-Path OK - verificado §11.6-1).
@@ -688,7 +689,7 @@ Restaurar:
 Build (Android Debug):
   dotnet build NavajaSuiza_.NET10/NavajaSuiza_.NET10.csproj -f net10.0-android -c Debug
 
-Suite de tests (esperado: 199 superados / 0 fallos):
+Suite de tests (esperado: 204 superados / 0 fallos):
   dotnet test NavajaSuiza_.NET10/NavajaSuiza_.NET10.csproj
 
 Release Android (APK):

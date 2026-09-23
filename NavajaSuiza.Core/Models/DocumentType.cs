@@ -6,6 +6,9 @@ public enum DocumentType
     Pdf,
     Docx,
     Xlsx,
+    Doc,
+    Xls,
+    Ole,
     Csv,
     Text
 }

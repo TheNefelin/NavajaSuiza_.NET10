@@ -37,9 +37,13 @@ public class DocumentPdfConverter : IDocumentPdfConverter
             switch (documentType)
             {
                 case DocumentType.Docx:
-                    ConvertWordToPdf(input, output);
+                    ConvertWordToPdf(input, output, FormatType.Docx);
+                    break;
+                case DocumentType.Doc:
+                    ConvertWordToPdf(input, output, FormatType.Doc);
                     break;
                 case DocumentType.Xlsx:
+                case DocumentType.Xls:
                     ConvertExcelToPdf(input, output);
                     break;
                 case DocumentType.Csv:
@@ -59,9 +63,9 @@ public class DocumentPdfConverter : IDocumentPdfConverter
         }
     }
 
-    private static void ConvertWordToPdf(Stream input, MemoryStream output)
+    private static void ConvertWordToPdf(Stream input, MemoryStream output, FormatType format)
     {
-        using var document = new WordDocument(input, FormatType.Docx);
+        using var document = new WordDocument(input, format);
         using var renderer = new DocIORenderer();
         using var pdfDocument = renderer.ConvertToPDF(document);
         pdfDocument.Save(output);

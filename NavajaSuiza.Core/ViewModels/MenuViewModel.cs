@@ -76,6 +76,8 @@ public partial class MenuViewModel : BaseViewModel
 
             case DocumentType.Docx:
             case DocumentType.Xlsx:
+            case DocumentType.Doc:
+            case DocumentType.Xls:
             case DocumentType.Csv:
                 IsConverting = true;
                 try

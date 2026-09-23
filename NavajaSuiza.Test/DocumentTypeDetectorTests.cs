@@ -147,11 +147,59 @@ public class DocumentTypeDetectorTests
     }
 
     [Fact]
-    public void Detect_OleSignature_ReturnsUnknown()
+    public void Detect_OleSignature_ReturnsOle()
     {
         using var stream = new MemoryStream(new byte[] { 0xD0, 0xCF, 0x11, 0xE0, 0xA1, 0xB1, 0xC1, 0xD1 });
 
-        Assert.Equal(DocumentType.Unknown, DocumentTypeDetector.Detect(stream));
+        Assert.Equal(DocumentType.Ole, DocumentTypeDetector.Detect(stream));
+    }
+
+    [Fact]
+    public void Detect_OleWithDocExtension_ReturnsDoc()
+    {
+        var path = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N") + ".doc");
+        try
+        {
+            File.WriteAllBytes(path, new byte[] { 0xD0, 0xCF, 0x11, 0xE0, 0xA1, 0xB1, 0xC1, 0xD1 });
+
+            Assert.Equal(DocumentType.Doc, DocumentTypeDetector.Detect(path));
+        }
+        finally
+        {
+            File.Delete(path);
+        }
+    }
+
+    [Fact]
+    public void Detect_OleWithXlsExtension_ReturnsXls()
+    {
+        var path = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N") + ".xls");
+        try
+        {
+            File.WriteAllBytes(path, new byte[] { 0xD0, 0xCF, 0x11, 0xE0, 0xA1, 0xB1, 0xC1, 0xD1 });
+
+            Assert.Equal(DocumentType.Xls, DocumentTypeDetector.Detect(path));
+        }
+        finally
+        {
+            File.Delete(path);
+        }
+    }
+
+    [Fact]
+    public void Detect_OleWithOtherExtension_ReturnsOle()
+    {
+        var path = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N") + ".bin");
+        try
+        {
+            File.WriteAllBytes(path, new byte[] { 0xD0, 0xCF, 0x11, 0xE0, 0xA1, 0xB1, 0xC1, 0xD1 });
+
+            Assert.Equal(DocumentType.Ole, DocumentTypeDetector.Detect(path));
+        }
+        finally
+        {
+            File.Delete(path);
+        }
     }
 
     [Fact]

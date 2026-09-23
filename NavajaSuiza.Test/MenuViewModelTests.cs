@@ -60,6 +60,13 @@ public class MenuViewModelTests
         return path;
     }
 
+    private static string CreateTempFileWithExtension(string extension, byte[] content)
+    {
+        var path = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N") + extension);
+        File.WriteAllBytes(path, content);
+        return path;
+    }
+
     [Fact]
     public void BatteryLevel_DefaultsToZero()
     {
@@ -247,6 +254,35 @@ public class MenuViewModelTests
 
             _navigationServiceMock.Verify(s => s.PushAsync("TextReaderPage", path), Times.Once);
             _documentPdfConverterMock.Verify(s => s.ConvertToPdfAsync(It.IsAny<DocumentType>(), It.IsAny<string>()), Times.Never);
+        }
+        finally
+        {
+            File.Delete(path);
+        }
+    }
+
+    [Theory]
+    [InlineData(DocumentType.Doc)]
+    [InlineData(DocumentType.Xls)]
+    public async Task NavigateToPdfReader_LegacyOfficeConvertsAndNavigatesWithStream(DocumentType documentType)
+    {
+        var extension = documentType == DocumentType.Doc ? ".doc" : ".xls";
+        var path = CreateTempFileWithExtension(extension, new byte[] { 0xD0, 0xCF, 0x11, 0xE0, 0xA1, 0xB1, 0xC1, 0xD1 });
+        using var converted = new MemoryStream(new byte[] { 0x25, 0x50, 0x44, 0x46, 0x2D });
+        try
+        {
+            _filePickerServiceMock.Setup(s => s.PickDocumentAsync(It.IsAny<string>())).ReturnsAsync(path);
+            _documentPdfConverterMock
+                .Setup(s => s.ConvertToPdfAsync(documentType, path))
+                .ReturnsAsync(converted);
+
+            var vm = CreateSut();
+            await vm.NavigateToPdfReaderCommand.ExecuteAsync(null);
+
+            _documentPdfConverterMock.Verify(s => s.ConvertToPdfAsync(documentType, path), Times.Once);
+            _navigationServiceMock.Verify(
+                s => s.PushAsync("PdfReaderPage", It.Is<PdfReaderPayload>(p => p.Stream == converted)),
+                Times.Once);
         }
         finally
         {
