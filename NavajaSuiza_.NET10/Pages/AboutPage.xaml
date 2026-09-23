@@ -7,7 +7,7 @@
 
     <ScrollView>
         <Grid 
-            RowDefinitions="*,auto" 
+            RowDefinitions="*,auto,auto" 
             RowSpacing="20"
             Padding="20">
 
@@ -40,7 +40,32 @@
                 </Grid>
             </Border>
 
-            <VerticalStackLayout Grid.Row="1" Spacing="10">
+            <Border 
+                Grid.Row="1"
+                Padding="10" 
+                HeightRequest="100" VerticalOptions="Start">
+                
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                
+                <VerticalStackLayout Spacing="10" VerticalOptions="Center">
+                    <Label
+                        Text="{extensions:Translate AboutPrivacyPolicyText}"
+                        FontSize="18"
+                        FontAttributes="Bold" />
+
+                    <Button
+                        Text="{extensions:Translate AboutOpenPrivacyPolicyText}"
+                        Command="{Binding OpenPrivacyCommand}"
+                        CornerRadius="8"
+                        BackgroundColor="{StaticResource MyAccentBlue}"
+                        TextColor="White"
+                        HeightRequest="44" />
+                </VerticalStackLayout>
+            </Border>
+
+            <VerticalStackLayout Grid.Row="2" Spacing="10">
                 <Image Source="logo.svg" HeightRequest="100" HorizontalOptions="Center"/>
                 <Label Text="{Binding VersionText}" HorizontalTextAlignment="Center" Opacity="0.7"/>
 

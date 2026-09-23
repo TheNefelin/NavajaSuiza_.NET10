@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using NavajaSuiza.Core.Interfaces;
 using NavajaSuiza.Core.Models;
 
@@ -7,10 +6,12 @@ namespace NavajaSuiza.Core.Services;
 public class StopwatchService : IStopwatchService
 {
     private readonly object _lock = new();
-    private readonly Stopwatch _stopwatch = new();
+    private readonly ITimeSource _timeSource;
     private readonly List<StopwatchLap> _laps = new();
     private CancellationTokenSource? _cts;
     private bool _isRunning;
+    private DateTime _startedAt;
+    private TimeSpan _accumulated;
 
     public event Action<TimeSpan>? Tick;
 
@@ -21,12 +22,23 @@ public class StopwatchService : IStopwatchService
 
     public TimeSpan Elapsed
     {
-        get { lock (_lock) { return _stopwatch.Elapsed; } }
+        get
+        {
+            lock (_lock)
+            {
+                return _accumulated + (_isRunning ? _timeSource.UtcNow - _startedAt : TimeSpan.Zero);
+            }
+        }
     }
 
     public IReadOnlyList<StopwatchLap> Laps
     {
         get { lock (_lock) { return _laps.ToArray(); } }
+    }
+
+    public StopwatchService(ITimeSource timeSource)
+    {
+        _timeSource = timeSource;
     }
 
     public void AddLap(StopwatchLap lap)
@@ -53,7 +65,7 @@ public class StopwatchService : IStopwatchService
                 return;
 
             _isRunning = true;
-            _stopwatch.Start();
+            _startedAt = _timeSource.UtcNow;
         }
 
         _cts ??= new CancellationTokenSource();
@@ -68,7 +80,7 @@ public class StopwatchService : IStopwatchService
                 return;
 
             _isRunning = false;
-            _stopwatch.Stop();
+            _accumulated += _timeSource.UtcNow - _startedAt;
         }
 
         CancelTicker();
@@ -81,7 +93,7 @@ public class StopwatchService : IStopwatchService
         lock (_lock)
         {
             _isRunning = false;
-            _stopwatch.Reset();
+            _accumulated = TimeSpan.Zero;
         }
 
         Tick?.Invoke(TimeSpan.Zero);
@@ -107,7 +119,7 @@ public class StopwatchService : IStopwatchService
                     return;
 
                 TimeSpan elapsed;
-                lock (_lock) { elapsed = _stopwatch.Elapsed; }
+                lock (_lock) { elapsed = Elapsed; }
                 Tick?.Invoke(elapsed);
             }
         }

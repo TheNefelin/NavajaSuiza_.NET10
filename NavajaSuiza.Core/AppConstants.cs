@@ -41,5 +41,6 @@ public static class AppConstants
     {
         public const string DonationUrl = "";
         public const string WebsiteUrl = "https://francisco-dev.cl";
+        public const string PrivacyUrl = "https://www.francisco-dev.cl/navaja-suiza/privacy-policy";
     }
 }

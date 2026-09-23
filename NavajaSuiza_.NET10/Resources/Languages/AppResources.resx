@@ -123,6 +123,12 @@
   <data name="AboutDonationText" xml:space="preserve">
     <value>Donar</value>
   </data>
+  <data name="AboutPrivacyPolicyText" xml:space="preserve">
+    <value>Política de privacidad</value>
+  </data>
+  <data name="AboutOpenPrivacyPolicyText" xml:space="preserve">
+    <value>Abrir política de privacidad</value>
+  </data>
   <data name="CancelText" xml:space="preserve">
     <value>Cancelar</value>
   </data>

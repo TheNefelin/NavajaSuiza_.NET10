@@ -1,3 +1,4 @@
+﻿using NavajaSuiza.Core.Interfaces;
 using NavajaSuiza.Core.Models;
 using NavajaSuiza.Core.Services;
 
@@ -8,21 +9,21 @@ public class StopwatchServiceTests
     [Fact]
     public void IsRunning_DefaultsToFalse()
     {
-        var service = new StopwatchService();
+        var service = CreateService();
         Assert.False(service.IsRunning);
     }
 
     [Fact]
     public void Elapsed_DefaultsToZero()
     {
-        var service = new StopwatchService();
+        var service = CreateService();
         Assert.Equal(TimeSpan.Zero, service.Elapsed);
     }
 
     [Fact]
     public void Start_SetsIsRunningTrue()
     {
-        var service = new StopwatchService();
+        var service = CreateService();
         service.Start();
         Assert.True(service.IsRunning);
     }
@@ -30,7 +31,7 @@ public class StopwatchServiceTests
     [Fact]
     public void Start_WhenAlreadyRunning_DoesNotThrow()
     {
-        var service = new StopwatchService();
+        var service = CreateService();
         service.Start();
         service.Start();
         Assert.True(service.IsRunning);
@@ -39,7 +40,7 @@ public class StopwatchServiceTests
     [Fact]
     public void Pause_WhenRunning_SetsIsRunningFalse()
     {
-        var service = new StopwatchService();
+        var service = CreateService();
         service.Start();
         service.Pause();
         Assert.False(service.IsRunning);
@@ -48,7 +49,7 @@ public class StopwatchServiceTests
     [Fact]
     public void Pause_WhenStopped_DoesNothing()
     {
-        var service = new StopwatchService();
+        var service = CreateService();
         service.Pause();
         Assert.False(service.IsRunning);
         Assert.Equal(TimeSpan.Zero, service.Elapsed);
@@ -57,7 +58,7 @@ public class StopwatchServiceTests
     [Fact]
     public void Pause_FreezesElapsedImmediately()
     {
-        var service = new StopwatchService();
+        var service = CreateService();
         service.Start();
         Thread.Sleep(150);
         service.Pause();
@@ -69,7 +70,7 @@ public class StopwatchServiceTests
     [Fact]
     public void Stop_ResetsElapsedToZero()
     {
-        var service = new StopwatchService();
+        var service = CreateService();
         service.Start();
         Thread.Sleep(150);
         service.Stop();
@@ -80,7 +81,7 @@ public class StopwatchServiceTests
     [Fact]
     public void Tick_RaisedWhileRunning()
     {
-        var service = new StopwatchService();
+        var service = CreateService();
         var signal = new ManualResetEventSlim();
         TimeSpan? received = null;
 
@@ -106,7 +107,7 @@ public class StopwatchServiceTests
     [Fact]
     public void Stop_RaisesTickWithZero()
     {
-        var service = new StopwatchService();
+        var service = CreateService();
         TimeSpan? received = null;
 
         service.Tick += elapsed => received = elapsed;
@@ -120,14 +121,14 @@ public class StopwatchServiceTests
     [Fact]
     public void Laps_DefaultsToEmpty()
     {
-        var service = new StopwatchService();
+        var service = CreateService();
         Assert.Empty(service.Laps);
     }
 
     [Fact]
     public void AddLap_AddsLapOnTop()
     {
-        var service = new StopwatchService();
+        var service = CreateService();
         service.AddLap(new StopwatchLap { Number = 1, Split = TimeSpan.FromSeconds(1), Delta = TimeSpan.FromSeconds(1) });
         service.AddLap(new StopwatchLap { Number = 2, Split = TimeSpan.FromSeconds(3), Delta = TimeSpan.FromSeconds(2) });
 
@@ -139,7 +140,7 @@ public class StopwatchServiceTests
     [Fact]
     public void AddLap_IsNotMutableThroughReadOnlyList()
     {
-        var service = new StopwatchService();
+        var service = CreateService();
         service.AddLap(new StopwatchLap { Number = 1, Split = TimeSpan.Zero, Delta = TimeSpan.Zero });
 
         Assert.IsAssignableFrom<IReadOnlyList<StopwatchLap>>(service.Laps);
@@ -148,11 +149,19 @@ public class StopwatchServiceTests
     [Fact]
     public void ClearLaps_RemovesAllLaps()
     {
-        var service = new StopwatchService();
+        var service = CreateService();
         service.AddLap(new StopwatchLap { Number = 1, Split = TimeSpan.Zero, Delta = TimeSpan.Zero });
 
         service.ClearLaps();
 
         Assert.Empty(service.Laps);
+    }
+
+    private static StopwatchService CreateService()
+        => new(new FakeTimeSource());
+
+    private sealed class FakeTimeSource : ITimeSource
+    {
+        public DateTime UtcNow => DateTime.UtcNow;
     }
 }

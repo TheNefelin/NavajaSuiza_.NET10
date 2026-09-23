@@ -87,6 +87,7 @@
                     <Label 
                         Text="{Binding AngleText}" 
                         FontSize="28" FontAttributes="Bold"
+                        TextColor="White"
                         HorizontalTextAlignment="Center"
                         VerticalOptions="Center" />
                 </Border>

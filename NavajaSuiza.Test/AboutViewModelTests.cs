@@ -71,4 +71,13 @@ public class AboutViewModelTests
 
         _launcherServiceMock.Verify(s => s.OpenAsync(AppConstants.About.WebsiteUrl), Times.Once);
     }
+
+    [Fact]
+    public void OpenPrivacyCommand_OpensPrivacyUrl()
+    {
+        var vm = CreateSut();
+        vm.OpenPrivacyCommand.Execute(null);
+
+        _launcherServiceMock.Verify(s => s.OpenAsync(AppConstants.About.PrivacyUrl), Times.Once);
+    }
 }

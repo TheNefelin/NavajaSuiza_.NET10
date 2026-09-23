@@ -67,6 +67,7 @@ public static class MauiProgram
             .AddSingleton<IImagePickerService, ImagePickerService>()
             .AddSingleton<IScreenBrightnessService, ScreenBrightnessService>()
 .AddSingleton<IFlashlightStateService, FlashlightStateService>()
+            .AddSingleton<ITimeSource, RealtimeTimeSource>()
             .AddSingleton<IStopwatchService, StopwatchService>()
             .AddTransient<IMorseSignalService, MorseSignalService>()
             .AddSingleton<IAppInfoService, AppInfoService>()

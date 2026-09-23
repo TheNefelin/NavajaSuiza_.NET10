@@ -54,4 +54,10 @@ public partial class AboutViewModel : BaseViewModel
     {
         await _launcherService.OpenAsync(AppConstants.About.WebsiteUrl);
     }
+
+    [RelayCommand]
+    private async Task OpenPrivacyAsync()
+    {
+        await _launcherService.OpenAsync(AppConstants.About.PrivacyUrl);
+    }
 }

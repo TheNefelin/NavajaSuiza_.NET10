@@ -5,52 +5,141 @@
              x:Class="NavajaSuiza_.NET10.Pages.PizarraPage"
              Title="{extensions:Translate PizarraText}">
 
-    <Grid RowDefinitions="Auto,Auto,*" Padding="16,16,16,20" RowSpacing="10">
+    <Grid RowDefinitions="Auto,Auto,*" RowSpacing="10">
+        <ScrollView
+            Grid.Row="0"
+            Orientation="Horizontal">
 
-        <HorizontalStackLayout Grid.Row="0" Spacing="8">
+            <HorizontalStackLayout
+                HorizontalOptions="Center"
+                Padding="10,5"
+                Spacing="20">
 
-            <Button
-                Text="{extensions:Translate PizarraClearText}"
-                Command="{Binding ClearCommand}"
-                FontSize="13"
-                Padding="6,0"
-                HeightRequest="42"
-                HorizontalOptions="FillAndExpand" />
+                <VerticalStackLayout Spacing="5">
+                    <Label HorizontalOptions="Center" Text="{extensions:Translate PizarraClearText}" />
+                    <Button
+                        Command="{Binding ClearCommand}"
+                        BackgroundColor="{StaticResource MyAccentBlue}"
+                        ImageSource="icon_delete.png"
+                        FontAttributes="Bold"
+                        ContentLayout="Top, 0"
+                        Padding="5"
+                        WidthRequest="50"
+                        HeightRequest="50"/>
+                </VerticalStackLayout>
 
-            <Button
-                Text="{extensions:Translate PizarraUndoText}"
-                Command="{Binding UndoCommand}"
-                FontSize="13"
-                Padding="6,0"
-                HeightRequest="42"
-                HorizontalOptions="FillAndExpand" />
+                <VerticalStackLayout Spacing="5">
+                    <Label HorizontalOptions="Center" Text="{extensions:Translate PizarraUndoText}" />
+                    <Button
+                        Command="{Binding UndoCommand}"
+                        BackgroundColor="{StaticResource MyAccentBlue}"
+                        ImageSource="icon_erase.png"
+                        FontAttributes="Bold"
+                        ContentLayout="Top, 0"
+                        Padding="5"
+                        WidthRequest="50"
+                        HeightRequest="50"/>
+                </VerticalStackLayout>
 
-            <Button
-                Text="{extensions:Translate PizarraColorsText}"
-                Command="{Binding OpenColorPickerCommand}"
-                FontSize="13"
-                Padding="6,0"
-                HeightRequest="42"
-                HorizontalOptions="FillAndExpand" />
+                <VerticalStackLayout Spacing="5">
+                    <Label HorizontalOptions="Center" Text="{extensions:Translate PizarraColorsText}" />
+                    <Button
+                        Command="{Binding OpenColorPickerCommand}"
+                        BackgroundColor="{StaticResource MyAccentBlue}"
+                        ImageSource="icon_palette.png"
+                        FontAttributes="Bold"
+                        ContentLayout="Top, 0"
+                        Padding="5"
+                        WidthRequest="50"
+                        HeightRequest="50"/>
+                </VerticalStackLayout>
 
-            <Button
-                Text="{extensions:Translate PizarraBoardShortText}"
-                Clicked="OnBoardClicked"
-                FontSize="13"
-                Padding="6,0"
-                HeightRequest="42"
-                HorizontalOptions="FillAndExpand" />
+                <VerticalStackLayout Spacing="5">
+                    <Label HorizontalOptions="Center" Text="{extensions:Translate PizarraBoardShortText}" />
+                    <Button
+                        Clicked="OnBoardClicked"
+                        BackgroundColor="{StaticResource MyAccentBlue}"
+                        ImageSource="icon_blackboard.png"
+                        FontAttributes="Bold"
+                        ContentLayout="Top, 0"
+                        Padding="5"
+                        WidthRequest="50"
+                        HeightRequest="50"/>
+                </VerticalStackLayout>
 
-            <Button
-                Text="{extensions:Translate PizarraSaveText}"
-                Clicked="OnSaveClicked"
-                FontSize="13"
-                Padding="6,0"
-                HeightRequest="42"
-                HorizontalOptions="FillAndExpand" />
-        </HorizontalStackLayout>
+                <VerticalStackLayout Spacing="5">
+                    <Label HorizontalOptions="Center" Text="{extensions:Translate PizarraSaveText}" />
+                    <Button
+                        Clicked="OnSaveClicked"
+                        BackgroundColor="{StaticResource MyAccentBlue}"
+                        ImageSource="icon_save.png"
+                        FontAttributes="Bold"
+                        ContentLayout="Top, 0"
+                        Padding="5"
+                        WidthRequest="50"
+                        HeightRequest="50"/>
+                </VerticalStackLayout>
+            </HorizontalStackLayout>
+        </ScrollView>
 
-        <VerticalStackLayout Grid.Row="1" Spacing="4">
+        <!--
+        <Border
+            Grid.Row="0"
+            StrokeShape="RoundRectangle 18"
+            Padding="8,6"
+            BackgroundColor="{AppThemeBinding Light=#EFEFEF, Dark=#26262C}">
+
+            <HorizontalStackLayout Spacing="6">
+
+                <Button
+                    ImageSource="icon_delete.png"
+                    Command="{Binding UndoCommand}"
+                    WidthRequest="42"
+                    HeightRequest="42"
+                    CornerRadius="10"
+                    Padding="0"
+                    BackgroundColor="Transparent" />
+
+                <Button
+                    ImageSource="icon_delete.png"
+                    Command="{Binding ClearCommand}"
+                    WidthRequest="42"
+                    HeightRequest="42"
+                    CornerRadius="10"
+                    Padding="0"
+                    BackgroundColor="Transparent" />
+
+                <Button
+                    ImageSource="icon_delete.png"
+                    Command="{Binding OpenColorPickerCommand}"
+                    WidthRequest="42"
+                    HeightRequest="42"
+                    CornerRadius="10"
+                    Padding="0"
+                    BackgroundColor="Transparent" />
+
+                <Button
+                    ImageSource="icon_delete.png"
+                    Clicked="OnBoardClicked"
+                    WidthRequest="42"
+                    HeightRequest="42"
+                    CornerRadius="10"
+                    Padding="0"
+                    BackgroundColor="Transparent" />
+
+                <Button
+                    ImageSource="icon_delete.png"
+                    Clicked="OnSaveClicked"
+                    WidthRequest="42"
+                    HeightRequest="42"
+                    CornerRadius="10"
+                    Padding="0"
+                    BackgroundColor="Transparent" />
+            </HorizontalStackLayout>
+        </Border>
+        -->
+
+        <VerticalStackLayout Grid.Row="1" Spacing="4" Padding="10,0">
 
             <Label
                 Text="{extensions:Translate PizarraWidthText}"
@@ -67,8 +156,7 @@
         <Border
             Grid.Row="2"
             Stroke="{StaticResource MyAccentBlue}"
-            StrokeThickness="2"
-            StrokeShape="RoundRectangle 16">
+            StrokeThickness="2">
 
             <GraphicsView
                 x:Name="DrawingSurface"
