@@ -129,6 +129,9 @@
   <data name="AboutOpenPrivacyPolicyText" xml:space="preserve">
     <value>Abrir política de privacidad</value>
   </data>
+  <data name="AboutOpenGuideText" xml:space="preserve">
+    <value>Abrir guía del usuario</value>
+  </data>
   <data name="CancelText" xml:space="preserve">
     <value>Cancelar</value>
   </data>
@@ -167,6 +170,12 @@
   </data>
   <data name="ManualText" xml:space="preserve">
     <value>Manual</value>
+  </data>
+  <data name="GuideTitleText" xml:space="preserve">
+    <value>Guía del usuario</value>
+  </data>
+  <data name="GuideLoadErrorText" xml:space="preserve">
+    <value>No se pudo cargar la guía.</value>
   </data>
   <data name="MenuText" xml:space="preserve">
     <value>Menú</value>

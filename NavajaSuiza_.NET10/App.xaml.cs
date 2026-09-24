@@ -28,6 +28,7 @@ public partial class App : Application
 
     protected override Window CreateWindow(IActivationState? activationState)
     {
+        _themeService.ApplySavedTheme();
         var appShell = _serviceProvider.GetRequiredService<AppShell>();
         return new Window(appShell);
     }
@@ -35,7 +36,6 @@ public partial class App : Application
     protected override void OnStart()
     {
         _languageService.InitializeLanguage();
-        _themeService.ApplySavedTheme();
     }
 
     private void SetupGlobalErrorHandling()

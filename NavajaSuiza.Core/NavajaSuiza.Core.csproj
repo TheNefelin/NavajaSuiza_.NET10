@@ -9,9 +9,10 @@
 
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.11" />
-    <PackageReference Include="Syncfusion.DocIORenderer.NET" Version="34.2.8" />
-    <PackageReference Include="Syncfusion.XlsIORenderer.NET" Version="34.2.8" />
+    <PackageReference Include="Markdig" Version="1.4.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.12" />
+    <PackageReference Include="Syncfusion.DocIORenderer.NET" Version="34.2.9" />
+    <PackageReference Include="Syncfusion.XlsIORenderer.NET" Version="34.2.9" />
   </ItemGroup>
 
 </Project>

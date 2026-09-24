@@ -219,3 +219,9 @@ GitHub Actions workflow en `.github/workflows/build.yml`:
 ## Convenciones de código
 
 `.editorconfig` en raíz del repo con reglas de naming, formato y suppressions de analyzers.
+
+## Licencia
+
+Este proyecto se distribuye bajo la **Licencia MIT** (ver `LICENSE.txt`).
+
+> **Aviso sobre componentes de terceros:** este proyecto utiliza componentes de [Syncfusion](https://www.syncfusion.com) (`Syncfusion.DocIORenderer.NET`, `Syncfusion.XlsIORenderer.NET`, `Syncfusion.Maui.PdfViewer`, `Syncfusion.Maui.Toolkit`), que **no están cubiertos por la licencia MIT** de este repositorio. Los componentes Syncfusion se usan bajo su licencia correspondiente y siguen sujetos a los términos y condiciones de Syncfusion. No redistribuyas los binarios de Syncfusion fuera de los términos permitidos por su licencia.

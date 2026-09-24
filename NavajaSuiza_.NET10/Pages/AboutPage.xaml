@@ -7,7 +7,7 @@
 
     <ScrollView>
         <Grid 
-            RowDefinitions="*,auto,auto" 
+            RowDefinitions="auto,auto,auto,*,auto" 
             RowSpacing="20"
             Padding="20">
 
@@ -51,6 +51,31 @@
                 
                 <VerticalStackLayout Spacing="10" VerticalOptions="Center">
                     <Label
+                        Text="{extensions:Translate GuideTitleText}"
+                        FontSize="18"
+                        FontAttributes="Bold" />
+
+                    <Button
+                        Text="{extensions:Translate AboutOpenGuideText}"
+                        Command="{Binding OpenGuideCommand}"
+                        CornerRadius="8"
+                        BackgroundColor="{StaticResource MyAccentBlue}"
+                        TextColor="White"
+                        HeightRequest="44" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Border 
+                Grid.Row="2"
+                Padding="10" 
+                HeightRequest="100" VerticalOptions="Start">
+                
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                
+                <VerticalStackLayout Spacing="10" VerticalOptions="Center">
+                    <Label
                         Text="{extensions:Translate AboutPrivacyPolicyText}"
                         FontSize="18"
                         FontAttributes="Bold" />
@@ -65,7 +90,9 @@
                 </VerticalStackLayout>
             </Border>
 
-            <VerticalStackLayout Grid.Row="2" Spacing="10">
+            
+
+            <VerticalStackLayout Grid.Row="4" Spacing="10">
                 <Image Source="logo.svg" HeightRequest="100" HorizontalOptions="Center"/>
                 <Label Text="{Binding VersionText}" HorizontalTextAlignment="Center" Opacity="0.7"/>
 

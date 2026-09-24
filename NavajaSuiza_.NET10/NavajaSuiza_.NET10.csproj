@@ -23,14 +23,14 @@
 		<LangVersion>preview</LangVersion>
 
 		<!-- Display name -->
-		<ApplicationTitle>NavajaSuiza_.NET10</ApplicationTitle>
+		<ApplicationTitle>Navaja Suiza</ApplicationTitle>
 
 		<!-- App Identifier -->
-		<ApplicationId>com.companyname.navajasuiza_.net10</ApplicationId>
+		<ApplicationId>com.nefelin.navajasuiza</ApplicationId>
 
 		<!-- Versions -->
-		<ApplicationDisplayVersion>1.4.93</ApplicationDisplayVersion>
-		<ApplicationVersion>4</ApplicationVersion>
+		<ApplicationDisplayVersion>1.1.94</ApplicationDisplayVersion>
+		<ApplicationVersion>1</ApplicationVersion>
 
 		<!-- To develop, package, and publish an app to the Microsoft Store, see: https://aka.ms/MauiTemplateUnpackaged -->
 		<WindowsPackageType>None</WindowsPackageType>

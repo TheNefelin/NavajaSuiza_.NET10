@@ -10,6 +10,7 @@ public partial class AboutViewModel : BaseViewModel
     private readonly IThemeService _themeService;
     private readonly IAppInfoService _appInfoService;
     private readonly ILauncherService _launcherService;
+    private readonly INavigationService _navigationService;
 
     [ObservableProperty]
     public partial bool IsDarkMode { get; set; }
@@ -21,11 +22,13 @@ public partial class AboutViewModel : BaseViewModel
     public AboutViewModel(
         IThemeService themeService,
         IAppInfoService appInfoService,
-        ILauncherService launcherService)
+        ILauncherService launcherService,
+        INavigationService navigationService)
     {
         _themeService = themeService;
         _appInfoService = appInfoService;
         _launcherService = launcherService;
+        _navigationService = navigationService;
 
         LoadThemePreference();
     }
@@ -59,5 +62,11 @@ public partial class AboutViewModel : BaseViewModel
     private async Task OpenPrivacyAsync()
     {
         await _launcherService.OpenAsync(AppConstants.About.PrivacyUrl);
+    }
+
+    [RelayCommand]
+    private async Task OpenGuideAsync()
+    {
+        await _navigationService.PushAsync("GuidePage");
     }
 }

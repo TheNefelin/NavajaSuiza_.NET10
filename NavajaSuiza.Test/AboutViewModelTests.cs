@@ -10,12 +10,17 @@ public class AboutViewModelTests
     private readonly Mock<IThemeService> _themeServiceMock = new();
     private readonly Mock<IAppInfoService> _appInfoServiceMock = new();
     private readonly Mock<ILauncherService> _launcherServiceMock = new();
+    private readonly Mock<INavigationService> _navigationServiceMock = new();
 
     private AboutViewModel CreateSut()
     {
         _appInfoServiceMock.Setup(s => s.Version).Returns("1.0");
         _appInfoServiceMock.Setup(s => s.Build).Returns("1");
-        return new AboutViewModel(_themeServiceMock.Object, _appInfoServiceMock.Object, _launcherServiceMock.Object);
+        return new AboutViewModel(
+            _themeServiceMock.Object,
+            _appInfoServiceMock.Object,
+            _launcherServiceMock.Object,
+            _navigationServiceMock.Object);
     }
 
     [Fact]
@@ -79,5 +84,14 @@ public class AboutViewModelTests
         vm.OpenPrivacyCommand.Execute(null);
 
         _launcherServiceMock.Verify(s => s.OpenAsync(AppConstants.About.PrivacyUrl), Times.Once);
+    }
+
+    [Fact]
+    public void OpenGuideCommand_NavigatesToGuidePage()
+    {
+        var vm = CreateSut();
+        vm.OpenGuideCommand.Execute(null);
+
+        _navigationServiceMock.Verify(s => s.PushAsync("GuidePage", null), Times.Once);
     }
 }
