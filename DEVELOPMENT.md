@@ -20,9 +20,14 @@ Contexto técnico, arquitectura y evolución del proyecto.
 | MVVM Toolkit | CommunityToolkit.Mvvm | 8.4.2 |
 | UI Toolkit | CommunityToolkit.Maui | 15.0.1 |
 | Media | CommunityToolkit.Maui.MediaElement | 10.0.0 |
-| UI Components | Syncfusion.Maui.Toolkit | 1.0.10 |
-| Logging | Microsoft.Extensions.Logging.Debug | 10.0.11 |
-| Controls | Microsoft.Maui.Controls | 10.0.100 |
+| Markdown | Markdig | 1.4.0 |
+| PDF (visor) | Syncfusion.Maui.PdfViewer | 34.2.9 |
+| DocIO (conversión DOC/DOCX) | Syncfusion.DocIORenderer.NET | 34.2.9 |
+| XlsIO (conversión XLS/XLSX/CSV) | Syncfusion.XlsIORenderer.NET | 34.2.9 |
+| Licencia Syncfusion | Syncfusion.Licensing | 34.2.9 |
+| UI Components (gratuito) | Syncfusion.Maui.Toolkit | 1.0.11 |
+| Logging | Microsoft.Extensions.Logging.Debug | 10.0.12 |
+| Controls | Microsoft.Maui.Controls | 10.0.110 |
 
 ---
 
@@ -72,7 +77,7 @@ La aplicación sigue el patrón **MVVM** (Model-View-ViewModel) utilizing el Com
 ```
 NavajaSuiza_.NET10/                   # Solution
 ├── NavajaSuiza.Core/                 # Class Library (net10.0 puro, sin dependencias MAUI)
-│   ├── Interfaces/                   # 14 interfaces
+│   ├── Interfaces/                   # 23 interfaces
 │   │   ├── ILanguageService.cs
 │   │   ├── IThemeService.cs
 │   │   ├── IDeviceStatusService.cs
@@ -86,15 +91,33 @@ NavajaSuiza_.NET10/                   # Solution
 │   │   ├── IImagePickerService.cs
 │   │   ├── IScreenBrightnessService.cs
 │   │   ├── IFlashlightStateService.cs
-│   │   └── IStopwatchService.cs
+│   │   ├── IStopwatchService.cs
+│   │   ├── IFilePickerService.cs
+│   │   ├── IDocumentPdfConverter.cs
+│   │   ├── IAppInfoService.cs
+│   │   ├── ILauncherService.cs
+│   │   ├── IMarkdownToHtmlConverter.cs
+│   │   ├── INotesRepository.cs
+│   │   ├── IMorseSignalService.cs
+│   │   ├── IPizarraImageExporter.cs
+│   │   └── ITimeSource.cs
 │   ├── Models/
 │   │   ├── SupportedLanguages.cs
-│   │   └── InstrumentStringData.cs
+│   │   ├── InstrumentStringData.cs
+│   │   ├── StopwatchLap.cs
+│   │   ├── PizarraStroke.cs
+│   │   ├── DocumentType.cs
+│   │   ├── PdfReaderPayload.cs
+│   │   ├── MorseSignalSequence.cs
+│   │   └── Note.cs
 │   ├── Services/
 │   │   ├── FlashlightStateService.cs   # Singleton: persiste estado flash entre VM recreations
-│   │   └── StopwatchService.cs         # Singleton: cronómetro (Stopwatch + PeriodicTimer), thread-safe
+│   │   ├── StopwatchService.cs         # Singleton: cronómetro (Stopwatch + PeriodicTimer), thread-safe
+│   │   ├── MarkdownToHtmlConverter.cs  # Singleton: Markdig → HTML (assets embebidos como data URI)
+│   │   ├── MorseSignalService.cs       # Generación/parsing de secuencias Morse
+│   │   └── DocumentTypeDetector.cs     # Detección de tipo real por contenido (PDF/DOCX/XLSX/CSV/Texto)
 │   ├── AppConstants.cs
-│   └── ViewModels/                     # 19 ViewModels (todas testables, sin dependencias MAUI)
+│   └── ViewModels/                     # 24 ViewModels (todas testables, sin dependencias MAUI)
 │       ├── BaseViewModel.cs
 │       ├── AboutViewModel.cs
 │       ├── MenuViewModel.cs
@@ -112,7 +135,13 @@ NavajaSuiza_.NET10/                   # Solution
 │       ├── InstrumentNylonViewModel.cs
 │       ├── InstrumentSteelViewModel.cs
 │       ├── InstrumentUkuleleViewModel.cs
-│       └── InstrumentViolinViewModel.cs
+│       ├── InstrumentViolinViewModel.cs
+│       ├── GuideViewModel.cs
+│       ├── PizarraViewModel.cs
+│       ├── PdfReaderViewModel.cs
+│       ├── TextReaderViewModel.cs
+│       ├── NotesViewModel.cs
+│       └── NoteEditorViewModel.cs
 │
 ├── NavajaSuiza_.NET10/               # Proyecto MAUI
 │   ├── Pages/
@@ -123,7 +152,7 @@ NavajaSuiza_.NET10/                   # Solution
 │   │   └── *.xaml / *.xaml.cs
 │   ├── ViewModels/                     # Vacío — todas las VMs están en Core
 │   ├── Services/
-│   │   └── Implementations/           # 12 implementaciones (solo las que usan APIs de plataforma)
+│   │   └── Implementations/           # 19 implementaciones (las que usan APIs de plataforma + repos de datos)
 │   │       ├── LanguageService.cs
 │   │       ├── ThemeService.cs
 │   │       ├── DeviceStatusService.cs
@@ -135,7 +164,14 @@ NavajaSuiza_.NET10/                   # Solution
 │   │       ├── FlashlightService.cs
 │   │       ├── DeviceDisplayService.cs
 │   │       ├── ImagePickerService.cs
-│   │       └── ScreenBrightnessService.cs
+│   │       ├── ScreenBrightnessService.cs
+│   │       ├── FilePickerService.cs
+│   │       ├── DocumentPdfConverter.cs
+│   │       ├── LauncherService.cs
+│   │       ├── AppInfoService.cs
+│   │       ├── SqliteNotesRepository.cs     # INotesRepository (SQLite local)
+│   │       ├── RealtimeTimeSource.cs        # ITimeSource
+│   │       └── PizarraImageExporter.cs      # IPizarraImageExporter (SkiaSharp)
 │   ├── Converters/
 │   ├── Extensions/
 │   ├── Resources/
@@ -148,7 +184,7 @@ NavajaSuiza_.NET10/                   # Solution
 │   └── MauiProgram.cs
 │
 └── NavajaSuiza.Test/                # Proyecto de tests (net10.0 puro)
-    └── *Tests.cs                     # xUnit + Moq, 204 tests
+    └── *Tests.cs                     # xUnit + Moq, 212 tests
 ```
 
 #### Regla de separación Core vs MAUI
@@ -156,7 +192,7 @@ NavajaSuiza_.NET10/                   # Solution
 | Va a Core (reutilizable, net10.0 puro) | Se queda en MAUI (depende de APIs de plataforma) |
 |----------------------------------------|--------------------------------------------------|
 | `BaseViewModel` | `NavigationService` (usa `Shell.Current`) |
-| Todos los ViewModels (19) | `LanguageService` (usa `Preferences`, `CultureInfo`) |
+| Todos los ViewModels (24) | `LanguageService` (usa `Preferences`, `CultureInfo`) |
 | `ICompassService`, `IOrientationService` | `ThemeService` (usa `Application.Current`, Android Window) |
 | `IFlashlightService`, `IFlashlightStateService` | `DeviceStatusService` (usa `Battery.Default`, Android APIs) |
 | `IDeviceDisplayService`, `IImagePickerService` | `CompassSensorService` (usa `Compass.Default`, `OrientationSensor`) |
@@ -304,7 +340,7 @@ Todos los servicios están registrados en `MauiProgram.cs` e inyectados por DI.
 - Página informativa estática.
 
 ### 6.8 Acerca de (`AboutPage`)
-- Toggle de tema oscuro/claro con persistencia. En el **primer arranque** se aplica y persiste el tema oscuro (`ThemeService.ApplySavedTheme()` llama `SaveThemePreference(true)` cuando no hay preferencia guardada).
+- Toggle de tema oscuro/claro con persistencia. En el **primer arranque** se aplica y persiste el tema oscuro (`ThemeService.ApplySavedTheme()` llama `SaveThemePreference(true)` cuando no hay preferencia guardada). El tema se aplica en `CreateWindow()` **antes** de crear la ventana (`App.xaml.cs`), garantizando dark desde el primer frame sin parpadeo de tema claro; la llamada ya no cuelga de `OnStart()`.
 - **Versión** leída en runtime vía `IAppInfoService` (`AppInfo.Current`); única fuente de verdad: el `.csproj` (`ApplicationDisplayVersion`/`ApplicationVersion`). No duplicar versión en constantes.
 - **Enlaces**: URLs centralizadas en `AppConstants.About` (Core) y abiertas con `ILauncherService` (`Launcher.Default`). El botón de donación solo se muestra si `DonationUrl` está configurada; el botón de repositorio fue eliminado.
 - **Sitio web**: línea `© 2026 | francisco-dev.cl` completa como hipervínculo (un solo label con `TapGestureRecognizer`) hacia `AppConstants.About.WebsiteUrl`, con el color de texto del sistema (compatible tema claro/oscuro), igual que el label de versión (sin subrayado ni opacidad).
@@ -320,6 +356,15 @@ Todos los servicios están registrados en `MauiProgram.cs` e inyectados por DI.
 - **Estado persistente entre navegaciones**: al salir de la página el conteo continúa (patrón `FlashlightStateService`); `StopwatchViewModel.Initialize()` resincroniza al volver.
 - **Iconos**: botones fijos `icon_play.png` (Play/Marca) y `icon_stop.png` (Stop/Reset), sin `DataTrigger`. El asset `icon_stopwatch.png` se usa como icono del ítem del cronómetro en `MenuPage`.
 - **Nota de threading**: el `Tick` se dispara desde hilo background; validado en dispositivo, .NET MAUI refleja correctamente los cambios de propiedades bindables en la UI.
+
+### 6.10 Guía del usuario (`GuidePage`)
+- **Acceso**: desde `AboutPage` vía comando `OpenGuideCommand` (`INavigationService.PushAsync("GuidePage")`) y botón localizado `AboutOpenGuideText`.
+- **Recurso multidioma**: assets `Resources/Raw/guide/USER_GUIDE.{es,en,sv}.md` (default español, fallback a `USER_GUIDE.es.md` si el idioma activo no existe). Se resuelven con `ILanguageService.GetCurrentLanguage()`.
+- **Render**: `IMarkdownToHtmlConverter` en Core con **Markdig 1.4.0** (`UseAdvancedExtensions`), imágenes embebidas como **data URI** (se leen de los assets y se inyectan en el HTML para que funcionen offline en el WebView), CSS de tablas para las dos columnas por feature y regex que captura tanto `![alt](archivo)` como `<img src="...">`.
+- **Recarga dinámica**: `GuidePage` se suscribe a `LanguageChanged` en `OnNavigatedTo` y se desuscribe en `OnNavigatingFrom`; al cambiar el idioma con la guía abierta, `LoadGuideAsync()` re-renderiza el HTML con el idioma nuevo (`HtmlContent` del `GuideViewModel`).
+- **Manejo de error**: si no se puede cargar, se muestra `GuideLoadErrorText` localizado.
+- **DI**: `IMarkdownToHtmlConverter` (Singleton), `GuideViewModel` (Transient) y `GuidePage` (Singleton) registrados en `MauiProgram.cs`.
+- **Identidad de app**: `ApplicationTitle` = "Navaja Suiza" y `ApplicationId` = `com.nefelin.navajasuiza` (consistente con `AndroidManifest.xml`; el README ya documentaba ese ID en el APK firmado).
 
 ---
 
@@ -521,6 +566,8 @@ MAUI `Battery.Default` en Android exige `BATTERY_STATS` (permiso protegido `sign
 | 34 | Empaquetado multirarquitectura (RIDs arm/arm64/x64; A11 32-bit compatible) | `NavajaSuiza_.NET10.csproj` | ✅ Completado (APK Release fat 57,9 MB, 3 ABIs) |
 | 35 | Batería sin `BATTERY_STATS` vía `BatteryManager` (Android) | `DeviceStatusService.cs` | ✅ Completado |
 | 36 | Cronómetro: marcas persisten entre navegaciones (servicio Singleton) | Core (`Stopwatch*`) + tests | ✅ Completado (144 tests) |
+| 37 | Guía del usuario multi-idioma (Markdig, assets `USER_GUIDE.{es,en,sv}.md`, recarga al cambiar idioma) | Core + MAUI (GuidePage) | ✅ Completado (212 tests) |
+| 38 | Identidad de app para la tienda (`ApplicationId com.nefelin.navajasuiza`, título "Navaja Suiza") | `NavajaSuiza_.NET10.csproj` | ✅ Completado |
 
 **Pendiente de release**: Privacy Policy **publicada** en `https://www.francisco-dev.cl/navaja-suiza/privacy-policy` (fuente en `PRIVACY_POLICY.md`, trilingüe + bloque Astro) y **`allowBackup=false` decidido** (Notas solo locales, sin transmisión). Resta: pegar la URL en el listing de Play Console, completar el formulario Data Safety, validar target SDK del AAB (targetSdk 36 cumple), assets de tienda (icono adaptativo 512, splash, screenshots, listing trilingüe ES/EN/SV), Release AAB firmado + internal/closed testing → producción.
 
@@ -643,18 +690,18 @@ Pendiente de definir: ¿conteo solo en primer plano o en segundo plano/cerrada?;
 
 ### 18.4 Visor de PDF (Syncfusion SfPdfViewer)
 
-Estado: **implementada y verificada** (Android/Windows 0/0; tests del suite en total 204; conversión DOCX/XLSX y PDF directo verificados en runtime en dispositivo; CSV→PDF, visor de texto y DOC/XLS legacy verificados en build + tests, runtime pendiente).
+Estado: **implementada y verificada** (Android/Windows 0/0; tests del suite en total 212; conversión DOCX/XLSX y PDF directo verificados en runtime en dispositivo; CSV→PDF, visor de texto y DOC/XLS legacy verificados en build + tests, runtime pendiente).
 
 Decisión de alcance:
 - **Visor real de PDF mediante Syncfusion `SfPdfViewer`** (paquetes `Syncfusion.Maui.PdfViewer` 34.2.9 + `Syncfusion.Licensing` 34.2.9). Sustituye al visor propio con `#if ANDROID`/`#if WINDOWS` (`Android.Graphics.Pdf.PdfRenderer` + `Windows.Data.Pdf`) que se descartó por decisión del usuario tras probarla en emulador (sept 2026): no se comportaba como un visor real (scroll discreto por página rasterizada, sin búsqueda ni selección de texto).
-- **Licencia**: componente comercial; aplica la **Community License** gratuita (empresas y personas: organizaciones <US$1M de ingresos anuales, ≤5 desarrolladores, ≤10 empleados). Requiere `SyncfusionLicenseProvider.RegisterLicense(clave)` con la clave comunitaria que se obtiene en syncfusion.com; la clave se registra en `MauiProgram.cs` (gestionarla con cuidado: mantenerla fuera de repositorios públicos/logs). El `Syncfusion.Maui.Toolkit` 1.0.11 ya presente es un producto distinto (free) y coexiste sin conflicto.
+- **Licencia**: componente comercial; aplica la **Community License** gratuita (empresas y personas: organizaciones <US$1M de ingresos anuales, ≤5 desarrolladores, ≤10 empleados). La clave se **inyecta en build como `AssemblyMetadata`** (`MauiProgram.cs` lee el atributo y llama `SyncfusionLicenseProvider.RegisterLicense` solo si trae valor): se obtiene de la variable de entorno `SYNC_FUSION_LICENSE_KEY` o de la property MSBuild `-p:SyncfusionLicenseKey=...` (definida en el csproj con fallback a vacío). **La clave nunca se hardcodea ni se versiona** en el repositorio. Sin clave configurada el proyecto compila igual (sin registro; el visor mostraría advertencia trial en runtime). El `Syncfusion.Maui.Toolkit` 1.0.11 ya presente es un producto distinto (free) y coexiste sin conflicto.
 - El control cubre las 4 TFMs del csproj: Android, iOS, MacCatalyst y Windows (net10); build verificado en Android y Windows; iOS/MacCatalyst pendientes (requieren Mac).
 
 Entregado:
 - **Router multipropósito (botón único; Fases 1-3)**: `MenuViewModel.NavigateToPdfReader` usa `IFilePickerService.PickDocumentAsync` (PDF/DOCX/XLSX/DOC/XLS/CSV/texto) y detecta el **tipo real por contenido** (`DocumentTypeDetector`: firma `%PDF-` → PDF; entradas ZIP canónicas `word/document.xml` vs `xl/workbook.xml` → DOCX/XLSX; firma OLE `D0CF11E0` → contenedor legacy, resuelto **por extensión** `.doc`/`.xls` → DOC/XLS (Fase 3, límite documentado: renombrados no se detectan); si no hay firma, lee muestra UTF-8 y decide **CSV** si ≥90% de las líneas comparten el mismo conteo de delimitadores `,`, `;` o tab (`GetBestCsvDelimiter`) o **Texto plano** en caso contrario; presencia de byte de control → `Unknown`). El router enruta: **PDF** → se pasa el `path`; **DOCX/DOC/XLSX/XLS/CSV** → `IDocumentPdfConverter.ConvertToPdfAsync` (DocIO `FormatType.Docx`/`Doc`, XlsIO; para CSV `DocumentTypeDetector.DetectDelimiter(path)` detecta el separador real que se pasa a `Workbooks.Open(path, delimitador)`) y se pasa un `MemoryStream`; **Texto plano** → `PushAsync("TextReaderPage", path)` con el path como parámetro; formato no soportado (`Ole`, `Unknown`) → se ignora; error de conversión → alert localizado (`PdfReaderOpenErrorText` + `CommonOkText`). Navegación PDF mediante objeto `PdfReaderPayload` (`Path` o `Stream` + `FileName`). El botón usa el icono `icon_file.png`.
 - Core: `PdfReaderViewModel` — overloads `Load(path)` y `Load(Stream, fileName)`; `PdfDocumentStream`, `FileName`, `HintText`, `IsFileLoaded`; `Unload()` libera el stream y resetea el estado. `TextReaderViewModel` (Fase 2) — visor de texto plano: `Content`, `FileName`, `IsFileLoaded`, `Message`; `Load(path)` lee con StreamReader UTF-8 (hasta 2 MB por `MaxBytesToRead`), `Unload()` resetea el estado; error → `TextReaderOpenErrorText` localizado vía `ILanguageService`.
 - MAUI: `PdfReaderPage.xaml` con `<syncfusion:SfPdfViewer>` (`DocumentSource="{Binding PdfDocumentStream}"`; el control aporta toolbar, navegación, zoom, búsqueda y selección de texto) + Label de hint cuando no hay documento; `PdfReaderPage.xaml.cs` resuelve el VM en `OnNavigatedTo`, lee `PdfReaderPayload`, y en **`OnDisappearing`** llama `PdfViewer.UnloadDocument()` + `viewModel.Unload()` para liberar memoria del documento. `TextReaderPage.xaml` (Fase 2): `<Editor>` de solo lectura con `FontFamily="Courier New"` y mensaje de error visible cuando `IsFileLoaded=false`; `TextReaderPage.xaml.cs` resuelve el VM en `OnNavigatedTo` con el path como parámetro (`INavigationService.TakeNavigationParameter()` devuelve `string`), `OnDisappearing` → `Unload()`. `DocumentPdfConverter` y `TextReaderPage`/`TextReaderViewModel` registrados en DI. **Indicador de conversión**: `MenuViewModel.IsConverting` (observable) activa un overlay a pantalla completa en `MenuPage` con `ActivityIndicator` (color `MyAccentBlue` para visibilidad en tema claro/oscuro) + texto `PdfReaderConvertingText` ("Convirtiendo a PDF...") durante DOCX/XLSX/CSV; solo PDF y texto directos no lo activan. resx ×3 (claves `PdfReader*` y `TextReaderOpenErrorText`; se eliminaron `PdfReaderEmptyText` y `PdfReaderPageCountText` por quedar sin uso).
-- Tests: `PdfReaderViewModelTests` (4), `DocumentTypeDetectorTests` (18: firma PDF, DOCX/XLSX por entrada ZIP canónica, `Unknown` para ZIP sin entrada esperada/bytes inválidos/stream vacío, OLE→`Ole` + por extensión `.doc`/`.xls`/otra, CSV coma/punto-y-coma/tab, texto de una línea→Texto, texto plano y código→Text, preserva posición, lectura por path, `DetectDelimiter` coma/punto-y-coma/tab/default), `MenuViewModelTests` con router (PDF directo, DOCX convertido, CSV convertido, DOC/XLS convertido, texto→`TextReaderPage`, cancelación del picker, `IsConverting` activo durante la conversión y reseteado en éxito/error) → suite total 204.
+- Tests: `PdfReaderViewModelTests` (4), `DocumentTypeDetectorTests` (18: firma PDF, DOCX/XLSX por entrada ZIP canónica, `Unknown` para ZIP sin entrada esperada/bytes inválidos/stream vacío, OLE→`Ole` + por extensión `.doc`/`.xls`/otra, CSV coma/punto-y-coma/tab, texto de una línea→Texto, texto plano y código→Text, preserva posición, lectura por path, `DetectDelimiter` coma/punto-y-coma/tab/default), `MenuViewModelTests` con router (PDF directo, DOCX convertido, CSV convertido, DOC/XLS convertido, texto→`TextReaderPage`, cancelación del picker, `IsConverting` activo durante la conversión y reseteado en éxito/error) → suite total 212.
 
 Límites conocidos (no resueltos a propósito):
 - Sin clave de licencia válida, Syncfusion puede mostrar advertencia de licencia trial en runtime.
@@ -669,7 +716,7 @@ Límites conocidos (no resueltos a propósito):
 - **PDF en blanco al volver a la página**: con las páginas registradas como **Singleton**, salir a cargar otro documento (`OnDisappearing` → `PdfViewer.UnloadDocument()` + `viewModel.Unload()`) y volver/reabrir dejaba el visor en blanco. Referencia: Syncfusion Feedback #59237 / Foro de Syncfusion #189392 (reutilizar una instancia de `SfPdfViewer` tras `UnloadDocument` no soporta cargar documentos posteriores). **Fix aplicado (build 0 errores)**: `PdfReaderPage` ahora es **Transient** (página y control `SfPdfViewer` nuevos por navegación; el VM ya era Transient y se resuelve en `OnNavigatedTo`). **Verificado en runtime**: el flujo abrir PDF → menú → reabrir PDF funciona correctamente.
 - **Cancelación de la carga del PDF sin peligro**: verificado en runtime. No es un bug: el visor PDF funciona correctamente. El "cuelgue al cancelar el picker" observado antes en el emulador se debía a que el **emulador no tiene botón "volver"** para cancelar la carga; en **dispositivos físicos el botón volver del sistema cancela correctamente** el picker. Descartada la hipótesis de bug de MAUI (dotnet/maui #33706) y el fix propuesto de timeout en `FilePickerService`.
 
-- BUILD REAL: 0 errores / 0 advertencias; TEST REAL: 204/204 verdes.
+- BUILD REAL: 0 errores / 0 advertencias; TEST REAL: 212/212 verdes.
 ## 19. GUÍA de reconstrucción (build desde cero)
 
 Repositorio real: D:\Repo\.NET\NavajaSuiza_.NET10 (sin tildes; git rev-parse y Test-Path OK - verificado §11.6-1).
@@ -689,14 +736,16 @@ Restaurar:
 Build (Android Debug):
   dotnet build NavajaSuiza_.NET10/NavajaSuiza_.NET10.csproj -f net10.0-android -c Debug
 
-Suite de tests (esperado: 204 superados / 0 fallos):
+Suite de tests (esperado: 212 superados / 0 fallos):
   dotnet test NavajaSuiza_.NET10/NavajaSuiza_.NET10.csproj
 
-Release Android (APK):
+Release Android (APK): el default del csproj es AAB (para Google Play). Para generar APK de prueba:
   dotnet clean NavajaSuiza_.NET10/NavajaSuiza_.NET10.csproj -f net10.0-android -c Release
-  dotnet build NavajaSuiza_.NET10/NavajaSuiza_.NET10.csproj -f net10.0-android -c Release -p:AndroidPackageFormats=apk
+  dotnet build NavajaSuiza_.NET10/NavajaSuiza_.NET10.csproj -f net10.0-android -c Release -p:AndroidPackageFormat=apk
   Ante "Error de proceso de archivado" (lista de errores vacía): limpiar obj/bin y reconstruir;
   no conservar builds previos con encoding dañado (§24).
+Licencia Syncfusion: se inyecta con la variable de entorno SYNC_FUSION_LICENSE_KEY antes del build
+  (detalles en §18.4); nunca va hardcodeada ni versionada.
 
 Release Windows:
   dotnet build NavajaSuiza_.NET10/NavajaSuiza_.NET10.csproj -f net10.0-windows10.0.19041.0 -c Release

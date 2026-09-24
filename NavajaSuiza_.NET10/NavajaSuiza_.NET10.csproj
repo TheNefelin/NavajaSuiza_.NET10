@@ -29,7 +29,7 @@
 		<ApplicationId>com.nefelin.navajasuiza</ApplicationId>
 
 		<!-- Versions -->
-		<ApplicationDisplayVersion>1.1.94</ApplicationDisplayVersion>
+		<ApplicationDisplayVersion>1.1.95</ApplicationDisplayVersion>
 		<ApplicationVersion>1</ApplicationVersion>
 
 		<!-- To develop, package, and publish an app to the Microsoft Store, see: https://aka.ms/MauiTemplateUnpackaged -->
@@ -44,8 +44,26 @@
 
 	</PropertyGroup>
 
+	<!-- Licencia Syncfusion: se inyecta como AssemblyMetadata desde la variable de entorno SYNC_FUSION_LICENSE_KEY
+	     o con -p:SyncfusionLicenseKey=... Nunca se versiona la clave en el repositorio. -->
+	<PropertyGroup>
+		<SyncfusionLicenseKey Condition="'$(SyncfusionLicenseKey)' == ''">$(SYNC_FUSION_LICENSE_KEY)</SyncfusionLicenseKey>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<AssemblyMetadata Include="Syncfusion.LicenseKey" Value="$(SyncfusionLicenseKey)" />
+	</ItemGroup>
+
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net10.0-android|AnyCPU'">
+	  <AndroidPackageFormat>aab</AndroidPackageFormat>
+	  <AndroidKeyStore>False</AndroidKeyStore>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net10.0-android|AnyCPU'">
+	  <AndroidUseAapt2>True</AndroidUseAapt2>
+	  <AndroidCreatePackagePerAbi>False</AndroidCreatePackagePerAbi>
 	  <AndroidPackageFormat>apk</AndroidPackageFormat>
+	  <AndroidKeyStore>False</AndroidKeyStore>
 	</PropertyGroup>
 
 	<ItemGroup>

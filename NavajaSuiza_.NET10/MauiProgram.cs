@@ -1,3 +1,4 @@
+using System.Reflection;
 using CommunityToolkit.Maui;
 using Microsoft.Extensions.Logging;
 using NavajaSuiza_.NET10.Pages;
@@ -15,9 +16,15 @@ public static class MauiProgram
 {
     public static MauiApp CreateMauiApp()
     {
-        // Reemplaza el placeholder por tu clave de licencia de Syncfusion (Community License, gratuita:
-        // https://www.syncfusion.com/products/communitylicense). No compartas la clave en repositorios públicos.
-        SyncfusionLicenseProvider.RegisterLicense("CLAVE_LICENCIA_SYNCFUSION");
+        // Clave Syncfusion (Community License, gratuita) inyectada en build como AssemblyMetadata por el
+        // csproj desde la variable de entorno SYNC_FUSION_LICENSE_KEY o la property -p:SyncfusionLicenseKey.
+        // No se hardcodea ni se versiona en el repositorio.
+        var syncfusionLicenseKey = typeof(MauiProgram).Assembly
+            .GetCustomAttributes<AssemblyMetadataAttribute>()
+            .FirstOrDefault(a => a.Key == "Syncfusion.LicenseKey")?.Value;
+
+        if (!string.IsNullOrWhiteSpace(syncfusionLicenseKey))
+            SyncfusionLicenseProvider.RegisterLicense(syncfusionLicenseKey);
 
         var builder = MauiApp.CreateBuilder();
 #pragma warning disable CA1416 // CommunityToolkit.Maui.MediaElement requires Android 26+; min SDK stays at 21 for broader device support
@@ -41,11 +48,6 @@ public static class MauiProgram
             configure
                 .AddDebug()
                 .SetMinimumLevel(LogLevel.Trace));
-#else
-    builder.Services.AddLogging(configure =>
-        configure
-            .AddDebug()
-            .SetMinimumLevel(LogLevel.Information));
 #endif
 
         return builder.Build();
@@ -66,7 +68,7 @@ public static class MauiProgram
             .AddSingleton<IDeviceDisplayService, DeviceDisplayService>()
             .AddSingleton<IImagePickerService, ImagePickerService>()
             .AddSingleton<IScreenBrightnessService, ScreenBrightnessService>()
-.AddSingleton<IFlashlightStateService, FlashlightStateService>()
+            .AddSingleton<IFlashlightStateService, FlashlightStateService>()
             .AddSingleton<ITimeSource, RealtimeTimeSource>()
             .AddSingleton<IStopwatchService, StopwatchService>()
             .AddTransient<IMorseSignalService, MorseSignalService>()
@@ -107,13 +109,13 @@ public static class MauiProgram
             .AddSingleton<InstrumentUkulelePage>()
             .AddTransient<InstrumentCharangoViewModel>()
             .AddSingleton<InstrumentCharangoPage>()
-.AddTransient<MetronomeViewModel>()
+            .AddTransient<MetronomeViewModel>()
             .AddSingleton<MetronomePage>()
             .AddTransient<StopwatchViewModel>()
             .AddSingleton<StopwatchPage>()
             .AddTransient<FramingViewModel>()
             .AddSingleton<FramingPage>()
-.AddTransient<CompassViewModel>()
+            .AddTransient<CompassViewModel>()
             .AddSingleton<CompassPage>()
             .AddTransient<NotesViewModel>()
             .AddSingleton<NotesPage>()

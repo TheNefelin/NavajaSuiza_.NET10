@@ -237,6 +237,12 @@ ClientBin/
 *.dbproj.schemaview
 *.jfm
 *.pfx
+# Android signing keys / keystores (nunca versionar: perder el acceso =
+# no poder actualizar la app en Google Play; exponerla = firma comprometida)
+*.keystore
+*.jks
+*.p12
+*.key
 *.publishsettings
 orleans.codegen.cs
 

@@ -910,6 +910,19 @@ public static int GetBatteryLevel(Android.Content.Context ctx) =>
 - Validar en dispositivo real: `adb shell getprop ro.product.cpu.abi`. Dispositivos budget pueden correr **solo 32-bit** (caso real: Galaxy A11 `SM-A115M`, Android 12, `armeabi-v7a`); un APK sin ese ABI falla con "app no compatible" (`INSTALL_FAILED_NO_MATCHING_ABIS`).
 - Los builds **Debug** de MAUI apuntan a `x86_64` (emulador): no instalar en teléfonos reales; firmar y probar un APK **Release**.
 
+### 11.15 Firma, licencias y Release para Play Store
+
+**Firma de paquete (keystore)**:
+- Los secretos de firma **nunca van en el código ni en el `.csproj`**. Usar **Properties → Android Firma de Paquete** escribe `AndroidSigningKeyPass`/`AndroidSigningKeyStore` en el `.csproj`, que **se versiona** → contraseñas públicas. Preferir el flujo **Archive → Ad Hoc** de Visual Studio (perfil de firma fuera del proyecto) o pasar las properties por línea de comandos/CI (`-p:AndroidKeyStore=true -p:AndroidSigningKeyStore=... -p:AndroidSigningKeyAlias=... -p:AndroidSigningKeyPass=... -p:AndroidSigningStorePass=...`).
+- El keystore (`.keystore`/`.jks`/`.p12`) se guarda **fuera del repositorio**, con backup en otro disco o gestor de contraseñas. Perderlo = no poder actualizar la app en Play. `.gitignore` debe excluir `*.keystore`, `*.jks`, `*.p12`, `*.key`.
+- Validez: **mínimo 25 años** en `keytool` (`-validity 9125`); se recomienda 100 años (`36500`). El diálogo de VS pregunta validez en días.
+- **Contrato**: el keystore del APK de prueba debe ser el **mismo** que el del AAB final (si no, Play rechaza la actualización).
+- Play **no acepta APK**: se sube un **AAB** firmado (Release con `AndroidPackageFormat` aab por defecto; APK de prueba con `-p:AndroidPackageFormat=apk`). Activar **Play App Signing**: el keystore propio es solo la *upload key*; Google firma los APK finales.
+
+**Licencias de componentes comerciales (ej. Syncfusion)**:
+- La clave se **inyecta en build como `AssemblyMetadata`** (csproj `-p:SyncfusionLicenseKey=...` o variable de entorno de la máquina `SYNC_FUSION_LICENSE_KEY`) y se lee por reflexión en `MauiProgram.cs` solo si trae valor. **Nunca hardcodear ni versionar la clave**. Separar de la CI/CD cuando corresponda.
+- Diferenciar **Trial** (30 días, genera aviso en runtime) de la **Community License** gratuita definitiva (sin expirar si se cumplen condiciones: <US$1M ingresos, ≤5 desarrolladores, ≤10 empleados). Verificar el tipo en el panel de cuentas de Syncfusion; no publicar en producción con clave trial.
+
 ---
 
 ## 12. Tests
