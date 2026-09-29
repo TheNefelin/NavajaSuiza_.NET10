@@ -199,6 +199,28 @@ Google Play **no acepta APK**, requiere un **App Bundle (.aab)** firmado. El `cs
 
 > Si no tienes keystore, créalo con `keytool -genkey -v -keystore filename.keystore -alias alias -keyalg RSA -keysize 2048 -validity 10000` (requiere un JDK en la máquina), o desde el wizard de **Archive** de Visual Studio (Tools → Android → Archive → "+" en Signing).
 
+### Cuenta y proceso en Google Play Console (a grandes rasgos)
+
+Antes de subir el `.aab`, la app debe existir en **Play Console** y cumplir el trámite de alta. Resumen del recorrido (los detalles exactos de cada formulario cambian según la región y la cuenta):
+
+1. **Crear la cuenta de desarrollador** en [play.google.com/console](https://play.google.com/console):
+   - Se elige tipo **"Tú"** (personal) u **"Organización"** (empresa verificada).
+   - Se proporcionan nombre legal, dirección y sitio web; se vincula un **perfil de pagos** de Google.
+   - Se paga la **cuota única de USD 25**.
+   - La **Cuenta de Google propietaria no se puede cambiar** después (se puede invitar a otros usuarios, y actualizar el tipo de cuenta más adelante si se constituye una empresa).
+2. **Crear la app**: nombre, idioma por defecto, tipo (App/Juego) y si es gratis o de pago. Se aceptan las declaraciones de **Políticas del programa**, **Play App Signing** (obligatorio para AAB) y **leyes de exportación de EE. UU.**
+3. **Configurar la app** (bloqueante antes de publicar):
+   - **Ficha de Play Store**: nombre, descripción breve y completa, ícono 512×512, gráfico de funciones 1024×500 y 2–8 capturas de teléfono (proporción 16:9 o 9:16).
+   - **Contenido de la app**: clasificación de edad (IARC), anuncios, público objetivo, y si es gubernamental, de salud o con funciones financieras.
+   - **Seguridad de los datos (Data Safety)**: se declara qué datos se recopilan/comparten (esta app: **ninguno**, todo local) + URL de la política de privacidad.
+4. **Subir una versión**: en **Prueba y lanza** se crea una versión (cerrada o de producción) y se sube el `.aab` firmado con sus notas de versión.
+
+> **Prueba cerrada obligatoria (cuentas personales nuevas)**: para poder publicar en producción, Google exige ejecutar una **prueba cerrada de al menos 14 días con un mínimo de 12 verificadores** que acepten participar. Se sube el mismo `.aab` a la pista *Prueba cerrada*, se agregan los correos de los verificadores y se comparte el **link de participación** (ellos aceptan e instalan desde Play). Cumplido el plazo, se **solicita acceso a producción**.
+
+> **Inicio de sesión**: "Google Cloud" es otro producto (servicios cloud) y **no** es donde se publica la app; todo el trámite ocurre en **Play Console**.
+
+> **Privacidad de los datos**: si la cuenta es personal y **no** se declara que se ganan dinero, Google **no muestra públicamente** la dirección legal del desarrollador.
+
 ### APK (Android)
 
 > Probar en dispositivo real con **Archive → Distribuir → Ad Hoc** (selecciona el keystore en el diálogo). Evitar *Properties → Android Signing*: escribe contraseñas en el `.csproj` versionado.

@@ -73,7 +73,7 @@ public class InstrumentAudioService : IInstrumentAudioService
         return new ObservableCollection<InstrumentStringData>()
         {
             new InstrumentStringData { Note = "G3", AudioName = "V_01_G3.wav", Description = "196.00 Hz", Thickness = 1 },
-            new InstrumentStringData { Note = "D4", AudioName = "V_02_D3.wav", Description = "293.66 Hz", Thickness = 1 },
+            new InstrumentStringData { Note = "D4", AudioName = "V_02_D4.wav", Description = "293.66 Hz", Thickness = 1 },
             new InstrumentStringData { Note = "A4", AudioName = "V_03_A4.wav", Description = "440.00 Hz", Thickness = 1 },
             new InstrumentStringData { Note = "E5", AudioName = "V_04_E5.wav", Description = "659.26 Hz", Thickness = 1 }
         };
@@ -87,8 +87,8 @@ public class InstrumentAudioService : IInstrumentAudioService
             new InstrumentStringData { Note = "C5", AudioName = "C_02_C5.wav", Description = "x2", Thickness = 2 },
             new InstrumentStringData { Note = "E5", AudioName = "C_03_E5.wav", Description = "659.26 Hz", Thickness = 1 },
             new InstrumentStringData { Note = "E4", AudioName = "C_04_E4.wav", Description = "329.63 Hz", Thickness = 5 },
-            new InstrumentStringData { Note = "A4", AudioName = "C_05_A5.wav", Description = "x2", Thickness = 4 },
-            new InstrumentStringData { Note = "E5", AudioName = "C_06_E6.wav", Description = "x2", Thickness = 1 }
+            new InstrumentStringData { Note = "A4", AudioName = "C_05_A4.wav", Description = "x2", Thickness = 4 },
+            new InstrumentStringData { Note = "E5", AudioName = "C_06_E5.wav", Description = "x2", Thickness = 1 }
         };
     }
 
