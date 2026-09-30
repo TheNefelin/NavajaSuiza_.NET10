@@ -1,8 +1,8 @@
-# User Guide — Swiss Army Knife
+# User Manual — Swiss Army Knife
 
-Welcome to the Swiss Army Knife. This guide explains, step by step, how to use each tool in the app.
+Welcome to the Swiss Army Knife. This manual explains, step by step, how to use each tool in the app.
 
-> This guide is a living document: it is updated as the app adds features.
+> This manual is a living document: it is updated as the app adds features.
 
 ---
 
@@ -223,4 +223,4 @@ The document reader opens and displays all kinds of files without leaving the ap
 
 ---
 
-*End of guide. Need more help? Use the **About** section to see the app version or contact the developer.*
+*End of manual. Need more help? Use the **About** section to see the app version or contact the developer.*

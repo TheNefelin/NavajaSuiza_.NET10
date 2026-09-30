@@ -130,7 +130,7 @@
     <value>Öppna integritetspolicy</value>
   </data>
   <data name="AboutOpenGuideText" xml:space="preserve">
-    <value>Öppna användarguide</value>
+    <value>Öppna användarmanual</value>
   </data>
   <data name="CancelText" xml:space="preserve">
     <value>Avbryt</value>
@@ -172,10 +172,10 @@
     <value>Manual</value>
   </data>
   <data name="GuideTitleText" xml:space="preserve">
-    <value>Användarguide</value>
+    <value>Användarmanual</value>
   </data>
   <data name="GuideLoadErrorText" xml:space="preserve">
-    <value>Det gick inte att ladda guiden.</value>
+    <value>Det gick inte att ladda användarmanualen.</value>
   </data>
   <data name="MenuText" xml:space="preserve">
     <value>Meny</value>

@@ -48,7 +48,7 @@ El proyecto inicial era un monolito MAUI donde todo vivía en un solo `.csproj`:
 |--------|------------|---------|------------|-----------|
 | **A: Monolito MAUI** | Todo en un solo proyecto | Simple | No escala, no reutiliza | Descartada |
 | **B: Core + MAUI** | Class Library + proyecto MAUI | Reutilizable, equilibrado | Un nivel más de abstracción | **Seleccionada** |
-| **C: Clean Architecture** | Domain + Application + Infrastructure + UI | Extremadamente mantenible | Over-engineering para工具as independientes | Descartada |
+| **C: Clean Architecture** | Domain + Application + Infrastructure + UI | Extremadamente mantenible | Over-engineering para herramientas independientes | Descartada |
 
 #### Justificación de la Opción B
 
@@ -184,7 +184,7 @@ NavajaSuiza_.NET10/                   # Solution
 │   └── MauiProgram.cs
 │
 └── NavajaSuiza.Test/                # Proyecto de tests (net10.0 puro)
-    └── *Tests.cs                     # xUnit + Moq, 212 tests
+    └── *Tests.cs                     # xUnit + Moq, 214 tests
 ```
 
 #### Regla de separación Core vs MAUI
@@ -361,7 +361,9 @@ Todos los servicios están registrados en `MauiProgram.cs` e inyectados por DI.
 - **Acceso**: desde `AboutPage` vía comando `OpenGuideCommand` (`INavigationService.PushAsync("GuidePage")`) y botón localizado `AboutOpenGuideText`.
 - **Recurso multidioma**: assets `Resources/Raw/guide/USER_GUIDE.{es,en,sv}.md` (default español, fallback a `USER_GUIDE.es.md` si el idioma activo no existe). Se resuelven con `ILanguageService.GetCurrentLanguage()`.
 - **Render**: `IMarkdownToHtmlConverter` en Core con **Markdig 1.4.0** (`UseAdvancedExtensions`), imágenes embebidas como **data URI** (se leen de los assets y se inyectan en el HTML para que funcionen offline en el WebView), CSS de tablas para las dos columnas por feature y regex que captura tanto `![alt](archivo)` como `<img src="...">`.
-- **Recarga dinámica**: `GuidePage` se suscribe a `LanguageChanged` en `OnNavigatedTo` y se desuscribe en `OnNavigatingFrom`; al cambiar el idioma con la guía abierta, `LoadGuideAsync()` re-renderiza el HTML con el idioma nuevo (`HtmlContent` del `GuideViewModel`).
+- **Tema**: la guía era la única superficie visual sin soporte de tema, porque el WebView renderiza HTML plano y `AppThemeBinding` no aplica ahí. `ConvertToHtml(markdown, isDarkTheme, imageDataUris)` recibe el tema y elige entre dos paletas alineadas con `Resources/Styles/Colors.xaml` (`MyBackgroundLight/Dark`, `MyPrimaryTextLight/Dark`, `MyBackgroundMenuLight/Dark`); `Border` y `Muted` son las mezclas necesarias para tablas, citas y `hr`, que no existen en ese diccionario. **Descartado `prefers-color-scheme`**: ese media query refleja el modo oscuro del sistema operativo, no `Application.Current.UserAppTheme`, que la app gobierna con su propio toggle en `AboutPage`; con `prefers-color-scheme` la guía se desincronizaría del resto de la app al usar el toggle interno. La guía no usa enlaces ni bloques de código, así que no se estilan.
+- **Recarga dinámica**: `GuidePage` se suscribe a `LanguageChanged` y a `ThemeChanged` en `OnNavigatedTo`, y se desuscribe de ambos en `OnNavigatingFrom`; al cambiar el idioma o el tema con la guía abierta, `LoadGuideAsync()` re-renderiza el HTML (`HtmlContent` del `GuideViewModel`). `ThemeChanged` lo emite `ThemeService.ApplyTheme` después de setear `UserAppTheme`, y el tema vigente se lee de `IThemeService.IsDarkTheme`.
+- **Pendiente**: `ThemeService.UpdateStatusBarColors(bool isDarkMode)` recibe `isDarkMode` pero lo ignora y aplica siempre `#243042` a status y nav bar, también en tema claro. Queda fuera del alcance de la guía.
 - **Manejo de error**: si no se puede cargar, se muestra `GuideLoadErrorText` localizado.
 - **DI**: `IMarkdownToHtmlConverter` (Singleton), `GuideViewModel` (Transient) y `GuidePage` (Singleton) registrados en `MauiProgram.cs`.
 - **Identidad de app**: `ApplicationTitle` = "Navaja Suiza" y `ApplicationId` = `com.nefelin.navajasuiza` (consistente con `AndroidManifest.xml`; el README ya documentaba ese ID en el APK firmado).
@@ -566,7 +568,7 @@ MAUI `Battery.Default` en Android exige `BATTERY_STATS` (permiso protegido `sign
 | 34 | Empaquetado multirarquitectura (RIDs arm/arm64/x64; A11 32-bit compatible) | `NavajaSuiza_.NET10.csproj` | ✅ Completado (APK Release fat 57,9 MB, 3 ABIs) |
 | 35 | Batería sin `BATTERY_STATS` vía `BatteryManager` (Android) | `DeviceStatusService.cs` | ✅ Completado |
 | 36 | Cronómetro: marcas persisten entre navegaciones (servicio Singleton) | Core (`Stopwatch*`) + tests | ✅ Completado (144 tests) |
-| 37 | Guía del usuario multi-idioma (Markdig, assets `USER_GUIDE.{es,en,sv}.md`, recarga al cambiar idioma) | Core + MAUI (GuidePage) | ✅ Completado (212 tests) |
+| 37 | Guía del usuario multi-idioma y multi-tema (Markdig, assets `USER_GUIDE.{es,en,sv}.md`, recarga al cambiar idioma o tema) | Core + MAUI (GuidePage) | ✅ Completado (214 tests) |
 | 38 | Identidad de app para la tienda (`ApplicationId com.nefelin.navajasuiza`, título "Navaja Suiza") | `NavajaSuiza_.NET10.csproj` | ✅ Completado |
 
 **Pendiente de release**: Privacy Policy **publicada** en `https://www.francisco-dev.cl/navaja-suiza/privacy-policy` (fuente en `PRIVACY_POLICY.md`, trilingüe + bloque Astro) y **`allowBackup=false` decidido** (Notas solo locales, sin transmisión). Resta: pegar la URL en el listing de Play Console, completar el formulario Data Safety, validar target SDK del AAB (targetSdk 36 cumple), assets de tienda (icono adaptativo 512, splash, screenshots, listing trilingüe ES/EN/SV), Release AAB firmado + internal/closed testing → producción.

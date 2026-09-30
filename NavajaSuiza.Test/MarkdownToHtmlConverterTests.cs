@@ -5,12 +5,14 @@ namespace NavajaSuiza.Test;
 
 public class MarkdownToHtmlConverterTests
 {
+    private const bool LightTheme = false;
+
     private readonly IMarkdownToHtmlConverter _converter = new MarkdownToHtmlConverter();
 
     [Fact]
     public void ConvertToHtml_Heading_ProducesHeading()
     {
-        var html = _converter.ConvertToHtml("# Título");
+        var html = _converter.ConvertToHtml("# Título", LightTheme);
 
         Assert.Contains("<h1", html);
         Assert.Contains(">Título</h1>", html);
@@ -19,7 +21,7 @@ public class MarkdownToHtmlConverterTests
     [Fact]
     public void ConvertToHtml_List_ProducesListItem()
     {
-        var html = _converter.ConvertToHtml("- Uno\n- Dos");
+        var html = _converter.ConvertToHtml("- Uno\n- Dos", LightTheme);
 
         Assert.Contains("<li>Uno</li>", html);
         Assert.Contains("<li>Dos</li>", html);
@@ -28,7 +30,7 @@ public class MarkdownToHtmlConverterTests
     [Fact]
     public void ConvertToHtml_Blockquote_ProducesQuote()
     {
-        var html = _converter.ConvertToHtml("> cita");
+        var html = _converter.ConvertToHtml("> cita", LightTheme);
 
         Assert.Contains("<blockquote>", html);
         Assert.Contains("cita", html);
@@ -37,7 +39,7 @@ public class MarkdownToHtmlConverterTests
     [Fact]
     public void ConvertToHtml_ImageWithoutDataUri_KeepsOriginalSource()
     {
-        var html = _converter.ConvertToHtml("![Pizarra](01.jpg)");
+        var html = _converter.ConvertToHtml("![Pizarra](01.jpg)", LightTheme);
 
         Assert.Contains("<img src=\"01.jpg\"", html);
     }
@@ -50,7 +52,7 @@ public class MarkdownToHtmlConverterTests
             { "01.jpg", "data:image/jpeg;base64,AAA=" }
         };
 
-        var html = _converter.ConvertToHtml("![Pizarra](01.jpg)", images);
+        var html = _converter.ConvertToHtml("![Pizarra](01.jpg)", LightTheme, images);
 
         Assert.Contains("src=\"data:image/jpeg;base64,AAA=\"", html);
     }
@@ -63,8 +65,28 @@ public class MarkdownToHtmlConverterTests
             { "other.png", "data:image/png;base64,BBB=" }
         };
 
-        var html = _converter.ConvertToHtml("![Pizarra](01.jpg)", images);
+        var html = _converter.ConvertToHtml("![Pizarra](01.jpg)", LightTheme, images);
 
         Assert.Contains("<img src=\"01.jpg\"", html);
+    }
+
+    [Fact]
+    public void ConvertToHtml_DarkTheme_UsesDarkPalette()
+    {
+        var html = _converter.ConvertToHtml("# Título", isDarkTheme: true);
+
+        Assert.Contains("background-color: #1A2332", html);
+        Assert.Contains("color: #F0EDE6", html);
+        Assert.Contains("border: 1px solid #3A4A5F", html);
+    }
+
+    [Fact]
+    public void ConvertToHtml_LightTheme_UsesLightPalette()
+    {
+        var html = _converter.ConvertToHtml("# Título", isDarkTheme: false);
+
+        Assert.Contains("background-color: #FFFFFF", html);
+        Assert.Contains("color: #2E4057", html);
+        Assert.Contains("border: 1px solid #D6D2CA", html);
     }
 }

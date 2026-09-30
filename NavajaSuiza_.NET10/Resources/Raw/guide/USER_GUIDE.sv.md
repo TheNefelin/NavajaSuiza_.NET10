@@ -1,8 +1,8 @@
-# Användarguide — Navaja Suiza
+# Användarmanual — Navaja Suiza
 
-Välkommen till Navaja Suiza. Den här guiden förklarar steg för steg hur du använder varje verktyg i appen.
+Välkommen till Navaja Suiza. Den här manualen förklarar steg för steg hur du använder varje verktyg i appen.
 
-> Den här guiden är ett levande dokument: den uppdateras allt eftersom appen får nya funktioner.
+> Den här manualen är ett levande dokument: den uppdateras allt eftersom appen får nya funktioner.
 
 ---
 
@@ -223,4 +223,4 @@ Dokumentläsaren öppnar och visar olika typer av filer utan att du behöver lä
 
 ---
 
-*Slut på guiden. Behöver du mer hjälp? Använd avsnittet **Om** för att se appens version eller kontakta utvecklaren.*
+*Slut på manualen. Behöver du mer hjälp? Använd avsnittet **Om** för att se appens version eller kontakta utvecklaren.*

@@ -10,6 +10,7 @@ public partial class GuidePage : ContentPage
 
     private readonly IServiceProvider _serviceProvider;
     private ILanguageService? _languageService;
+    private IThemeService? _themeService;
 
     public GuidePage(IServiceProvider serviceProvider)
     {
@@ -26,6 +27,9 @@ public partial class GuidePage : ContentPage
         _languageService = _serviceProvider.GetRequiredService<ILanguageService>();
         _languageService.LanguageChanged += OnLanguageChanged;
 
+        _themeService = _serviceProvider.GetRequiredService<IThemeService>();
+        _themeService.ThemeChanged += OnThemeChanged;
+
         LoadGuideAsync();
     }
 
@@ -35,9 +39,17 @@ public partial class GuidePage : ContentPage
 
         if (_languageService is not null)
             _languageService.LanguageChanged -= OnLanguageChanged;
+
+        if (_themeService is not null)
+            _themeService.ThemeChanged -= OnThemeChanged;
     }
 
     private void OnLanguageChanged(object? sender, EventArgs e)
+    {
+        LoadGuideAsync();
+    }
+
+    private void OnThemeChanged(object? sender, EventArgs e)
     {
         LoadGuideAsync();
     }
@@ -53,7 +65,8 @@ public partial class GuidePage : ContentPage
             var markdown = await ReadGuideMarkdownAsync(_languageService!);
             var images = await ReadReferencedImagesAsync(markdown);
             var converter = _serviceProvider.GetRequiredService<IMarkdownToHtmlConverter>();
-            viewModel.HtmlContent = converter.ConvertToHtml(markdown, images);
+            var isDarkTheme = _themeService?.IsDarkTheme ?? true;
+            viewModel.HtmlContent = converter.ConvertToHtml(markdown, isDarkTheme, images);
         }
         catch (Exception)
         {

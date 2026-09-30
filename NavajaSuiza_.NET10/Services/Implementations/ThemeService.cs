@@ -4,6 +4,10 @@ namespace NavajaSuiza_.NET10.Services.Implementations;
 
 public class ThemeService : IThemeService
 {
+    public event EventHandler? ThemeChanged;
+
+    public bool IsDarkTheme { get; private set; } = true;
+
     public bool ApplySavedTheme()
     {
         if (Preferences.ContainsKey("ThemeMode"))
@@ -29,9 +33,12 @@ public class ThemeService : IThemeService
 
     private void ApplyTheme(bool isDarkMode)
     {
+        IsDarkTheme = isDarkMode;
         Application.Current!.UserAppTheme = isDarkMode ? AppTheme.Dark : AppTheme.Light;
 
         UpdateStatusBarColors(isDarkMode);
+
+        ThemeChanged?.Invoke(this, EventArgs.Empty);
     }
 
     private void UpdateStatusBarColors(bool isDarkMode)
