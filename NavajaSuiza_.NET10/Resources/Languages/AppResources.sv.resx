@@ -135,12 +135,6 @@
   <data name="CancelText" xml:space="preserve">
     <value>Avbryt</value>
   </data>
-  <data name="FlashlightActionOffText" xml:space="preserve">
-    <value>Stänga av</value>
-  </data>
-  <data name="FlashlightActionOnText" xml:space="preserve">
-    <value>Sätta på</value>
-  </data>
   <data name="FlashlightNoteText" xml:space="preserve">
     <value>Obs: Skärmen använder maximal ljusstyrka för att simulera ljus.</value>
   </data>
@@ -161,12 +155,6 @@
   </data>
   <data name="FlashlightOptionsText" xml:space="preserve">
     <value>Välj din ljuskälla</value>
-  </data>
-  <data name="FlashlightStatusOffText" xml:space="preserve">
-    <value>På</value>
-  </data>
-  <data name="FlashlightStatusOnText" xml:space="preserve">
-    <value>Av</value>
   </data>
   <data name="FlashlightText" xml:space="preserve">
     <value>Ficklampa</value>
@@ -230,9 +218,6 @@
   </data>
   <data name="PdfReaderPickerTitleText" xml:space="preserve">
     <value>Välj en fil (PDF, DOC, DOCX, XLS, XLSX, CSV eller text)</value>
-  </data>
-  <data name="PdfReaderEmptyHintText" xml:space="preserve">
-    <value>Välj en fil för att visa innehållet.</value>
   </data>
   <data name="PdfReaderOpenErrorText" xml:space="preserve">
     <value>Det gick inte att öppna filen.</value>
@@ -299,9 +284,6 @@
   </data>
   <data name="TunerText" xml:space="preserve">
     <value>Tuner</value>
-  </data>
-  <data name="WeatherText" xml:space="preserve">
-    <value>Väder</value>
   </data>
   <data name="FlashlightScreenLightText" xml:space="preserve">
     <value>Skärmljus</value>
@@ -380,9 +362,6 @@
   </data>
   <data name="FramingModeCoverText" xml:space="preserve">
     <value>Täcka</value>
-  </data>
-  <data name="FramingModeFillText" xml:space="preserve">
-    <value>Fylla</value>
   </data>
   <data name="FramingBackgroundBlurText" xml:space="preserve">
     <value>Fläck</value>
@@ -467,9 +446,6 @@
   </data>
   <data name="CompassCalibrationEndText" xml:space="preserve">
     <value>Kalibrering klar</value>
-  </data>
-  <data name="CompassCalibrationIconText" xml:space="preserve">
-    <value>🧭</value>
   </data>
   <data name="CompassCalibrateButtonText" xml:space="preserve">
     <value>Kalibrera kompass</value>

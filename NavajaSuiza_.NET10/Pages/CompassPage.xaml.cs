@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using NavajaSuiza.Core.ViewModels;
 
 namespace NavajaSuiza_.NET10.Pages;
@@ -33,8 +34,9 @@ public partial class CompassPage : ContentPage
         {
             await _viewModel.StartSensorsAsync();
         }
-        catch (Exception)
+        catch (Exception exception)
         {
+            Debug.WriteLine($"Compass sensors could not start: {exception.Message}");
         }
     }
 
@@ -45,8 +47,9 @@ public partial class CompassPage : ContentPage
         {
             _viewModel?.StopSensors();
         }
-        catch (Exception)
+        catch (Exception exception)
         {
+            Debug.WriteLine($"Compass sensors could not stop: {exception.Message}");
         }
     }
 }

@@ -368,7 +368,7 @@ NavajaSuiza_.NET10.sln
 │   │   │   ├── AppResources.en.resx    # Inglés
 │   │   │   └── AppResources.sv.resx    # Sueco
 │   │   ├── Raw/
-│   │   │   ├── Audio/                   # Assets de audio WAV (37 archivos)
+│   │   │   ├── Audio/                   # Assets de audio WAV (32 archivos)
 │   │   │   └── guide/                   # Guía del usuario (USER_GUIDE.{es,en,sv}.md + imágenes)
 │   │   └── Styles/
 │   ├── Platforms/

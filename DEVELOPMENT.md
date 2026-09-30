@@ -187,7 +187,7 @@ NavajaSuiza_.NET10/                   # Solution
 │   └── MauiProgram.cs
 │
 └── NavajaSuiza.Test/                # Proyecto de tests (net10.0 puro)
-    └── *Tests.cs                     # xUnit + Moq, 214 tests
+    └── *Tests.cs                     # xUnit + Moq, 227 tests
 ```
 
 #### Regla de separación Core vs MAUI
@@ -448,21 +448,21 @@ Constantes centralizadas agrupadas por dominio (Metronome, Framing, Instruments)
 
 | Converter | Función |
 |-----------|---------|
-| `BoolToLocalizedStringConverter` | Convierte `bool` a string localizado (TrueResourceKey/FalseResourceKey) |
 | `BoolToColorConverter` | Convierte `bool` a color (TrueColor/FalseColor). Soporta `FalseColorLight`/`FalseColorDark` para theme-aware |
 | `InvertedBoolConverter` | Invierte `bool` (true→false, false→true). Usado para `!IsBusy` en bindings de IsEnabled |
+| `StringNotEmptyConverter` | `string` no vacío/no blanco → `true`. Usado para la visibilidad de mensajes (error, vacío, confirmación). `ConvertBack` lanza `NotSupportedException` |
 
 ---
 
 ## 11. Assets de audio
 
-37 archivos WAV en `Resources/Raw/`:
+32 archivos WAV en `Resources/Raw/`:
 
 | Prefijo | Instrumento | Cantidad |
 |---------|-------------|----------|
 | `GN_` | Guitarra Nylon | 6 |
 | `GS_` | Guitarra Acero | 6 |
-| `B_` | Bajo | 5 |
+| `B_` | Bajo | 4 |
 | `U_` | Ukulele | 4 |
 | `V_` | Violín | 4 |
 | `C_` | Charango | 6 |
@@ -476,6 +476,7 @@ Constantes centralizadas agrupadas por dominio (Metronome, Framing, Instruments)
 - `CAMERA`
 - `FLASHLIGHT`
 - `ACCESS_COARSE_LOCATION` / `ACCESS_FINE_LOCATION` (posición bajo demanda, ver 6.5)
+- `WRITE_EXTERNAL_STORAGE` con `android:maxSdkVersion="28"` (solo para exportar la pizarra en Android API 21–28; ver 18.1)
 
 **Ubicación**: re-Agregada a propósito para la función "Mi posición" de la brújula (6.5), revirtiendo parte de la tarea 33. Se solicita en runtime solo al presionar el botón y únicamente mientras la app está en uso; no hay rastreo en background. Google Play requiere declarar el uso de ubicación en el Data safety del release.
 
@@ -631,6 +632,12 @@ MAUI `Battery.Default` en Android exige `BATTERY_STATS` (permiso protegido `sign
 
 24. **Despliegue en emulador desde Visual Studio se agotaba esperando el proceso**: el lanzador expiraba con "No se pudo obtener el id. de proceso para 'com.nefelin.navajasuiza'" durante el arranque en frío (~6 s) combinado con Fast Deployment (`monodroid-debug: Not starting the debugger as the timeout value has been reached`). **Diagnóstico anterior corregido**: la causa **no** era que `adb` estuviera fuera del PATH. Verificado en esta máquina: `adb` sigue fuera del PATH (ni en variables de sistema ni de usuario, y sin `ANDROID_HOME`/`ANDROID_SDK_ROOT`) y el despliegue funciona igual, porque Visual Studio resuelve el Android SDK por su cuenta. El fallo era **intermitente**, del mismo tipo que el bloqueo de Smart App Control. **Verificado**: la app despliega y arranca desde Visual Studio sin pasos manuales.
 
+25. **Limpieza de código muerto, catches silenciosos y recursos huérfanos** (complementa el punto 5):
+    - `FlashlightViewModel`: eliminados la propiedad `IsLightOn` y la dependencia única de `ILanguageService`, con su suscripción a `LanguageChanged` y su `Cleanup()` vacío. `FlashlightPage.xaml` ya no declara `BoolToStatusText` ni `BoolToActionText`.
+    - `BoolToLocalizedStringConverter` eliminado: quedó huérfano al quitar esas dos declaraciones. Sus etiquetas de linterna tenían los valores **invertidos** (`FlashlightStatusOffText` = "Encendido") y `FramingModeFillText` era una etiqueta obsoleta, ya que el modo `AspectFill` se muestra con `FramingModeCoverText`.
+    - Catches silenciosos con traza: `FlashlightViewModel` ahora recibe `ILogger<T>` para los fallos de apagado antes y después de Morse; `CompassPage.xaml.cs` y `ThemeService` usan `Debug.WriteLine`. Se conservan los `catch (OperationCanceledException)` y los fallbacks deliberados.
+    - 8 claves sin uso eliminadas de `AppResources.resx`, `AppResources.en.resx` y `AppResources.sv.resx`: `FlashlightActionOnText`, `FlashlightActionOffText`, `FlashlightStatusOnText`, `FlashlightStatusOffText`, `FramingModeFillText`, `PdfReaderEmptyHintText`, `CompassCalibrationIconText` y `WeatherText`. Las 3 tablas quedan alineadas con 124 claves cada una, con BOM UTF-8 y CRLF preservados.
+
 ### 15.2 Issues pendientes (Backlog)
 
 - **Biblioteca de componentes MAUI**: la planificación se extrae a un proyecto independiente (no entra en el alcance de esta app). El documento de planificación se movió fuera del repositorio.
@@ -664,7 +671,7 @@ Pasos 1–6 completados: la app está publicada en Internal testing y Closed tes
 
 ### 18.1 Pizarra (dibujo)
 
-Estado: **Fases 1 y 2 implementadas y verificadas** (suite total 214 tests; builds Android/Windows 0 errores). Fase 2 = export WebP a galería, ahora **transversal vía SkiaSharp** (verificado en emulador Android y en Windows). **Goma descartada**: Deshacer (LIFO) + Limpiar cubren el caso de esta app.
+Estado: **Fases 1 y 2 implementadas y verificadas** (suite total 227 tests; builds Android/Windows 0 errores). Fase 2 = export WebP a galería, ahora **transversal vía SkiaSharp** (verificado en emulador Android y en Windows). **Goma descartada**: Deshacer (LIFO) + Limpiar cubren el caso de esta app.
 
 Entregado (Fase 1):
 - Lienzo a máximo espacio (`Grid` `Auto,Auto,*`), **sin `ScrollView`** (interceptaba los gestos verticales del dibujo).
@@ -710,7 +717,7 @@ Pendiente de definir: ¿conteo solo en primer plano o en segundo plano/cerrada?;
 
 ### 18.4 Visor de PDF (Syncfusion SfPdfViewer)
 
-Estado: **implementada y verificada en dispositivo real** (Android/Windows build 0/0; suite total 214 tests; **todas las conversiones y los visores probados en runtime en dispositivo físico**: PDF directo, DOCX, XLSX, CSV→PDF, texto plano y DOC/XLS legacy).
+Estado: **implementada y verificada en dispositivo real** (Android/Windows build 0/0; suite total 227 tests; **todas las conversiones y los visores probados en runtime en dispositivo físico**: PDF directo, DOCX, XLSX, CSV→PDF, texto plano y DOC/XLS legacy).
 
 Decisión de alcance:
 - **Visor real de PDF mediante Syncfusion `SfPdfViewer`** (paquetes `Syncfusion.Maui.PdfViewer` 34.2.9 + `Syncfusion.Licensing` 34.2.9). Sustituye al visor propio con `#if ANDROID`/`#if WINDOWS` (`Android.Graphics.Pdf.PdfRenderer` + `Windows.Data.Pdf`) que se descartó por decisión del usuario tras probarla en emulador (sept 2026): no se comportaba como un visor real (scroll discreto por página rasterizada, sin búsqueda ni selección de texto).

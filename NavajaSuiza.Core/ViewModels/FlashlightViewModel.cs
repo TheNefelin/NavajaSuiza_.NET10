@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Extensions.Logging;
 using NavajaSuiza.Core.Interfaces;
 using NavajaSuiza.Core.Models;
 using NavajaSuiza.Core.ViewModels;
@@ -9,7 +10,7 @@ namespace NavajaSuiza.Core.ViewModels;
 public partial class FlashlightViewModel : BaseViewModel
 {
     private readonly INavigationService _navigationService;
-    private readonly ILanguageService _languageService;
+    private readonly ILogger<FlashlightViewModel> _logger;
     private readonly IFlashlightService _flashlightService;
     private readonly IDeviceDisplayService _deviceDisplayService;
     private readonly IFlashlightStateService _stateService;
@@ -37,9 +38,6 @@ public partial class FlashlightViewModel : BaseViewModel
     public partial bool IsScreenOn { get; set; }
 
     [ObservableProperty]
-    public partial bool IsLightOn { get; set; }
-
-    [ObservableProperty]
     public partial bool IsSosActive { get; set; }
 
     [ObservableProperty]
@@ -65,31 +63,19 @@ public partial class FlashlightViewModel : BaseViewModel
     }
 
     public FlashlightViewModel(
+        ILogger<FlashlightViewModel> logger,
         INavigationService navigationService,
-        ILanguageService languageService,
         IFlashlightService flashlightService,
         IDeviceDisplayService deviceDisplayService,
         IFlashlightStateService stateService,
         IMorseSignalService morseSignalService)
     {
+        _logger = logger;
         _navigationService = navigationService;
-        _languageService = languageService;
         _flashlightService = flashlightService;
         _deviceDisplayService = deviceDisplayService;
         _stateService = stateService;
         _morseSignalService = morseSignalService;
-        _languageService.LanguageChanged += OnLanguageChanged;
-    }
-
-    private void OnLanguageChanged(object? sender, EventArgs e)
-    {
-        OnPropertyChanged(nameof(IsLightOn));
-    }
-
-    public override void Cleanup()
-    {
-        _languageService.LanguageChanged -= OnLanguageChanged;
-        base.Cleanup();
     }
 
     [RelayCommand]
@@ -196,8 +182,9 @@ public partial class FlashlightViewModel : BaseViewModel
             {
                 await _flashlightService.TurnOffAsync();
             }
-            catch (Exception)
+            catch (Exception exception)
             {
+                _logger.LogWarning(exception, "Could not turn the flash off before the Morse sequence");
             }
         }
 
@@ -261,8 +248,9 @@ public partial class FlashlightViewModel : BaseViewModel
             {
                 await _flashlightService.TurnOffAsync();
             }
-            catch (Exception)
+            catch (Exception exception)
             {
+                _logger.LogWarning(exception, "Could not turn the flash off after the Morse sequence");
             }
 
             if (ReferenceEquals(_morseCts, cts))

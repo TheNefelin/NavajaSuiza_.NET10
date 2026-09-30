@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using Moq;
 using NavajaSuiza.Core.Interfaces;
 using NavajaSuiza.Core.Models;
@@ -8,16 +9,16 @@ namespace NavajaSuiza.Test;
 
 public class FlashlightViewModelTests
 {
+    private readonly Mock<ILogger<FlashlightViewModel>> _loggerMock = new();
     private readonly Mock<INavigationService> _navigationServiceMock = new();
-    private readonly Mock<ILanguageService> _languageServiceMock = new();
     private readonly Mock<IFlashlightService> _flashlightServiceMock = new();
     private readonly Mock<IDeviceDisplayService> _deviceDisplayServiceMock = new();
     private readonly Mock<IMorseSignalService> _morseSignalServiceMock = new();
     private readonly IFlashlightStateService _stateService = new FlashlightStateService();
 
     private FlashlightViewModel CreateSut() => new(
+        _loggerMock.Object,
         _navigationServiceMock.Object,
-        _languageServiceMock.Object,
         _flashlightServiceMock.Object,
         _deviceDisplayServiceMock.Object,
         _stateService,

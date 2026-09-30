@@ -81,8 +81,9 @@ public class ThemeService : IThemeService
             controller.AppearanceLightStatusBars = !isDarkMode;
             controller.AppearanceLightNavigationBars = !isDarkMode;
         }
-        catch (Exception)
+        catch (Exception exception)
         {
+            System.Diagnostics.Debug.WriteLine($"System bar appearance failed: {exception.Message}");
         }
 #endif
     }

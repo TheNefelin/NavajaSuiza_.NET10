@@ -17,14 +17,6 @@
             TrueColor="{StaticResource MyPrimaryDark}"
             FalseColorLight="{StaticResource MyPrimaryTextLight}"
             FalseColorDark="{StaticResource MyPrimaryTextDark}" />
-        <converters:BoolToLocalizedStringConverter 
-            x:Key="BoolToStatusText"
-            TrueResourceKey="FlashlightStatusOffText"
-            FalseResourceKey="FlashlightStatusOnText" />
-        <converters:BoolToLocalizedStringConverter 
-            x:Key="BoolToActionText"
-            TrueResourceKey="FlashlightActionOffText"
-            FalseResourceKey="FlashlightActionOnText" />
         <converters:BoolToColorConverter
             x:Key="MorseButtonColor"
             TrueColor="{StaticResource MyAccent}"

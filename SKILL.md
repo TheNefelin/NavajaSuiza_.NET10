@@ -513,7 +513,7 @@ protected override void OnAppearing()
 | Componente | Lifetime correcto | Justificación |
 |------------|-------------------|---------------|
 | **Services stateless** (wrappers de APIs de plataforma, sensores, idioma) | Singleton | Sin estado mutable persistente; seguros de compartir |
-| **Services con estado por instancia** (audio de instrumentos, metrónomo) | Transient | Estado aislado por ViewModel/página; evita estado residual entre navegaciones |
+| **Services con estado por instancia** (reproducción de audio, players, temporizadores) | Transient | Estado aislado por ViewModel/página; evita estado residual entre navegaciones |
 | **ViewModels** | Transient | Fresh instance en cada navegación, sin estado residual |
 | **Pages** | Singleton (Shell) | Shell cachea las ShellContent pages |
 | **AppShell** | Singleton | Shell infrastructure |
@@ -527,7 +527,7 @@ builder.Services
     .AddSingleton<IAppInfoService, AppInfoService>()
     .AddSingleton<ILauncherService, LauncherService>()
     // Services con estado por instancia — Transient
-    .AddTransient<IMetronomeService, MetronomeService>()
+    .AddTransient<IAudioPlayerService, AudioPlayerService>()
     // ViewModels — Transient
     .AddTransient<HomeViewModel>()
     .AddTransient<SettingsViewModel>()
@@ -799,11 +799,11 @@ Para estado visual binario (on/off, active/inactive), usar `IValueConverter` con
 
 ### 11.9 Localización multi-idioma (resx)
 
-Patrón validado en el repo (ES/EN/SV):
+Patrón validado en MAUI (ES/EN/SV):
 
-- **Recursos**: `AppResources.resx` (idioma base) + `AppResources.{culture}.resx` (p. ej. `.en`, `.sv`).
-- **Manager**: `LocalizationResourceManager` (singleton) expone un indexer por clave `[Clave]`; al cambiar de idioma notifica para re-enlazar los Bindings.
-- **Markup**: `TranslateExtension` (namespace propio, `IMarkupExtension<BindingBase>`) usado como `{extensions:Translate Clave}`.
+- **Recursos**: un `.resx` base (idioma por defecto) + un `.{culture}.resx` por idioma adicional (p. ej. `.en`, `.sv`), todos con el **mismo nombre base**. La paridad de claves entre idiomas es obligatoria: una clave que existe en el base y no en una traducción cae en fallback silencioso.
+- **Manager**: singleton que expone un indexer por clave `[Clave]` y una propiedad de cultura; al cambiarla notifica (`PropertyChanged`) para re-enlazar los Bindings.
+- **Markup**: una `IMarkupExtension<BindingBase>` en namespace propio que devuelve un `Binding` al indexer del manager, usada como `{ext:Translate Clave}`.
 
 ```csharp
 // Devuelve un Binding enlazado al indexer del manager.
@@ -813,12 +813,12 @@ public BindingBase ProvideValue(IServiceProvider serviceProvider)
     {
         Mode = BindingMode.OneWay,
         Path = $"[{Name}]",
-        Source = LocalizationResourceManager.Instance
+        Source = LocalizationManager.Instance
     };
 }
 ```
 
-**Gotcha verificada**: `TranslateExtension` devuelve un **`Binding`**. Usarlo SOLO en propiedades bindables (`Text`, `Title`, `ToolTip`, ...). En propiedades no enlazables (p. ej. valores estáticos, `Source`, colecciones) no aplica o falla silenciosamente.
+**Gotcha verificada**: la markup extension devuelve un **`Binding`**. Usarla SOLO en propiedades bindables (`Text`, `Title`, `ToolTip`, ...). En propiedades no enlazables (p. ej. valores estáticos, `Source`, colecciones) no aplica o falla silenciosamente.
 
 **Reglas**:
 - Un `View`/`Page` que muestre cadenas debe consumir las claves vía markup; nunca hardcodear textos visibles.
@@ -839,7 +839,7 @@ public BindingBase ProvideValue(IServiceProvider serviceProvider)
 | Caso de uso | Motor recomendado |
 |-------------|-------------------|
 | Música, reproducción larga, notas de instrumento | `MediaElement` |
-| Clics/efectos cortos precisos (metrónomo) | APIs nativas de baja latencia |
+| Clics/efectos cortos y precisos | APIs nativas de baja latencia |
 
 APIs de baja latencia disponibles sin dependencias nuevas:
 
@@ -851,15 +851,15 @@ APIs de baja latencia disponibles sin dependencias nuevas:
 
 ```csharp
 // Core
-public interface IMetronomeClickService
+public interface IShortSoundPlayer
 {
-    void PlayClick(bool accent);
+    void Play(bool accent);
 }
 
 // MAUI (implementación única por TFM con #if)
-public partial class MetronomeClickService : IMetronomeClickService
+public partial class ShortSoundPlayer : IShortSoundPlayer
 {
-    public void PlayClick(bool accent)
+    public void Play(bool accent)
     {
 #if ANDROID
         _soundPool?.Play(accent ? _accentSoundId : _normalSoundId, 1f, 1f, 1, 0, 1f);
@@ -877,7 +877,7 @@ public partial class MetronomeClickService : IMetronomeClickService
 ### 11.12 Reuso y convenciones para biblioteca de componentes
 
 - **Colores/estilos con `AppThemeBinding`** desde el origen: todo recurso visual declara variante claro/oscuro; nunca un color fijo para ambos temas.
-- **Converters centralizados** (`BoolToColorConverter`, `BoolToLocalizedStringConverter`, `InvertedBoolConverter`): estado visual binario por binding, no por DataTriggers (§11.8).
+- **Converters centralizados**: todo converter vive en un único lugar y se reutiliza; el estado visual binario se resuelve por binding, no por DataTriggers (§11.8). Antes de escribir uno nuevo, verificar si ya existe uno equivalente.
 - **Componentes autocontenidos** (1 control = 1 archivo + partial class si requiere código) con inyección por `BindableProperty` (§11.5), nunca Service Locator.
 - Si hay 3+ apps MAUI que comparten estilos/converters/localización/servicios wrapper, extraerlos a una **librería compartida** (`Toolkit.Core` maUI-free + `Toolkit.Maui`) consumida por referencia de proyecto; recién evaluar NuGet cuando la distribución lo justifique.
 
@@ -919,9 +919,9 @@ public static int GetBatteryLevel(Android.Content.Context ctx) =>
 - **Contrato**: el keystore del APK de prueba debe ser el **mismo** que el del AAB final (si no, Play rechaza la actualización).
 - Play **no acepta APK**: se sube un **AAB** firmado (Release con `AndroidPackageFormat` aab por defecto; APK de prueba con `-p:AndroidPackageFormat=apk`). Activar **Play App Signing**: el keystore propio es solo la *upload key*; Google firma los APK finales.
 
-**Licencias de componentes comerciales (ej. Syncfusion)**:
-- La clave se **inyecta en build como `AssemblyMetadata`** (csproj `-p:SyncfusionLicenseKey=...` o variable de entorno de la máquina `SYNC_FUSION_LICENSE_KEY`) y se lee por reflexión en `MauiProgram.cs` solo si trae valor. **Nunca hardcodear ni versionar la clave**. Separar de la CI/CD cuando corresponda.
-- Diferenciar **Trial** (30 días, genera aviso en runtime) de la **Community License** gratuita definitiva (sin expirar si se cumplen condiciones: <US$1M ingresos, ≤5 desarrolladores, ≤10 empleados). Verificar el tipo en el panel de cuentas de Syncfusion; no publicar en producción con clave trial.
+**Licencias de componentes comerciales**:
+- La clave se **inyecta en build como `AssemblyMetadata`** (propiedad de MSBuild pasada por línea de comandos o variable de entorno de la máquina) y se lee por reflexión en `MauiProgram.cs` solo si trae valor. **Nunca hardcodear ni versionar la clave**. Separar de la CI/CD cuando corresponda.
+- Diferenciar **Trial** (con expiración y aviso en runtime) de la **licencia gratuita definitiva** (sin expirar, sujeta a los límites de ingresos y tamaño de equipo que declare el proveedor). Verificar el tipo en el panel de cuentas del proveedor; no publicar en producción con clave trial.
 
 ---
 
