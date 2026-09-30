@@ -1,0 +1,54 @@
+name: Sincronizar guia
+
+# El README no debe llevar una copia de la guia: la region entre los marcadores
+# MANUAL:INICIO / MANUAL:FIN se regenera desde USER_GUIDE.es.md, que es la misma
+# fuente que carga la app. Asi la guia nunca puede quedar desactualizada en el
+# README sin que alguien lo note en un pull request.
+#
+# Solo se sincroniza el .md en espanol, que es el idioma de este README. El
+# workflow no se dispara por cambios en el README, asi que no puede entrar en
+# ciclo con el commit que publica.
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'NavajaSuiza_.NET10/Resources/Raw/guide/USER_GUIDE.es.md'
+      - '.github/scripts/sync-manual.py'
+      - '.github/workflows/sync-manual.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-manual
+  cancel-in-progress: true
+
+jobs:
+  sync:
+    name: Inyectar la guia en el README
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Obtener el codigo
+        uses: actions/checkout@v5
+
+      - name: Regenerar la region de la guia
+        run: python3 .github/scripts/sync-manual.py
+
+      - name: Publicar el README si cambio
+        run: |
+          git config user.name  'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+
+          git add README.md
+
+          # El script ya es idempotente, asi que esto casi nunca hace falta.
+          # Queda como red de seguridad para no crear un commit vacio.
+          if git diff --cached --quiet; then
+            echo 'El README ya estaba sincronizado.'
+            exit 0
+          fi
+
+          git commit -m 'docs(readme): sincroniza la guia de usuario desde USER_GUIDE.es.md'
+          git push

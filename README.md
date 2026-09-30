@@ -2,6 +2,9 @@
 
 Navaja suiza digital — app multiplataforma (.NET MAUI) con herramientas de uso diario: linterna, luz de pantalla, afinador de instrumentos, metrónomo, brújula, encuadre de imagen y más.
 
+<!-- MANUAL:INICIO - generado por .github/scripts/sync-manual.py, no editar a mano -->
+<!-- MANUAL:FIN -->
+
 ## Dependencias
 
 | Paquete | Versión |
