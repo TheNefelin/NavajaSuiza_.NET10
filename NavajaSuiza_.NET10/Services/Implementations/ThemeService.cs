@@ -1,4 +1,8 @@
-﻿using NavajaSuiza.Core.Interfaces;
+﻿#if ANDROID
+using AndroidX.Core.View;
+using Microsoft.Maui.Platform;
+#endif
+using NavajaSuiza.Core.Interfaces;
 
 namespace NavajaSuiza_.NET10.Services.Implementations;
 
@@ -43,25 +47,51 @@ public class ThemeService : IThemeService
 
     private void UpdateStatusBarColors(bool isDarkMode)
     {
-
 #if ANDROID
         try
         {
-            var color = Android.Graphics.Color.ParseColor("#243042");
-            var activity = Platform.CurrentActivity;
+            var resourceKey = isDarkMode ? "MyBackgroundMenuDark" : "MyBackgroundMenuLight";
 
-            if (activity?.Window != null)
+            if (ResolveThemeColor(resourceKey) is not { } color)
             {
-#pragma warning disable CA1422 // Deprecated in Android 35; still functional on target API levels
-                activity.Window.SetStatusBarColor(color);
-                activity.Window.SetNavigationBarColor(color);
-#pragma warning restore CA1422
+                return;
             }
+
+            var window = Platform.CurrentActivity?.Window;
+
+            if (window == null)
+            {
+                return;
+            }
+
+            var androidColor = color.ToPlatform();
+
+#pragma warning disable CA1422 // Deprecated in Android 35; still functional on target API levels
+            window.SetStatusBarColor(androidColor);
+            window.SetNavigationBarColor(androidColor);
+#pragma warning restore CA1422
+
+            var controller = WindowCompat.GetInsetsController(window, window.DecorView);
+
+            if (controller is null)
+            {
+                return;
+            }
+
+            controller.AppearanceLightStatusBars = !isDarkMode;
+            controller.AppearanceLightNavigationBars = !isDarkMode;
         }
         catch (Exception)
         {
         }
 #endif
+    }
 
+    private static Microsoft.Maui.Graphics.Color? ResolveThemeColor(string key)
+    {
+        return Application.Current?.Resources?.TryGetValue(key, out var value) == true
+            && value is Microsoft.Maui.Graphics.Color resolved
+                ? resolved
+                : null;
     }
 }

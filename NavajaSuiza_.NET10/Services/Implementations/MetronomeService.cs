@@ -154,13 +154,21 @@ public class MetronomeService : IMetronomeService
 
         var context = Android.App.Application.Context;
 
-        _soundPool = new Android.Media.SoundPool.Builder()
-            .SetMaxStreams(2)
-            .SetAudioAttributes(new Android.Media.AudioAttributes.Builder()
-                .SetUsage(Android.Media.AudioUsageKind.Game)
-                .SetContentType(Android.Media.AudioContentType.Sonification)
-                .Build())
+        var audioAttributes = new Android.Media.AudioAttributes.Builder()
+            .SetUsage(Android.Media.AudioUsageKind.Game)!
+            .SetContentType(Android.Media.AudioContentType.Sonification)!
             .Build();
+
+        _soundPool = new Android.Media.SoundPool.Builder()
+            .SetMaxStreams(2)!
+            .SetAudioAttributes(audioAttributes)!
+            .Build();
+
+        if (_soundPool == null)
+        {
+            System.Diagnostics.Debug.WriteLine("Metronome SoundPool not created");
+            return;
+        }
 
         _accentSoundId = LoadClip(context, ACCENT_CLIP);
         _normalSoundId = LoadClip(context, NORMAL_CLIP);

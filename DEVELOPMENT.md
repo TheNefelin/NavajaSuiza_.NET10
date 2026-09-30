@@ -363,7 +363,7 @@ Todos los servicios están registrados en `MauiProgram.cs` e inyectados por DI.
 - **Render**: `IMarkdownToHtmlConverter` en Core con **Markdig 1.4.0** (`UseAdvancedExtensions`), imágenes embebidas como **data URI** (se leen de los assets y se inyectan en el HTML para que funcionen offline en el WebView), CSS de tablas para las dos columnas por feature y regex que captura tanto `![alt](archivo)` como `<img src="...">`.
 - **Tema**: la guía era la única superficie visual sin soporte de tema, porque el WebView renderiza HTML plano y `AppThemeBinding` no aplica ahí. `ConvertToHtml(markdown, isDarkTheme, imageDataUris)` recibe el tema y elige entre dos paletas alineadas con `Resources/Styles/Colors.xaml` (`MyBackgroundLight/Dark`, `MyPrimaryTextLight/Dark`, `MyBackgroundMenuLight/Dark`); `Border` y `Muted` son las mezclas necesarias para tablas, citas y `hr`, que no existen en ese diccionario. **Descartado `prefers-color-scheme`**: ese media query refleja el modo oscuro del sistema operativo, no `Application.Current.UserAppTheme`, que la app gobierna con su propio toggle en `AboutPage`; con `prefers-color-scheme` la guía se desincronizaría del resto de la app al usar el toggle interno. La guía no usa enlaces ni bloques de código, así que no se estilan.
 - **Recarga dinámica**: `GuidePage` se suscribe a `LanguageChanged` y a `ThemeChanged` en `OnNavigatedTo`, y se desuscribe de ambos en `OnNavigatingFrom`; al cambiar el idioma o el tema con la guía abierta, `LoadGuideAsync()` re-renderiza el HTML (`HtmlContent` del `GuideViewModel`). `ThemeChanged` lo emite `ThemeService.ApplyTheme` después de setear `UserAppTheme`, y el tema vigente se lee de `IThemeService.IsDarkTheme`.
-- **Pendiente**: `ThemeService.UpdateStatusBarColors(bool isDarkMode)` recibe `isDarkMode` pero lo ignora y aplica siempre `#243042` a status y nav bar, también en tema claro. Queda fuera del alcance de la guía.
+- **Barras del sistema**: `ThemeService.UpdateStatusBarColors(bool isDarkMode)` aplica `MyBackgroundMenuDark`/`MyBackgroundMenuLight` de `Resources/Styles/Colors.xaml` según el tema (sin colores hardcodeados), resueltos con `ResolveThemeColor` sobre `Application.Current.Resources`. Además fija el contraste de los iconos con `WindowInsetsControllerCompat.AppearanceLightStatusBars`/`AppearanceLightNavigationBars`, porque `SetStatusBarColor` cambia solo el fondo y dejaría iconos blancos sobre fondo claro. Solo Android. `SetStatusBarColor`/`SetNavigationBarColor` están obsoletas desde Android 15+ (las apps dibujan de borde a borde por defecto), pero **en el dispositivo verificado el color de las barras sí cambia con esta llamada**, así que se mantienen. No se verificó el comportamiento en un Android 15+ real. En AndroidX Core 1.16 el contraste son **propiedades**, no métodos (`SetSystemBarsAppearance` no existe en esa versión). **Verificado en runtime** por el usuario en emulador Android (arranque desde Visual Studio): en tema oscuro la barra queda azul oscura con iconos claros, en tema claro queda casi blanca con iconos oscuros, y ambos cambian correctamente al cambiar el tema y al abrir la app.
 - **Manejo de error**: si no se puede cargar, se muestra `GuideLoadErrorText` localizado.
 - **DI**: `IMarkdownToHtmlConverter` (Singleton), `GuideViewModel` (Transient) y `GuidePage` (Singleton) registrados en `MauiProgram.cs`.
 - **Identidad de app**: `ApplicationTitle` = "Navaja Suiza" y `ApplicationId` = `com.nefelin.navajasuiza` (consistente con `AndroidManifest.xml`; el README ya documentaba ese ID en el APK firmado).
@@ -571,7 +571,7 @@ MAUI `Battery.Default` en Android exige `BATTERY_STATS` (permiso protegido `sign
 | 37 | Guía del usuario multi-idioma y multi-tema (Markdig, assets `USER_GUIDE.{es,en,sv}.md`, recarga al cambiar idioma o tema) | Core + MAUI (GuidePage) | ✅ Completado (214 tests) |
 | 38 | Identidad de app para la tienda (`ApplicationId com.nefelin.navajasuiza`, título "Navaja Suiza") | `NavajaSuiza_.NET10.csproj` | ✅ Completado |
 
-**Pendiente de release**: Privacy Policy **publicada** en `https://www.francisco-dev.cl/navaja-suiza/privacy-policy` (fuente en `PRIVACY_POLICY.md`, trilingüe + bloque Astro) y **`allowBackup=false` decidido** (Notas solo locales, sin transmisión). Resta: pegar la URL en el listing de Play Console, completar el formulario Data Safety, validar target SDK del AAB (targetSdk 36 cumple), assets de tienda (icono adaptativo 512, splash, screenshots, listing trilingüe ES/EN/SV), Release AAB firmado + internal/closed testing → producción.
+**Estado de release (2026-09-30)**: app **publicada en Google Play, en Internal testing y Closed testing** (pista `Prueba cerrada - Alpha`, release `1.1.97-prueba-cerrada`, AAB firmado aceptado; la vía de Internal testing está activa y se puede subir una versión nueva cuando haga falta). Privacy Policy **publicada** en `https://www.francisco-dev.cl/navaja-suiza/privacy-policy` (fuente en `PRIVACY_POLICY.md`, trilingüe + bloque Astro), **`allowBackup=false` decidido** (Notas solo locales, sin transmisión) y targetSdk 36 (cumple). **Siguiente paso**: completar los 12 testers opted-in durante 14 días continuos en la pista cerrada y luego solicitar la revisión de producción.
 
 ---
 
@@ -606,13 +606,13 @@ MAUI `Battery.Default` en Android exige `BATTERY_STATS` (permiso protegido `sign
 
 22. **Cronómetro: las marcas se perdían al navegar**: `Laps` vivía en el ViewModel (Transient). Solución: persistencia en `StopwatchService` (Singleton); las marcas se limpian únicamente con el reset (segundo toque de Stop).
 
+23. **Metrónomo: jitter y deriva acumulada del clic**: el scheduler usaba `PeriodicTimer` con salto al UI thread, lo que acumulaba deriva. Solución: scheduler de tiempos absolutos con `Stopwatch` (`Stopwatch.StartNew()` + `nextTick - stopwatch.Elapsed`) y `Android.Media.SoundPool` para la reproducción; `MediaElement` queda solo como fallback cuando `SoundPool` no está disponible. **Sin dependencias nuevas.** No se extrajo un `MetronomeClickService` por plataforma: la latencia quedó resuelta sin necesidad de una capa nueva. Referencia: jfversluis/Plugin.Maui.Audio#89 documenta latencia de 150-200 ms incluso con player precargado. **Verificado en runtime** por el usuario en emulador Android (arranque desde Visual Studio): clic normal y acentuado auditionados sin deriva.
+
+24. **Despliegue en emulador desde Visual Studio se agotaba esperando el proceso**: el lanzador expiraba con "No se pudo obtener el id. de proceso para 'com.nefelin.navajasuiza'" durante el arranque en frío (~6 s) combinado con Fast Deployment (`monodroid-debug: Not starting the debugger as the timeout value has been reached`). **Diagnóstico anterior corregido**: la causa **no** era que `adb` estuviera fuera del PATH. Verificado en esta máquina: `adb` sigue fuera del PATH (ni en variables de sistema ni de usuario, y sin `ANDROID_HOME`/`ANDROID_SDK_ROOT`) y el despliegue funciona igual, porque Visual Studio resuelve el Android SDK por su cuenta. El fallo era **intermitente**, del mismo tipo que el bloqueo de Smart App Control. **Verificado**: la app despliega y arranca desde Visual Studio sin pasos manuales.
+
 ### 15.2 Issues pendientes (Backlog)
 
-- **Metrónomo — audio de baja latencia**: el clic usa `MediaElement` + `PeriodicTimer` con salto al UI thread (jitter y deriva acumulada). Plan: refactor a servicio `MetronomeClickService` por plataforma (Android `SoundPool`, iOS `AudioToolbox.SystemSound`) + scheduler con tiempos absolutos (`Stopwatch`) para eliminar deriva. **Sin dependencias nuevas.** Referencia: jfversluis/Plugin.Maui.Audio#89 documenta latencia de 150-200 ms incluso con player precargado.
-- **Weather — módulo del clima**: evaluar Open-Meteo (gratis, sin API key) cuando se implemente.
 - **Biblioteca de componentes MAUI**: la planificación se extrae a un proyecto independiente (no entra en el alcance de esta app). El documento de planificación se movió fuera del repositorio.
-- **Deploy Android automatizado falla ("No se pudo obtener el id. de proceso para 'com.nefelin.navajasuiza'")**: la app se instala y arranca bien manualmente (`adb shell am start`), pero el lanzador/depurador expira esperando el pid (arranque en frío ~6 s + Fast Deployment; log `monodroid-debug: Not starting the debugger as the timeout value has been reached`). Operativo: `adb` **no está en PATH** (ruta `C:\Program Files (x86)\Android\android-sdk\platform-tools\adb.exe`); si el Run falla, probar `adb uninstall com.nefelin.navajasuiza` y reintentar, y si persiste reiniciar el emulador.
-
 ---
 
 ## 16. Referencias
@@ -635,7 +635,7 @@ Pasos para publicar `NavajaSuiza` en Google Play (proceso de mantenedor, no docu
 5. **Subir assets del listing**: ícono 512×512, screenshots (mín. 2, recomendado 6–8), textos trilingües ES/EN/SV.
 6. **Cargar el Release AAB firmado**: subir el `.aab` (ver README §Release) → Internal testing → Closed testing → Production.
 
-Pasos 1–2 completados; 3–6 según el plan §14 Fase F.
+Pasos 1–6 completados: la app está publicada en Internal testing y Closed testing. Estado actual y siguiente paso en §14 Fase F.
 
 ---
 
@@ -643,7 +643,7 @@ Pasos 1–2 completados; 3–6 según el plan §14 Fase F.
 
 ### 18.1 Pizarra (dibujo)
 
-Estado: **Fases 1 y 2 implementadas y verificadas** (170 tests; builds Android/Windows 0 errores). Fase 2 = export WebP a galería, ahora **transversal vía SkiaSharp** (verificado en emulador Android y en Windows). **Goma descartada**: Deshacer (LIFO) + Limpiar cubren el caso de esta app.
+Estado: **Fases 1 y 2 implementadas y verificadas** (suite total 214 tests; builds Android/Windows 0 errores). Fase 2 = export WebP a galería, ahora **transversal vía SkiaSharp** (verificado en emulador Android y en Windows). **Goma descartada**: Deshacer (LIFO) + Limpiar cubren el caso de esta app.
 
 Entregado (Fase 1):
 - Lienzo a máximo espacio (`Grid` `Auto,Auto,*`), **sin `ScrollView`** (interceptaba los gestos verticales del dibujo).
@@ -661,10 +661,7 @@ Entregado (Fase 2 — Guardar/export a galería):
 - Guardado por plataforma: **Android** vía `MediaStore.Images` → `Pictures/pizarra.webp` (API 29+ sin permiso; API 21–28 pide `WRITE_EXTERNAL_STORAGE` en runtime, declarado en manifest con `maxSdkVersion="28"`); **Windows** → archivo WebP en Carpeta de imágenes (nombre único con fecha+guid); iOS/MacCatalyst `NotAvailable`.
 - El VM expone `PizarraExportResult` (`Saved`/`NotAvailable`/`Failed`) y la página muestra el mensaje correspondiente (resx ×3).
 
-Pendiente (Fase 3):
-- **Compartir** la imagen exportada desde la app (Share API de MAUI).
-- **iOS**: guardado en Photos (requeriría `NSPhotoLibraryAddUsageDescription` en el Info.plist).
-- La **goma quedó descartada** (Deshacer/ Limpiar cubren el caso; Deshacer es LIFO y Limpiar total — ver estado).
+Fase 3 **descartada por decisión del usuario** (2026-09-30): no habrá botón de compartir, porque la imagen se guarda localmente en la galería y eso ya cubre el caso de uso. Tampoco se implementa el guardado en Photos de iOS, ya que el proyecto no cubre iOS por no disponer de Mac para compilar. La Pizarra queda **completa en las Fases 1 y 2**.
 
 Enfoque técnico de export (referencia):
 - **MAUI no exporta `GraphicsView` a archivo**: se re-rasterizan los trazos desde el modelo. Ahora con **SkiaSharp** (una dependencia, raster + WebP transversal para todas las plataformas). Se evaluó un rasterizador propio en Core + encoder PNG (0 dependencias) pero se descartó: más líneas de gráficas que mantener y se perdía el WebP liviano.
@@ -673,7 +670,7 @@ Enfoque técnico de export (referencia):
 
 ### 18.2 Contador de pasos
 
-Estado: **planificada** — enfoque definido; pendiente confirmar alcance y autorización para implementar.
+Estado: **planificada, sin urgencia** — el usuario confirmó que le serviría, pero no es prioritario. Enfoque definido; pendiente confirmar alcance y autorización para implementar.
 
 Referencia de cómo funciona (contexto técnico):
 - El conteo real **no usa GPS**; usa sensores inerciales:
@@ -692,23 +689,23 @@ Pendiente de definir: ¿conteo solo en primer plano o en segundo plano/cerrada?;
 
 ### 18.4 Visor de PDF (Syncfusion SfPdfViewer)
 
-Estado: **implementada y verificada** (Android/Windows 0/0; tests del suite en total 212; conversión DOCX/XLSX y PDF directo verificados en runtime en dispositivo; CSV→PDF, visor de texto y DOC/XLS legacy verificados en build + tests, runtime pendiente).
+Estado: **implementada y verificada en dispositivo real** (Android/Windows build 0/0; suite total 214 tests; **todas las conversiones y los visores probados en runtime en dispositivo físico**: PDF directo, DOCX, XLSX, CSV→PDF, texto plano y DOC/XLS legacy).
 
 Decisión de alcance:
 - **Visor real de PDF mediante Syncfusion `SfPdfViewer`** (paquetes `Syncfusion.Maui.PdfViewer` 34.2.9 + `Syncfusion.Licensing` 34.2.9). Sustituye al visor propio con `#if ANDROID`/`#if WINDOWS` (`Android.Graphics.Pdf.PdfRenderer` + `Windows.Data.Pdf`) que se descartó por decisión del usuario tras probarla en emulador (sept 2026): no se comportaba como un visor real (scroll discreto por página rasterizada, sin búsqueda ni selección de texto).
 - **Licencia**: componente comercial; aplica la **Community License** gratuita (empresas y personas: organizaciones <US$1M de ingresos anuales, ≤5 desarrolladores, ≤10 empleados). La clave se **inyecta en build como `AssemblyMetadata`** (`MauiProgram.cs` lee el atributo y llama `SyncfusionLicenseProvider.RegisterLicense` solo si trae valor): se obtiene de la variable de entorno `SYNC_FUSION_LICENSE_KEY` o de la property MSBuild `-p:SyncfusionLicenseKey=...` (definida en el csproj con fallback a vacío). **La clave nunca se hardcodea ni se versiona** en el repositorio. Sin clave configurada el proyecto compila igual (sin registro; el visor mostraría advertencia trial en runtime). El `Syncfusion.Maui.Toolkit` 1.0.11 ya presente es un producto distinto (free) y coexiste sin conflicto.
-- El control cubre las 4 TFMs del csproj: Android, iOS, MacCatalyst y Windows (net10); build verificado en Android y Windows; iOS/MacCatalyst pendientes (requieren Mac).
+- El control cubre las 4 TFMs del csproj: Android, iOS, MacCatalyst y Windows (net10). Build verificado en Android y Windows. **iOS y MacCatalyst no son objetivo del proyecto**: no se compilan ni se prueban porque no hay Mac disponible, y su estado es de mejor esfuerzo (código presente por el control de Syncfusion, sin verificación).
 
 Entregado:
 - **Router multipropósito (botón único; Fases 1-3)**: `MenuViewModel.NavigateToPdfReader` usa `IFilePickerService.PickDocumentAsync` (PDF/DOCX/XLSX/DOC/XLS/CSV/texto) y detecta el **tipo real por contenido** (`DocumentTypeDetector`: firma `%PDF-` → PDF; entradas ZIP canónicas `word/document.xml` vs `xl/workbook.xml` → DOCX/XLSX; firma OLE `D0CF11E0` → contenedor legacy, resuelto **por extensión** `.doc`/`.xls` → DOC/XLS (Fase 3, límite documentado: renombrados no se detectan); si no hay firma, lee muestra UTF-8 y decide **CSV** si ≥90% de las líneas comparten el mismo conteo de delimitadores `,`, `;` o tab (`GetBestCsvDelimiter`) o **Texto plano** en caso contrario; presencia de byte de control → `Unknown`). El router enruta: **PDF** → se pasa el `path`; **DOCX/DOC/XLSX/XLS/CSV** → `IDocumentPdfConverter.ConvertToPdfAsync` (DocIO `FormatType.Docx`/`Doc`, XlsIO; para CSV `DocumentTypeDetector.DetectDelimiter(path)` detecta el separador real que se pasa a `Workbooks.Open(path, delimitador)`) y se pasa un `MemoryStream`; **Texto plano** → `PushAsync("TextReaderPage", path)` con el path como parámetro; formato no soportado (`Ole`, `Unknown`) → se ignora; error de conversión → alert localizado (`PdfReaderOpenErrorText` + `CommonOkText`). Navegación PDF mediante objeto `PdfReaderPayload` (`Path` o `Stream` + `FileName`). El botón usa el icono `icon_file.png`.
 - Core: `PdfReaderViewModel` — overloads `Load(path)` y `Load(Stream, fileName)`; `PdfDocumentStream`, `FileName`, `HintText`, `IsFileLoaded`; `Unload()` libera el stream y resetea el estado. `TextReaderViewModel` (Fase 2) — visor de texto plano: `Content`, `FileName`, `IsFileLoaded`, `Message`; `Load(path)` lee con StreamReader UTF-8 (hasta 2 MB por `MaxBytesToRead`), `Unload()` resetea el estado; error → `TextReaderOpenErrorText` localizado vía `ILanguageService`.
 - MAUI: `PdfReaderPage.xaml` con `<syncfusion:SfPdfViewer>` (`DocumentSource="{Binding PdfDocumentStream}"`; el control aporta toolbar, navegación, zoom, búsqueda y selección de texto) + Label de hint cuando no hay documento; `PdfReaderPage.xaml.cs` resuelve el VM en `OnNavigatedTo`, lee `PdfReaderPayload`, y en **`OnDisappearing`** llama `PdfViewer.UnloadDocument()` + `viewModel.Unload()` para liberar memoria del documento. `TextReaderPage.xaml` (Fase 2): `<Editor>` de solo lectura con `FontFamily="Courier New"` y mensaje de error visible cuando `IsFileLoaded=false`; `TextReaderPage.xaml.cs` resuelve el VM en `OnNavigatedTo` con el path como parámetro (`INavigationService.TakeNavigationParameter()` devuelve `string`), `OnDisappearing` → `Unload()`. `DocumentPdfConverter` y `TextReaderPage`/`TextReaderViewModel` registrados en DI. **Indicador de conversión**: `MenuViewModel.IsConverting` (observable) activa un overlay a pantalla completa en `MenuPage` con `ActivityIndicator` (color `MyAccentBlue` para visibilidad en tema claro/oscuro) + texto `PdfReaderConvertingText` ("Convirtiendo a PDF...") durante DOCX/XLSX/CSV; solo PDF y texto directos no lo activan. resx ×3 (claves `PdfReader*` y `TextReaderOpenErrorText`; se eliminaron `PdfReaderEmptyText` y `PdfReaderPageCountText` por quedar sin uso).
-- Tests: `PdfReaderViewModelTests` (4), `DocumentTypeDetectorTests` (18: firma PDF, DOCX/XLSX por entrada ZIP canónica, `Unknown` para ZIP sin entrada esperada/bytes inválidos/stream vacío, OLE→`Ole` + por extensión `.doc`/`.xls`/otra, CSV coma/punto-y-coma/tab, texto de una línea→Texto, texto plano y código→Text, preserva posición, lectura por path, `DetectDelimiter` coma/punto-y-coma/tab/default), `MenuViewModelTests` con router (PDF directo, DOCX convertido, CSV convertido, DOC/XLS convertido, texto→`TextReaderPage`, cancelación del picker, `IsConverting` activo durante la conversión y reseteado en éxito/error) → suite total 212.
+- Tests: `PdfReaderViewModelTests` (4), `DocumentTypeDetectorTests` (18: firma PDF, DOCX/XLSX por entrada ZIP canónica, `Unknown` para ZIP sin entrada esperada/bytes inválidos/stream vacío, OLE→`Ole` + por extensión `.doc`/`.xls`/otra, CSV coma/punto-y-coma/tab, texto de una línea→Texto, texto plano y código→Text, preserva posición, lectura por path, `DetectDelimiter` coma/punto-y-coma/tab/default), `MenuViewModelTests` con router (PDF directo, DOCX convertido, CSV convertido, DOC/XLS convertido, texto→`TextReaderPage`, cancelación del picker, `IsConverting` activo durante la conversión y reseteado en éxito/error) → suite total 214.
 
 Límites conocidos (no resueltos a propósito):
 - Sin clave de licencia válida, Syncfusion puede mostrar advertencia de licencia trial en runtime.
 - Documentos muy grandes: carga y memoria las maneja el control; validar comportamiento en emulador/dispositivo.
-- iOS/MacCatalyst: implementación presente por el control, pero compilación no verificada (requiere Mac).
+- iOS/MacCatalyst: fuera del alcance del proyecto (sin Mac para compilar/probar); el código queda tal cual por el control de Syncfusion, sin verificación de build ni runtime.
 - El visor se unload automáticamente al salir de la página (`OnDisappearing`): al volver hay que volver a abrir el archivo.
 - Visor de texto plano (Fase 2): sin resaltado de sintaxis; archivos >2 MB se rechazan con `TextReaderOpenErrorText`; CSV también es convertible a PDF, por lo que la detección prioriza CSV cuando hay alineación de columnas (texto libre de datos con comas puede clasificarse como CSV).
 - DOC/XLS legacy (Fase 3): la distinción DOC vs XLS usa la **extensión** del archivo una vez confirmado el contenedor OLE por contenido; un `.doc` o `.xls` mal nombrado (extensión distinta) no se detectaría. La conversión a PDF es la misma que DOCX/XLSX (DocIO `FormatType.Doc` / XlsIO).
@@ -718,7 +715,7 @@ Límites conocidos (no resueltos a propósito):
 - **PDF en blanco al volver a la página**: con las páginas registradas como **Singleton**, salir a cargar otro documento (`OnDisappearing` → `PdfViewer.UnloadDocument()` + `viewModel.Unload()`) y volver/reabrir dejaba el visor en blanco. Referencia: Syncfusion Feedback #59237 / Foro de Syncfusion #189392 (reutilizar una instancia de `SfPdfViewer` tras `UnloadDocument` no soporta cargar documentos posteriores). **Fix aplicado (build 0 errores)**: `PdfReaderPage` ahora es **Transient** (página y control `SfPdfViewer` nuevos por navegación; el VM ya era Transient y se resuelve en `OnNavigatedTo`). **Verificado en runtime**: el flujo abrir PDF → menú → reabrir PDF funciona correctamente.
 - **Cancelación de la carga del PDF sin peligro**: verificado en runtime. No es un bug: el visor PDF funciona correctamente. El "cuelgue al cancelar el picker" observado antes en el emulador se debía a que el **emulador no tiene botón "volver"** para cancelar la carga; en **dispositivos físicos el botón volver del sistema cancela correctamente** el picker. Descartada la hipótesis de bug de MAUI (dotnet/maui #33706) y el fix propuesto de timeout en `FilePickerService`.
 
-- BUILD REAL: 0 errores / 0 advertencias; TEST REAL: 212/212 verdes.
+- BUILD REAL: 0 errores / 0 advertencias; TEST REAL: 214/214 verdes.
 ## 19. GUÍA de reconstrucción (build desde cero)
 
 Repositorio real: D:\Repo\.NET\NavajaSuiza_.NET10 (sin tildes; git rev-parse y Test-Path OK - verificado §11.6-1).
@@ -738,8 +735,9 @@ Restaurar:
 Build (Android Debug):
   dotnet build NavajaSuiza_.NET10/NavajaSuiza_.NET10.csproj -f net10.0-android -c Debug
 
-Suite de tests (esperado: 212 superados / 0 fallos):
-  dotnet test NavajaSuiza_.NET10/NavajaSuiza_.NET10.csproj
+Suite de tests (esperado: 214 superados / 0 fallos):
+  dotnet test NavajaSuiza.Test/NavajaSuiza.Test.csproj
+Si la suite falla con "No se pudieron cargar las extensiones" o con el error 0x800711C7, no es un fallo del proyecto: Smart App Control de Windows bloquea el archivo `xunit.runner.visualstudio.testadapter.dll` porque ese paquete viene sin firma digital. Reiniciar el IDE o el equipo lo resuelve; no hace falta cambiar ningún paquete.
 
 Release Android (APK): el default del csproj es AAB (para Google Play). Para generar APK de prueba:
   dotnet clean NavajaSuiza_.NET10/NavajaSuiza_.NET10.csproj -f net10.0-android -c Release

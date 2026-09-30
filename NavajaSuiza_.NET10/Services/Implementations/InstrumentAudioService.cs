@@ -26,7 +26,7 @@ public class InstrumentAudioService : IInstrumentAudioService
         {
             new InstrumentStringData { Note = "E2", AudioName = "GN_01_E2.wav", Description = "82.41 Hz", Thickness = 6 },
             new InstrumentStringData { Note = "A2", AudioName = "GN_02_A2.wav", Description = "110.00 Hz", Thickness = 5 },
-            new InstrumentStringData { Note = "A4", AudioName = "GN_03_D3.wav", Description = "146.83 Hz", Thickness = 4 },
+            new InstrumentStringData { Note = "D3", AudioName = "GN_03_D3.wav", Description = "146.83 Hz", Thickness = 4 },
             new InstrumentStringData { Note = "G3", AudioName = "GN_04_G3.wav", Description = "196.00 Hz", Thickness = 3 },
             new InstrumentStringData { Note = "B3", AudioName = "GN_05_B3.wav", Description = "246.94 Hz", Thickness = 2 },
             new InstrumentStringData { Note = "E4", AudioName = "GN_06_E4.wav", Description = "329.63 Hz", Thickness = 1 }
@@ -39,7 +39,7 @@ public class InstrumentAudioService : IInstrumentAudioService
         {
             new InstrumentStringData { Note = "E2", AudioName = "GS_01_E2.wav", Description = "82.41 Hz", Thickness = 6 },
             new InstrumentStringData { Note = "A2", AudioName = "GS_02_A2.wav", Description = "110.00 Hz", Thickness = 5 },
-            new InstrumentStringData { Note = "A4", AudioName = "GS_03_D3.wav", Description = "146.83 Hz", Thickness = 4 },
+            new InstrumentStringData { Note = "D3", AudioName = "GS_03_D3.wav", Description = "146.83 Hz", Thickness = 4 },
             new InstrumentStringData { Note = "G3", AudioName = "GS_04_G3.wav", Description = "196.00 Hz", Thickness = 3 },
             new InstrumentStringData { Note = "B3", AudioName = "GS_05_B3.wav", Description = "246.94 Hz", Thickness = 2 },
             new InstrumentStringData { Note = "E4", AudioName = "GS_06_E4.wav", Description = "329.63 Hz", Thickness = 1 }
@@ -64,7 +64,7 @@ public class InstrumentAudioService : IInstrumentAudioService
             new InstrumentStringData { Note = "G4", AudioName = "U_01_G4.wav", Description = "392.00 Hz", Thickness = 1 },
             new InstrumentStringData { Note = "C4", AudioName = "U_02_C4.wav", Description = "261.63 Hz", Thickness = 3 },
             new InstrumentStringData { Note = "E4", AudioName = "U_03_E4.wav", Description = "329.63 Hz", Thickness = 2 },
-            new InstrumentStringData { Note = "A4", AudioName = "U_04_A4.wav", Description = "440.63 Hz", Thickness = 1 }
+            new InstrumentStringData { Note = "A4", AudioName = "U_04_A4.wav", Description = "440.00 Hz", Thickness = 1 }
         };
     }
 
