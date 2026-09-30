@@ -86,6 +86,7 @@ NavajaSuiza_.NET10/                   # Solution
 │   │   ├── IMetronomeService.cs
 │   │   ├── ICompassService.cs
 │   │   ├── IOrientationService.cs
+│   │   ├── ICompassPositionService.cs
 │   │   ├── IFlashlightService.cs
 │   │   ├── IDeviceDisplayService.cs
 │   │   ├── IImagePickerService.cs
@@ -109,6 +110,7 @@ NavajaSuiza_.NET10/                   # Solution
 │   │   ├── DocumentType.cs
 │   │   ├── PdfReaderPayload.cs
 │   │   ├── MorseSignalSequence.cs
+│   │   ├── PositionReading.cs
 │   │   └── Note.cs
 │   ├── Services/
 │   │   ├── FlashlightStateService.cs   # Singleton: persiste estado flash entre VM recreations
@@ -152,7 +154,7 @@ NavajaSuiza_.NET10/                   # Solution
 │   │   └── *.xaml / *.xaml.cs
 │   ├── ViewModels/                     # Vacío — todas las VMs están en Core
 │   ├── Services/
-│   │   └── Implementations/           # 19 implementaciones (las que usan APIs de plataforma + repos de datos)
+│   │   └── Implementations/           # 20 implementaciones (las que usan APIs de plataforma + repos de datos)
 │   │       ├── LanguageService.cs
 │   │       ├── ThemeService.cs
 │   │       ├── DeviceStatusService.cs
@@ -161,6 +163,7 @@ NavajaSuiza_.NET10/                   # Solution
 │   │       ├── MetronomeService.cs
 │   │       ├── CompassSensorService.cs
 │   │       ├── OrientationSensorService.cs
+│   │       ├── CompassPositionService.cs  # ICompassPositionService (Geolocation bajo demanda)
 │   │       ├── FlashlightService.cs
 │   │       ├── DeviceDisplayService.cs
 │   │       ├── ImagePickerService.cs
@@ -196,6 +199,7 @@ NavajaSuiza_.NET10/                   # Solution
 | `ICompassService`, `IOrientationService` | `ThemeService` (usa `Application.Current`, Android Window) |
 | `IFlashlightService`, `IFlashlightStateService` | `DeviceStatusService` (usa `Battery.Default`, Android APIs) |
 | `IDeviceDisplayService`, `IImagePickerService` | `CompassSensorService` (usa `Compass.Default`, `OrientationSensor`) |
+| `ICompassPositionService` | `CompassPositionService` (usa `Geolocation.Default`, `Permissions`) |
 | `IScreenBrightnessService` | `OrientationSensorService` (usa `OrientationSensor.Default`) |
 | `INavigationService`, `ILanguageService`, `IThemeService` | `FlashlightService` (usa `Flashlight.Default`) |
 | `IInstrumentAudioService`, `IMetronomeService` | `DeviceDisplayService` (usa `DeviceDisplay.Current`) |
@@ -260,6 +264,7 @@ Todos los servicios están registrados en `MauiProgram.cs` e inyectados por DI.
 | `INavigationService` | `NavigationService` | Transient | Navegación Shell (`PushAsync`, `GoToAsync`, `DisplayAlertAsync`), null-safe |
 | `ICompassService` | `CompassSensorService` | Singleton | Lectura de brújula (`Compass.Default`) |
 | `IOrientationService` | `OrientationSensorService` | Singleton | Lectura de orientación (`OrientationSensor.Default`) |
+| `ICompassPositionService` | `CompassPositionService` | Singleton | Posición actual bajo demanda (`Geolocation.Default`) + permiso de ubicación |
 | `IFlashlightService` | `FlashlightService` | Singleton | Control de flash (`Flashlight.Default`) |
 | `IDeviceDisplayService` | `DeviceDisplayService` | Singleton | Control de brillo y `KeepScreenOn` |
 | `IImagePickerService` | `ImagePickerService` | Singleton | Selección de imagen (`FilePicker`) |
@@ -282,6 +287,7 @@ Todos los servicios están registrados en `MauiProgram.cs` e inyectados por DI.
 | `NavigationService` | Transient | Resuelve páginas desde DI, nuevo en cada llamada |
 | `CompassSensorService` | Singleton | Comparte datos de sensores entre componentes |
 | `OrientationSensorService` | Singleton | Comparte datos de sensores entre componentes |
+| `CompassPositionService` | Singleton | Wrapper de `Geolocation.Default`, sin estado persistente entre lecturas |
 | `FlashlightService` | Singleton | Wrapper de `Flashlight.Default` |
 | `DeviceDisplayService` | Singleton | Wrapper de `DeviceDisplay.Current` |
 | `ImagePickerService` | Singleton | Wrapper de `FilePicker` |
@@ -335,6 +341,12 @@ Todos los servicios están registrados en `MauiProgram.cs` e inyectados por DI.
 - **Eficiencia de batería**: `SensorSpeed.UI` en vez de `SensorSpeed.Fastest`. Suficiente para actualización de UI, menor consumo.
 - **Calibración manual**: Botón "Calibrar Brújula" que ejecuta flujo de 7 segundos (instrucción → calibrando → completado) con texto localizado. No se ejecuta automáticamente al entrar.
 - **Protección contra crashes**: `OnNavigatedTo` síncrono con fire-and-forget seguro (try/catch). Unsubscribe antes de Stop() para evitar eventos post-limpieza.
+- **Posición actual bajo demanda**: botón "Obtener mi posición" (`LocateCommand`) que consulta el GPS una sola vez, sin rastreo continuo. Grilla 2×2 con latitud, longitud, altitud y precisión horizontal.
+  - Coordenadas en grados y minutos decimales con hemisferio: `S 47° 23.434'` / `W 123° 2.740'`. Formato **invariante de cultura** (`CultureInfo.InvariantCulture`) porque la coma decimal rompe la notación de coordenadas.
+  - Altitud (`Location.Altitude`) y precisión (`Location.Accuracy`) son `double?`; `null` o `0` se muestra como "no disponible". La altitud real requiere hardware con barómetro/GPS compatibles.
+  - Flujo: `IsAvailable` (`Geolocation.Default.IsEnabled`) → permiso `ACCESS_FINE_LOCATION` vía `Permissions.LocationWhenInUse` → `GeolocationRequest(GeolocationAccuracy.High, 20s)` con `RequestFullAccuracy = true` (Android 12+).
+  - `IsLocating` deshabilita el botón y muestra "Buscando señal...". Errores diferenciados: ubicación desactivada, permiso denegado (`UnauthorizedAccessException`) y fallo genérico.
+  - `StopSensors()` cancela el `CancellationTokenSource` de posición para no dejar lecturas pendientes al salir de la página.
 
 ### 6.6 Encuadre de imagen (`FramingPage`)
 - Relaciones de aspecto: 1:1, 4:5, 9:16, 16:9.
@@ -463,10 +475,13 @@ Constantes centralizadas agrupadas por dominio (Metronome, Framing, Instruments)
 ### Permisos Android (`AndroidManifest`)
 - `CAMERA`
 - `FLASHLIGHT`
+- `ACCESS_COARSE_LOCATION` / `ACCESS_FINE_LOCATION` (posición bajo demanda, ver 6.5)
+
+**Ubicación**: re-Agregada a propósito para la función "Mi posición" de la brújula (6.5), revirtiendo parte de la tarea 33. Se solicita en runtime solo al presionar el botón y únicamente mientras la app está en uso; no hay rastreo en background. Google Play requiere declarar el uso de ubicación en el Data safety del release.
 
 **`INTERNET`**: lo re-inyecta `CommunityToolkit.Maui` en el manifest fusionado (`obj/.../AndroidManifest.xml`); permiso *normal*, se conserva.
 
-**No declarados** (principio de mínimo privilegio, eliminados): `BATTERY_STATS` (protegido, no se usa; ver batería abajo), `ACCESS_FINE_LOCATION`, `ACCESS_COARSE_LOCATION`, `ACCESS_NETWORK_STATE`, `INTERNET` (en el manifest fuente).
+**No declarados** (principio de mínimo privilegio, eliminados): `BATTERY_STATS` (protegido, no se usa; ver batería abajo), `ACCESS_NETWORK_STATE`, `INTERNET` (en el manifest fuente).
 
 ### Lectura de batería sin permisos
 MAUI `Battery.Default` en Android exige `BATTERY_STATS` (permiso protegido `signature|privileged`, red flag en Play). `DeviceStatusService.GetBatteryLevel()` en Android usa `BatteryManager.GetIntProperty(Android.OS.BatteryProperty.Capacity)` (API 21+, síncrono, sin permiso); `Battery.Default` queda como fallback en otras plataformas.
@@ -570,7 +585,7 @@ MAUI `Battery.Default` en Android exige `BATTERY_STATS` (permiso protegido `sign
 
 | # | Tarea | Archivo(s) | Estado |
 |---|-------|-----------|--------|
-| 33 | Reducir permisos Android a mínimo (quitar `BATTERY_STATS`, location, network, `INTERNET` del source) | `Platforms/Android/AndroidManifest.xml` | ✅ Completado (manifest fusionado verificado) |
+| 33 | Reducir permisos Android a mínimo (quitar `BATTERY_STATS`, location, network, `INTERNET` del source) | `Platforms/Android/AndroidManifest.xml` | ⚠️ Parcialmente revertido: `ACCESS_FINE_LOCATION`/`ACCESS_COARSE_LOCATION` re-agregados para la posición bajo demanda de la brújula (6.5). `BATTERY_STATS`, `ACCESS_NETWORK_STATE` y `INTERNET` siguen fuera. |
 | 34 | Empaquetado multirarquitectura (RIDs arm/arm64/x64; A11 32-bit compatible) | `NavajaSuiza_.NET10.csproj` | ✅ Completado (APK Release fat 57,9 MB, 3 ABIs) |
 | 35 | Batería sin `BATTERY_STATS` vía `BatteryManager` (Android) | `DeviceStatusService.cs` | ✅ Completado |
 | 36 | Cronómetro: marcas persisten entre navegaciones (servicio Singleton) | Core (`Stopwatch*`) + tests | ✅ Completado (144 tests) |

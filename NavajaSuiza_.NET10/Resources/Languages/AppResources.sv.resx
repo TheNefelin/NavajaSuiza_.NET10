@@ -474,6 +474,39 @@
   <data name="CompassCalibrateButtonText" xml:space="preserve">
     <value>Kalibrera kompass</value>
   </data>
+  <data name="CompassPositionText" xml:space="preserve">
+    <value>Min position</value>
+  </data>
+  <data name="CompassLocateButtonText" xml:space="preserve">
+    <value>Hämta min position</value>
+  </data>
+  <data name="CompassLocatingText" xml:space="preserve">
+    <value>Söker signal...</value>
+  </data>
+  <data name="CompassLocationDisabledText" xml:space="preserve">
+    <value>Platsinställningar är avstängda på den här enheten.</value>
+  </data>
+  <data name="CompassPermissionDeniedText" xml:space="preserve">
+    <value>Platsbehörighet krävs för att visa din position.</value>
+  </data>
+  <data name="CompassPositionErrorText" xml:space="preserve">
+    <value>Kunde inte hämta din position. Gå utomhus och försök igen.</value>
+  </data>
+  <data name="CompassLatitudeText" xml:space="preserve">
+    <value>Latitud</value>
+  </data>
+  <data name="CompassLongitudeText" xml:space="preserve">
+    <value>Longitud</value>
+  </data>
+  <data name="CompassAltitudeText" xml:space="preserve">
+    <value>Höjd</value>
+  </data>
+  <data name="CompassAccuracyText" xml:space="preserve">
+    <value>Precision</value>
+  </data>
+  <data name="CompassValueUnavailableText" xml:space="preserve">
+    <value>inte tillgänglig</value>
+  </data>
   <data name="MenuWelcomeText" xml:space="preserve">
     <value>Vad behöver du idag?</value>
   </data>

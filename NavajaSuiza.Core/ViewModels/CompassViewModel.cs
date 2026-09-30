@@ -1,3 +1,4 @@
+using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
@@ -13,10 +14,12 @@ public partial class CompassViewModel : BaseViewModel
     private readonly INavigationService _navigationService;
     private readonly ICompassService _compassService;
     private readonly IOrientationService _orientationService;
+    private readonly ICompassPositionService _compassPositionService;
 
     private const double SMOOTHING_FACTOR = 0.3;
     private double _smoothedHeading = -1;
     private CancellationTokenSource? _calibrationCts;
+    private CancellationTokenSource? _positionCts;
 
     [ObservableProperty]
     public partial string StatusText { get; set; } = "...";
@@ -36,18 +39,41 @@ public partial class CompassViewModel : BaseViewModel
     [ObservableProperty]
     public partial string CalibrationText { get; set; } = "...";
 
+    [ObservableProperty]
+    public partial bool IsLocating { get; set; }
+
+    [ObservableProperty]
+    public partial bool HasPosition { get; set; }
+
+    [ObservableProperty]
+    public partial string LatitudeText { get; set; } = "--";
+
+    [ObservableProperty]
+    public partial string LongitudeText { get; set; } = "--";
+
+    [ObservableProperty]
+    public partial string AltitudeText { get; set; } = "--";
+
+    [ObservableProperty]
+    public partial string AccuracyText { get; set; } = "--";
+
+    [ObservableProperty]
+    public partial string PositionMessage { get; set; } = "";
+
     public CompassViewModel(
         ILogger<CompassViewModel> logger,
         ILanguageService languageService,
         INavigationService navigationService,
         ICompassService compassService,
-        IOrientationService orientationService)
+        IOrientationService orientationService,
+        ICompassPositionService compassPositionService)
     {
         _logger = logger;
         _languageService = languageService;
         _navigationService = navigationService;
         _compassService = compassService;
         _orientationService = orientationService;
+        _compassPositionService = compassPositionService;
     }
 
     [RelayCommand]
@@ -108,6 +134,7 @@ public partial class CompassViewModel : BaseViewModel
     public void StopSensors()
     {
         _calibrationCts?.Cancel();
+        _positionCts?.Cancel();
         IsCalibrating = false;
         _smoothedHeading = -1;
 
@@ -116,6 +143,88 @@ public partial class CompassViewModel : BaseViewModel
 
         _orientationService.ReadingChanged -= OnOrientationReadingChanged;
         _orientationService.Stop();
+    }
+
+    [RelayCommand]
+    private async Task LocateAsync()
+    {
+        if (IsLocating)
+            return;
+
+        _positionCts?.Cancel();
+        _positionCts = new CancellationTokenSource();
+        var token = _positionCts.Token;
+
+        IsLocating = true;
+        PositionMessage = GetString("CompassLocatingText", "Buscando señal...");
+
+        try
+        {
+            if (!_compassPositionService.IsAvailable)
+            {
+                PositionMessage = GetString(
+                    "CompassLocationDisabledText",
+                    "La ubicación está desactivada en este dispositivo.");
+                return;
+            }
+
+            var reading = await _compassPositionService.GetCurrentPositionAsync(token);
+
+            var unavailableText = GetString("CompassValueUnavailableText", "no disponible");
+            LatitudeText = FormatCoordinate(reading.Latitude, isLatitude: true);
+            LongitudeText = FormatCoordinate(reading.Longitude, isLatitude: false);
+            AltitudeText = reading.AltitudeMeters is > 0
+                ? string.Create(CultureInfo.InvariantCulture, $"{reading.AltitudeMeters:F0} m")
+                : unavailableText;
+            AccuracyText = reading.HorizontalAccuracyMeters is > 0
+                ? string.Create(
+                    CultureInfo.InvariantCulture,
+                    $"≈{reading.HorizontalAccuracyMeters:F0} m")
+                : unavailableText;
+
+            HasPosition = true;
+            PositionMessage = "";
+        }
+        catch (OperationCanceledException)
+        {
+            PositionMessage = "";
+        }
+        catch (UnauthorizedAccessException)
+        {
+            PositionMessage = GetString(
+                "CompassPermissionDeniedText",
+                "Se necesita permiso de ubicación para mostrar la posición.");
+        }
+        catch (Exception exception)
+        {
+            _logger.LogWarning(exception, "Could not read the device position");
+            PositionMessage = GetString(
+                "CompassPositionErrorText",
+                "No se pudo obtener la posición. Salí al exterior e intentá de nuevo.");
+        }
+        finally
+        {
+            IsLocating = false;
+        }
+    }
+
+    private string GetString(string key, string fallback) =>
+        _languageService.GetString(key) ?? fallback;
+
+    private static string FormatCoordinate(double value, bool isLatitude)
+    {
+        var isNegative = value < 0;
+        var absolute = Math.Abs(value);
+        var degrees = (int)absolute;
+        var minutes = (absolute - degrees) * 60;
+
+        var hemisphere = isLatitude
+            ? isNegative ? "S" : "N"
+            : isNegative ? "W" : "E";
+
+        return string.Create(
+            CultureInfo.InvariantCulture,
+            $"{hemisphere} {degrees}° {minutes:F3}'");
     }
 
     private void OnCompassReadingChanged(object? sender, CompassReadingChangedEventArgs e)

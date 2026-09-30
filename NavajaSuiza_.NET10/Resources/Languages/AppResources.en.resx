@@ -474,6 +474,39 @@
   <data name="CompassCalibrateButtonText" xml:space="preserve">
     <value>Calibrate Compass</value>
   </data>
+  <data name="CompassPositionText" xml:space="preserve">
+    <value>My position</value>
+  </data>
+  <data name="CompassLocateButtonText" xml:space="preserve">
+    <value>Get my position</value>
+  </data>
+  <data name="CompassLocatingText" xml:space="preserve">
+    <value>Searching for signal...</value>
+  </data>
+  <data name="CompassLocationDisabledText" xml:space="preserve">
+    <value>Location is turned off on this device.</value>
+  </data>
+  <data name="CompassPermissionDeniedText" xml:space="preserve">
+    <value>Location permission is needed to show your position.</value>
+  </data>
+  <data name="CompassPositionErrorText" xml:space="preserve">
+    <value>Could not get your position. Go outside and try again.</value>
+  </data>
+  <data name="CompassLatitudeText" xml:space="preserve">
+    <value>Latitude</value>
+  </data>
+  <data name="CompassLongitudeText" xml:space="preserve">
+    <value>Longitude</value>
+  </data>
+  <data name="CompassAltitudeText" xml:space="preserve">
+    <value>Altitude</value>
+  </data>
+  <data name="CompassAccuracyText" xml:space="preserve">
+    <value>Accuracy</value>
+  </data>
+  <data name="CompassValueUnavailableText" xml:space="preserve">
+    <value>not available</value>
+  </data>
   <data name="MenuWelcomeText" xml:space="preserve">
     <value>What do you need today?</value>
   </data>

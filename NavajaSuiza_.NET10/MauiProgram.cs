@@ -64,6 +64,7 @@ public static class MauiProgram
             .AddSingleton<INavigationService, NavigationService>()
             .AddSingleton<ICompassService, CompassSensorService>()
             .AddSingleton<IOrientationService, OrientationSensorService>()
+            .AddSingleton<ICompassPositionService, CompassPositionService>()
             .AddSingleton<IFlashlightService, FlashlightService>()
             .AddSingleton<IDeviceDisplayService, DeviceDisplayService>()
             .AddSingleton<IImagePickerService, ImagePickerService>()

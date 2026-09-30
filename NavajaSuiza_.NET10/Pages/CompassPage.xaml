@@ -8,6 +8,7 @@
 
     <ContentPage.Resources>
         <converters:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+        <converters:StringNotEmptyConverter x:Key="StringNotEmptyConverter" />
     </ContentPage.Resources>
 
     <ScrollView>
@@ -107,6 +108,51 @@
                         FontAttributes="Bold" HorizontalOptions="Center" />
                 </VerticalStackLayout>
             </Border>
+
+            <!-- Mi posición -->
+            <Label 
+                Text="{extensions:Translate CompassPositionText}"
+                FontSize="16"
+                HorizontalTextAlignment="Center"
+                Margin="20,0,20,0" />
+
+            <Button 
+                Text="{extensions:Translate CompassLocateButtonText}"
+                Command="{Binding LocateCommand}"
+                IsEnabled="{Binding IsLocating, Converter={StaticResource InvertedBoolConverter}}"
+                BackgroundColor="{StaticResource MyAccentBlue}"
+                TextColor="White"
+                FontSize="16"
+                HeightRequest="50"
+                Margin="20,0"
+                HorizontalOptions="Fill" />
+
+            <Label 
+                Text="{Binding PositionMessage}"
+                IsVisible="{Binding PositionMessage, Converter={StaticResource StringNotEmptyConverter}}"
+                HorizontalTextAlignment="Center"
+                FontSize="13"
+                Opacity="0.7"
+                Margin="20,0,20,10"/>
+
+            <Grid 
+                IsVisible="{Binding HasPosition}"
+                Margin="20,0"
+                RowDefinitions="Auto,Auto"
+                ColumnDefinitions="Auto,*,Auto,*"
+                ColumnSpacing="10"
+                RowSpacing="8">
+
+                <Label Grid.Row="0" Grid.Column="0" Text="{extensions:Translate CompassLatitudeText}" FontSize="13" VerticalOptions="Center" />
+                <Label Grid.Row="0" Grid.Column="1" Text="{Binding LatitudeText}" FontSize="13" FontAttributes="Bold" VerticalOptions="Center" />
+                <Label Grid.Row="0" Grid.Column="2" Text="{extensions:Translate CompassLongitudeText}" FontSize="13" VerticalOptions="Center" />
+                <Label Grid.Row="0" Grid.Column="3" Text="{Binding LongitudeText}" FontSize="13" FontAttributes="Bold" VerticalOptions="Center" />
+
+                <Label Grid.Row="1" Grid.Column="0" Text="{extensions:Translate CompassAltitudeText}" FontSize="13" VerticalOptions="Center" />
+                <Label Grid.Row="1" Grid.Column="1" Text="{Binding AltitudeText}" FontSize="13" FontAttributes="Bold" VerticalOptions="Center" />
+                <Label Grid.Row="1" Grid.Column="2" Text="{extensions:Translate CompassAccuracyText}" FontSize="13" VerticalOptions="Center" />
+                <Label Grid.Row="1" Grid.Column="3" Text="{Binding AccuracyText}" FontSize="13" FontAttributes="Bold" VerticalOptions="Center" />
+            </Grid>
 
             <!-- Botón Calibrar -->
             <Button 
