@@ -4,11 +4,11 @@ Navaja suiza digital — app multiplataforma (.NET MAUI) con herramientas de uso
 
 <!-- MANUAL:INICIO - generado por .github/scripts/sync-manual.py, no editar a mano -->
 
-## Guía del usuario — Navaja Suiza
+## Manual de usuario — Navaja Suiza
 
-Bienvenido a la Navaja Suiza. Esta guía te explica, paso a paso, cómo usar cada herramienta de la aplicación.
+Bienvenido a la Navaja Suiza. Este manual te explica, paso a paso, cómo usar cada herramienta de la aplicación.
 
-> Esta guía es un documento vivo: se actualiza a medida que la aplicación suma funciones.
+> Este manual es un documento vivo: se actualiza a medida que la aplicación suma funciones.
 
 ---
 
@@ -229,7 +229,7 @@ El lector de documentos abre y muestra archivos de todo tipo sin salir de la app
 
 ---
 
-*Fin de la guía. ¿Necesitas ayuda con algo más? Usa la sección **Acerca de** para ver la versión de la app o contactar al desarrollador.*
+*Fin del manual. ¿Necesitas ayuda con algo más? Usa la sección **Acerca de** para ver la versión de la app o contactar al desarrollador.*
 
 <!-- MANUAL:FIN -->
 
