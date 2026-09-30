@@ -18,6 +18,8 @@ public partial class FlashlightViewModel : BaseViewModel
     private CancellationTokenSource? _morseCts;
     private Task? _morseTask;
 
+    private const int MinimumIntensityLevel = 1;
+
     public bool IsFlashOn
     {
         get => _stateService.IsFlashOn;
@@ -42,6 +44,25 @@ public partial class FlashlightViewModel : BaseViewModel
 
     [ObservableProperty]
     public partial bool IsHelpActive { get; set; }
+
+    public bool IsFlashIntensitySupported => _flashlightService.SupportsVariableIntensity;
+
+    public bool IsFlashIntensityUnsupported => !IsFlashIntensitySupported;
+
+    public int IntensityLevelMaximum => Math.Max(MinimumIntensityLevel, _flashlightService.MaxIntensityLevel);
+
+    public int IntensityLevel
+    {
+        get => _flashlightService.IntensityLevel;
+        set
+        {
+            if (_flashlightService.IntensityLevel == value)
+                return;
+
+            _flashlightService.IntensityLevel = value;
+            OnPropertyChanged();
+        }
+    }
 
     public FlashlightViewModel(
         INavigationService navigationService,

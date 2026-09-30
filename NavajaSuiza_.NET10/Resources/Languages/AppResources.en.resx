@@ -147,6 +147,12 @@
   <data name="FlashlightEmergencyText" xml:space="preserve">
     <value>Emergency</value>
   </data>
+  <data name="FlashlightIntensityText" xml:space="preserve">
+    <value>Flash intensity</value>
+  </data>
+  <data name="FlashlightIntensityUnsupportedText" xml:space="preserve">
+    <value>This device does not support variable flash intensity.</value>
+  </data>
   <data name="FlashlightOpFlashText" xml:space="preserve">
     <value>Flash</value>
   </data>

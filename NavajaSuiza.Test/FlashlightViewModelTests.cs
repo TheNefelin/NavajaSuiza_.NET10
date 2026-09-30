@@ -117,6 +117,73 @@ public class FlashlightViewModelTests
     }
 
     [Fact]
+    public void Intensity_IsUnsupported_WhenServiceReportsNoSupport()
+    {
+        _flashlightServiceMock.Setup(s => s.SupportsVariableIntensity).Returns(false);
+
+        var vm = CreateSut();
+
+        Assert.False(vm.IsFlashIntensitySupported);
+        Assert.True(vm.IsFlashIntensityUnsupported);
+    }
+
+    [Fact]
+    public void Intensity_IsSupported_WhenServiceReportsSupport()
+    {
+        _flashlightServiceMock.Setup(s => s.SupportsVariableIntensity).Returns(true);
+        _flashlightServiceMock.Setup(s => s.MaxIntensityLevel).Returns(5);
+
+        var vm = CreateSut();
+
+        Assert.True(vm.IsFlashIntensitySupported);
+        Assert.False(vm.IsFlashIntensityUnsupported);
+        Assert.Equal(5, vm.IntensityLevelMaximum);
+    }
+
+    [Fact]
+    public void IntensityLevelMaximum_IsAtLeastOne_WhenUnsupported()
+    {
+        _flashlightServiceMock.Setup(s => s.SupportsVariableIntensity).Returns(false);
+        _flashlightServiceMock.Setup(s => s.MaxIntensityLevel).Returns(0);
+
+        var vm = CreateSut();
+
+        Assert.Equal(1, vm.IntensityLevelMaximum);
+    }
+
+    [Fact]
+    public void IntensityLevel_ReturnsLevelFromService()
+    {
+        _flashlightServiceMock.Setup(s => s.IntensityLevel).Returns(3);
+
+        var vm = CreateSut();
+
+        Assert.Equal(3, vm.IntensityLevel);
+    }
+
+    [Fact]
+    public void IntensityLevel_WhenChanged_UpdatesService()
+    {
+        var vm = CreateSut();
+
+        vm.IntensityLevel = 4;
+
+        _flashlightServiceMock.VerifySet(s => s.IntensityLevel = 4);
+    }
+
+    [Fact]
+    public void IntensityLevel_WhenUnchanged_DoesNotWriteService()
+    {
+        _flashlightServiceMock.Setup(s => s.IntensityLevel).Returns(3);
+
+        var vm = CreateSut();
+
+        vm.IntensityLevel = 3;
+
+        _flashlightServiceMock.VerifySet(s => s.IntensityLevel = It.IsAny<int>(), Times.Never);
+    }
+
+    [Fact]
     public async Task SendSosCommand_StartsLoop_TurnsFlashOff_AndCancelsOnSecondPress()
     {
         HangMorse(out var tcs);

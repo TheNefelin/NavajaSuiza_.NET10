@@ -297,7 +297,13 @@ Todos los servicios están registrados en `MauiProgram.cs` e inyectados por DI.
 ## 6. Herramientas (Features)
 
 ### 6.1 Linterna (`FlashlightPage`)
-- Encender/apagar linterna del dispositivo (`Flashlight.Default`).
+- Encender/apagar linterna del dispositivo.
+- **Intensidad variable (solo Android)**: control por `CameraManager.TurnOnTorchWithStrengthLevel`. El soporte se detecta leyendo `CameraCharacteristics.FLASH_INFO_STRENGTH_MAXIMUM_LEVEL`; solo se considera compatible si el máximo es mayor que 1. Esa clave existe desde Android 13, por lo que en versiones anteriores la función queda deshabilitada.
+- El flash se enciende siempre al nivel elegido, incluso durante las señales SOS y HELP.
+- **No interfiere con el sistema**: el nivel se lee de `CameraCharacteristics.FLASH_INFO_STRENGTH_DEFAULT_LEVEL` al iniciar la app y el valor elegido por el usuario solo vive en memoria mientras la app está abierta. Al apagar el flash, `CameraManager.SetTorchMode(false)` devuelve el hardware a su nivel por defecto de forma automática, sin intervención del código.
+- Si el teléfono declara intensidad variable pero no declara un nivel por defecto, se usa el máximo.
+- Cuando el dispositivo no es compatible, el control queda visible pero deshabilitado y se muestra un aviso en rojo (`MyDangerLight`/`MyDangerDark`).
+- En iOS y demás plataformas se usa `Flashlight.Default` y no hay intensidad variable: la API pública solo permite encendido y apagado.
 - Navegar a pantalla de luz completa (`ScreenLightPage`).
 - Manejo de errores con reversión de estado.
 - **Estado flash persistente**: `FlashlightStateService` (Singleton) mantiene `IsFlashOn` entre recreaciones de VM Transient.

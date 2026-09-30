@@ -147,6 +147,12 @@
   <data name="FlashlightEmergencyText" xml:space="preserve">
     <value>Nödsignal</value>
   </data>
+  <data name="FlashlightIntensityText" xml:space="preserve">
+    <value>Intensitet för blixt</value>
+  </data>
+  <data name="FlashlightIntensityUnsupportedText" xml:space="preserve">
+    <value>Den här enheten stöder inte variabel blixtintensitet.</value>
+  </data>
   <data name="FlashlightOpFlashText" xml:space="preserve">
     <value>Flash</value>
   </data>

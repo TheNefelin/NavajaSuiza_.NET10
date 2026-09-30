@@ -25,6 +25,8 @@
     
     <Color x:Key="MyOn">#FF0000</Color>
     <Color x:Key="MyOff">#999999</Color>
+    <Color x:Key="MyDangerLight">#B3261E</Color>
+    <Color x:Key="MyDangerDark">#FF897D</Color>
 
     <!-- E07A5F FCA120 FF990A-->
     
