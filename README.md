@@ -251,7 +251,7 @@ Un punto gris significa que el sistema no entregó la lectura. Si el teléfono l
 | Color | Porcentaje de carga |
 |---|---|
 | Azul | 60% o más |
-| Naranja | Entre 30% y 59% |
+| Naranja | Entre 31% y 59% |
 | Rojo | 30% o menos |
 
 #### Almacenamiento
