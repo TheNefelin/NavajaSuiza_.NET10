@@ -5,9 +5,11 @@
              x:Class="NavajaSuiza_.NET10.Pages.GuidePage"
              Title="{extensions:Translate GuideTitleText}">
 
-    <Grid>
+    <Grid
+        BackgroundColor="{AppThemeBinding Light={StaticResource MyBackgroundLight}, Dark={StaticResource MyBackgroundDark}}">
 
-        <WebView>
+        <WebView
+            BackgroundColor="{AppThemeBinding Light={StaticResource MyBackgroundLight}, Dark={StaticResource MyBackgroundDark}}">
             <WebView.Source>
                 <HtmlWebViewSource Html="{Binding HtmlContent}" />
             </WebView.Source>

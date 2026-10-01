@@ -32,14 +32,15 @@ Ritplattan låter dig rita fritt för hand på en vit yta och spara din teckning
 
 - Välj en färg med palettknappen (färghjulet).
 - Rita genom att dra fingret över den vita ytan.
+- Lägg till text med textknappen och tryck på ytan där du vill ha den.
 - Använd suddgummit för att rätta till ett streck.
-- Ångra det senaste strecket med pilknappen.
+- Ångra det senaste strecket eller texten med pilknappen.
 - Rensa hela ritplattan med papperskorgsknappen.
 - Spara din teckning som bild med spara-knappen.
 
 ### Tips
 
-- Streckets tjocklek ställs in med reglaget överst.
+- Streckets tjocklek ställs in med reglaget, bredvid etiketten för tjocklek.
 - Ritplattan anpassar sig till appens ljusa och mörka tema.
 - Om du ändrar bakgrundsfärgen justerar pennan sin kontrast automatiskt så att den alltid syns.
 
@@ -162,11 +163,20 @@ Kompassen visar magnetisk norr och den exakta vinkeln i grader, med utjämnade a
 - Håll telefonen platt: nålen pekar mot norr och vinkeln visas i grader.
 - Riktningen visas som text (N, NO, O, SO, S, SV, V, NV).
 - Lutningsindikatorn varnar dig när telefonen inte ligger platt.
+- Tryck på **Min plats** för att se var du är: appen frågar om platsbehörighet och visar latitud, longitud, höjd och ungefärlig noggrannhet.
 
 ### Kalibrering
 
 - Tryck på **Kalibrera** och rör enheten i en åtta i luften medan appen mäter.
 - Kalibreringen tar några sekunder och förbättrar avläsningens noggrannhet.
+
+### Plats
+
+- Din position läses **endast när du trycker på knappen**: appen spårar inte din plats i bakgrunden.
+- Koordinaterna visas i grader och decimalminuter med halvklot, till exempel `S 47° 23.434'`.
+- Noggrannheten visas som `≈8 m`, alltså det troliga felet som en radie, inte ett intervall.
+- Om höjd eller noggrannhet inte är tillgänglig visas "inte tillgängligt".
+- Du kan stänga av platssensorn med strömbrytaren längst upp; när den är av fungerar inte knappen.
 
 ---
 

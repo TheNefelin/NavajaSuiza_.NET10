@@ -55,17 +55,36 @@
                 </VerticalStackLayout>
 
                 <VerticalStackLayout Spacing="5">
-                    <Label HorizontalOptions="Center" Text="{extensions:Translate PizarraBoardShortText}" />
+                    <Label
+                        HorizontalOptions="Center"
+                        Text="{extensions:Translate PizarraAddTextText}" />
                     <Button
-                        Clicked="OnBoardClicked"
+                        Command="{Binding ToggleTextModeCommand}"
                         BackgroundColor="{StaticResource MyAccentBlue}"
-                        ImageSource="icon_blackboard.png"
+                        ImageSource="icons_text.png"
                         FontAttributes="Bold"
                         ContentLayout="Top, 0"
                         Padding="5"
                         WidthRequest="50"
-                        HeightRequest="50"/>
-                </VerticalStackLayout>
+                        HeightRequest="50">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="Disabled" />
+                                <VisualState x:Name="Active">
+                                    <VisualState.Setters>
+                                        <Setter Property="BackgroundColor" Value="{StaticResource MyAccentOrange}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <Button.Triggers>
+                            <DataTrigger TargetType="Button" Binding="{Binding IsTextModeActive}" Value="True">
+                                <Setter Property="BackgroundColor" Value="{StaticResource MyAccentOrange}" />
+                            </DataTrigger>
+                        </Button.Triggers>
+                    </Button>
+                </VerticalStackLayout>                
 
                 <VerticalStackLayout Spacing="5">
                     <Label HorizontalOptions="Center" Text="{extensions:Translate PizarraSaveText}" />
@@ -79,78 +98,53 @@
                         WidthRequest="50"
                         HeightRequest="50"/>
                 </VerticalStackLayout>
+
+                <VerticalStackLayout Spacing="5">
+                    <Label HorizontalOptions="Center" Text="{extensions:Translate PizarraBoardShortText}" />
+                    <Button
+                        Clicked="OnBoardClicked"
+                        BackgroundColor="{StaticResource MyAccentBlue}"
+                        ImageSource="icon_blackboard.png"
+                        FontAttributes="Bold"
+                        ContentLayout="Top, 0"
+                        Padding="5"
+                        WidthRequest="50"
+                        HeightRequest="50"/>
+                </VerticalStackLayout>                
             </HorizontalStackLayout>
         </ScrollView>
 
-        <!--
-        <Border
-            Grid.Row="0"
-            StrokeShape="RoundRectangle 18"
-            Padding="8,6"
-            BackgroundColor="{AppThemeBinding Light=#EFEFEF, Dark=#26262C}">
+<VerticalStackLayout
+            Grid.Row="1"
+            Spacing="4"
+            Padding="10,0">
 
-            <HorizontalStackLayout Spacing="6">
+            <Grid HeightRequest="20">
+                <Label
+                    Text="{extensions:Translate PizarraTextModeHintText}"
+                    FontSize="14"
+                    FontAttributes="Bold"
+                    IsVisible="{Binding IsTextModeActive}"
+                    VerticalOptions="Start"
+                    TextColor="{StaticResource MyAccentOrange}" />
+            </Grid>
 
-                <Button
-                    ImageSource="icon_delete.png"
-                    Command="{Binding UndoCommand}"
-                    WidthRequest="42"
-                    HeightRequest="42"
-                    CornerRadius="10"
-                    Padding="0"
-                    BackgroundColor="Transparent" />
+            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
+                <Label
+                    Grid.Column="0"
+                    Text="{extensions:Translate PizarraWidthText}"
+                    FontSize="14"
+                    FontAttributes="Bold"
+                    Opacity="0.7"
+                    VerticalOptions="Center" />
 
-                <Button
-                    ImageSource="icon_delete.png"
-                    Command="{Binding ClearCommand}"
-                    WidthRequest="42"
-                    HeightRequest="42"
-                    CornerRadius="10"
-                    Padding="0"
-                    BackgroundColor="Transparent" />
-
-                <Button
-                    ImageSource="icon_delete.png"
-                    Command="{Binding OpenColorPickerCommand}"
-                    WidthRequest="42"
-                    HeightRequest="42"
-                    CornerRadius="10"
-                    Padding="0"
-                    BackgroundColor="Transparent" />
-
-                <Button
-                    ImageSource="icon_delete.png"
-                    Clicked="OnBoardClicked"
-                    WidthRequest="42"
-                    HeightRequest="42"
-                    CornerRadius="10"
-                    Padding="0"
-                    BackgroundColor="Transparent" />
-
-                <Button
-                    ImageSource="icon_delete.png"
-                    Clicked="OnSaveClicked"
-                    WidthRequest="42"
-                    HeightRequest="42"
-                    CornerRadius="10"
-                    Padding="0"
-                    BackgroundColor="Transparent" />
-            </HorizontalStackLayout>
-        </Border>
-        -->
-
-        <VerticalStackLayout Grid.Row="1" Spacing="4" Padding="10,0">
-
-            <Label
-                Text="{extensions:Translate PizarraWidthText}"
-                FontSize="14"
-                FontAttributes="Bold"
-                Opacity="0.7" />
-
-            <Slider
-                Minimum="1"
-                Maximum="18"
-                Value="{Binding StrokeWidth}" />
+                <Slider
+                    Grid.Column="1"
+                    Minimum="1"
+                    Maximum="18"
+                    Value="{Binding StrokeWidth}"
+                    VerticalOptions="Center" />
+            </Grid>
         </VerticalStackLayout>
 
         <Border
@@ -168,7 +162,7 @@
                 CancelInteraction="OnCancelInteraction" />
         </Border>
 
-        <Grid
+<Grid
             Grid.RowSpan="3"
             IsVisible="{Binding IsColorPickerVisible}">
 

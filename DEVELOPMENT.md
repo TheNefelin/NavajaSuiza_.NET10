@@ -1,4 +1,4 @@
-﻿# DEVELOPMENT.md - NavajaSuiza .NET10
+# DEVELOPMENT.md - NavajaSuiza .NET10
 
 Contexto técnico, arquitectura y evolución del proyecto.
 
@@ -28,6 +28,8 @@ Contexto técnico, arquitectura y evolución del proyecto.
 | UI Components (gratuito) | Syncfusion.Maui.Toolkit | 1.0.11 |
 | Logging | Microsoft.Extensions.Logging.Debug | 10.0.12 |
 | Controls | Microsoft.Maui.Controls | 10.0.110 |
+| Tests | xUnit.net v3 (runner in-process) | 4.0.1 |
+| Raster/export | SkiaSharp | 4.152.1 |
 
 ---
 
@@ -187,8 +189,10 @@ NavajaSuiza_.NET10/                   # Solution
 │   └── MauiProgram.cs
 │
 └── NavajaSuiza.Test/                # Proyecto de tests (net10.0 puro)
-    └── *Tests.cs                     # xUnit + Moq, 239 tests
+    └── *Tests.cs                     # xUnit + Moq, 254 tests
 ```
+
+El conteo de 254 se obtiene de 237 `[Fact]` más 17 `[InlineData]`. Las cifras 229 / 230 / 232 que aparecieron en corridas locales **no eran una diferencia real de tests**: el bloqueo de Smart App Control hace fallar los constructores de las clases y altera el conteo del runner (§15.2).
 
 #### Regla de separación Core vs MAUI
 
@@ -672,14 +676,16 @@ MAUI `Battery.Default` en Android exige `BATTERY_STATS` (permiso protegido `sign
     - Catches silenciosos con traza: `FlashlightViewModel` ahora recibe `ILogger<T>` para los fallos de apagado antes y después de Morse; `CompassPage.xaml.cs` y `ThemeService` usan `Debug.WriteLine`. Se conservan los `catch (OperationCanceledException)` y los fallbacks deliberados.
     - 8 claves sin uso eliminadas de `AppResources.resx`, `AppResources.en.resx` y `AppResources.sv.resx`: `FlashlightActionOnText`, `FlashlightActionOffText`, `FlashlightStatusOnText`, `FlashlightStatusOffText`, `FramingModeFillText`, `PdfReaderEmptyHintText`, `CompassCalibrationIconText` y `WeatherText`. Las 3 tablas quedan alineadas con 124 claves cada una, con BOM UTF-8 y CRLF preservados.
 
+- **Ripple del cronómetro al registrar una vuelta**: cerrado en dispositivo físico. `AppConstants.Stopwatch.TICK_INTERVAL_MS` está en **16 ms** (~60 actualizaciones de `ElapsedText` por segundo). **Verificado por el usuario en un Android físico**: el contador va fluido y el síntoma de saltos visibles **no se reproduce**. Esto contradice la medición de laboratorio previa (el emulador daba peor con 16 ms que con 10 ms), y confirma que **el emulador no es representativo** para este síntoma porque renderiza por software y amplifica el efecto; las conclusiones de rendimiento del cronómetro deben tomarse en hardware real, no en emulador. El intervalo de 16 ms queda como el valor definitivo. Contexto para el registro: el síntoma solo aparecía en emulador y el contador nunca se atrasaba (el valor siempre era correcto), lo que descartaba un backlog de valores obsoletos. Se evaluó que la causa podría ser el `await` de `RunTickerAsync` (`StopwatchService.cs:147`) sin `ConfigureAwait(false)`, que dejaría el ciclo `Tick` → `OnTick` → `ElapsedText` en el hilo de UI; **no se aplicó** ni se midió porque en hardware real no hay problema que resolver. **No es una regresión del borrado de marcas** (el diff de `StopwatchService` solo agrega `RemoveLap`/`RenumberLaps`, fuera de la ruta del tick).
+
+---
+
 ### 15.2 Issues pendientes (Backlog)
 
-- **Biblioteca de componentes MAUI**: la planificación se extrae a un proyecto independiente (no entra en el alcance de esta app). El documento de planificación se movió fuera del repositorio.
-- **Ripple del cronómetro al registrar una vuelta**: abierto. `AppConstants.Stopwatch.TICK_INTERVAL_MS` está en **16 ms** (~60 actualizaciones de `ElapsedText` por segundo). El cambio desde 10 ms **no resolvió el síntoma y empeoró la percepción**: con menos repintados pero más espaciados, cada salto de tiempo se hace más visible. Por tanto el intervalo **no es la causa raíz** y subirlo más no es el camino. Observación clave del usuario: el contador **no se atrasa** (el valor siempre es correcto), solo **no es fluido**, lo que descarta un backlog de valores obsoletos. Hipótesis pendiente de medir: el `await` de `RunTickerAsync` (`StopwatchService.cs:147`) no usa `ConfigureAwait(false)`, por lo que — pese al fire-and-forget de la línea 103 — el ciclo completo (`Tick` → `OnTick` → `ElapsedText`) podría ejecutarse en el **hilo de UI**, compitiendo con la inflación de la fila que hace `Laps.Insert(0, lap)` al marcar. Eso explicaría la falta de fluidez sin atraso. **Sin medir**: se propuso registrar `Thread.CurrentThread.Name` en `OnTick` para confirmar en qué hilo corre, y no se ha ejecutado. No se ha aplicado coalescencia de updates ni `ConfigureAwait(false)`. **No es una regresión del borrado de marcas** (el diff de `StopwatchService` solo agrega `RemoveLap`/`RenumberLaps`, fuera de la ruta del tick). Nota: el emulador renderiza por software y amplifica el síntoma, así que la validación final requiere un dispositivo físico.
 - **Disposición del `CancellationTokenSource` del ticker**: `StopwatchService` hace `cts?.Dispose()` mientras el `PeriodicTimer` puede tener un `WaitForNextTickAsync` pendiente, lo que puede lanzar `ObjectDisposedException` en el lazo fire-and-forget y dejar el ticker muerto. No reproducido hasta ahora; pendiente de revisar.
-- **Pruebas sin poder ejecutar localmente por Smart App Control**: `dotnet test` falla en esta máquina con `System.IO.FileLoadException ... (0x800711C7)`, "Una directiva de Control de aplicaciones bloqueó este archivo", al cargar `NavajaSuiza.Core.dll`. **No es un fallo del código bajo prueba**: el build compila los cuatro TFMs con 0 advertencias y **GitHub Actions ejecuta la suite completa en verde**. El bloqueo es local y persistente en esta máquina; depende de la reputación que Windows asigne al binario recién compilado. Mitigaciones descartadas: `Unblock-File` no sirve porque el archivo **no** tiene `Zone.Identifier` (no es Mark of the Web). Workaround: ejecutar los tests en CI.
-- **Conteo de casos de prueba: 239**, cifra confirmada en GitHub Actions. La sucesión 229 / 230 / 232 que aparecía en corridas locales **no era una diferencia real de tests**: la carga fallida del assembly hace fallar los constructores de las clases y altera el conteo del runner. Los 239 casos se obtienen de 224 `[Fact]` más 15 `[InlineData]`.
+- ~~**Pruebas sin poder ejecutar localmente por Smart App Control**~~ **Resuelto** al migrar a xUnit.net v3 (ver §19). El bloqueo era `Code Integrity` contra `xunit.runner.visualstudio.testadapter.dll`, que venía sin firma digital en todas las versiones publicadas (verificado en 4.0.0 y 3.1.5, con `Get-AuthenticodeSignature`). xUnit v3 usa un runner in-process que no carga ese assembly sin firmar, por lo que la suite ahora corre local y en CI con el mismo comando. Nota: `dotnet remove package` solo borra la referencia del `.csproj`; la `PackageVersion` centralizada en `Directory.Packages.props` hay que eliminarla a mano, y el archivo queda sin salto de línea final.
 - **Sin pruebas directas de `DeviceStatusService`**: la lógica de `StatFs`/`DriveInfo` y el mapeo de umbrales no tienen cobertura propia; `MenuViewModel` se prueba con mocks de `IDeviceStatusService`. Probar el servicio real requiere Android APIs y no es trivial, por lo que queda pendiente decidir si vale la pena.
+
 ---
 
 ## 16. Referencias
@@ -710,7 +716,7 @@ Pasos 1–6 completados: la app está publicada en Internal testing y Closed tes
 
 ### 18.1 Pizarra (dibujo)
 
-Estado: **Fases 1 y 2 implementadas y verificadas** (suite total 239 tests; builds Android/Windows 0 errores). Fase 2 = export WebP a galería, ahora **transversal vía SkiaSharp** (verificado en emulador Android y en Windows). **Goma descartada**: Deshacer (LIFO) + Limpiar cubren el caso de esta app.
+Estado: **Fases 1, 2 y 3 implementadas y verificadas** (suite total 254 tests; builds de los 4 TFMs con 0 advertencias y 0 errores). Fase 2 = export WebP a galería, ahora **transversal vía SkiaSharp** (verificado en emulador Android y en Windows). Fase 3 = texto sobre el lienzo. **Goma descartada**: Deshacer (LIFO) + Limpiar cubren el caso de esta app.
 
 Entregado (Fase 1):
 - Lienzo a máximo espacio (`Grid` `Auto,Auto,*`), **sin `ScrollView`** (interceptaba los gestos verticales del dibujo).
@@ -728,7 +734,28 @@ Entregado (Fase 2 — Guardar/export a galería):
 - Guardado por plataforma: **Android** vía `MediaStore.Images` → `Pictures/pizarra.webp` (API 29+ sin permiso; API 21–28 pide `WRITE_EXTERNAL_STORAGE` en runtime, declarado en manifest con `maxSdkVersion="28"`); **Windows** → archivo WebP en Carpeta de imágenes (nombre único con fecha+guid); iOS/MacCatalyst `NotAvailable`.
 - El VM expone `PizarraExportResult` (`Saved`/`NotAvailable`/`Failed`) y la página muestra el mensaje correspondiente (resx ×3).
 
-Fase 3 **descartada por decisión del usuario** (2026-09-30): no habrá botón de compartir, porque la imagen se guarda localmente en la galería y eso ya cubre el caso de uso. Tampoco se implementa el guardado en Photos de iOS, ya que el proyecto no cubre iOS por no disponer de Mac para compilar. La Pizarra queda **completa en las Fases 1 y 2**.
+Entregado (Fase 3 — Texto):
+- **Botón "Agregar texto"** al inicio de la fila de herramientas, con `icons_text.png` (placeholder, el usuario proveerá el icono definitivo). La fila ya tenía `ScrollView Orientation="Horizontal"`, así que el scroll con muchos botones no requirió trabajo.
+- **Modo texto por comando**: el botón alterna `IsTextModeActive` y se pinta de `MyAccentOrange` para signaling estado activo, con un `DataTrigger` y un aviso en la fila del slider. Con el modo activo, `StartStroke`/`AddPoint` no dibujan, de modo que el toque en el lienzo abre `DisplayPromptAsync` y escribe el texto en esa posición.
+- `PizarraText` (contenido, X, Y, `FontSize`, `ColorHex`) y `PizarraDefaults.FontSize` (28) en Core, agnósticos de plataforma. El tamaño es **fijo** por decisión del usuario y el texto hereda el color del lápiz activo.
+- **Contraste aplicado también a los textos ya creados**: `ApplyContrastToTexts` recorre `Texts` cuando cambia el fondo, con el mismo umbral WCAG 2.5:1 del lápiz. Sin esto el texto quedaba invisible al pasar a pizarra oscura.
+- **Historial de undo unificado**: `PizarraUndoEntry` (record struct con `Stroke`/`Text`) registra cada elemento en orden cronológico, así que `Undo` saca el último creado sea trazo o texto. La alternativa de comparar timestamps entre colecciones se descartó por más frágil. `Clear` vacía trazos, textos e historial.
+- `IPizarraImageExporter.ExportAsync` ahora recibe `(strokes, texts, boardColorHex)`. Se eligió agregar un parámetro en vez de un tipo base `PizarraElement` para no refactorizar los trazos que ya funcionaban.
+- `PizarraImageExporter` dibuja el texto con `SKFont` + `SKTextAlign.Left` (SkiaSharp 4.152.1 ya no expone `SKPaint.TextSize` ni `DrawText(string,...)`). `TryComputeLayout` **incluye los textos** en el bounding box, lo que corrige tres fallos: una pizarra **solo con texto** no exportaba (`maxX < minX` → `false`), un texto fuera del bounding box de los trazos se recortaba, y `SaveCommand` con `Strokes.Count == 0` ni siquiera llamaba al exportador. El ancho del texto se estima con 0.6 em por carácter para no depender de SkiaSharp en el cálculo.
+- 4 claves i18n nuevas en es/en/sv (`PizarraAddTextText`, `PizarraTextModeHintText`, `PizarraEnterTextTitle`, `PizarraEnterTextPrompt`) → 134 claves por idioma, paridad exacta.
+- 13 tests nuevos: modo texto, alta con color del lápiz, contenido vacío/en blanco, rechazo con el modo apagado, trazos bloqueados en modo texto, undo en ambos sentidos (texto sobre trazo y trazo sobre texto), limpieza de historial, y contraste del texto al cambiar de pizarra.
+
+Correcciones de render detectadas en dispositivo (Android, emulador):
+- **`StrokeDrawable` pasaba `text.X` y `text.Y` como `width`/`height` de `DrawString`** (el 4º y 5º parámetro son dimensiones, no coordenadas). Como el ancho del rectángulo dependía de la coordenada del toque, el corte de línea caía en puntos arbitrarios y el texto se envolvía en vertical al pegarse a la izquierda.
+- Se volvió al overload de 8 parámetros calculando el espacio real con `dirtyRect` (el área que MAUI pasa a `Draw`): `availableWidth = dirtyRect.Width - text.X`, `availableHeight = dirtyRect.Height - text.Y`. Con `TextFlow.OverflowBounds` el texto que excede se dibuja en vez de recortarse, así el salto cae en los espacios.
+- **El overload de 4 argumentos no sirve para esto**: en Skia delega a `DrawText(value, x, y, ...)`, donde `y` es la **línea base**, no el borde superior. Por eso el texto se salía por arriba de la pizarra y se veía bien solo en la parte de abajo. Con el overload de 8 parámetros + `VerticalAlignment.Top`, `text.Y` vuelve a ser el borde superior.
+- **Pendiente**: `SkiaTextLayout` no parte palabras sin espacios (URL, identificadores largos), que pueden desbordar. La alternativa sería medir con `GetStringSize` y reducir el tamaño de fuente en ese caso; no se implementó por no ser un requisito definido.
+- El hint de modo texto se envuelve en un `Grid` con `HeightRequest="20"` para reservar el alto: con `IsVisible` directo, el `Label` empujaba la pizarra y reducía su altura al activarse.
+- El control de grosor pasó a disposición **inline** (`Grid` de 2 columnas, texto a la izquierda y slider a la derecha) en lugar de apilado vertical.
+- **`PizarraViewModel` cambió de `AddTransient` a `AddSingleton`** en `MauiProgram.cs`: con Transient, al navegar fuera y volver se resolvía una instancia nueva y el dibujo se perdía. La página ya era Singleton; el estado vive en el VM.
+- El label del botón se acortó a "Texto" (`PizarraAddTextText` en los tres idiomas).
+
+Fase 4 **descartada por decisión del usuario** (2026-09-30): no habrá botón de compartir, porque la imagen se guarda localmente en la galería y eso ya cubre el caso de uso. Tampoco se implementa el guardado en Photos de iOS, ya que el proyecto no cubre iOS por no disponer de Mac para compilar.
 
 Enfoque técnico de export (referencia):
 - **MAUI no exporta `GraphicsView` a archivo**: se re-rasterizan los trazos desde el modelo. Ahora con **SkiaSharp** (una dependencia, raster + WebP transversal para todas las plataformas). Se evaluó un rasterizador propio en Core + encoder PNG (0 dependencias) pero se descartó: más líneas de gráficas que mantener y se perdía el WebP liviano.
@@ -756,7 +783,7 @@ Pendiente de definir: ¿conteo solo en primer plano o en segundo plano/cerrada?;
 
 ### 18.4 Visor de PDF (Syncfusion SfPdfViewer)
 
-Estado: **implementada y verificada en dispositivo real** (Android/Windows build 0/0; suite total 239 tests; **todas las conversiones y los visores probados en runtime en dispositivo físico**: PDF directo, DOCX, XLSX, CSV→PDF, texto plano y DOC/XLS legacy).
+Estado: **implementada y verificada en dispositivo real** (Android/Windows build 0/0; suite total 254 tests; **todas las conversiones y los visores probados en runtime en dispositivo físico**: PDF directo, DOCX, XLSX, CSV→PDF, texto plano y DOC/XLS legacy).
 
 Decisión de alcance:
 - **Visor real de PDF mediante Syncfusion `SfPdfViewer`** (paquetes `Syncfusion.Maui.PdfViewer` 34.2.9 + `Syncfusion.Licensing` 34.2.9). Sustituye al visor propio con `#if ANDROID`/`#if WINDOWS` (`Android.Graphics.Pdf.PdfRenderer` + `Windows.Data.Pdf`) que se descartó por decisión del usuario tras probarla en emulador (sept 2026): no se comportaba como un visor real (scroll discreto por página rasterizada, sin búsqueda ni selección de texto).
@@ -802,9 +829,15 @@ Restaurar:
 Build (Android Debug):
   dotnet build NavajaSuiza_.NET10/NavajaSuiza_.NET10.csproj -f net10.0-android -c Debug
 
-Suite de tests (esperado: 214 superados / 0 fallos):
-  dotnet test NavajaSuiza.Test/NavajaSuiza.Test.csproj
-Si la suite falla con "No se pudieron cargar las extensiones" o con el error 0x800711C7, no es un fallo del proyecto: Smart App Control de Windows bloquea el archivo `xunit.runner.visualstudio.testadapter.dll` porque ese paquete viene sin firma digital. Reiniciar el IDE o el equipo lo resuelve; no hace falta cambiar ningún paquete.
+Suite de tests (esperado: 254 superados / 0 fallos):
+  dotnet run --project NavajaSuiza.Test/NavajaSuiza.Test.csproj
+La suite usa xUnit.net v3 (4.0.1) con runner **in-process**: el proyecto de tests es un
+ejecutable y no requiere `dotnet test`. `dotnet test` ya no es compatible: el SDK de .NET 10
+rechaza el target de VSTest con Microsoft.Testing.Platform
+("Testing with VSTest target is no longer supported"). El CI ejecuta el mismo `dotnet run`.
+xUnit v3 trae analyzers propios: `xUnit1051` pide pasar `TestContext.Current.CancellationToken`
+a los tests que esperan un `CancellationToken`. Queda un aviso pendiente en
+`StopwatchServiceTests.cs`; no bloquea la suite.
 
 Release Android (APK): el default del csproj es AAB (para Google Play). Para generar APK de prueba:
   dotnet clean NavajaSuiza_.NET10/NavajaSuiza_.NET10.csproj -f net10.0-android -c Release

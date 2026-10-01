@@ -20,14 +20,17 @@ public sealed class PizarraImageExporter : IPizarraImageExporter
         _logger = logger;
     }
 
-    public async Task<PizarraExportResult> ExportAsync(IReadOnlyList<PizarraStroke> strokes, string boardColorHex)
+    public async Task<PizarraExportResult> ExportAsync(
+        IReadOnlyList<PizarraStroke> strokes,
+        IReadOnlyList<PizarraText> texts,
+        string boardColorHex)
     {
-        if (strokes.Count == 0)
+        if (strokes.Count == 0 && texts.Count == 0)
             return PizarraExportResult.Failed;
 
         try
         {
-            var webpBytes = RenderWebP(strokes, boardColorHex);
+            var webpBytes = RenderWebP(strokes, texts, boardColorHex);
             if (webpBytes is null)
                 return PizarraExportResult.Failed;
 
@@ -40,9 +43,9 @@ public sealed class PizarraImageExporter : IPizarraImageExporter
         }
     }
 
-    private static byte[]? RenderWebP(IReadOnlyList<PizarraStroke> strokes, string boardColorHex)
+    private static byte[]? RenderWebP(IReadOnlyList<PizarraStroke> strokes, IReadOnlyList<PizarraText> texts, string boardColorHex)
     {
-        using var bitmap = RenderBitmap(strokes, boardColorHex);
+        using var bitmap = RenderBitmap(strokes, texts, boardColorHex);
         if (bitmap is null)
             return null;
 
@@ -54,9 +57,9 @@ public sealed class PizarraImageExporter : IPizarraImageExporter
         return data.ToArray();
     }
 
-    private static SKBitmap? RenderBitmap(IReadOnlyList<PizarraStroke> strokes, string boardColorHex)
+    private static SKBitmap? RenderBitmap(IReadOnlyList<PizarraStroke> strokes, IReadOnlyList<PizarraText> texts, string boardColorHex)
     {
-        if (!TryComputeLayout(strokes, out var width, out var height, out var offsetX, out var offsetY, out var scale))
+        if (!TryComputeLayout(strokes, texts, out var width, out var height, out var offsetX, out var offsetY, out var scale))
             return null;
 
         var bitmap = new SKBitmap(width, height);
@@ -96,10 +99,44 @@ public sealed class PizarraImageExporter : IPizarraImageExporter
             canvas.DrawPath(path, paint);
         }
 
+        foreach (var text in texts)
+        {
+            if (string.IsNullOrWhiteSpace(text.Content))
+                continue;
+
+            using var paint = new SKPaint
+            {
+                IsAntialias = true,
+                Color = SKColor.Parse(text.ColorHex)
+            };
+
+            using var font = new SKFont(SKTypeface.Default, text.FontSize * scale);
+
+            canvas.DrawText(
+                text.Content,
+                (text.X + offsetX) * scale,
+                (text.Y + offsetY) * scale,
+                SKTextAlign.Left,
+                font,
+                paint);
+        }
+
         return bitmap;
     }
 
-    private static bool TryComputeLayout(IReadOnlyList<PizarraStroke> strokes, out int width, out int height, out float offsetX, out float offsetY, out float scale)
+    /// <summary>
+    /// Calcula el bounding box del contenido combinando trazos y textos. Sin los
+    /// textos una pizarra que solo tenga texto devolveria false y la exportacion
+    /// fallaria, y un texto fuera del bounding box de los trazos se recortaria.
+    /// </summary>
+    private static bool TryComputeLayout(
+        IReadOnlyList<PizarraStroke> strokes,
+        IReadOnlyList<PizarraText> texts,
+        out int width,
+        out int height,
+        out float offsetX,
+        out float offsetY,
+        out float scale)
     {
         var minX = float.MaxValue;
         var minY = float.MaxValue;
@@ -118,6 +155,21 @@ public sealed class PizarraImageExporter : IPizarraImageExporter
                 maxX = Math.Max(maxX, point.X);
                 maxY = Math.Max(maxY, point.Y);
             }
+        }
+
+        foreach (var text in texts)
+        {
+            if (string.IsNullOrWhiteSpace(text.Content))
+                continue;
+
+            // Se estima el ancho con 0.6 em por caracter, que es la media habitual
+            // para Helvetica/Arial y evita depender de SkiaSharp en el calculo.
+            var estimatedWidth = text.Content.Length * text.FontSize * 0.6f;
+
+            minX = Math.Min(minX, text.X);
+            minY = Math.Min(minY, text.Y);
+            maxX = Math.Max(maxX, text.X + estimatedWidth);
+            maxY = Math.Max(maxY, text.Y + text.FontSize);
         }
 
         if (maxX < minX || maxY < minY)

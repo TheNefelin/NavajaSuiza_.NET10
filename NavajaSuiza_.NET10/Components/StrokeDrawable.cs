@@ -33,5 +33,27 @@ public partial class StrokeDrawable : IDrawable
             canvas.StrokeLineJoin = LineJoin.Round;
             canvas.DrawPath(path);
         }
+
+        foreach (var text in _viewModel.Texts)
+        {
+            if (string.IsNullOrWhiteSpace(text.Content))
+                continue;
+
+            canvas.FontColor = Color.FromArgb(text.ColorHex);
+            canvas.FontSize = text.FontSize;
+
+            var availableWidth = Math.Max(dirtyRect.Width - text.X, 1f);
+            var availableHeight = Math.Max(dirtyRect.Height - text.Y, 1f);
+
+            canvas.DrawString(
+                text.Content,
+                text.X,
+                text.Y,
+                availableWidth,
+                availableHeight,
+                HorizontalAlignment.Left,
+                VerticalAlignment.Top,
+                TextFlow.OverflowBounds);
+        }
     }
 }

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -466,7 +466,7 @@
     <value>Buscando señal...</value>
   </data>
   <data name="CompassLocationDisabledText" xml:space="preserve">
-    <value>La ubicación está desactivada en este dispositivo.</value>
+    <value>Debes activar la Ubicación en el dispositivo.</value>
   </data>
   <data name="CompassPermissionDeniedText" xml:space="preserve">
     <value>Se necesita permiso de ubicación para mostrar la posición.</value>
@@ -494,5 +494,17 @@
   </data>
   <data name="MenuStatusText" xml:space="preserve">
     <value>Estado Rápido</value>
+  </data>
+  <data name="PizarraAddTextText" xml:space="preserve">
+    <value>Texto</value>
+  </data>
+  <data name="PizarraTextModeHintText" xml:space="preserve">
+    <value>Modo texto: toca el lienzo para escribir</value>
+  </data>
+  <data name="PizarraEnterTextTitle" xml:space="preserve">
+    <value>Agregar texto</value>
+  </data>
+  <data name="PizarraEnterTextPrompt" xml:space="preserve">
+    <value>Escribe el texto</value>
   </data>
 </root>

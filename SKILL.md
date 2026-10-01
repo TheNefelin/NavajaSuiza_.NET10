@@ -931,7 +931,7 @@ public static int GetBatteryLevel(Android.Content.Context ctx) =>
 - Probar **contra BD real** (o instancia de prueba) para validar DTO → SP → respuesta completa.
 - Verificar el **envelope**: `IsSuccess`, `StatusCode`, `Message` correctos para éxito, 400, 401, 404, 429 y 500.
 - No mockear repositorios para probar la API: el valor está en el flujo real.
-- Comando: `dotnet test` (no ejecutar sin autorización del usuario según las reglas del repo).
+- Comando: `dotnet run --project NavajaSuiza.Test/NavajaSuiza.Test.csproj` (no ejecutar sin autorización del usuario según las reglas del repo). La suite usa xUnit.net v3 con runner in-process; `dotnet test` no es compatible con el SDK de .NET 10.
 
 ---
 

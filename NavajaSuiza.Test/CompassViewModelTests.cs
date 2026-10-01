@@ -176,10 +176,40 @@ public class CompassViewModelTests
         await vm.LocateCommand.ExecuteAsync(null);
 
         Assert.False(vm.HasPosition);
-        Assert.Equal("La ubicación está desactivada en este dispositivo.", vm.PositionMessage);
+        Assert.Equal("Debes activar la Ubicación en el dispositivo.", vm.PositionMessage);
+        Assert.True(vm.IsLocationDisabledMessage);
         _compassPositionServiceMock.Verify(
             s => s.GetCurrentPositionAsync(It.IsAny<CancellationToken>()),
             Times.Never);
+    }
+
+    [Fact]
+    public async Task Locate_WhenPermissionDenied_DoesNotFlagLocationDisabled()
+    {
+        _compassPositionServiceMock.Setup(s => s.IsAvailable).Returns(true);
+        _compassPositionServiceMock
+            .Setup(s => s.GetCurrentPositionAsync(It.IsAny<CancellationToken>()))
+            .ThrowsAsync(new UnauthorizedAccessException());
+
+        var vm = CreateSut();
+        await vm.LocateCommand.ExecuteAsync(null);
+
+        Assert.False(vm.IsLocationDisabledMessage);
+    }
+
+    [Fact]
+    public async Task Locate_WhenSuccess_ClearsLocationDisabledFlag()
+    {
+        _compassPositionServiceMock.Setup(s => s.IsAvailable).Returns(true);
+        _compassPositionServiceMock
+            .Setup(s => s.GetCurrentPositionAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new PositionReading(10, 20, 100, 15));
+
+        var vm = CreateSut();
+        await vm.LocateCommand.ExecuteAsync(null);
+
+        Assert.False(vm.IsLocationDisabledMessage);
+        Assert.True(vm.HasPosition);
     }
 
     [Fact]

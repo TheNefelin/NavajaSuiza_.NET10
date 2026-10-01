@@ -110,6 +110,13 @@ public partial class PizarraPage : ContentPage
             return;
 
         var touch = touches[0];
+
+        if (viewModel.IsTextModeActive)
+        {
+            _ = PromptTextAsync(touch.X, touch.Y);
+            return;
+        }
+
         viewModel.StartStroke(touch.X, touch.Y);
     }
 
@@ -117,7 +124,7 @@ public partial class PizarraPage : ContentPage
     {
         var viewModel = _viewModel;
         var touches = e.Touches;
-        if (viewModel is null || touches.Length == 0)
+        if (viewModel is null || touches.Length == 0 || viewModel.IsTextModeActive)
             return;
 
         var touch = touches[0];
@@ -132,6 +139,24 @@ public partial class PizarraPage : ContentPage
     private void OnCancelInteraction(object? sender, EventArgs e)
     {
         _viewModel?.EndStroke();
+    }
+
+    private async Task PromptTextAsync(float x, float y)
+    {
+        var viewModel = _viewModel;
+        if (viewModel is null)
+            return;
+
+        var local = LocalizationResourceManager.Instance;
+        var title = local["PizarraEnterTextTitle"]?.ToString() ?? string.Empty;
+        var prompt = local["PizarraEnterTextPrompt"]?.ToString() ?? string.Empty;
+        var cancelText = local["CancelText"]?.ToString() ?? string.Empty;
+
+        var content = await DisplayPromptAsync(title, prompt, "OK", cancelText);
+        if (string.IsNullOrWhiteSpace(content))
+            return;
+
+        viewModel.AddText(content, x, y);
     }
 
     private static bool IsDarkThemeActive() =>

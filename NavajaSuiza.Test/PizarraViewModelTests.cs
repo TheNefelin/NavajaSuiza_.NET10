@@ -237,7 +237,10 @@ public class PizarraViewModelTests
     [Fact]
     public async Task SaveCommand_ExportsStrokesAndBoardColor()
     {
-        _exporterMock.Setup(e => e.ExportAsync(It.IsAny<IReadOnlyList<PizarraStroke>>(), It.IsAny<string>()))
+        _exporterMock.Setup(e => e.ExportAsync(
+                It.IsAny<IReadOnlyList<PizarraStroke>>(),
+                It.IsAny<IReadOnlyList<PizarraText>>(),
+                It.IsAny<string>()))
             .ReturnsAsync(PizarraExportResult.Saved);
 
         var vm = CreateSut();
@@ -249,6 +252,7 @@ public class PizarraViewModelTests
 
         _exporterMock.Verify(e => e.ExportAsync(
             It.Is<IReadOnlyList<PizarraStroke>>(s => s.Count == 1 && s[0].Points.Count == 2),
+            It.Is<IReadOnlyList<PizarraText>>(t => t.Count == 0),
             "#17171B"), Times.Once);
         Assert.Equal(PizarraExportResult.Saved, vm.LastExportResult);
     }
@@ -256,20 +260,29 @@ public class PizarraViewModelTests
     [Fact]
     public async Task SaveCommand_OnEmptyBoard_DoesNotExportAndFlagsFailed()
     {
-        _exporterMock.Setup(e => e.ExportAsync(It.IsAny<IReadOnlyList<PizarraStroke>>(), It.IsAny<string>()))
+        _exporterMock.Setup(e => e.ExportAsync(
+                It.IsAny<IReadOnlyList<PizarraStroke>>(),
+                It.IsAny<IReadOnlyList<PizarraText>>(),
+                It.IsAny<string>()))
             .ReturnsAsync(PizarraExportResult.Saved);
 
         var vm = CreateSut();
         await vm.SaveCommand.ExecuteAsync(null);
 
-        _exporterMock.Verify(e => e.ExportAsync(It.IsAny<IReadOnlyList<PizarraStroke>>(), It.IsAny<string>()), Times.Never);
+        _exporterMock.Verify(e => e.ExportAsync(
+            It.IsAny<IReadOnlyList<PizarraStroke>>(),
+            It.IsAny<IReadOnlyList<PizarraText>>(),
+            It.IsAny<string>()), Times.Never);
         Assert.Equal(PizarraExportResult.Failed, vm.LastExportResult);
     }
 
     [Fact]
     public async Task SaveCommand_WhenExporterUnavailable_SetsNotAvailable()
     {
-        _exporterMock.Setup(e => e.ExportAsync(It.IsAny<IReadOnlyList<PizarraStroke>>(), It.IsAny<string>()))
+        _exporterMock.Setup(e => e.ExportAsync(
+                It.IsAny<IReadOnlyList<PizarraStroke>>(),
+                It.IsAny<IReadOnlyList<PizarraText>>(),
+                It.IsAny<string>()))
             .ReturnsAsync(PizarraExportResult.NotAvailable);
 
         var vm = CreateSut();
@@ -283,7 +296,10 @@ public class PizarraViewModelTests
     [Fact]
     public async Task SaveCommand_WhenExporterFails_SetsFailed()
     {
-        _exporterMock.Setup(e => e.ExportAsync(It.IsAny<IReadOnlyList<PizarraStroke>>(), It.IsAny<string>()))
+        _exporterMock.Setup(e => e.ExportAsync(
+                It.IsAny<IReadOnlyList<PizarraStroke>>(),
+                It.IsAny<IReadOnlyList<PizarraText>>(),
+                It.IsAny<string>()))
             .ReturnsAsync(PizarraExportResult.Failed);
 
         var vm = CreateSut();
@@ -292,5 +308,185 @@ public class PizarraViewModelTests
         await vm.SaveCommand.ExecuteAsync(null);
 
         Assert.Equal(PizarraExportResult.Failed, vm.LastExportResult);
+    }
+
+    [Fact]
+    public async Task SaveCommand_WithOnlyText_ExportsWithoutStrokes()
+    {
+        _exporterMock.Setup(e => e.ExportAsync(
+                It.IsAny<IReadOnlyList<PizarraStroke>>(),
+                It.IsAny<IReadOnlyList<PizarraText>>(),
+                It.IsAny<string>()))
+            .ReturnsAsync(PizarraExportResult.Saved);
+
+        var vm = CreateSut();
+        vm.ToggleTextModeCommand.Execute(null);
+        vm.AddText("Hola", 10f, 20f);
+
+        await vm.SaveCommand.ExecuteAsync(null);
+
+        _exporterMock.Verify(e => e.ExportAsync(
+            It.Is<IReadOnlyList<PizarraStroke>>(s => s.Count == 0),
+            It.Is<IReadOnlyList<PizarraText>>(t => t.Count == 1 && t[0].Content == "Hola"),
+            It.IsAny<string>()), Times.Once);
+        Assert.Equal(PizarraExportResult.Saved, vm.LastExportResult);
+    }
+
+    [Fact]
+    public void ToggleTextModeCommand_FlipsTextMode()
+    {
+        var vm = CreateSut();
+
+        Assert.False(vm.IsTextModeActive);
+
+        vm.ToggleTextModeCommand.Execute(null);
+        Assert.True(vm.IsTextModeActive);
+
+        vm.ToggleTextModeCommand.Execute(null);
+        Assert.False(vm.IsTextModeActive);
+    }
+
+    [Fact]
+    public void AddText_InTextMode_AddsTextWithPenColor()
+    {
+        var vm = CreateSut();
+        vm.SelectColorCommand.Execute("#E53935");
+        vm.ToggleTextModeCommand.Execute(null);
+
+        var added = vm.AddText("Hola", 15f, 25f);
+
+        var text = Assert.Single(vm.Texts);
+        Assert.True(added);
+        Assert.Equal("Hola", text.Content);
+        Assert.Equal(15f, text.X);
+        Assert.Equal(25f, text.Y);
+        Assert.Equal("#E53935", text.ColorHex);
+        Assert.Equal(PizarraDefaults.FontSize, text.FontSize);
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData("   ")]
+    public void AddText_WithBlankContent_DoesNothing(string content)
+    {
+        var vm = CreateSut();
+        vm.ToggleTextModeCommand.Execute(null);
+
+        var added = vm.AddText(content, 10f, 20f);
+
+        Assert.False(added);
+        Assert.Empty(vm.Texts);
+    }
+
+    [Fact]
+    public void AddText_WhenTextModeIsOff_DoesNothing()
+    {
+        var vm = CreateSut();
+
+        var added = vm.AddText("Hola", 10f, 20f);
+
+        Assert.False(added);
+        Assert.Empty(vm.Texts);
+    }
+
+    [Fact]
+    public void StartStroke_InTextMode_DoesNotAddStroke()
+    {
+        var vm = CreateSut();
+        vm.ToggleTextModeCommand.Execute(null);
+
+        vm.StartStroke(10f, 20f);
+        vm.AddPoint(30f, 40f);
+
+        Assert.Empty(vm.Strokes);
+    }
+
+    [Fact]
+    public void AddPoint_InTextMode_DoesNothing()
+    {
+        var vm = CreateSut();
+        vm.StartStroke(10f, 20f);
+        vm.ToggleTextModeCommand.Execute(null);
+
+        vm.AddPoint(30f, 40f);
+
+        Assert.Single(vm.Strokes);
+        Assert.Single(vm.Strokes[0].Points);
+    }
+
+    [Fact]
+    public void UndoCommand_AfterText_RemovesTheTextNotTheStroke()
+    {
+        var vm = CreateSut();
+        vm.StartStroke(10f, 20f);
+        vm.ToggleTextModeCommand.Execute(null);
+        vm.AddText("Hola", 30f, 40f);
+
+        vm.UndoCommand.Execute(null);
+
+        Assert.Empty(vm.Texts);
+        Assert.Single(vm.Strokes);
+    }
+
+    [Fact]
+    public void UndoCommand_AfterStroke_RemovesTheStrokeNotTheText()
+    {
+        var vm = CreateSut();
+        vm.ToggleTextModeCommand.Execute(null);
+        vm.AddText("Hola", 30f, 40f);
+        vm.ToggleTextModeCommand.Execute(null);
+        vm.StartStroke(10f, 20f);
+
+        vm.UndoCommand.Execute(null);
+
+        Assert.Empty(vm.Strokes);
+        Assert.Single(vm.Texts);
+    }
+
+    [Fact]
+    public void ClearCommand_RemovesStrokesTextsAndHistory()
+    {
+        var vm = CreateSut();
+        vm.StartStroke(10f, 20f);
+        vm.ToggleTextModeCommand.Execute(null);
+        vm.AddText("Hola", 30f, 40f);
+
+        vm.ClearCommand.Execute(null);
+
+        Assert.Empty(vm.Strokes);
+        Assert.Empty(vm.Texts);
+
+        // Si el historial no se limpiara, Undo todavia tendria entradas.
+        vm.UndoCommand.Execute(null);
+        Assert.Empty(vm.Strokes);
+        Assert.Empty(vm.Texts);
+    }
+
+    [Fact]
+    public void SetBoardColor_OnDarkBoardWithDarkText_SwitchesTextToReadableColor()
+    {
+        var vm = CreateSut();
+        vm.SelectColorCommand.Execute("#1F1F1F");
+        vm.ToggleTextModeCommand.Execute(null);
+        vm.AddText("Hola", 10f, 20f);
+        Assert.Equal("#1F1F1F", vm.Texts[0].ColorHex);
+
+        vm.SetBoardColorCommand.Execute("#17171B");
+
+        Assert.Equal("#FDD835", vm.Texts[0].ColorHex);
+    }
+
+    [Fact]
+    public void SetBoardColor_KeepsTextColorWithEnoughContrast()
+    {
+        var vm = CreateSut();
+        vm.SetBoardColorCommand.Execute("#17171B");
+        vm.SelectColorCommand.Execute("#E53935");
+        vm.ToggleTextModeCommand.Execute(null);
+        vm.AddText("Hola", 10f, 20f);
+
+        vm.SetBoardColorCommand.Execute("#17171B");
+
+        Assert.Equal("#E53935", vm.Texts[0].ColorHex);
     }
 }

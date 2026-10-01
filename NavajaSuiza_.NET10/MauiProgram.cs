@@ -122,7 +122,7 @@ public static class MauiProgram
             .AddSingleton<NotesPage>()
             .AddTransient<NoteEditorViewModel>()
             .AddSingleton<NoteEditorPage>()
-            .AddTransient<PizarraViewModel>()
+            .AddSingleton<PizarraViewModel>()
             .AddSingleton<PizarraPage>()
             .AddTransient<PdfReaderViewModel>()
             .AddTransient<PdfReaderPage>()

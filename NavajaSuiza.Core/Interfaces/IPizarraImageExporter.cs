@@ -11,5 +11,8 @@ public enum PizarraExportResult
 
 public interface IPizarraImageExporter
 {
-    Task<PizarraExportResult> ExportAsync(IReadOnlyList<PizarraStroke> strokes, string boardColorHex);
+    Task<PizarraExportResult> ExportAsync(
+        IReadOnlyList<PizarraStroke> strokes,
+        IReadOnlyList<PizarraText> texts,
+        string boardColorHex);
 }

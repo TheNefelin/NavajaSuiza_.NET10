@@ -15,8 +15,14 @@ public partial class PizarraViewModel : BaseViewModel
 
     private readonly ILogger<PizarraViewModel> _logger;
     private readonly IPizarraImageExporter _exporter;
+    private readonly List<PizarraUndoEntry> _undoHistory = new();
 
     public ObservableCollection<PizarraStroke> Strokes { get; } = new();
+
+    public ObservableCollection<PizarraText> Texts { get; } = new();
+
+    [ObservableProperty]
+    public partial bool IsTextModeActive { get; set; }
 
     [ObservableProperty]
     public partial string SelectedColor { get; set; } = "#E53935";
@@ -42,6 +48,9 @@ public partial class PizarraViewModel : BaseViewModel
 
     public void StartStroke(float x, float y)
     {
+        if (IsTextModeActive)
+            return;
+
         var stroke = new PizarraStroke
         {
             ColorHex = SelectedColor,
@@ -49,12 +58,13 @@ public partial class PizarraViewModel : BaseViewModel
         };
         stroke.AddPoint(x, y);
         Strokes.Add(stroke);
+        _undoHistory.Add(PizarraUndoEntry.ForStroke(stroke));
         RaiseCanvasChanged();
     }
 
     public void AddPoint(float x, float y)
     {
-        if (Strokes.Count == 0)
+        if (IsTextModeActive || Strokes.Count == 0)
             return;
 
         Strokes[^1].AddPoint(x, y);
@@ -66,6 +76,38 @@ public partial class PizarraViewModel : BaseViewModel
     /// </summary>
     public void EndStroke()
     {
+    }
+
+    /// <summary>
+    /// Agrega un texto al lienzo en modo texto. No hace nada si el modo está
+    /// desactivado o si el contenido está vacío.
+    /// </summary>
+    public bool AddText(string content, float x, float y)
+    {
+        if (!IsTextModeActive || string.IsNullOrWhiteSpace(content))
+            return false;
+
+        var text = new PizarraText
+        {
+            Content = content.Trim(),
+            X = x,
+            Y = y,
+            FontSize = PizarraDefaults.FontSize,
+            ColorHex = SelectedColor
+        };
+
+        Texts.Add(text);
+        _undoHistory.Add(PizarraUndoEntry.ForText(text));
+        RaiseCanvasChanged();
+        _logger.LogInformation("Pizarra: texto agregado");
+        return true;
+    }
+
+    [RelayCommand]
+    private void ToggleTextMode()
+    {
+        IsTextModeActive = !IsTextModeActive;
+        _logger.LogInformation("Pizarra: modo texto {Estado}", IsTextModeActive ? "activado" : "desactivado");
     }
 
     [RelayCommand]
@@ -103,11 +145,29 @@ public partial class PizarraViewModel : BaseViewModel
 
     private void EnsurePenContrast()
     {
-        if (ContrastRatio(BoardColor, SelectedColor) >= PenContrastThreshold)
-            return;
+        if (ContrastRatio(BoardColor, SelectedColor) < PenContrastThreshold)
+        {
+            var isDarkBoard = RelativeLuminance(BoardColor) < 0.5d;
+            SelectedColor = isDarkBoard ? DarkBoardPenHex : LightBoardPenHex;
+        }
 
+        ApplyContrastToTexts();
+    }
+
+    /// <summary>
+    /// Ajusta el color de los textos ya creados cuando el tablero cambia, para que
+    /// no queden invisibles sobre el fondo nuevo.
+    /// </summary>
+    private void ApplyContrastToTexts()
+    {
         var isDarkBoard = RelativeLuminance(BoardColor) < 0.5d;
-        SelectedColor = isDarkBoard ? DarkBoardPenHex : LightBoardPenHex;
+        var readable = isDarkBoard ? DarkBoardPenHex : LightBoardPenHex;
+
+        foreach (var text in Texts)
+        {
+            if (ContrastRatio(BoardColor, text.ColorHex) < PenContrastThreshold)
+                text.ColorHex = readable;
+        }
     }
 
     private static double ContrastRatio(string hex1, string hex2)
@@ -137,33 +197,59 @@ public partial class PizarraViewModel : BaseViewModel
     private void Clear()
     {
         Strokes.Clear();
+        Texts.Clear();
+        _undoHistory.Clear();
         RaiseCanvasChanged();
         _logger.LogInformation("Pizarra limpiada");
     }
 
+    /// <summary>
+    /// Deshace la última acción, sea un trazo o un texto. El historial mantiene
+    /// el orden cronológico, así que deshacer sigue el orden en que el usuario
+    /// creó los elementos aunque estén en colecciones separadas.
+    /// </summary>
     [RelayCommand]
     private void Undo()
     {
-        if (Strokes.Count == 0)
+        if (_undoHistory.Count == 0)
             return;
 
-        Strokes.RemoveAt(Strokes.Count - 1);
+        var entry = _undoHistory[^1];
+        _undoHistory.RemoveAt(_undoHistory.Count - 1);
+
+        if (entry.Stroke is not null)
+        {
+            Strokes.Remove(entry.Stroke);
+            _logger.LogInformation("Pizarra: trazo deshecho");
+        }
+        else if (entry.Text is not null)
+        {
+            Texts.Remove(entry.Text);
+            _logger.LogInformation("Pizarra: texto deshecho");
+        }
+
         RaiseCanvasChanged();
-        _logger.LogInformation("Pizarra: trazo deshecho");
     }
 
     [RelayCommand]
     private async Task Save()
     {
-        if (Strokes.Count == 0)
+        if (Strokes.Count == 0 && Texts.Count == 0)
         {
             LastExportResult = PizarraExportResult.Failed;
             return;
         }
 
-        LastExportResult = await _exporter.ExportAsync(Strokes.ToArray(), BoardColor);
+        LastExportResult = await _exporter.ExportAsync(Strokes.ToArray(), Texts.ToArray(), BoardColor);
         _logger.LogInformation("Export de pizarra: {Result}", LastExportResult);
     }
 
     private void RaiseCanvasChanged() => CanvasChanged?.Invoke();
+
+    private readonly record struct PizarraUndoEntry(PizarraStroke? Stroke, PizarraText? Text)
+    {
+        public static PizarraUndoEntry ForStroke(PizarraStroke stroke) => new(stroke, null);
+
+        public static PizarraUndoEntry ForText(PizarraText text) => new(null, text);
+    }
 }

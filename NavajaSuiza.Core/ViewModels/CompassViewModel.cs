@@ -46,6 +46,9 @@ public partial class CompassViewModel : BaseViewModel
     public partial bool HasPosition { get; set; }
 
     [ObservableProperty]
+    public partial bool IsLocationDisabledMessage { get; set; }
+
+    [ObservableProperty]
     public partial string LatitudeText { get; set; } = "--";
 
     [ObservableProperty]
@@ -156,15 +159,17 @@ public partial class CompassViewModel : BaseViewModel
         var token = _positionCts.Token;
 
         IsLocating = true;
+        IsLocationDisabledMessage = false;
         PositionMessage = GetString("CompassLocatingText", "Buscando señal...");
 
         try
         {
             if (!_compassPositionService.IsAvailable)
             {
+                IsLocationDisabledMessage = true;
                 PositionMessage = GetString(
                     "CompassLocationDisabledText",
-                    "La ubicación está desactivada en este dispositivo.");
+                    "Debes activar la Ubicación en el dispositivo.");
                 return;
             }
 
@@ -183,14 +188,17 @@ public partial class CompassViewModel : BaseViewModel
                 : unavailableText;
 
             HasPosition = true;
+            IsLocationDisabledMessage = false;
             PositionMessage = "";
         }
         catch (OperationCanceledException)
         {
+            IsLocationDisabledMessage = false;
             PositionMessage = "";
         }
         catch (UnauthorizedAccessException)
         {
+            IsLocationDisabledMessage = false;
             PositionMessage = GetString(
                 "CompassPermissionDeniedText",
                 "Se necesita permiso de ubicación para mostrar la posición.");
@@ -198,6 +206,7 @@ public partial class CompassViewModel : BaseViewModel
         catch (Exception exception)
         {
             _logger.LogWarning(exception, "Could not read the device position");
+            IsLocationDisabledMessage = false;
             PositionMessage = GetString(
                 "CompassPositionErrorText",
                 "No se pudo obtener la posición. Salí al exterior e intentá de nuevo.");

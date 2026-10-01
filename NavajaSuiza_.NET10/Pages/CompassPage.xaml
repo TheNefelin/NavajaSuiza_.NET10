@@ -133,7 +133,16 @@
                 HorizontalTextAlignment="Center"
                 FontSize="13"
                 Opacity="0.7"
-                Margin="20,0,20,10"/>
+                Margin="20,0,20,10">
+                <Label.Triggers>
+                    <DataTrigger TargetType="Label" Binding="{Binding IsLocationDisabledMessage}" Value="True">
+                        <Setter Property="Opacity" Value="1" />
+                        <Setter
+                            Property="TextColor"
+                            Value="{AppThemeBinding Light={StaticResource MyDangerLight}, Dark={StaticResource MyDangerDark}}" />
+                    </DataTrigger>
+                </Label.Triggers>
+            </Label>
 
             <Grid 
                 IsVisible="{Binding HasPosition}"

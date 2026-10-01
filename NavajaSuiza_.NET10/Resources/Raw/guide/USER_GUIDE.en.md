@@ -32,14 +32,15 @@ The sketchpad lets you draw freehand on a white surface and save your drawing as
 
 - Pick a color with the palette button (color wheel).
 - Draw by dragging your finger across the white surface.
+- Add text with the text button and tap the canvas where you want it.
 - Use the eraser to correct a stroke.
-- Undo the last stroke with the arrow button.
+- Undo the last stroke or text with the arrow button.
 - Clear the whole sketchpad with the trash button.
 - Save your drawing as an image with the save button.
 
 ### Tips
 
-- Stroke thickness is adjusted with the slider at the top.
+- Stroke thickness is adjusted with the slider, next to the thickness label.
 - The sketchpad adapts to the app's light and dark theme.
 - If you change the background color, the pen adjusts its contrast automatically so it is always visible.
 
@@ -162,11 +163,20 @@ The compass shows you magnetic north and the exact angle in degrees, with smooth
 - Hold the phone flat: the needle points north and the angle is shown in degrees.
 - The direction is shown as text (N, NE, E, SE, S, SW, W, NW).
 - The tilt indicator warns you when the phone is not flat.
+- Tap **My location** to see where you are: the app asks for location permission and shows latitude, longitude, altitude and approximate accuracy.
 
 ### Calibration
 
 - Tap **Calibrate** and move the device in a figure-eight in the air while the app measures.
 - Calibration takes a few seconds and improves the accuracy of the reading.
+
+### Location
+
+- Your position is read **only when you tap the button**: the app does not track your location in the background.
+- Coordinates are shown in degrees and decimal minutes with the hemisphere, for example `S 47° 23.434'`.
+- Accuracy is shown as `≈8 m`, meaning the likely radius of the error, not an interval.
+- If altitude or accuracy is unavailable, it shows "not available".
+- You can turn the location sensor off with the switch at the top; while it is off, the button does nothing.
 
 ---
 

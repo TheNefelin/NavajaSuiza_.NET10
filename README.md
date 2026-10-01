@@ -38,8 +38,9 @@ La pizarra te permite dibujar a mano alzada sobre una superficie blanca y guarda
 
 - Elige un color con el botón de la paleta (rueda de colores).
 - Dibuja arrastrando el dedo sobre la superficie blanca.
+- Agrega texto con el botón de texto y toca el lienzo donde quieras escribirlo.
 - Usa el borrador para corregir un trazo.
-- Deshaz el último trazo con el botón de la flecha.
+- Deshaz el último trazo o texto con el botón de la flecha.
 - Limpia toda la pizarra con el botón de la papelera.
 - Guarda tu dibujo como imagen con el botón de guardar.
 
@@ -546,7 +547,7 @@ var cancelText = LocalizationResourceManager.Instance["CancelText"]?.ToString();
 
 GitHub Actions workflow en `.github/workflows/build.yml`:
 - Ejecuta en push y PR a `main`
-- Steps: `dotnet restore` → `dotnet build` → `dotnet test`
+- Steps: `dotnet restore` → `dotnet build` → `dotnet run --project NavajaSuiza.Test/NavajaSuiza.Test.csproj` (la suite usa xUnit.net v3 con runner in-process; `dotnet test` no es compatible con el SDK de .NET 10)
 
 ## Convenciones de código
 

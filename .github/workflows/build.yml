@@ -26,4 +26,4 @@ jobs:
           dotnet-version: "10.0.x"
 
       - name: Test (Core + Test)
-        run: dotnet test NavajaSuiza.Test/NavajaSuiza.Test.csproj --configuration Release --verbosity normal
+        run: dotnet run --project NavajaSuiza.Test/NavajaSuiza.Test.csproj --configuration Release
