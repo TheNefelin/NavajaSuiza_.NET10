@@ -46,7 +46,7 @@ La pizarra te permite dibujar a mano alzada sobre una superficie blanca y guarda
 
 #### Consejos
 
-- El grosor del trazo se ajusta con el control deslizante de la parte de arriba.
+- El grosor del trazo se ajusta con el control deslizante, junto a la etiqueta de grosor.
 - La pizarra se adapta al tema claro y oscuro de la aplicación.
 - Si cambias el color del fondo, el lápiz ajusta su contraste automáticamente para que siempre se vea.
 
@@ -169,11 +169,20 @@ La brújula te indica el norte magnético y el ángulo exacto en grados, con lec
 - Mantén el teléfono en horizontal: la aguja indica el norte y el ángulo se muestra en grados.
 - La dirección se muestra en texto (N, NE, E, SE, S, SO, O, NO).
 - El indicador de inclinación te avisa cuándo el teléfono no está plano.
+- Toca **Mi ubicación** para ver dónde estás: la app pide permiso de ubicación y muestra latitud, longitud, altitud y precisión aproximada.
 
 #### Calibración
 
 - Toca **Calibrar** y mueve el dispositivo en forma de 8 en el aire mientras la app mide.
 - La calibración toma unos segundos y mejora la precisión de la lectura.
+
+#### Ubicación
+
+- La posición se lee **solo cuando pulsas el botón**: la app no rastrea tu ubicación en segundo plano.
+- Las coordenadas se muestran en grados y minutos decimales con el hemisferio, por ejemplo `S 47° 23.434'`.
+- La precisión se indica como `≈8 m`, es decir, el radio probable del error, no un intervalo.
+- Si la altitud o la precisión no están disponibles, se muestra "no disponible".
+- Puedes desactivar el sensor de ubicación con el interruptor de la parte superior; mientras esté apagado, el botón no hace nada.
 
 ---
 
