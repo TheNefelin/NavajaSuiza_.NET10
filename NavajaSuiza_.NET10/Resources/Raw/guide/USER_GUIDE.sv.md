@@ -244,7 +244,7 @@ En grå punkt betyder att systemet inte returnerade något värde. Om den är kv
 | Färg | Laddningsnivå |
 |---|---|
 | Blå | 60% eller mer |
-| Orange | Mellan 30% och 59% |
+| Orange | Mellan 31% och 59% |
 | Röd | 30% eller mindre |
 
 ### Lagring

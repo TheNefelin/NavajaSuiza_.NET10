@@ -101,7 +101,7 @@ public class MenuViewModelTests
     [Theory]
     [InlineData(60, StatusLevel.Ok)]
     [InlineData(59, StatusLevel.Warning)]
-    [InlineData(30, StatusLevel.Warning)]
+    [InlineData(30, StatusLevel.Danger)]
     [InlineData(29, StatusLevel.Danger)]
     [InlineData(0, StatusLevel.Danger)]
     public void OnPageAppearing_MapsBatteryCapacityToStatus(int capacity, StatusLevel expected)

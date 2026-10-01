@@ -244,7 +244,7 @@ A gray dot means the system did not return a reading. If it stays gray for a lon
 | Color | Charge level |
 |---|---|
 | Blue | 60% or more |
-| Orange | Between 30% and 59% |
+| Orange | Between 31% and 59% |
 | Red | 30% or less |
 
 ### Storage

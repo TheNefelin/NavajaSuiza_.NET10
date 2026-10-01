@@ -1,4 +1,4 @@
-# DEVELOPMENT.md - NavajaSuiza .NET10
+﻿# DEVELOPMENT.md - NavajaSuiza .NET10
 
 Contexto técnico, arquitectura y evolución del proyecto.
 
@@ -187,7 +187,7 @@ NavajaSuiza_.NET10/                   # Solution
 │   └── MauiProgram.cs
 │
 └── NavajaSuiza.Test/                # Proyecto de tests (net10.0 puro)
-    └── *Tests.cs                     # xUnit + Moq, 230 tests
+    └── *Tests.cs                     # xUnit + Moq, 239 tests
 ```
 
 #### Regla de separación Core vs MAUI
@@ -381,7 +381,7 @@ Todos los servicios están registrados en `MauiProgram.cs` e inyectados por DI.
   | Estado | Batería | Disco libre |
   |--------|---------|-------------|
   | Verde | ≥ 60% | ≥ 5 GB |
-  | Naranja | 30-59% | 2-5 GB |
+  | Naranja | 31-59% | 2-5 GB |
   | Rojo | ≤ 30% | < 2 GB |
 
   El almacenamiento **no** puede usar porcentajes: 20% libre puede ser correcto en un disco de 128 GB y crítico en uno de 16 GB.
@@ -677,8 +677,8 @@ MAUI `Battery.Default` en Android exige `BATTERY_STATS` (permiso protegido `sign
 - **Biblioteca de componentes MAUI**: la planificación se extrae a un proyecto independiente (no entra en el alcance de esta app). El documento de planificación se movió fuera del repositorio.
 - **Ripple del cronómetro al registrar una vuelta**: abierto. `AppConstants.Stopwatch.TICK_INTERVAL_MS` está en **16 ms** (~60 actualizaciones de `ElapsedText` por segundo). El cambio desde 10 ms **no resolvió el síntoma y empeoró la percepción**: con menos repintados pero más espaciados, cada salto de tiempo se hace más visible. Por tanto el intervalo **no es la causa raíz** y subirlo más no es el camino. Observación clave del usuario: el contador **no se atrasa** (el valor siempre es correcto), solo **no es fluido**, lo que descarta un backlog de valores obsoletos. Hipótesis pendiente de medir: el `await` de `RunTickerAsync` (`StopwatchService.cs:147`) no usa `ConfigureAwait(false)`, por lo que — pese al fire-and-forget de la línea 103 — el ciclo completo (`Tick` → `OnTick` → `ElapsedText`) podría ejecutarse en el **hilo de UI**, compitiendo con la inflación de la fila que hace `Laps.Insert(0, lap)` al marcar. Eso explicaría la falta de fluidez sin atraso. **Sin medir**: se propuso registrar `Thread.CurrentThread.Name` en `OnTick` para confirmar en qué hilo corre, y no se ha ejecutado. No se ha aplicado coalescencia de updates ni `ConfigureAwait(false)`. **No es una regresión del borrado de marcas** (el diff de `StopwatchService` solo agrega `RemoveLap`/`RenumberLaps`, fuera de la ruta del tick). Nota: el emulador renderiza por software y amplifica el síntoma, así que la validación final requiere un dispositivo físico.
 - **Disposición del `CancellationTokenSource` del ticker**: `StopwatchService` hace `cts?.Dispose()` mientras el `PeriodicTimer` puede tener un `WaitForNextTickAsync` pendiente, lo que puede lanzar `ObjectDisposedException` en el lazo fire-and-forget y dejar el ticker muerto. No reproducido hasta ahora; pendiente de revisar.
-- **Pruebas sin poder ejecutar por Smart App Control**: `dotnet test` falla con `System.IO.FileLoadException ... (0x800711C7)`, "Una directiva de Control de aplicaciones bloqueó este archivo", al cargar `NavajaSuiza.Core.dll` en el constructor de las clases de prueba. **No es un fallo del código bajo prueba**: el build compila los cuatro TFMs con 0 advertencias. Es transitorio y depende de la reputación que Windows asigne al binario recién compilado; una corrida anterior sí completó 230/230 sin cambios en el proyecto. Mitigaciones descartadas: `Unblock-File` no sirve porque el archivo **no** tiene `Zone.Identifier` (no es Mark of the Web). Workaround: reintentar, o ejecutar las pruebas con el proyecto recién compilado. **Los 15 tests de `MenuViewModel` (incluidos los del semáforo) están escritos pero no verificados en la última corrida.**
-- **Conteo de casos de prueba inconsistente**: el runner reporta 229, 230 y 232 en distintas corridas. La causa es la aforementioned carga fallida del assembly (los constructores fallan y alteran el conteo), no una diferencia real de tests. La cifra esperada es la que se obtiene con la suite completa en verde.
+- **Pruebas sin poder ejecutar localmente por Smart App Control**: `dotnet test` falla en esta máquina con `System.IO.FileLoadException ... (0x800711C7)`, "Una directiva de Control de aplicaciones bloqueó este archivo", al cargar `NavajaSuiza.Core.dll`. **No es un fallo del código bajo prueba**: el build compila los cuatro TFMs con 0 advertencias y **GitHub Actions ejecuta la suite completa en verde**. El bloqueo es local y persistente en esta máquina; depende de la reputación que Windows asigne al binario recién compilado. Mitigaciones descartadas: `Unblock-File` no sirve porque el archivo **no** tiene `Zone.Identifier` (no es Mark of the Web). Workaround: ejecutar los tests en CI.
+- **Conteo de casos de prueba: 239**, cifra confirmada en GitHub Actions. La sucesión 229 / 230 / 232 que aparecía en corridas locales **no era una diferencia real de tests**: la carga fallida del assembly hace fallar los constructores de las clases y altera el conteo del runner. Los 239 casos se obtienen de 224 `[Fact]` más 15 `[InlineData]`.
 - **Sin pruebas directas de `DeviceStatusService`**: la lógica de `StatFs`/`DriveInfo` y el mapeo de umbrales no tienen cobertura propia; `MenuViewModel` se prueba con mocks de `IDeviceStatusService`. Probar el servicio real requiere Android APIs y no es trivial, por lo que queda pendiente decidir si vale la pena.
 ---
 
@@ -710,7 +710,7 @@ Pasos 1–6 completados: la app está publicada en Internal testing y Closed tes
 
 ### 18.1 Pizarra (dibujo)
 
-Estado: **Fases 1 y 2 implementadas y verificadas** (suite total 230 tests; builds Android/Windows 0 errores). Fase 2 = export WebP a galería, ahora **transversal vía SkiaSharp** (verificado en emulador Android y en Windows). **Goma descartada**: Deshacer (LIFO) + Limpiar cubren el caso de esta app.
+Estado: **Fases 1 y 2 implementadas y verificadas** (suite total 239 tests; builds Android/Windows 0 errores). Fase 2 = export WebP a galería, ahora **transversal vía SkiaSharp** (verificado en emulador Android y en Windows). **Goma descartada**: Deshacer (LIFO) + Limpiar cubren el caso de esta app.
 
 Entregado (Fase 1):
 - Lienzo a máximo espacio (`Grid` `Auto,Auto,*`), **sin `ScrollView`** (interceptaba los gestos verticales del dibujo).
@@ -756,7 +756,7 @@ Pendiente de definir: ¿conteo solo en primer plano o en segundo plano/cerrada?;
 
 ### 18.4 Visor de PDF (Syncfusion SfPdfViewer)
 
-Estado: **implementada y verificada en dispositivo real** (Android/Windows build 0/0; suite total 230 tests; **todas las conversiones y los visores probados en runtime en dispositivo físico**: PDF directo, DOCX, XLSX, CSV→PDF, texto plano y DOC/XLS legacy).
+Estado: **implementada y verificada en dispositivo real** (Android/Windows build 0/0; suite total 239 tests; **todas las conversiones y los visores probados en runtime en dispositivo físico**: PDF directo, DOCX, XLSX, CSV→PDF, texto plano y DOC/XLS legacy).
 
 Decisión de alcance:
 - **Visor real de PDF mediante Syncfusion `SfPdfViewer`** (paquetes `Syncfusion.Maui.PdfViewer` 34.2.9 + `Syncfusion.Licensing` 34.2.9). Sustituye al visor propio con `#if ANDROID`/`#if WINDOWS` (`Android.Graphics.Pdf.PdfRenderer` + `Windows.Data.Pdf`) que se descartó por decisión del usuario tras probarla en emulador (sept 2026): no se comportaba como un visor real (scroll discreto por página rasterizada, sin búsqueda ni selección de texto).
