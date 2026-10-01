@@ -16,6 +16,7 @@ Välkommen till Navaja Suiza. Den här manualen förklarar steg för steg hur du
 6. Kompass
 7. Anteckningar
 8. Dokumentläsare
+9. Enhetsstatus
 
 ---
 
@@ -220,6 +221,48 @@ Dokumentläsaren öppnar och visar olika typer av filer utan att du behöver lä
 
 - Office-filer går igenom en konvertering; en förloppsindikator visas medan den förbereds.
 - Mycket stora textfiler öppnas inte (storleksgräns för att skydda prestandan).
+
+---
+
+## 9. Enhetsstatus
+
+Överst i menyn visas två indikatorer med en färgad punkt: **batteri** och **lagring**. Punkten sammanfattar tillståndet och siffran till höger ger det exakta värdet, så färgen är aldrig den enda informationen.
+
+### Vad färgerna betyder
+
+| Färg | Betydelse |
+|---|---|
+| Blå | Normalt tillstånd |
+| Orange | Varning |
+| Röd | Kritiskt tillstånd |
+| Grå | Värdet kunde inte läsas |
+
+En grå punkt betyder att systemet inte returnerade något värde. Om den är kvar grå länge kan det saknas behörighet för den informationen.
+
+### Batteri
+
+| Färg | Laddningsnivå |
+|---|---|
+| Blå | 60% eller mer |
+| Orange | Mellan 30% och 59% |
+| Röd | 30% eller mindre |
+
+### Lagring
+
+| Färg | Ledigt utrymme |
+|---|---|
+| Blå | 5 GB eller mer |
+| Orange | Mellan 2 GB och 5 GB |
+| Röd | Mindre än 2 GB |
+
+Lagring mäts i lediga GB, inte i procent.
+
+Värdena uppdateras varje gång du öppnar menyn, så detta är inte realtidsövervakning.
+
+### Tips
+
+- Siffran som visas är **ledigt** utrymme, inte använt. Totalen hittar du i telefonens inställningar.
+- Kapaciteten som systemet visar (till exempel 128 GB) är oftast större än det utrymme som faktiskt går att använda, eftersom en del reserveras för systemet. Därför stämmer siffrorna i appen och i inställningarna inte alltid överens.
 
 ---
 

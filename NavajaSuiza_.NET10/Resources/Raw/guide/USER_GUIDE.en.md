@@ -16,6 +16,7 @@ Welcome to the Swiss Army Knife. This manual explains, step by step, how to use 
 6. Compass
 7. Notes
 8. Document reader
+9. Device status
 
 ---
 
@@ -220,6 +221,48 @@ The document reader opens and displays all kinds of files without leaving the ap
 
 - Office files go through a conversion; a progress indicator appears while it is prepared.
 - Very large text files are not opened (size limit to protect performance).
+
+---
+
+## 9. Device status
+
+The top of the menu shows two indicators with a colored dot: **battery** and **storage**. The dot summarizes the state and the number on the right gives you the exact value, so the color is never the only information.
+
+### What the colors mean
+
+| Color | Meaning |
+|---|---|
+| Blue | Normal state |
+| Orange | Warning state |
+| Red | Critical state |
+| Gray | The value could not be read |
+
+A gray dot means the system did not return a reading. If it stays gray for a long time, the app may not have permission for that information.
+
+### Battery
+
+| Color | Charge level |
+|---|---|
+| Blue | 60% or more |
+| Orange | Between 30% and 59% |
+| Red | 30% or less |
+
+### Storage
+
+| Color | Free space |
+|---|---|
+| Blue | 5 GB or more |
+| Orange | Between 2 GB and 5 GB |
+| Red | Less than 2 GB |
+
+Storage is measured in free GB, not in percentage.
+
+Values refresh every time you open the menu, so this is not real-time monitoring.
+
+### Tips
+
+- The displayed number is the **available** space, not the used space. If you need the total, you will find it in your phone's settings.
+- The capacity your system shows (for example 128 GB) is usually larger than the space you can actually use, because part of it is reserved for the system. That is why the numbers in the app and in the settings do not always match.
 
 ---
 

@@ -16,6 +16,7 @@ Bienvenido a la Navaja Suiza. Este manual te explica, paso a paso, cómo usar ca
 6. Brújula
 7. Notas
 8. Lector de documentos
+9. Estado del dispositivo
 
 ---
 
@@ -220,6 +221,48 @@ El lector de documentos abre y muestra archivos de todo tipo sin salir de la app
 
 - Los archivos de Office pasan por una conversión; aparece un indicador de progreso mientras se prepara.
 - Los archivos de texto muy grandes no se abren (límite de tamaño para cuidar el rendimiento).
+
+---
+
+## 9. Estado del dispositivo
+
+El menú superior muestra dos indicadores con un punto de color: **batería** y **almacenamiento**. El punto resume el estado y el número a la derecha te da el valor exacto, así que el color nunca es la única información.
+
+### Qué significan los colores
+
+| Color | Significado |
+|---|---|
+| Azul | Estado normal |
+| Naranja | Estado de alerta |
+| Rojo | Estado crítico |
+| Gris | No se pudo leer el valor |
+
+Un punto gris significa que el sistema no entregó la lectura. Si el teléfono lo mantiene en gris mucho tiempo, la app puede no tener permiso para esa información.
+
+### Batería
+
+| Color | Porcentaje de carga |
+|---|---|
+| Azul | 60% o más |
+| Naranja | Entre 30% y 59% |
+| Rojo | 30% o menos |
+
+### Almacenamiento
+
+| Color | Espacio libre |
+|---|---|
+| Azul | 5 GB o más |
+| Naranja | Entre 2 GB y 5 GB |
+| Rojo | Menos de 2 GB |
+
+El almacenamiento se mide en GB libres, no en porcentaje.
+
+Los valores se actualizan cada vez que abres el menú, así que no es un monitoreo en tiempo real.
+
+### Consejos
+
+- El número mostrado es el espacio **disponible**, no el usado. Si necesitas el total, lo verás en los ajustes de tu teléfono.
+- La capacidad que muestra el sistema (por ejemplo 128 GB) suele ser mayor que el espacio realmente utilizable, porque una parte se reserva para el sistema. Por eso los números de la app y los de los ajustes no siempre coinciden.
 
 ---
 

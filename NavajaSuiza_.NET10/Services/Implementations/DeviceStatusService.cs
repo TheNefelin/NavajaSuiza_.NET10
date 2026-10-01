@@ -1,62 +1,100 @@
-﻿using NavajaSuiza.Core.Interfaces;
+﻿using Microsoft.Extensions.Logging;
+using NavajaSuiza.Core.Interfaces;
 
 namespace NavajaSuiza_.NET10.Services.Implementations;
 
 public class DeviceStatusService : IDeviceStatusService
 {
-    public string GetBatteryLevel()
+    private readonly ILogger<DeviceStatusService> _logger;
+
+    public DeviceStatusService(ILogger<DeviceStatusService> logger)
+    {
+        _logger = logger;
+    }
+
+    public int GetBatteryCapacity()
     {
         try
         {
 #if ANDROID
             var batteryManager = Android.App.Application.Context.GetSystemService(Android.Content.Context.BatteryService) as Android.OS.BatteryManager;
-            var capacity = batteryManager?.GetIntProperty((int)Android.OS.BatteryProperty.Capacity);
+            var capacity = batteryManager?.GetIntProperty((int)Android.OS.BatteryProperty.Capacity) ?? -1;
             if (capacity is >= 0 and <= 100)
-                return $"{capacity}%";
+                return capacity;
+
+            _logger.LogInformation("BatteryManager.Capacity devolvio {Capacity}, se usa la API de Essentials", capacity);
 #endif
             double level = Battery.Default.ChargeLevel;
-            if (level > 0 && level <= 1)
-                return $"{(int)(level * 100)}%";
+            if (level >= 0 && level <= 1)
+                return (int)(level * 100);
+
+            _logger.LogInformation("Battery.Default.ChargeLevel devolvio {Level}", level);
         }
-        catch
+        catch (Exception ex)
         {
-            return "N/A";
+            _logger.LogWarning(ex, "No se pudo leer la carga de la bateria");
         }
 
-        return "N/A";
+        return -1;
     }
 
-    public string GetAvailableStorage()
+    public long GetAvailableStorageBytes()
     {
         try
         {
 #if ANDROID
-            var path = Android.OS.Environment.ExternalStorageDirectory?.AbsolutePath;
-            if (!string.IsNullOrEmpty(path))
-            {
-                var statFs = new Android.OS.StatFs(path);
-                long availableBytes = statFs.AvailableBytes;
-                return FormatBytes(availableBytes);
-            }
+            return GetStatFs().AvailableBytes;
+#else
+            return GetDrive().AvailableFreeSpace;
 #endif
-            return "N/A";
         }
-        catch
+        catch (Exception ex)
         {
-            return "N/A";
+            _logger.LogWarning(ex, "No se pudo leer el almacenamiento disponible");
+            return -1;
         }
     }
 
-    private string FormatBytes(long bytes)
+    public long GetTotalStorageBytes()
     {
-        string[] sizes = { "B", "KB", "MB", "GB", "TB" };
-        double len = bytes;
-        int order = 0;
-        while (len >= 1024 && order < sizes.Length - 1)
+        try
         {
-            order++;
-            len = len / 1024;
+#if ANDROID
+            return GetStatFs().TotalBytes;
+#else
+            return GetDrive().TotalSize;
+#endif
         }
-        return $"{len:0.##} {sizes[order]}";
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "No se pudo leer el almacenamiento total");
+            return -1;
+        }
     }
+
+#if ANDROID
+    private Android.OS.StatFs GetStatFs()
+    {
+        var path = Android.OS.Environment.DataDirectory?.AbsolutePath ?? string.Empty;
+        if (string.IsNullOrEmpty(path))
+        {
+            _logger.LogWarning("No se encontro una ruta de almacenamiento valida");
+            return new Android.OS.StatFs(Android.OS.Environment.RootDirectory?.AbsolutePath ?? "/");
+        }
+
+        return new Android.OS.StatFs(path);
+    }
+#else
+    private DriveInfo GetDrive()
+    {
+        var path = FileSystem.Current.AppDataDirectory;
+        if (string.IsNullOrEmpty(path))
+        {
+            _logger.LogWarning("No se encontro una ruta de almacenamiento valida");
+            return new DriveInfo(Path.GetTempPath());
+        }
+
+        return new DriveInfo(path);
+    }
+#endif
 }

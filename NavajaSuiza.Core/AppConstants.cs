@@ -10,7 +10,7 @@ public static class AppConstants
 
     public static class Stopwatch
     {
-        public const int TICK_INTERVAL_MS = 10;
+        public const int TICK_INTERVAL_MS = 16;
     }
 
     public static class Framing

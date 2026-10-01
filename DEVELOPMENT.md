@@ -260,7 +260,7 @@ Todos los servicios están registrados en `MauiProgram.cs` e inyectados por DI.
 |-----------------|----------------------|----------|-----------------|
 | `ILanguageService` | `LanguageService` | Singleton | Localización, cambio de idioma, persistencia en `Preferences` |
 | `IThemeService` | `ThemeService` | Singleton | Tema oscuro/claro, persistencia, status bar (Android) |
-| `IDeviceStatusService` | `DeviceStatusService` | Singleton | Nivel de batería y almacenamiento disponible |
+| `IDeviceStatusService` | `DeviceStatusService` | Singleton | Batería y almacenamiento en **valores numéricos** (`GetBatteryCapacity`, `GetAvailableStorageBytes`, `GetTotalStorageBytes`); devuelve `-1` en fallo |
 | `INavigationService` | `NavigationService` | Transient | Navegación Shell (`PushAsync`, `GoToAsync`, `DisplayAlertAsync`), null-safe |
 | `ICompassService` | `CompassSensorService` | Singleton | Lectura de brújula (`Compass.Default`) |
 | `IOrientationService` | `OrientationSensorService` | Singleton | Lectura de orientación (`OrientationSensor.Default`) |
@@ -364,11 +364,36 @@ Todos los servicios están registrados en `MauiProgram.cs` e inyectados por DI.
 - **Sitio web**: línea `© 2026 | francisco-dev.cl` completa como hipervínculo (un solo label con `TapGestureRecognizer`) hacia `AppConstants.About.WebsiteUrl`, con el color de texto del sistema (compatible tema claro/oscuro), igual que el label de versión (sin subrayado ni opacidad).
 - **Versión 3 partes**: `ApplicationDisplayVersion=1.0.1` (texto libre válido en Android/iOS) y `ApplicationVersion=3` como build interno.
 
+### 6.8.1 Indicadores de estado del menú (`MenuPage`)
+- **Batería y almacenamiento se muestran como semáforo**: un `Ellipse` de 10 px junto a cada etiqueta, más el valor numérico a la derecha. El color **refuerza** la lectura, nunca la reemplaza: el número sigue visible porque el color por sí solo no es accesible para usuarios daltónicos.
+- **Estados** (`StatusLevel`, enum en Core) mapeados a color del semáforo:
+
+  | Estado | Color | Recurso |
+  |--------|-------|---------|
+  | `Ok` | Azul | `MyAccentBlue` `#2196F3` |
+  | `Warning` | Naranja | `MyAccentOrange` `#FF990A` |
+  | `Danger` | Rojo | `MyOn` `#FF0000` |
+  | `Unknown` | Gris | `MyOff` (valor base, sin `DataTrigger`) |
+
+  `Unknown` es el valor por defecto del `Ellipse` y se aplica cuando el dispositivo no entrega lectura, de modo que el punto nunca queda sin color definido.
+- **Umbrales asimétricos por diseño**: la batería se evalúa por **porcentaje** y el almacenamiento por **bytes absolutos**.
+
+  | Estado | Batería | Disco libre |
+  |--------|---------|-------------|
+  | Verde | ≥ 60% | ≥ 5 GB |
+  | Naranja | 30-59% | 2-5 GB |
+  | Rojo | ≤ 30% | < 2 GB |
+
+  El almacenamiento **no** puede usar porcentajes: 20% libre puede ser correcto en un disco de 128 GB y crítico en uno de 16 GB.
+- **El formateo a texto vive en `MenuViewModel`, no en el servicio.** El servicio devuelve números crudos porque XAML no puede comparar strings, y porque el umbral necesita la magnitud real. `FormatBytes()` y el mapeo a `StatusLevel` están en el VM.
+- **`Core` no puede exponer colores de MAUI.** Por eso el VM expone el enum `StatusLevel` (agnóstico de plataforma) y el XAML lo traduce con `DataTrigger`; exponer `Color` desde Core rompería el build de los cuatro TFMs, igual que ocurrió con `MainThread`.
+- **Se muestra solo el espacio libre**, no `usado / total`: la capacidad nominal de marketing (128 GB) no coincide con la partición real (~119 GB), y mostrar ambos invite a comparar con Ajustes y desconfiar. El total sigue disponible en `GetTotalStorageBytes()` por si se requiere.
+
 ### 6.9 Cronómetro (`StopwatchPage`)
 - Iniciar/pausar/reiniciar con display `HH:mm:ss.mmm` (3 decimales) y **registro de marcas (vueltas)**.
 - **Botones fijos** (no intercambian icono): `Play` (arranca; si ya corre, agrega una marca a la lista sin detener) y `Stop` (detiene; oprimido de nuevo limpia el cronómetro y la lista, dejando `00:00:00.000`).
 - **Marcas**: `StopwatchLap` (Number, Split, Delta) en `ObservableCollection`; cada marca guarda el tiempo acumulado y la diferencia con la anterior, mostradas en una lista. Las marcas viven en `StopwatchService` (Singleton) y el VM las refleja en `Initialize()`.
-- **Servicio Singleton en Core**: `StopwatchService` usa `System.Diagnostics.Stopwatch` + `PeriodicTimer` (intervalo 10 ms), thread-safe con lock. La UI se actualiza por evento `Tick` con `TimeSpan`.
+- **Servicio Singleton en Core**: `StopwatchService` usa `System.Diagnostics.Stopwatch` + `PeriodicTimer` (intervalo 16 ms), thread-safe con lock. La UI se actualiza por evento `Tick` con `TimeSpan`.
 - **Detención instantánea**: el ticker verifica cancelación antes de cada emisión y `Stop()` cancela antes de resetear, evitando que un tick residual "siga contando" tras pausar/reiniciar.
 - **Marcas persistentes**: viven en el servicio Singleton (no en el VM Transient), por lo que persisten al salir y volver a la página y se limpian únicamente con el reset (segundo toque de Stop).
 - **Estado persistente entre navegaciones**: al salir de la página el conteo continúa (patrón `FlashlightStateService`); `StopwatchViewModel.Initialize()` resincroniza al volver.
@@ -382,7 +407,8 @@ Todos los servicios están registrados en `MauiProgram.cs` e inyectados por DI.
 
 ### 6.10 Guía del usuario (`GuidePage`)
 - **Acceso**: desde `AboutPage` vía comando `OpenGuideCommand` (`INavigationService.PushAsync("GuidePage")`) y botón localizado `AboutOpenGuideText`.
-- **Recurso multidioma**: assets `Resources/Raw/guide/USER_GUIDE.{es,en,sv}.md` (default español, fallback a `USER_GUIDE.es.md` si el idioma activo no existe). Se resuelven con `ILanguageService.GetCurrentLanguage()`.
+- **Recurso multidioma**: assets `Resources/Raw/guide/USER_GUIDE.{es,en,sv}.md` (default español, fallback a `USER_GUIDE.es.md` si el idioma activo no existe). Se resuelven con `ILanguageService.GetCurrentLanguage()`. Los tres manuales mantienen la **misma numeración de secciones** (9 en total, la última es "Estado del dispositivo" con el semáforo del menú): al agregar una sección hay que actualizar el índice **y** los tres idiomas, porque el `Contenido` es un lista literal en cada archivo.
+- **La sección 9 documenta los umbrales del semáforo** (batería por porcentaje, almacenamiento por GB libres absolutos) para que el manual de usuario y §6.8.1 no se desincronicen. La tabla de colores del manual es la versión legible para el usuario de la de §6.8.1, que además incluye los valores hexadecimales.
 - **Render**: `IMarkdownToHtmlConverter` en Core con **Markdig 1.4.0** (`UseAdvancedExtensions`), imágenes embebidas como **data URI** (se leen de los assets y se inyectan en el HTML para que funcionen offline en el WebView), CSS de tablas para las dos columnas por feature y regex que captura tanto `![alt](archivo)` como `<img src="...">`.
 - **Tema**: la guía era la única superficie visual sin soporte de tema, porque el WebView renderiza HTML plano y `AppThemeBinding` no aplica ahí. `ConvertToHtml(markdown, isDarkTheme, imageDataUris)` recibe el tema y elige entre dos paletas alineadas con `Resources/Styles/Colors.xaml` (`MyBackgroundLight/Dark`, `MyPrimaryTextLight/Dark`, `MyBackgroundMenuLight/Dark`); `Border` y `Muted` son las mezclas necesarias para tablas, citas y `hr`, que no existen en ese diccionario. **Descartado `prefers-color-scheme`**: ese media query refleja el modo oscuro del sistema operativo, no `Application.Current.UserAppTheme`, que la app gobierna con su propio toggle en `AboutPage`; con `prefers-color-scheme` la guía se desincronizaría del resto de la app al usar el toggle interno. La guía no usa enlaces ni bloques de código, así que no se estilan.
 - **Recarga dinámica**: `GuidePage` se suscribe a `LanguageChanged` y a `ThemeChanged` en `OnNavigatedTo`, y se desuscribe de ambos en `OnNavigatingFrom`; al cambiar el idioma o el tema con la guía abierta, `LoadGuideAsync()` re-renderiza el HTML (`HtmlContent` del `GuideViewModel`). `ThemeChanged` lo emite `ThemeService.ApplyTheme` después de setear `UserAppTheme`, y el tema vigente se lee de `IThemeService.IsDarkTheme`.
@@ -628,6 +654,9 @@ MAUI `Battery.Default` en Android exige `BATTERY_STATS` (permiso protegido `sign
 19. **AboutPage navigation crash en Android**: `GoToAsync("//AboutPage")` causaba `JavaProxyThrowable` en Android. El botón interno del menú era redundante con el tab inferior. Se eliminó el botón, `NavigateToAboutCommand` y el workaround `IsDevelopment` asociado. El acceso a About queda por el tab inferior del TabBar.
 
 20. **`TestingPage`/`TestingViewModel` vacíos**: Página de pruebas sin implementación, botón TEST oculto por `IsDevelopment`. Eliminada junto con sus registros DI, entry de `.csproj` y botón de menú.
+21. **Almacenamiento del menú nunca mostraba el valor real**: `DeviceStatusService` consultaba `Environment.ExternalStorageDirectory` (`/storage/emulated/0`), que con **almacenamiento por ámbito** no es confiable, y el `catch` mudo devolvía `"N/A"` sin explicar la causa. Corregido — ahora usa `Environment.DataDirectory` (partición `/data`, la que el usuario ve en Ajustes) en Android y `FileSystem.Current.AppDataDirectory` + `DriveInfo` en iOS/MacCatalyst/Windows, donde antes devolvía siempre `"N/A"`. Los `catch` ahora loguean con `_logger.LogWarning(ex, ...)`.
+22. **Batería del menú marcaba mal**: `Battery.Default.ChargeLevel` usaba `level > 0`, lo que excluía `0%` y mostraba `"N/A"` con la batería agotada. Corregido a `level >= 0`. Además el `int?` implícito de `GetIntProperty` ahora coalesce a `-1`.
+23. **Valores por defecto mentirosos del menú**: `AvailableStorage` arrancaba en `"0 GB"` (afirmaba cero espacio libre) y `BatteryLevel` en `"0%"`. Ambos ahora `"N/A"` con `StatusLevel.Unknown`, que distingue "no lo sé" de "cero".
 
 21. **Batería no visible tras la limpieza de permisos**: MAUI `Battery.Default` exige `BATTERY_STATS` en Android. Solución: lectura con `BatteryManager.GetIntProperty(BatteryProperty.Capacity)` (sin permiso). `BATTERY_STATS` NO se re-agrega (permiso protegido, red flag en Play).
 
@@ -646,9 +675,11 @@ MAUI `Battery.Default` en Android exige `BATTERY_STATS` (permiso protegido `sign
 ### 15.2 Issues pendientes (Backlog)
 
 - **Biblioteca de componentes MAUI**: la planificación se extrae a un proyecto independiente (no entra en el alcance de esta app). El documento de planificación se movió fuera del repositorio.
-- **Micro-parpadeo del cronómetro**: `AppConstants.Stopwatch.TICK_INTERVAL_MS` está en 10 ms, es decir ~100 actualizaciones de `ElapsedText` por segundo, y `StopwatchService` invoca `Tick` desde el hilo del thread pool sin pasar por el dispatcher, así que cada tick cruza al hilo de UI. En emulador (render por software) se percibe un parpadeo puntual. **No es una regresión del borrado de marcas** (el diff de `StopwatchService` solo agrega `RemoveLap`/`RenumberLaps`, fuera de la ruta del tick). Ajuste propuesto y no aplicado: subir el intervalo a ~16 ms (60 fps); el display muestra milisegundos, así que sigue actualizando con fidelidad.
-- **`AppResources.Designer.cs` desactualizado**: el archivo generado (`ResXFileCodeGenerator`) no incluye las claves agregadas después de su última generación, pero **es inocuo**: la app resuelve los recursos por `AppResources.ResourceManager.GetObject(...)` desde `LocalizationResourceManager`, que no depende de las propiedades tipadas. Regenerarlo produciría un diff de ~57 propiedades sin efecto funcional, por lo que se deja pendiente.
+- **Ripple del cronómetro al registrar una vuelta**: abierto. `AppConstants.Stopwatch.TICK_INTERVAL_MS` está en **16 ms** (~60 actualizaciones de `ElapsedText` por segundo). El cambio desde 10 ms **no resolvió el síntoma y empeoró la percepción**: con menos repintados pero más espaciados, cada salto de tiempo se hace más visible. Por tanto el intervalo **no es la causa raíz** y subirlo más no es el camino. Observación clave del usuario: el contador **no se atrasa** (el valor siempre es correcto), solo **no es fluido**, lo que descarta un backlog de valores obsoletos. Hipótesis pendiente de medir: el `await` de `RunTickerAsync` (`StopwatchService.cs:147`) no usa `ConfigureAwait(false)`, por lo que — pese al fire-and-forget de la línea 103 — el ciclo completo (`Tick` → `OnTick` → `ElapsedText`) podría ejecutarse en el **hilo de UI**, compitiendo con la inflación de la fila que hace `Laps.Insert(0, lap)` al marcar. Eso explicaría la falta de fluidez sin atraso. **Sin medir**: se propuso registrar `Thread.CurrentThread.Name` en `OnTick` para confirmar en qué hilo corre, y no se ha ejecutado. No se ha aplicado coalescencia de updates ni `ConfigureAwait(false)`. **No es una regresión del borrado de marcas** (el diff de `StopwatchService` solo agrega `RemoveLap`/`RenumberLaps`, fuera de la ruta del tick). Nota: el emulador renderiza por software y amplifica el síntoma, así que la validación final requiere un dispositivo físico.
 - **Disposición del `CancellationTokenSource` del ticker**: `StopwatchService` hace `cts?.Dispose()` mientras el `PeriodicTimer` puede tener un `WaitForNextTickAsync` pendiente, lo que puede lanzar `ObjectDisposedException` en el lazo fire-and-forget y dejar el ticker muerto. No reproducido hasta ahora; pendiente de revisar.
+- **Pruebas sin poder ejecutar por Smart App Control**: `dotnet test` falla con `System.IO.FileLoadException ... (0x800711C7)`, "Una directiva de Control de aplicaciones bloqueó este archivo", al cargar `NavajaSuiza.Core.dll` en el constructor de las clases de prueba. **No es un fallo del código bajo prueba**: el build compila los cuatro TFMs con 0 advertencias. Es transitorio y depende de la reputación que Windows asigne al binario recién compilado; una corrida anterior sí completó 230/230 sin cambios en el proyecto. Mitigaciones descartadas: `Unblock-File` no sirve porque el archivo **no** tiene `Zone.Identifier` (no es Mark of the Web). Workaround: reintentar, o ejecutar las pruebas con el proyecto recién compilado. **Los 15 tests de `MenuViewModel` (incluidos los del semáforo) están escritos pero no verificados en la última corrida.**
+- **Conteo de casos de prueba inconsistente**: el runner reporta 229, 230 y 232 en distintas corridas. La causa es la aforementioned carga fallida del assembly (los constructores fallan y alteran el conteo), no una diferencia real de tests. La cifra esperada es la que se obtiene con la suite completa en verde.
+- **Sin pruebas directas de `DeviceStatusService`**: la lógica de `StatFs`/`DriveInfo` y el mapeo de umbrales no tienen cobertura propia; `MenuViewModel` se prueba con mocks de `IDeviceStatusService`. Probar el servicio real requiere Android APIs y no es trivial, por lo que queda pendiente decidir si vale la pena.
 ---
 
 ## 16. Referencias

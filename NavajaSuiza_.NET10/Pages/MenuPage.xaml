@@ -142,9 +142,21 @@
                 
                 <Grid ColumnDefinitions="*,Auto">
                     <HorizontalStackLayout Grid.Column="0" Spacing="12">
-                        <Ellipse 
-                            WidthRequest="10" HeightRequest="10" 
-                            Fill="{StaticResource MyOn}" />
+                        <Ellipse
+                            WidthRequest="10" HeightRequest="10"
+                            Fill="{StaticResource MyOff}">
+                            <Ellipse.Triggers>
+                                <DataTrigger TargetType="Ellipse" Binding="{Binding BatteryStatus}" Value="Ok">
+                                    <Setter Property="Fill" Value="{StaticResource MyAccentBlue}" />
+                                </DataTrigger>
+                                <DataTrigger TargetType="Ellipse" Binding="{Binding BatteryStatus}" Value="Warning">
+                                    <Setter Property="Fill" Value="{StaticResource MyAccentOrange}" />
+                                </DataTrigger>
+                                <DataTrigger TargetType="Ellipse" Binding="{Binding BatteryStatus}" Value="Danger">
+                                    <Setter Property="Fill" Value="{StaticResource MyOn}" />
+                                </DataTrigger>
+                            </Ellipse.Triggers>
+                        </Ellipse>
                         <Label 
                             Text="{extensions:Translate MenuBateryText}" 
                             FontSize="14" FontAttributes="Bold"/>
@@ -162,9 +174,21 @@
 
                 <Grid ColumnDefinitions="*,Auto">
                     <HorizontalStackLayout Grid.Column="0" Spacing="12">
-                        <Ellipse 
-                            WidthRequest="10" HeightRequest="10" 
-                            Fill="{StaticResource MyOn}" />
+                        <Ellipse
+                            WidthRequest="10" HeightRequest="10"
+                            Fill="{StaticResource MyOff}">
+                            <Ellipse.Triggers>
+                                <DataTrigger TargetType="Ellipse" Binding="{Binding StorageStatus}" Value="Ok">
+                                    <Setter Property="Fill" Value="{StaticResource MyAccentBlue}" />
+                                </DataTrigger>
+                                <DataTrigger TargetType="Ellipse" Binding="{Binding StorageStatus}" Value="Warning">
+                                    <Setter Property="Fill" Value="{StaticResource MyAccentOrange}" />
+                                </DataTrigger>
+                                <DataTrigger TargetType="Ellipse" Binding="{Binding StorageStatus}" Value="Danger">
+                                    <Setter Property="Fill" Value="{StaticResource MyOn}" />
+                                </DataTrigger>
+                            </Ellipse.Triggers>
+                        </Ellipse>
                         <Label 
                             Text="{extensions:Translate MenuStorageText}" 
                             FontSize="14" FontAttributes="Bold" />

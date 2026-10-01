@@ -68,30 +68,80 @@ public class MenuViewModelTests
     }
 
     [Fact]
-    public void BatteryLevel_DefaultsToZero()
+    public void BatteryLevel_DefaultsToNotAvailable()
     {
         var vm = CreateSut();
-        Assert.Equal("0%", vm.BatteryLevel);
+        Assert.Equal("N/A", vm.BatteryLevel);
+        Assert.Equal(StatusLevel.Unknown, vm.BatteryStatus);
     }
 
     [Fact]
-    public void AvailableStorage_DefaultsToZeroGB()
+    public void AvailableStorage_DefaultsToNotAvailable()
     {
         var vm = CreateSut();
-        Assert.Equal("0 GB", vm.AvailableStorage);
+        Assert.Equal("N/A", vm.AvailableStorage);
+        Assert.Equal(StatusLevel.Unknown, vm.StorageStatus);
     }
 
     [Fact]
     public void OnPageAppearing_UpdatesBatteryAndStorage()
     {
-        _deviceStatusServiceMock.Setup(s => s.GetBatteryLevel()).Returns("85%");
-        _deviceStatusServiceMock.Setup(s => s.GetAvailableStorage()).Returns("32 GB");
+        _deviceStatusServiceMock.Setup(s => s.GetBatteryCapacity()).Returns(85);
+        _deviceStatusServiceMock.Setup(s => s.GetAvailableStorageBytes()).Returns(32L * 1024 * 1024 * 1024);
 
         var vm = CreateSut();
         vm.OnPageAppearing();
 
         Assert.Equal("85%", vm.BatteryLevel);
         Assert.Equal("32 GB", vm.AvailableStorage);
+        Assert.Equal(StatusLevel.Ok, vm.BatteryStatus);
+        Assert.Equal(StatusLevel.Ok, vm.StorageStatus);
+    }
+
+    [Theory]
+    [InlineData(60, StatusLevel.Ok)]
+    [InlineData(59, StatusLevel.Warning)]
+    [InlineData(30, StatusLevel.Warning)]
+    [InlineData(29, StatusLevel.Danger)]
+    [InlineData(0, StatusLevel.Danger)]
+    public void OnPageAppearing_MapsBatteryCapacityToStatus(int capacity, StatusLevel expected)
+    {
+        _deviceStatusServiceMock.Setup(s => s.GetBatteryCapacity()).Returns(capacity);
+
+        var vm = CreateSut();
+        vm.OnPageAppearing();
+
+        Assert.Equal(expected, vm.BatteryStatus);
+        Assert.Equal($"{capacity}%", vm.BatteryLevel);
+    }
+
+    [Theory]
+    [InlineData(10, StatusLevel.Ok)]
+    [InlineData(3, StatusLevel.Warning)]
+    [InlineData(1, StatusLevel.Danger)]
+    public void OnPageAppearing_MapsStorageBytesToStatus(long gigabytes, StatusLevel expected)
+    {
+        _deviceStatusServiceMock.Setup(s => s.GetAvailableStorageBytes()).Returns(gigabytes * 1024L * 1024 * 1024);
+
+        var vm = CreateSut();
+        vm.OnPageAppearing();
+
+        Assert.Equal(expected, vm.StorageStatus);
+    }
+
+    [Fact]
+    public void OnPageAppearing_WhenDeviceReportsFailure_ShowsNotAvailable()
+    {
+        _deviceStatusServiceMock.Setup(s => s.GetBatteryCapacity()).Returns(-1);
+        _deviceStatusServiceMock.Setup(s => s.GetAvailableStorageBytes()).Returns(-1);
+
+        var vm = CreateSut();
+        vm.OnPageAppearing();
+
+        Assert.Equal("N/A", vm.BatteryLevel);
+        Assert.Equal("N/A", vm.AvailableStorage);
+        Assert.Equal(StatusLevel.Unknown, vm.BatteryStatus);
+        Assert.Equal(StatusLevel.Unknown, vm.StorageStatus);
     }
 
     [Fact]

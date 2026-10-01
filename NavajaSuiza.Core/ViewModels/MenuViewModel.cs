@@ -9,6 +9,12 @@ namespace NavajaSuiza.Core.ViewModels;
 
 public partial class MenuViewModel : BaseViewModel
 {
+    private const string NotAvailable = "N/A";
+    private const int BatteryDangerMax = 30;
+    private const int BatteryWarningMax = 59;
+    private const long StorageDangerBytes = 2L * 1024 * 1024 * 1024;
+    private const long StorageWarningBytes = 5L * 1024 * 1024 * 1024;
+
     private readonly ILogger<MenuViewModel> _logger;
     private readonly INavigationService _navigationService;
     private readonly IDeviceStatusService _deviceStatusService;
@@ -17,10 +23,16 @@ public partial class MenuViewModel : BaseViewModel
     private readonly IDocumentPdfConverter _documentPdfConverter;
 
     [ObservableProperty]
-    public partial string AvailableStorage { get; set; } = "0 GB";
+    public partial string AvailableStorage { get; set; } = NotAvailable;
 
     [ObservableProperty]
-    public partial string BatteryLevel { get; set; } = "0%";
+    public partial StatusLevel StorageStatus { get; set; } = StatusLevel.Unknown;
+
+    [ObservableProperty]
+    public partial string BatteryLevel { get; set; } = NotAvailable;
+
+    [ObservableProperty]
+    public partial StatusLevel BatteryStatus { get; set; } = StatusLevel.Unknown;
 
     [ObservableProperty]
     public partial bool IsDevelopment { get; set; }
@@ -46,8 +58,66 @@ public partial class MenuViewModel : BaseViewModel
 
     public void OnPageAppearing()
     {
-        BatteryLevel = _deviceStatusService.GetBatteryLevel();
-        AvailableStorage = _deviceStatusService.GetAvailableStorage();
+        UpdateBattery();
+        UpdateStorage();
+    }
+
+    private void UpdateBattery()
+    {
+        int capacity = _deviceStatusService.GetBatteryCapacity();
+
+        if (capacity is < 0 or > 100)
+        {
+            BatteryLevel = NotAvailable;
+            BatteryStatus = StatusLevel.Unknown;
+            return;
+        }
+
+        BatteryLevel = $"{capacity}%";
+        BatteryStatus = capacity switch
+        {
+            <= BatteryDangerMax => StatusLevel.Danger,
+            <= BatteryWarningMax => StatusLevel.Warning,
+            _ => StatusLevel.Ok
+        };
+    }
+
+    private void UpdateStorage()
+    {
+        long available = _deviceStatusService.GetAvailableStorageBytes();
+
+        if (available < 0)
+        {
+            AvailableStorage = NotAvailable;
+            StorageStatus = StatusLevel.Unknown;
+            return;
+        }
+
+        AvailableStorage = FormatBytes(available);
+
+        // El almacenamiento se evalua por espacio absoluto, no por porcentaje:
+        // 20% libre puede ser correcto en un disco de 128 GB y critico en uno de 16 GB.
+        StorageStatus = available switch
+        {
+            < StorageDangerBytes => StatusLevel.Danger,
+            < StorageWarningBytes => StatusLevel.Warning,
+            _ => StatusLevel.Ok
+        };
+    }
+
+    private static string FormatBytes(long bytes)
+    {
+        string[] sizes = { "B", "KB", "MB", "GB", "TB" };
+        double len = bytes;
+        int order = 0;
+
+        while (len >= 1024 && order < sizes.Length - 1)
+        {
+            order++;
+            len /= 1024;
+        }
+
+        return $"{len:0.##} {sizes[order]}";
     }
 
     [RelayCommand]
