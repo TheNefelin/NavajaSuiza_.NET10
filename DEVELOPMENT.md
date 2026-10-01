@@ -187,7 +187,7 @@ NavajaSuiza_.NET10/                   # Solution
 │   └── MauiProgram.cs
 │
 └── NavajaSuiza.Test/                # Proyecto de tests (net10.0 puro)
-    └── *Tests.cs                     # xUnit + Moq, 227 tests
+    └── *Tests.cs                     # xUnit + Moq, 230 tests
 ```
 
 #### Regla de separación Core vs MAUI
@@ -372,7 +372,12 @@ Todos los servicios están registrados en `MauiProgram.cs` e inyectados por DI.
 - **Detención instantánea**: el ticker verifica cancelación antes de cada emisión y `Stop()` cancela antes de resetear, evitando que un tick residual "siga contando" tras pausar/reiniciar.
 - **Marcas persistentes**: viven en el servicio Singleton (no en el VM Transient), por lo que persisten al salir y volver a la página y se limpian únicamente con el reset (segundo toque de Stop).
 - **Estado persistente entre navegaciones**: al salir de la página el conteo continúa (patrón `FlashlightStateService`); `StopwatchViewModel.Initialize()` resincroniza al volver.
+- **Borrado de una marca individual**: cada fila de la lista tiene un botón `icon_delete.png` al final que pide confirmación (`INavigationService.DisplayAlertConfirmAsync`, mismo patrón que Notas) y elimina solo esa marca.
+- **Correlativos densos**: al borrar, `StopwatchService.RemoveLap(int index)` renumera para que no queden huecos y recalcula el delta de las marcas siguientes. `Number` es una propiedad almacenada e inmutable (`Number { get; init; }`), no un índice, y `StopwatchLap` no admite mutación, así que `RenumberLaps()` reconstruye las instancias. El delta es la distancia hasta la marca anterior **que existe** (`Split[i] - Split[i+1]`, la más antigua contra cero): borrar la marca 2 de [10 s, 25 s, 40 s] deja `2 · 00:00:40 · +30 s` y `1 · 00:00:10 · +10 s`.
+- **El borrado opera por índice, no por referencia**: dentro de un `DataTemplate` el `BindingContext` es cada `StopwatchLap`, por lo que `CommandParameter="{Binding .}"` sí resuelve la marca, pero `Command="{Binding DeleteLapCommand}"` no encontraría el comando. Por eso el botón enlaza con `BindingContext.DeleteLapCommand` y `Source={x:Reference StopwatchPageRoot}`, igual que `NotesPage`.
+- **Fondo de fila**: las filas usan `AppThemeBinding` con `MyPrimaryLight`/`MyPrimaryDark`, que es el fondo del estilo implícito de `Border` (`Styles.xaml`), y no `MyBackground`, que es un color fijo sin variación por tema.
 - **Iconos**: botones fijos `icon_play.png` (Play/Marca) y `icon_stop.png` (Stop/Reset), sin `DataTrigger`. El asset `icon_stopwatch.png` se usa como icono del ítem del cronómetro en `MenuPage`.
+- **Nota de dimensionado de íconos en `Button`**: según la documentación oficial de MAUI, los bitmaps **no se escalan** para ajustarse al `Button`; el tamaño recomendado del bitmap es de 32 a 64 unidades independientes del dispositivo. `Padding` solo define el espacio interior y `WidthRequest`/`HeightRequest` dimensionan el botón, ninguno redimensiona el ícono. Por eso el botón de borrar es de 44×44 con `Padding="10"`.
 - **Nota de threading**: el `Tick` se dispara desde hilo background; validado en dispositivo, .NET MAUI refleja correctamente los cambios de propiedades bindables en la UI.
 
 ### 6.10 Guía del usuario (`GuidePage`)
@@ -641,6 +646,9 @@ MAUI `Battery.Default` en Android exige `BATTERY_STATS` (permiso protegido `sign
 ### 15.2 Issues pendientes (Backlog)
 
 - **Biblioteca de componentes MAUI**: la planificación se extrae a un proyecto independiente (no entra en el alcance de esta app). El documento de planificación se movió fuera del repositorio.
+- **Micro-parpadeo del cronómetro**: `AppConstants.Stopwatch.TICK_INTERVAL_MS` está en 10 ms, es decir ~100 actualizaciones de `ElapsedText` por segundo, y `StopwatchService` invoca `Tick` desde el hilo del thread pool sin pasar por el dispatcher, así que cada tick cruza al hilo de UI. En emulador (render por software) se percibe un parpadeo puntual. **No es una regresión del borrado de marcas** (el diff de `StopwatchService` solo agrega `RemoveLap`/`RenumberLaps`, fuera de la ruta del tick). Ajuste propuesto y no aplicado: subir el intervalo a ~16 ms (60 fps); el display muestra milisegundos, así que sigue actualizando con fidelidad.
+- **`AppResources.Designer.cs` desactualizado**: el archivo generado (`ResXFileCodeGenerator`) no incluye las claves agregadas después de su última generación, pero **es inocuo**: la app resuelve los recursos por `AppResources.ResourceManager.GetObject(...)` desde `LocalizationResourceManager`, que no depende de las propiedades tipadas. Regenerarlo produciría un diff de ~57 propiedades sin efecto funcional, por lo que se deja pendiente.
+- **Disposición del `CancellationTokenSource` del ticker**: `StopwatchService` hace `cts?.Dispose()` mientras el `PeriodicTimer` puede tener un `WaitForNextTickAsync` pendiente, lo que puede lanzar `ObjectDisposedException` en el lazo fire-and-forget y dejar el ticker muerto. No reproducido hasta ahora; pendiente de revisar.
 ---
 
 ## 16. Referencias
@@ -671,7 +679,7 @@ Pasos 1–6 completados: la app está publicada en Internal testing y Closed tes
 
 ### 18.1 Pizarra (dibujo)
 
-Estado: **Fases 1 y 2 implementadas y verificadas** (suite total 227 tests; builds Android/Windows 0 errores). Fase 2 = export WebP a galería, ahora **transversal vía SkiaSharp** (verificado en emulador Android y en Windows). **Goma descartada**: Deshacer (LIFO) + Limpiar cubren el caso de esta app.
+Estado: **Fases 1 y 2 implementadas y verificadas** (suite total 230 tests; builds Android/Windows 0 errores). Fase 2 = export WebP a galería, ahora **transversal vía SkiaSharp** (verificado en emulador Android y en Windows). **Goma descartada**: Deshacer (LIFO) + Limpiar cubren el caso de esta app.
 
 Entregado (Fase 1):
 - Lienzo a máximo espacio (`Grid` `Auto,Auto,*`), **sin `ScrollView`** (interceptaba los gestos verticales del dibujo).
@@ -717,7 +725,7 @@ Pendiente de definir: ¿conteo solo en primer plano o en segundo plano/cerrada?;
 
 ### 18.4 Visor de PDF (Syncfusion SfPdfViewer)
 
-Estado: **implementada y verificada en dispositivo real** (Android/Windows build 0/0; suite total 227 tests; **todas las conversiones y los visores probados en runtime en dispositivo físico**: PDF directo, DOCX, XLSX, CSV→PDF, texto plano y DOC/XLS legacy).
+Estado: **implementada y verificada en dispositivo real** (Android/Windows build 0/0; suite total 230 tests; **todas las conversiones y los visores probados en runtime en dispositivo físico**: PDF directo, DOCX, XLSX, CSV→PDF, texto plano y DOC/XLS legacy).
 
 Decisión de alcance:
 - **Visor real de PDF mediante Syncfusion `SfPdfViewer`** (paquetes `Syncfusion.Maui.PdfViewer` 34.2.9 + `Syncfusion.Licensing` 34.2.9). Sustituye al visor propio con `#if ANDROID`/`#if WINDOWS` (`Android.Graphics.Pdf.PdfRenderer` + `Windows.Data.Pdf`) que se descartó por decisión del usuario tras probarla en emulador (sept 2026): no se comportaba como un visor real (scroll discreto por página rasterizada, sin búsqueda ni selección de texto).

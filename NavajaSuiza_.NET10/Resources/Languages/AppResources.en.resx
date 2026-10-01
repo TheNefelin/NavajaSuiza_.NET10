@@ -306,6 +306,12 @@
   <data name="LapText" xml:space="preserve">
     <value>Laps</value>
   </data>
+  <data name="StopwatchDeleteLapTitleText" xml:space="preserve">
+    <value>Delete lap</value>
+  </data>
+  <data name="StopwatchDeleteLapConfirmationText" xml:space="preserve">
+    <value>Delete this lap?</value>
+  </data>
   <data name="MetronomeOptionsText" xml:space="preserve">
     <value>Select the Tempo, Speed and Play</value>
   </data>

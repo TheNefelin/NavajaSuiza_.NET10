@@ -49,6 +49,37 @@ public class StopwatchService : IStopwatchService
         }
     }
 
+    public void RemoveLap(int index)
+    {
+        lock (_lock)
+        {
+            if (index < 0 || index >= _laps.Count)
+                return;
+
+            _laps.RemoveAt(index);
+            RenumberLaps();
+        }
+    }
+
+    private void RenumberLaps()
+    {
+        for (var i = 0; i < _laps.Count; i++)
+        {
+            var previousSplit = i + 1 < _laps.Count ? _laps[i + 1].Split : TimeSpan.Zero;
+            var number = _laps.Count - i;
+
+            if (_laps[i].Number != number)
+            {
+                _laps[i] = new StopwatchLap
+                {
+                    Number = number,
+                    Split = _laps[i].Split,
+                    Delta = _laps[i].Split - previousSplit
+                };
+            }
+        }
+    }
+
     public void ClearLaps()
     {
         lock (_lock)

@@ -9,8 +9,12 @@ namespace NavajaSuiza.Test;
 public class StopwatchViewModelTests
 {
     private readonly Mock<ILogger<StopwatchViewModel>> _loggerMock = new();
+    private readonly Mock<INavigationService> _navigationServiceMock = new();
+    private readonly Mock<ILanguageService> _languageServiceMock = new();
 
-    private (StopwatchViewModel Vm, Mock<IStopwatchService> Service, Action<TimeSpan> SetElapsed) CreateSut(bool running = false)
+    private (StopwatchViewModel Vm, Mock<IStopwatchService> Service, Action<TimeSpan> SetElapsed) CreateSut(
+        bool running = false,
+        bool confirmDelete = true)
     {
         var elapsed = TimeSpan.Zero;
         var laps = new List<StopwatchLap>();
@@ -27,8 +31,40 @@ public class StopwatchViewModelTests
         service.Setup(s => s.Laps).Returns(() => laps.ToArray());
         service.Setup(s => s.AddLap(It.IsAny<StopwatchLap>())).Callback<StopwatchLap>(lap => laps.Insert(0, lap));
         service.Setup(s => s.ClearLaps()).Callback(() => laps.Clear());
+        service.Setup(s => s.RemoveLap(It.IsAny<int>())).Callback<int>(index =>
+        {
+            if (index < 0 || index >= laps.Count)
+                return;
 
-        var vm = new StopwatchViewModel(_loggerMock.Object, service.Object);
+            laps.RemoveAt(index);
+
+            for (var i = 0; i < laps.Count; i++)
+            {
+                var previousSplit = i + 1 < laps.Count ? laps[i + 1].Split : TimeSpan.Zero;
+                var number = laps.Count - i;
+
+                if (laps[i].Number != number)
+                {
+                    laps[i] = new StopwatchLap
+                    {
+                        Number = number,
+                        Split = laps[i].Split,
+                        Delta = laps[i].Split - previousSplit
+                    };
+                }
+            }
+        });
+
+        _languageServiceMock.Setup(s => s.GetString(It.IsAny<string>())).Returns("test");
+        _navigationServiceMock
+            .Setup(n => n.DisplayAlertConfirmAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+            .ReturnsAsync(confirmDelete);
+
+        var vm = new StopwatchViewModel(
+            _loggerMock.Object,
+            service.Object,
+            _navigationServiceMock.Object,
+            _languageServiceMock.Object);
         return (vm, service, value => elapsed = value);
     }
 
@@ -171,17 +207,79 @@ public class StopwatchViewModelTests
     public void Initialize_RestoresLapsFromService_AfterNewViewModel()
     {
         var (_, service, setElapsed) = CreateSut(running: true);
-        var vm = new StopwatchViewModel(_loggerMock.Object, service.Object);
+        var vm = new StopwatchViewModel(
+            _loggerMock.Object,
+            service.Object,
+            _navigationServiceMock.Object,
+            _languageServiceMock.Object);
         vm.Initialize();
         setElapsed(TimeSpan.FromSeconds(10));
         vm.StartLapCommand.Execute(null);
         vm.Cleanup();
 
-        var vm2 = new StopwatchViewModel(_loggerMock.Object, service.Object);
+        var vm2 = new StopwatchViewModel(
+            _loggerMock.Object,
+            service.Object,
+            _navigationServiceMock.Object,
+            _languageServiceMock.Object);
         vm2.Initialize();
 
         var lap = Assert.Single(vm2.Laps);
         Assert.Equal(1, lap.Number);
         Assert.Equal(TimeSpan.FromSeconds(10), lap.Split);
+    }
+
+    [Fact]
+    public async Task DeleteLapAsync_WhenConfirmed_RemovesLap()
+    {
+        var (vm, _, setElapsed) = CreateSut(running: true);
+        setElapsed(TimeSpan.FromSeconds(10));
+        vm.StartLapCommand.Execute(null);
+        setElapsed(TimeSpan.FromSeconds(25));
+        vm.StartLapCommand.Execute(null);
+
+        var target = vm.Laps.First(l => l.Number == 2);
+        await vm.DeleteLapCommand.ExecuteAsync(target);
+
+        var lap = Assert.Single(vm.Laps);
+        Assert.Equal(1, lap.Number);
+        Assert.Equal(TimeSpan.FromSeconds(10), lap.Split);
+    }
+
+    [Fact]
+    public async Task DeleteLapAsync_WhenNotConfirmed_KeepsLaps()
+    {
+        var (vm, _, setElapsed) = CreateSut(running: true, confirmDelete: false);
+        setElapsed(TimeSpan.FromSeconds(10));
+        vm.StartLapCommand.Execute(null);
+        setElapsed(TimeSpan.FromSeconds(25));
+        vm.StartLapCommand.Execute(null);
+
+        await vm.DeleteLapCommand.ExecuteAsync(vm.Laps[0]);
+
+        Assert.Equal(2, vm.Laps.Count);
+    }
+
+    [Fact]
+    public async Task DeleteLapAsync_MiddleLap_KeepsCorrelativesDense()
+    {
+        var (vm, _, setElapsed) = CreateSut(running: true);
+        setElapsed(TimeSpan.FromSeconds(10));
+        vm.StartLapCommand.Execute(null);
+        setElapsed(TimeSpan.FromSeconds(25));
+        vm.StartLapCommand.Execute(null);
+        setElapsed(TimeSpan.FromSeconds(40));
+        vm.StartLapCommand.Execute(null);
+
+        Assert.Equal(3, vm.Laps[0].Number);
+
+        await vm.DeleteLapCommand.ExecuteAsync(vm.Laps[1]);
+
+        Assert.Equal(2, vm.Laps.Count);
+        Assert.Equal(2, vm.Laps[0].Number);
+        Assert.Equal(TimeSpan.FromSeconds(40), vm.Laps[0].Split);
+        Assert.Equal(TimeSpan.FromSeconds(30), vm.Laps[0].Delta);
+        Assert.Equal(1, vm.Laps[1].Number);
+        Assert.Equal(TimeSpan.FromSeconds(10), vm.Laps[1].Split);
     }
 }

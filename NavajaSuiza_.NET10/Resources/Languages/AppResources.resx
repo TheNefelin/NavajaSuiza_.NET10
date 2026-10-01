@@ -306,6 +306,12 @@
   <data name="LapText" xml:space="preserve">
     <value>Marcas</value>
   </data>
+  <data name="StopwatchDeleteLapTitleText" xml:space="preserve">
+    <value>Eliminar marca</value>
+  </data>
+  <data name="StopwatchDeleteLapConfirmationText" xml:space="preserve">
+    <value>¿Eliminar esta marca?</value>
+  </data>
   <data name="MetronomeOptionsText" xml:space="preserve">
     <value>Seleccione el Tempo, Velocidad y Play</value>
   </data>

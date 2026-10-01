@@ -11,6 +11,8 @@ public partial class StopwatchViewModel : BaseViewModel
 {
     private readonly ILogger<StopwatchViewModel> _logger;
     private readonly IStopwatchService _stopwatchService;
+    private readonly INavigationService _navigationService;
+    private readonly ILanguageService _languageService;
 
     public ObservableCollection<StopwatchLap> Laps { get; } = new();
 
@@ -22,10 +24,14 @@ public partial class StopwatchViewModel : BaseViewModel
 
     public StopwatchViewModel(
         ILogger<StopwatchViewModel> logger,
-        IStopwatchService stopwatchService)
+        IStopwatchService stopwatchService,
+        INavigationService navigationService,
+        ILanguageService languageService)
     {
         _logger = logger;
         _stopwatchService = stopwatchService;
+        _navigationService = navigationService;
+        _languageService = languageService;
     }
 
     public void Initialize()
@@ -108,6 +114,31 @@ public partial class StopwatchViewModel : BaseViewModel
         _stopwatchService.AddLap(lap);
 
         _logger.LogInformation("Lap {Number} recorded at {Split}", Laps[0].Number, split);
+    }
+
+    [RelayCommand]
+    private async Task DeleteLapAsync(StopwatchLap lap)
+    {
+        if (lap is null)
+            return;
+
+        var confirmed = await _navigationService.DisplayAlertConfirmAsync(
+            _languageService.GetString("StopwatchDeleteLapTitleText"),
+            _languageService.GetString("StopwatchDeleteLapConfirmationText"),
+            _languageService.GetString("CommonYesText"),
+            _languageService.GetString("CommonNoText"));
+
+        if (!confirmed)
+            return;
+
+        var index = Laps.IndexOf(lap);
+        if (index < 0)
+            return;
+
+        _stopwatchService.RemoveLap(index);
+        RestoreLaps();
+
+        _logger.LogInformation("Lap {Number} deleted", lap.Number);
     }
 
     public static string FormatTimeSpan(TimeSpan elapsed) => StopwatchLap.FormatTime(elapsed);

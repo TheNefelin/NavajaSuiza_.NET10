@@ -306,6 +306,12 @@
   <data name="LapText" xml:space="preserve">
     <value>Varv</value>
   </data>
+  <data name="StopwatchDeleteLapTitleText" xml:space="preserve">
+    <value>Ta bort varv</value>
+  </data>
+  <data name="StopwatchDeleteLapConfirmationText" xml:space="preserve">
+    <value>Ta bort detta varv?</value>
+  </data>
   <data name="MetronomeOptionsText" xml:space="preserve">
     <value>Välj Tempo, Hastighet och Uppspelning</value>
   </data>

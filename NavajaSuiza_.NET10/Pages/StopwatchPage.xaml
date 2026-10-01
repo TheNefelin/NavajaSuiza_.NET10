@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:extensions="clr-namespace:NavajaSuiza_.NET10.Extensions"
              x:Class="NavajaSuiza_.NET10.Pages.StopwatchPage"
+             x:Name="StopwatchPageRoot"
              Title="{extensions:Translate StopwatchText}">
 
     <ScrollView>
@@ -47,7 +48,6 @@
             </HorizontalStackLayout>
 
             <VerticalStackLayout Padding="20,0" Spacing="6">
-
                 <Label
                     Text="{extensions:Translate LapText}"
                     FontSize="14"
@@ -55,48 +55,57 @@
                     HorizontalTextAlignment="Center"
                     Opacity="0.7" />
 
-                <Border
-                    MinimumHeightRequest="120"
-                    Padding="10"
-                    StrokeThickness="1"
-                    Stroke="{StaticResource MyAccentBlue}"
-                    StrokeShape="RoundRectangle 20">
+                <VerticalStackLayout
+                    Spacing="2"
+                    BindableLayout.ItemsSource="{Binding Laps}">
 
-                    <VerticalStackLayout
-                        Spacing="2"
-                        BindableLayout.ItemsSource="{Binding Laps}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate>
+                            <Grid
+                                ColumnDefinitions="Auto,*,*,Auto"
+                                ColumnSpacing="10"
+                                Padding="6,4"
+                                BackgroundColor="{AppThemeBinding Light={StaticResource MyPrimaryLight}, Dark={StaticResource MyPrimaryDark}}">
 
-                        <BindableLayout.ItemTemplate>
-                            <DataTemplate>
-                                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10" Padding="6,4">
+                                <Label
+                                    Grid.Column="0"
+                                    Text="{Binding Number}"
+                                    FontSize="14"
+                                    WidthRequest="30"
+                                    FontAttributes="Bold"
+                                    HorizontalTextAlignment="Center"                                    
+                                    VerticalOptions="Center" />
 
-                                    <Label
-                                        Grid.Column="0"
-                                        Text="{Binding Number}"
-                                        FontSize="14"
-                                        FontAttributes="Bold"
-                                        VerticalOptions="Center" />
+                                <Label
+                                    Grid.Column="1"
+                                    FontAttributes="Bold"                                    
+                                    Text="{Binding SplitText}"
+                                    FontSize="14"
+                                    TextColor="{StaticResource MyAccentBlue}"
+                                    HorizontalTextAlignment="Center"
+                                    VerticalOptions="Center" />
 
-                                    <Label
-                                        Grid.Column="1"
-                                        Text="{Binding SplitText}"
-                                        FontSize="14"
-                                        FontAttributes="Bold"
-                                        TextColor="{StaticResource MyAccentBlue}"
-                                        HorizontalTextAlignment="Center"
-                                        VerticalOptions="Center" />
+                                <Label
+                                    Grid.Column="2"
+                                    Text="{Binding DeltaText}"
+                                    FontSize="13"
+                                    Opacity="0.7"
+                                    HorizontalTextAlignment="Center"                                    
+                                    VerticalOptions="Center" />
 
-                                    <Label
-                                        Grid.Column="2"
-                                        Text="{Binding DeltaText}"
-                                        FontSize="13"
-                                        Opacity="0.7"
-                                        VerticalOptions="Center" />
-                                </Grid>
-                            </DataTemplate>
-                        </BindableLayout.ItemTemplate>
-                    </VerticalStackLayout>
-                </Border>
+                                <Button
+                                    Grid.Column="3"
+                                    Command="{Binding BindingContext.DeleteLapCommand, Source={x:Reference StopwatchPageRoot}}"
+                                    CommandParameter="{Binding .}"
+                                    BackgroundColor="{StaticResource MyOn}"
+                                    ImageSource="icon_delete.png"
+                                    Padding="10"
+                                    WidthRequest="44"
+                                    HeightRequest="44" />
+                            </Grid>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
             </VerticalStackLayout>
         </VerticalStackLayout>
     </ScrollView>
