@@ -14,16 +14,16 @@
     <PackageVersion Include="CommunityToolkit.Maui.MediaElement" Version="10.0.0" />
     <PackageVersion Include="Microsoft.Maui.Controls" Version="10.0.110" />
     <PackageVersion Include="Microsoft.Extensions.Logging.Debug" Version="10.0.12" />
-    <PackageVersion Include="SkiaSharp" Version="4.152.1" />
+    <PackageVersion Include="SkiaSharp" Version="4.153.1" />
     <PackageVersion Include="sqlite-net-pcl" Version="1.11.285" />
     <PackageVersion Include="Syncfusion.Licensing" Version="34.2.9" />
     <PackageVersion Include="Syncfusion.Maui.PdfViewer" Version="34.2.9" />
     <PackageVersion Include="Syncfusion.Maui.Toolkit" Version="1.0.11" />
   </ItemGroup>
   <ItemGroup Label="Test">
-    <PackageVersion Include="coverlet.collector" Version="10.0.1" />
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.9.0" />
-    <PackageVersion Include="Moq" Version="4.20.72" />
+    <PackageVersion Include="coverlet.collector" Version="10.1.0" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.10.1" />
+    <PackageVersion Include="Moq" Version="4.21.0" />
     <PackageVersion Include="xunit.v3" Version="4.0.1" />
   </ItemGroup>
 </Project>

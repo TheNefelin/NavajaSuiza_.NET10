@@ -286,7 +286,7 @@ Los valores se actualizan cada vez que abres el menú, así que no es un monitor
 | CommunityToolkit.Mvvm | 8.4.2 |
 | Microsoft.Extensions.Logging.Debug | 10.0.12 |
 | Microsoft.Maui.Controls | 10.0.110 |
-| SkiaSharp | 4.152.1 |
+| SkiaSharp | 4.153.1 |
 | sqlite-net-pcl | 1.11.285 |
 | Syncfusion.Maui.Toolkit | 1.0.11 |
 | Syncfusion.Maui.PdfViewer | 34.2.9 |

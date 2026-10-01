@@ -29,7 +29,10 @@ Contexto técnico, arquitectura y evolución del proyecto.
 | Logging | Microsoft.Extensions.Logging.Debug | 10.0.12 |
 | Controls | Microsoft.Maui.Controls | 10.0.110 |
 | Tests | xUnit.net v3 (runner in-process) | 4.0.1 |
-| Raster/export | SkiaSharp | 4.152.1 |
+| Test runner | Microsoft.NET.Test.Sdk | 18.10.1 |
+| Test mocking | Moq | 4.21.0 |
+| Test coverage | coverlet.collector | 10.1.0 |
+| Raster/export | SkiaSharp | 4.153.1 |
 
 ---
 
@@ -729,7 +732,7 @@ Entregado (Fase 1):
 
 Entregado (Fase 2 — Guardar/export a galería):
 - **Decisión**: se descartó la persistencia JSON propuesta originalmente (generaba archivos grandes y opacos para el usuario; "no todos saben qué es un JSON"). `Guardar` **exporta el dibujo como imagen WebP a la galería** (comprensible y borrable por el usuario). La pizarra **abre siempre en blanco** (sin restauración).
-- **SkiaSharp 4.152.1** (única dependencia nueva, instalada por el usuario): `IPizarraImageExporter` (Core) + `PizarraImageExporter` (MAUI) con **raster + encode transversal** — una sola implementación para todas las plataformas usando `SKBitmap`/`SKCanvas`/`SKPathBuilder`/`SKPaint` (caps/joins redondos, antialias, mismo estilo que `StrokeDrawable`) y `SKImage.Encode(Webp, 95)`. Reemplaza el raster nativo de Android (`Bitmap`/`Canvas`/`Paint`) y corrige de paso un bug: las coordenadas de trazo ahora **se escalan** junto con el grosor (antes solo se escalaba el grosor).
+- **SkiaSharp 4.153.1** (única dependencia nueva, instalada por el usuario): `IPizarraImageExporter` (Core) + `PizarraImageExporter` (MAUI) con **raster + encode transversal** — una sola implementación para todas las plataformas usando `SKBitmap`/`SKCanvas`/`SKPathBuilder`/`SKPaint` (caps/joins redondos, antialias, mismo estilo que `StrokeDrawable`) y `SKImage.Encode(Webp, 95)`. Reemplaza el raster nativo de Android (`Bitmap`/`Canvas`/`Paint`) y corrige de paso un bug: las coordenadas de trazo ahora **se escalan** junto con el grosor (antes solo se escalaba el grosor).
 - Layout de la imagen: máx. 2048px con margen (padding 40 + media anchura de trazo), `scale ≤ 1` (downscale si el contenido excede; sin upscale para no degradar).
 - Guardado por plataforma: **Android** vía `MediaStore.Images` → `Pictures/pizarra.webp` (API 29+ sin permiso; API 21–28 pide `WRITE_EXTERNAL_STORAGE` en runtime, declarado en manifest con `maxSdkVersion="28"`); **Windows** → archivo WebP en Carpeta de imágenes (nombre único con fecha+guid); iOS/MacCatalyst `NotAvailable`.
 - El VM expone `PizarraExportResult` (`Saved`/`NotAvailable`/`Failed`) y la página muestra el mensaje correspondiente (resx ×3).
@@ -741,7 +744,7 @@ Entregado (Fase 3 — Texto):
 - **Contraste aplicado también a los textos ya creados**: `ApplyContrastToTexts` recorre `Texts` cuando cambia el fondo, con el mismo umbral WCAG 2.5:1 del lápiz. Sin esto el texto quedaba invisible al pasar a pizarra oscura.
 - **Historial de undo unificado**: `PizarraUndoEntry` (record struct con `Stroke`/`Text`) registra cada elemento en orden cronológico, así que `Undo` saca el último creado sea trazo o texto. La alternativa de comparar timestamps entre colecciones se descartó por más frágil. `Clear` vacía trazos, textos e historial.
 - `IPizarraImageExporter.ExportAsync` ahora recibe `(strokes, texts, boardColorHex)`. Se eligió agregar un parámetro en vez de un tipo base `PizarraElement` para no refactorizar los trazos que ya funcionaban.
-- `PizarraImageExporter` dibuja el texto con `SKFont` + `SKTextAlign.Left` (SkiaSharp 4.152.1 ya no expone `SKPaint.TextSize` ni `DrawText(string,...)`). `TryComputeLayout` **incluye los textos** en el bounding box, lo que corrige tres fallos: una pizarra **solo con texto** no exportaba (`maxX < minX` → `false`), un texto fuera del bounding box de los trazos se recortaba, y `SaveCommand` con `Strokes.Count == 0` ni siquiera llamaba al exportador. El ancho del texto se estima con 0.6 em por carácter para no depender de SkiaSharp en el cálculo.
+- `PizarraImageExporter` dibuja el texto con `SKFont` + `SKTextAlign.Left` (SkiaSharp 4.153.1 ya no expone `SKPaint.TextSize` ni `DrawText(string,...)`). `TryComputeLayout` **incluye los textos** en el bounding box, lo que corrige tres fallos: una pizarra **solo con texto** no exportaba (`maxX < minX` → `false`), un texto fuera del bounding box de los trazos se recortaba, y `SaveCommand` con `Strokes.Count == 0` ni siquiera llamaba al exportador. El ancho del texto se estima con 0.6 em por carácter para no depender de SkiaSharp en el cálculo.
 - 4 claves i18n nuevas en es/en/sv (`PizarraAddTextText`, `PizarraTextModeHintText`, `PizarraEnterTextTitle`, `PizarraEnterTextPrompt`) → 134 claves por idioma, paridad exacta.
 - 13 tests nuevos: modo texto, alta con color del lápiz, contenido vacío/en blanco, rechazo con el modo apagado, trazos bloqueados en modo texto, undo en ambos sentidos (texto sobre trazo y trazo sobre texto), limpieza de historial, y contraste del texto al cambiar de pizarra.
 

@@ -13,8 +13,7 @@
 
             <Border 
                 Grid.Row="0"
-                Padding="10" 
-                HeightRequest="100" VerticalOptions="Start">
+                Padding="10" VerticalOptions="Start">
                 
                 <Border.StrokeShape>
                     <RoundRectangle CornerRadius="10" />
@@ -42,8 +41,7 @@
 
             <Border 
                 Grid.Row="1"
-                Padding="10" 
-                HeightRequest="100" VerticalOptions="Start">
+                Padding="10" VerticalOptions="Start">
                 
                 <Border.StrokeShape>
                     <RoundRectangle CornerRadius="10" />
@@ -67,8 +65,7 @@
 
             <Border 
                 Grid.Row="2"
-                Padding="10" 
-                HeightRequest="100" VerticalOptions="Start">
+                Padding="10" VerticalOptions="Start">
                 
                 <Border.StrokeShape>
                     <RoundRectangle CornerRadius="10" />
