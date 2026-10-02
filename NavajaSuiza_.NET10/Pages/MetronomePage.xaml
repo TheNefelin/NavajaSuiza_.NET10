@@ -29,10 +29,14 @@
                 Padding="10"/>            
 
             <ScrollView
+                x:Name="TimeSignatureScroll"
                 Orientation="Horizontal"
                 HorizontalScrollBarVisibility="Never">
+                <Grid
+                    Padding="10,0"
+                    MinimumWidthRequest="{Binding Width, Source={x:Reference TimeSignatureScroll}}">
                 <HorizontalStackLayout
-                    Padding="10,0">
+                    HorizontalOptions="Center">
 
                 <Button
                     Text="2/2"
@@ -118,6 +122,7 @@
                     </Button.Triggers>
                 </Button>
                 </HorizontalStackLayout>
+                </Grid>
             </ScrollView>
 
             <!-- BPM Display -->

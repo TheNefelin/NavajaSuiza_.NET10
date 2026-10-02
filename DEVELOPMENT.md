@@ -336,6 +336,7 @@ Todos los servicios están registrados en `MauiProgram.cs` e inyectados por DI.
 ### 6.4 Metrónomo (`MetronomePage`)
 - BPM ajustable (50-350), con cambio en caliente durante la reproducción.
 - Firma de tiempos: 2/2, 3/4, 4/4, 5/4, 6/8, 7/8, con cambio en caliente.
+- Fila de compases en `ScrollView` horizontal: centrada cuando los seis botones entran en el ancho de la pantalla y desplazable cuando no.
 - Sonido de acento (1er tiempo) y normal (tiempos restantes).
 - Implementado con un scheduler asíncrono basado en `Stopwatch` (`MetronomeScheduler`) y audio vía `SoundPool` en Android (`MediaElement` como fallback).
 - El BPM y el compás se persisten en `Preferences` y se restauran al abrir la página.
