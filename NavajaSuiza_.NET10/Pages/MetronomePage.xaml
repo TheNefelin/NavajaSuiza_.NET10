@@ -28,10 +28,11 @@
                 Opacity="0.6" 
                 Padding="10"/>            
 
-            <FlexLayout
-                Wrap="Wrap"
-                JustifyContent="Center"
-                Padding="0">
+            <ScrollView
+                Orientation="Horizontal"
+                HorizontalScrollBarVisibility="Never">
+                <HorizontalStackLayout
+                    Padding="10,0">
 
                 <Button
                     Text="2/2"
@@ -116,7 +117,8 @@
                         </DataTrigger>
                     </Button.Triggers>
                 </Button>
-            </FlexLayout>
+                </HorizontalStackLayout>
+            </ScrollView>
 
             <!-- BPM Display -->
             <Border
