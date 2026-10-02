@@ -192,10 +192,10 @@ NavajaSuiza_.NET10/                   # Solution
 │   └── MauiProgram.cs
 │
 └── NavajaSuiza.Test/                # Proyecto de tests (net10.0 puro)
-    └── *Tests.cs                     # xUnit + Moq, 254 tests
+    └── *Tests.cs                     # xUnit + Moq, 264 tests
 ```
 
-El conteo de 254 se obtiene de 237 `[Fact]` más 17 `[InlineData]`. Las cifras 229 / 230 / 232 que aparecieron en corridas locales **no eran una diferencia real de tests**: el bloqueo de Smart App Control hace fallar los constructores de las clases y altera el conteo del runner (§15.2).
+El conteo de 264 se obtiene de 247 `[Fact]` más 17 `[InlineData]`. Las cifras 229 / 230 / 232 que aparecieron en corridas locales **no eran una diferencia real de tests**: el bloqueo de Smart App Control hace fallar los constructores de las clases y altera el conteo del runner (§15.2).
 
 #### Regla de separación Core vs MAUI
 
@@ -213,7 +213,7 @@ El conteo de 254 se obtiene de 237 `[Fact]` más 17 `[InlineData]`. Las cifras 2
 | `InstrumentStringData`, `SupportedLanguages` | `ImagePickerService` (usa `FilePicker`) |
 | `AppConstants` | `ScreenBrightnessService` (usa Android brightness APIs) |
 | `FlashlightStateService` (Core.Services) | `InstrumentAudioService` (usa `MediaElement`, `Border`) |
-| `StopwatchService` (Core.Services) | `MetronomeService` (usa `MediaElement`) |
+| `StopwatchService` (Core.Services) | `MetronomeService` (usa `SoundPool` en Android, `MediaElement` como fallback) |
 
 **Patrón para desacoplar MAUI types en interfaces Core**: Las interfaces `IInstrumentAudioService` e `IMetronomeService` usan `object` en lugar de `MediaElement`/`Border` para no depender de MAUI. Las implementaciones en MAUI hacen el cast explícito.
 
@@ -279,7 +279,7 @@ Todos los servicios están registrados en `MauiProgram.cs` e inyectados por DI.
 | `IDocumentPdfConverter` | `DocumentPdfConverter` | Singleton | Conversión DOCX/XLSX → PDF (DocIO/XlsIO) |
 | `IFlashlightStateService` | `FlashlightStateService` (Core) | Singleton | Persistencia de estado flash entre recreaciones de VM, thread-safe con lock |
 | `IStopwatchService` | `StopwatchService` (Core) | Singleton | Cronómetro con `Stopwatch` + `PeriodicTimer`, thread-safe con lock; persiste tiempo y marcas |
-| `IMetronomeService` | `MetronomeService` | Transient | Metrónomo con `PeriodicTimer` y reproducción de audio |
+| `IMetronomeService` | `MetronomeService` | Singleton | Metrónomo con scheduler `Stopwatch` y reproducción de audio (`SoundPool` en Android); permite cambiar tempo/compás en caliente y persiste ambos en `Preferences` |
 | `IInstrumentAudioService` | `InstrumentAudioService` | Transient | Configuración de cuerdas, reproducción de audio, vibración |
 
 **ViewModels**: Todos registrados como **Transient** (cada navegación obtiene una nueva instancia, evitando estado residual).
@@ -301,7 +301,7 @@ Todos los servicios están registrados en `MauiProgram.cs` e inyectados por DI.
 | `ScreenBrightnessService` | Singleton | Control de brillo nativo Android |
 | `FlashlightStateService` | Singleton | Persiste estado flash entre recreaciones de VM |
 | `StopwatchService` | Singleton | Persiste el estado del cronómetro (corriendo/pausado) y las marcas entre recreaciones de VM |
-| `MetronomeService` | Transient | Timer y estado por instancia |
+| `MetronomeService` | Singleton | Comparte el `SoundPool` y el estado del scheduler; recrear el pool por navegación provocaba tirones al inicio |
 | `InstrumentAudioService` | Transient | Estado de audio y vibración por instancia, aislado por ViewModel |
 | **Todos los ViewModels** | **Transient** | Cada navegación obtiene nueva instancia; evita estado residual entre sesiones |
 
@@ -334,10 +334,11 @@ Todos los servicios están registrados en `MauiProgram.cs` e inyectados por DI.
 - Animación de vibración en las cuerdas al tocar.
 
 ### 6.4 Metrónomo (`MetronomePage`)
-- BPM ajustable (50-350).
-- Firma de tiempos: 2/4, 3/4, 4/4, 5/4, 6/8, 7/8.
+- BPM ajustable (50-350), con cambio en caliente durante la reproducción.
+- Firma de tiempos: 2/2, 3/4, 4/4, 5/4, 6/8, 7/8, con cambio en caliente.
 - Sonido de acento (1er tiempo) y normal (tiempos restantes).
-- Implementado con `System.Timers.Timer` y `MainThread.BeginInvokeOnMainThread`.
+- Implementado con un scheduler asíncrono basado en `Stopwatch` (`MetronomeScheduler`) y audio vía `SoundPool` en Android (`MediaElement` como fallback).
+- El BPM y el compás se persisten en `Preferences` y se restauran al abrir la página.
 
 ### 6.5 Brújula (`CompassPage`)
 - Lee sensor de brújula (`Compass.Default`) y orientación (`OrientationSensor.Default`).
@@ -570,7 +571,7 @@ MAUI `Battery.Default` en Android exige `BATTERY_STATS` (permiso protegido `sign
 | 6 | Carpeta `Behaviors/` vacía | `.csproj` | Baja | ✅ Completado |
 | 7 | ViewModels Singleton → Transient | `MauiProgram.cs` + ViewModels | Alta | ✅ Completado |
 | 8 | `InstrumentStringComponent` resuelve DI manualmente | `InstrumentStringComponent.xaml.cs` | Media | ✅ Completado (AudioService via BindableProperty) |
-| 9 | `MetronomeService` usa `System.Timers.Timer` | `MetronomeService.cs` | Baja | ✅ Completado (migrado a PeriodicTimer) |
+| 9 | `MetronomeService` usa `System.Timers.Timer` | `MetronomeService.cs` | Baja | ✅ Completado (migrado a scheduler asíncrono con `Stopwatch` y `MetronomeScheduler`) |
 | 10 | `B_00_B0.wav` eliminado | `Resources/Raw/` | Baja | ✅ Completado (commit 7248906) |
 | 16 | CompassPage crash Android | `CompassPage.xaml.cs`, `CompassViewModel.cs` | Alta | ✅ Completado |
 | 17 | Compass calibración automática | `CompassViewModel.cs`, `CompassPage.xaml` | Media | ✅ Completado |
@@ -719,7 +720,7 @@ Pasos 1–6 completados: la app está publicada en Internal testing y Closed tes
 
 ### 18.1 Pizarra (dibujo)
 
-Estado: **Fases 1, 2 y 3 implementadas y verificadas** (suite total 254 tests; builds de los 4 TFMs con 0 advertencias y 0 errores). Fase 2 = export WebP a galería, ahora **transversal vía SkiaSharp** (verificado en emulador Android y en Windows). Fase 3 = texto sobre el lienzo. **Goma descartada**: Deshacer (LIFO) + Limpiar cubren el caso de esta app.
+Estado: **Fases 1, 2 y 3 implementadas y verificadas** (suite total 264 tests; builds de los 4 TFMs con 0 advertencias y 0 errores). Fase 2 = export WebP a galería, ahora **transversal vía SkiaSharp** (verificado en emulador Android y en Windows). Fase 3 = texto sobre el lienzo. **Goma descartada**: Deshacer (LIFO) + Limpiar cubren el caso de esta app.
 
 Entregado (Fase 1):
 - Lienzo a máximo espacio (`Grid` `Auto,Auto,*`), **sin `ScrollView`** (interceptaba los gestos verticales del dibujo).
@@ -786,7 +787,7 @@ Pendiente de definir: ¿conteo solo en primer plano o en segundo plano/cerrada?;
 
 ### 18.4 Visor de PDF (Syncfusion SfPdfViewer)
 
-Estado: **implementada y verificada en dispositivo real** (Android/Windows build 0/0; suite total 254 tests; **todas las conversiones y los visores probados en runtime en dispositivo físico**: PDF directo, DOCX, XLSX, CSV→PDF, texto plano y DOC/XLS legacy).
+Estado: **implementada y verificada en dispositivo real** (Android/Windows build 0/0; suite total 264 tests; **todas las conversiones y los visores probados en runtime en dispositivo físico**: PDF directo, DOCX, XLSX, CSV→PDF, texto plano y DOC/XLS legacy).
 
 Decisión de alcance:
 - **Visor real de PDF mediante Syncfusion `SfPdfViewer`** (paquetes `Syncfusion.Maui.PdfViewer` 34.2.9 + `Syncfusion.Licensing` 34.2.9). Sustituye al visor propio con `#if ANDROID`/`#if WINDOWS` (`Android.Graphics.Pdf.PdfRenderer` + `Windows.Data.Pdf`) que se descartó por decisión del usuario tras probarla en emulador (sept 2026): no se comportaba como un visor real (scroll discreto por página rasterizada, sin búsqueda ni selección de texto).
@@ -832,7 +833,7 @@ Restaurar:
 Build (Android Debug):
   dotnet build NavajaSuiza_.NET10/NavajaSuiza_.NET10.csproj -f net10.0-android -c Debug
 
-Suite de tests (esperado: 254 superados / 0 fallos):
+Suite de tests (esperado: 264 superados / 0 fallos):
   dotnet run --project NavajaSuiza.Test/NavajaSuiza.Test.csproj
 La suite usa xUnit.net v3 (4.0.1) con runner **in-process**: el proyecto de tests es un
 ejecutable y no requiere `dotnet test`. `dotnet test` ya no es compatible: el SDK de .NET 10

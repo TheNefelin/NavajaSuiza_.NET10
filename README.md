@@ -102,13 +102,15 @@ El metrónomo te ayuda a mantener un ritmo constante mientras estudias o tocas.
 #### Cómo se usa
 
 1. Ajusta la velocidad con el control de BPM (pulsos por minuto).
-2. Elige el compás: 3/4, 4/4, 5/4, 6/8 o 7/8.
+2. Elige el compás: 2/2, 3/4, 4/4, 5/4, 6/8 o 7/8.
 3. Toca **Play** para comenzar y **Stop** para detenerlo.
 
 #### Consejos
 
 - Comienza lento (60–80 BPM) y aumenta la velocidad de a poco.
 - En los compases con acento (por ejemplo 4/4), el primer pulso suena más marcado.
+- Puedes cambiar el BPM o el compás mientras suena: se aplica en el siguiente pulso.
+- El BPM y el compás se guardan solos y se restauran la próxima vez que abras la app.
 
 ---
 

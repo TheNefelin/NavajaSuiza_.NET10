@@ -28,7 +28,7 @@ public partial class MetronomePage : ContentPage
         base.OnDisappearing();
         if (BindingContext is MetronomeViewModel viewModel)
         {
-            viewModel.StopMetronome();
+            _ = viewModel.StopMetronome();
         }
     }
 }

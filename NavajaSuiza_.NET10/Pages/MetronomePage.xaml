@@ -33,6 +33,20 @@
                 JustifyContent="Center"
                 Padding="0">
 
+                <Button
+                    Text="2/2"
+                    Command="{Binding SelectTimeSignatureCommand}"
+                    CommandParameter="2/2"
+                    WidthRequest="55" HeightRequest="55" FontAttributes="Bold" Margin="2">
+
+                    <Button.Triggers>
+                        <DataTrigger TargetType="Button" Binding="{Binding SelectedTimeSignature}" Value="2/2">
+                            <Setter Property="BackgroundColor" Value="{StaticResource MyAccent}" />
+                            <Setter Property="TextColor" Value="{StaticResource MyPrimaryDark}" />
+                        </DataTrigger>
+                    </Button.Triggers>
+                </Button>
+
                 <Button    
                     Text="3/4"                    
                     Command="{Binding SelectTimeSignatureCommand}"
@@ -130,7 +144,6 @@
             <!-- BPM Slider -->
             <VerticalStackLayout Padding="20,0">
                 <Slider
-                    IsEnabled="{Binding IsEnabled}"
                     Value="{Binding CurrentBPM}"
                     Minimum="50"
                     Maximum="350"

@@ -25,6 +25,9 @@ public partial class MetronomeViewModel : BaseViewModel
     {
         _logger = logger;
         _metronomeService = metronomeService;
+
+        CurrentBPM = metronomeService.SavedBpm;
+        SelectedTimeSignature = metronomeService.SavedTimeSignature;
     }
 
     public void RegisterMediaElement(object accentMediaElement, object normalMediaElement)
@@ -32,27 +35,35 @@ public partial class MetronomeViewModel : BaseViewModel
         _metronomeService.SetMediaElement(accentMediaElement, normalMediaElement);
     }
 
+    partial void OnCurrentBPMChanged(int value)
+    {
+        _metronomeService.SetTempo(value);
+    }
+
+    partial void OnSelectedTimeSignatureChanged(string value)
+    {
+        _metronomeService.SetTimeSignature(value);
+    }
+
     [RelayCommand]
     private void SelectTimeSignature(string timeSignature)
     {
-        if (!IsEnabled) return;
-
         _logger.LogInformation("Time signature changed to {TimeSignature}", timeSignature);
         SelectedTimeSignature = timeSignature;
     }
 
     [RelayCommand]
-    private void PlayMetronome()
+    private async Task PlayMetronome()
     {
         IsEnabled = false;
 
-        _metronomeService.Start(CurrentBPM, SelectedTimeSignature);
+        await _metronomeService.StartAsync(CurrentBPM, SelectedTimeSignature);
     }
 
     [RelayCommand]
-    public void StopMetronome()
+    public async Task StopMetronome()
     {
+        await _metronomeService.StopAsync();
         IsEnabled = true;
-        _metronomeService.Stop();
     }
 }

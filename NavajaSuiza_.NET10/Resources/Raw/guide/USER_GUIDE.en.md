@@ -96,7 +96,7 @@ The metronome helps you keep a steady rhythm while you practice or play.
 ### How to use it
 
 1. Adjust the speed with the BPM control (beats per minute).
-2. Pick the time signature: 3/4, 4/4, 5/4, 6/8 or 7/8.
+2. Pick the time signature: 2/2, 3/4, 4/4, 5/4, 6/8 or 7/8.
 3. Tap **Play** to start and **Stop** to stop it.
 
 ### Tips

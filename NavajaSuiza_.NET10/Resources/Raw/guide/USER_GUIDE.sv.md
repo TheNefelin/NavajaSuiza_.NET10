@@ -96,7 +96,7 @@ Metronomen hjälper dig hålla en jämn rytm när du övar eller spelar.
 ### Så här använder du den
 
 1. Justera hastigheten med BPM-reglaget (slag per minut).
-2. Välj taktart: 3/4, 4/4, 5/4, 6/8 eller 7/8.
+2. Välj taktart: 2/2, 3/4, 4/4, 5/4, 6/8 eller 7/8.
 3. Tryck på **Play** för att starta och **Stop** för att stänga av.
 
 ### Tips

@@ -60,7 +60,7 @@ public static class MauiProgram
             .AddSingleton<IThemeService, ThemeService>()
             .AddSingleton<IDeviceStatusService, DeviceStatusService>()
             .AddTransient<IInstrumentAudioService, InstrumentAudioService>()
-            .AddTransient<IMetronomeService, MetronomeService>()
+            .AddSingleton<IMetronomeService, MetronomeService>()
             .AddSingleton<INavigationService, NavigationService>()
             .AddSingleton<ICompassService, CompassSensorService>()
             .AddSingleton<IOrientationService, OrientationSensorService>()
