@@ -62,6 +62,11 @@ public static class MauiProgram
             .AddTransient<IInstrumentAudioService, InstrumentAudioService>()
             .AddSingleton<IMetronomeService, MetronomeService>()
             .AddSingleton<INavigationService, NavigationService>()
+#if ANDROID
+            .AddSingleton<IMetronomePlayer, AudioTrackMetronomePlayer>()
+#else
+            .AddSingleton<IMetronomePlayer, MediaElementMetronomePlayer>()
+#endif
             .AddSingleton<ICompassService, CompassSensorService>()
             .AddSingleton<IOrientationService, OrientationSensorService>()
             .AddSingleton<ICompassPositionService, CompassPositionService>()

@@ -17,6 +17,7 @@ public partial class MetronomeViewModel : BaseViewModel
     public partial string SelectedTimeSignature { get; set; } = AppConstants.Metronome.DEFAULT_TIME_SIGNATURE;
 
     [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(PlayMetronomeCommand))]
     public partial bool IsEnabled { get; set; } = true;
 
     public MetronomeViewModel(
@@ -52,7 +53,7 @@ public partial class MetronomeViewModel : BaseViewModel
         SelectedTimeSignature = timeSignature;
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanStart))]
     private async Task PlayMetronome()
     {
         IsEnabled = false;
@@ -66,4 +67,6 @@ public partial class MetronomeViewModel : BaseViewModel
         await _metronomeService.StopAsync();
         IsEnabled = true;
     }
+
+    private bool CanStart() => IsEnabled;
 }
