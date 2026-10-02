@@ -34,12 +34,12 @@ public class MetronomeService : IMetronomeService, IDisposable
         _normalMediaElement = normalMediaElement as MediaElement;
 
 #if ANDROID
-        InitializeSoundPool();
-#else
         if (_accentMediaElement != null)
             _accentMediaElement.Source = MediaSource.FromResource($"{ACCENT_CLIP}.wav");
         if (_normalMediaElement != null)
             _normalMediaElement.Source = MediaSource.FromResource($"{NORMAL_CLIP}.wav");
+
+        InitializeSoundPool();
 #endif
     }
 
@@ -161,11 +161,8 @@ public class MetronomeService : IMetronomeService, IDisposable
         {
             var soundId = isAccent ? _accentSoundId : _normalSoundId;
 
-            if (soundId != 0)
-            {
-                _soundPool.Play(soundId, 1f, 1f, 1, 0, 1f);
+            if (soundId != 0 && _soundPool.Play(soundId, 1f, 1f, 1, 0, 1f) != 0)
                 return;
-            }
         }
 #endif
 

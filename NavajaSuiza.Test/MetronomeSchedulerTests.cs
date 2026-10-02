@@ -38,8 +38,8 @@ public class MetronomeSchedulerTests
             TimeSpan.FromMilliseconds(1500),
             Interval);
 
-        Assert.Equal(Interval, tick.Delay);
-        Assert.Equal(TimeSpan.FromMilliseconds(2500), tick.NextTick);
+        Assert.Equal(TimeSpan.Zero, tick.Delay);
+        Assert.Equal(TimeSpan.FromMilliseconds(2000), tick.NextTick);
     }
 
     [Fact]
@@ -50,8 +50,8 @@ public class MetronomeSchedulerTests
             TimeSpan.FromMilliseconds(6000),
             Interval);
 
-        Assert.Equal(Interval, tick.Delay);
-        Assert.Equal(TimeSpan.FromMilliseconds(7000), tick.NextTick);
+        Assert.Equal(TimeSpan.Zero, tick.Delay);
+        Assert.Equal(TimeSpan.FromMilliseconds(6500), tick.NextTick);
     }
 
     [Fact]
@@ -64,7 +64,7 @@ public class MetronomeSchedulerTests
         var resumedAt = TimeSpan.FromMilliseconds(30000) + first.Delay;
         var second = MetronomeScheduler.GetTick(first.NextTick, resumedAt, Interval);
 
-        Assert.Equal(Interval, first.Delay);
+        Assert.Equal(TimeSpan.Zero, first.Delay);
         Assert.Equal(Interval, second.Delay);
         Assert.Equal(first.NextTick + Interval, second.NextTick);
     }
@@ -112,5 +112,35 @@ public class MetronomeSchedulerTests
 
         Assert.Equal(fast, afterChange.Delay);
         Assert.Equal(beforeChange.Delay + fast + fast, afterChange.NextTick);
+    }
+
+    [Fact]
+    public void GetTick_WhenJitterExceedsIntervalAtFastTempo_DoesNotSkipPulses()
+    {
+        var fastInterval = TimeSpan.FromMilliseconds(171);
+        var overshoot = TimeSpan.FromMilliseconds(250);
+
+        var elapsed = TimeSpan.Zero;
+        var nextTick = fastInterval;
+        var previousInterval = (TimeSpan?)null;
+        TimeSpan? lastPulse = null;
+        var gaps = new List<TimeSpan>();
+
+        for (var i = 0; i < 20; i++)
+        {
+            var tick = MetronomeScheduler.GetTick(nextTick, elapsed, fastInterval, previousInterval);
+            previousInterval = fastInterval;
+            nextTick = tick.NextTick;
+
+            elapsed += tick.Delay + overshoot;
+
+            if (lastPulse is { } previousPulse)
+                gaps.Add(elapsed - previousPulse);
+
+            lastPulse = elapsed;
+        }
+
+        Assert.Equal(19, gaps.Count);
+        Assert.All(gaps, gap => Assert.True(gap < fastInterval + overshoot, $"Se salto un pulso: hueco de {gap}"));
     }
 }

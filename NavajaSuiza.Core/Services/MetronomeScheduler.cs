@@ -17,7 +17,7 @@ public static class MetronomeScheduler
             return (remaining, targetTick + interval);
 
         if (remaining <= -interval)
-            return (interval, elapsed + interval + interval);
+            return (TimeSpan.Zero, elapsed + interval);
 
         return (TimeSpan.Zero, targetTick + interval);
     }
