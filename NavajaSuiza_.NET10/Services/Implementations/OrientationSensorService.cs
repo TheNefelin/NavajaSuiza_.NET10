@@ -8,8 +8,9 @@ public class OrientationSensorService : IOrientationService
 
     public event EventHandler<OrientationReadingChangedEventArgs>? ReadingChanged;
 
-    public void Start(double speed)
+    public void Start()
     {
+        OrientationSensor.Default.ReadingChanged -= OnReadingChanged;
         OrientationSensor.Default.ReadingChanged += OnReadingChanged;
         OrientationSensor.Default.Start(SensorSpeed.UI);
     }

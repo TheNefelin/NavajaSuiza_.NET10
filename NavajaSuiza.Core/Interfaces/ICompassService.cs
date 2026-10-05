@@ -4,7 +4,7 @@ public interface ICompassService
 {
     bool IsSupported { get; }
     event EventHandler<CompassReadingChangedEventArgs>? ReadingChanged;
-    void Start(double speed, bool applyLowPassFilter);
+    void Start(bool applyLowPassFilter);
     void Stop();
 }
 

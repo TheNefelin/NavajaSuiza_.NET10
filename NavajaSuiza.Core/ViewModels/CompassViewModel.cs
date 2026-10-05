@@ -3,11 +3,10 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
 using NavajaSuiza.Core.Interfaces;
-using NavajaSuiza.Core.ViewModels;
 
 namespace NavajaSuiza.Core.ViewModels;
 
-public partial class CompassViewModel : BaseViewModel
+public partial class CompassViewModel : BaseViewModel, IDisposable
 {
     private readonly ILogger<CompassViewModel> _logger;
     private readonly ILanguageService _languageService;
@@ -16,8 +15,13 @@ public partial class CompassViewModel : BaseViewModel
     private readonly IOrientationService _orientationService;
     private readonly ICompassPositionService _compassPositionService;
 
-    private const double SMOOTHING_FACTOR = 0.3;
+    private const double SmoothingFactor = 0.3;
     private double _smoothedHeading = -1;
+    private double _declinationDegrees;
+    private bool _hasDeclination;
+
+    private string[]? _cardinalDirections16;
+
     private CancellationTokenSource? _calibrationCts;
     private CancellationTokenSource? _positionCts;
 
@@ -31,7 +35,7 @@ public partial class CompassViewModel : BaseViewModel
     public partial string CardinalDirection { get; set; } = "N/A";
 
     [ObservableProperty]
-    public partial double CompassDialRotation { get; set; } = 0.0f;
+    public partial double CompassDialRotation { get; set; } = 0.0;
 
     [ObservableProperty]
     public partial bool IsCalibrating { get; set; }
@@ -61,7 +65,7 @@ public partial class CompassViewModel : BaseViewModel
     public partial string AccuracyText { get; set; } = "--";
 
     [ObservableProperty]
-    public partial string PositionMessage { get; set; } = "";
+    public partial string PositionMessage { get; set; } = string.Empty;
 
     public CompassViewModel(
         ILogger<CompassViewModel> logger,
@@ -77,6 +81,9 @@ public partial class CompassViewModel : BaseViewModel
         _compassService = compassService;
         _orientationService = orientationService;
         _compassPositionService = compassPositionService;
+
+        _languageService.LanguageChanged += OnLanguageChanged;
+        BuildCardinalDirections();
     }
 
     [RelayCommand]
@@ -92,11 +99,11 @@ public partial class CompassViewModel : BaseViewModel
 
         _compassService.ReadingChanged -= OnCompassReadingChanged;
         _compassService.ReadingChanged += OnCompassReadingChanged;
-        _compassService.Start(1, true);
+        _compassService.Start(applyLowPassFilter: true);
 
         _orientationService.ReadingChanged -= OnOrientationReadingChanged;
         _orientationService.ReadingChanged += OnOrientationReadingChanged;
-        _orientationService.Start(1);
+        _orientationService.Start();
     }
 
     [RelayCommand]
@@ -189,12 +196,14 @@ public partial class CompassViewModel : BaseViewModel
 
             HasPosition = true;
             IsLocationDisabledMessage = false;
-            PositionMessage = "";
+            PositionMessage = string.Empty;
+
+            UpdateDeclination(reading.Latitude, reading.Longitude, reading.AltitudeMeters);
         }
         catch (OperationCanceledException)
         {
             IsLocationDisabledMessage = false;
-            PositionMessage = "";
+            PositionMessage = string.Empty;
         }
         catch (UnauthorizedAccessException)
         {
@@ -209,7 +218,7 @@ public partial class CompassViewModel : BaseViewModel
             IsLocationDisabledMessage = false;
             PositionMessage = GetString(
                 "CompassPositionErrorText",
-                "No se pudo obtener la posición. Salí al exterior e intentá de nuevo.");
+                "No se pudo obtener la posición. Salí al exterior e intenta de nuevo.");
         }
         finally
         {
@@ -238,23 +247,30 @@ public partial class CompassViewModel : BaseViewModel
 
     private void OnCompassReadingChanged(object? sender, CompassReadingChangedEventArgs e)
     {
-        var angle = e.HeadingMagneticNorth;
+        var magneticHeading = e.HeadingMagneticNorth;
+        var trueHeading = magneticHeading;
+
+        if (_hasDeclination)
+        {
+            trueHeading = magneticHeading + _declinationDegrees;
+        }
 
         if (_smoothedHeading < 0)
         {
-            _smoothedHeading = angle;
+            _smoothedHeading = trueHeading;
         }
         else
         {
-            double delta = angle - _smoothedHeading;
+            double delta = trueHeading - _smoothedHeading;
             if (delta > 180) delta -= 360;
             if (delta < -180) delta += 360;
-            _smoothedHeading += SMOOTHING_FACTOR * delta;
-            _smoothedHeading = (_smoothedHeading % 360 + 360) % 360;
+            _smoothedHeading += SmoothingFactor * delta;
         }
 
+        _smoothedHeading = (_smoothedHeading % 360 + 360) % 360;
+
         AngleText = $"{_smoothedHeading:F0}°";
-        CompassDialRotation = 360 - _smoothedHeading;
+        CompassDialRotation = (360.0 - _smoothedHeading) % 360.0;
         CardinalDirection = GetCardinalDirection(_smoothedHeading);
     }
 
@@ -265,8 +281,12 @@ public partial class CompassViewModel : BaseViewModel
         double q2 = e.Y;
         double q3 = e.Z;
 
-        double pitch = Math.Asin(2 * (q0 * q2 - q3 * q1));
-        double roll = Math.Atan2(2 * (q0 * q1 + q2 * q3), 1 - 2 * (q1 * q1 + q2 * q2));
+        double asinArg = 2.0 * (q0 * q2 - q3 * q1);
+        if (asinArg > 1.0) asinArg = 1.0;
+        if (asinArg < -1.0) asinArg = -1.0;
+
+        double pitch = Math.Asin(asinArg);
+        double roll = Math.Atan2(2.0 * (q0 * q1 + q2 * q3), 1.0 - 2.0 * (q1 * q1 + q2 * q2));
 
         pitch = Math.Abs(pitch * (180.0 / Math.PI));
         roll = Math.Abs(roll * (180.0 / Math.PI));
@@ -276,39 +296,92 @@ public partial class CompassViewModel : BaseViewModel
         StatusText = GetTiltStatus(tiltDegrees);
     }
 
+    private void BuildCardinalDirections()
+    {
+        _cardinalDirections16 = new string[16];
+
+        _cardinalDirections16[0] = _languageService.GetString("CompassCardinalNorthText") ?? "N";
+        _cardinalDirections16[1] = $"{_languageService.GetString("CompassCardinalNorthText") ?? "N"}-{_languageService.GetString("CompassCardinalNorthEastText") ?? "NE"}";
+        _cardinalDirections16[2] = _languageService.GetString("CompassCardinalNorthEastText") ?? "NE";
+        _cardinalDirections16[3] = $"{_languageService.GetString("CompassCardinalEastText") ?? "E"}-{_languageService.GetString("CompassCardinalNorthEastText") ?? "NE"}";
+        _cardinalDirections16[4] = _languageService.GetString("CompassCardinalEastText") ?? "E";
+        _cardinalDirections16[5] = $"{_languageService.GetString("CompassCardinalEastText") ?? "E"}-{_languageService.GetString("CompassCardinalSouthEastText") ?? "SE"}";
+        _cardinalDirections16[6] = _languageService.GetString("CompassCardinalSouthEastText") ?? "SE";
+        _cardinalDirections16[7] = $"{_languageService.GetString("CompassCardinalSouthText") ?? "S"}-{_languageService.GetString("CompassCardinalSouthEastText") ?? "SE"}";
+        _cardinalDirections16[8] = _languageService.GetString("CompassCardinalSouthText") ?? "S";
+        _cardinalDirections16[9] = $"{_languageService.GetString("CompassCardinalSouthText") ?? "S"}-{_languageService.GetString("CompassCardinalSouthWestText") ?? "SW"}";
+        _cardinalDirections16[10] = _languageService.GetString("CompassCardinalSouthWestText") ?? "SW";
+        _cardinalDirections16[11] = $"{_languageService.GetString("CompassCardinalWestText") ?? "W"}-{_languageService.GetString("CompassCardinalSouthWestText") ?? "SW"}";
+        _cardinalDirections16[12] = _languageService.GetString("CompassCardinalWestText") ?? "W";
+        _cardinalDirections16[13] = $"{_languageService.GetString("CompassCardinalWestText") ?? "W"}-{_languageService.GetString("CompassCardinalNorthWestText") ?? "NW"}";
+        _cardinalDirections16[14] = _languageService.GetString("CompassCardinalNorthWestText") ?? "NW";
+        _cardinalDirections16[15] = $"{_languageService.GetString("CompassCardinalNorthText") ?? "N"}-{_languageService.GetString("CompassCardinalNorthWestText") ?? "NW"}";
+    }
+
     private string GetCardinalDirection(double heading)
     {
         heading = (heading % 360 + 360) % 360;
-
-        string[] directions = {
-            _languageService.GetString("CompassCardinalNorthText"),
-            $"{_languageService.GetString("CompassCardinalNorthText")}-{_languageService.GetString("CompassCardinalNorthEastText")}",
-            _languageService.GetString("CompassCardinalNorthEastText"),
-            $"{_languageService.GetString("CompassCardinalEastText")}-{_languageService.GetString("CompassCardinalNorthEastText")}",
-            _languageService.GetString("CompassCardinalEastText"),
-            $"{_languageService.GetString("CompassCardinalEastText")}-{_languageService.GetString("CompassCardinalSouthEastText")}",
-            _languageService.GetString("CompassCardinalSouthEastText"),
-            $"{_languageService.GetString("CompassCardinalSouthText")}-{_languageService.GetString("CompassCardinalSouthEastText")}",
-            _languageService.GetString("CompassCardinalSouthText"),
-            $"{_languageService.GetString("CompassCardinalSouthText")}-{_languageService.GetString("CompassCardinalSouthWestText")}",
-            _languageService.GetString("CompassCardinalSouthWestText"),
-            $"{_languageService.GetString("CompassCardinalWestText")}-{_languageService.GetString("CompassCardinalSouthWestText")}",
-            _languageService.GetString("CompassCardinalWestText"),
-            $"{_languageService.GetString("CompassCardinalWestText")}-{_languageService.GetString("CompassCardinalNorthWestText")}",
-            _languageService.GetString("CompassCardinalNorthWestText"),
-            $"{_languageService.GetString("CompassCardinalNorthText")}-{_languageService.GetString("CompassCardinalNorthWestText")}"
-        };
-
+        var dirs = _cardinalDirections16 ?? BuildCardinalDirectionsCached();
         int index = (int)Math.Round(heading / 22.5) % 16;
-        return directions[index];
+        return dirs[index];
+    }
+
+    private string[] BuildCardinalDirectionsCached()
+    {
+        BuildCardinalDirections();
+        return _cardinalDirections16!;
+    }
+
+    private void OnLanguageChanged(object? sender, EventArgs e)
+    {
+        BuildCardinalDirections();
+    }
+
+    private void UpdateDeclination(double latitude, double longitude, double? altitudeMeters)
+    {
+        try
+        {
+#if ANDROID
+            double altitudeM = altitudeMeters is > 0 ? altitudeMeters.Value : 0.0;
+            var geoField = new Android.Hardware.GeomagneticField(
+                (float)latitude,
+                (float)longitude,
+                (float)altitudeM,
+                DateTime.UtcNow.Ticks / TimeSpan.TicksPerMillisecond);
+
+            _declinationDegrees = geoField.Declination;
+            _hasDeclination = true;
+            _logger.LogDebug("Compass declination updated: {Declination}° (lat={Lat}, lon={Lon}, alt={Alt})",
+                _declinationDegrees.ToString("F2", CultureInfo.InvariantCulture),
+                latitude.ToString("F5", CultureInfo.InvariantCulture),
+                longitude.ToString("F5", CultureInfo.InvariantCulture),
+                altitudeM.ToString("F1", CultureInfo.InvariantCulture));
+#else
+            _hasDeclination = false;
+#endif
+        }
+        catch (Exception exception)
+        {
+            _logger.LogWarning(exception, "Could not compute magnetic declination");
+            _hasDeclination = false;
+        }
     }
 
     private string GetTiltStatus(double tiltDegrees)
     {
-        if (tiltDegrees < 10) return _languageService.GetString("CompassStatusAText");
-        if (tiltDegrees < 25) return _languageService.GetString("CompassStatusBText");
-        if (tiltDegrees < 45) return _languageService.GetString("CompassStatusCText");
-        if (tiltDegrees < 70) return _languageService.GetString("CompassStatusDText");
-        return _languageService.GetString("CompassStatusEText");
+        if (tiltDegrees < 10) return _languageService.GetString("CompassStatusAText") ?? string.Empty;
+        if (tiltDegrees < 25) return _languageService.GetString("CompassStatusBText") ?? string.Empty;
+        if (tiltDegrees < 45) return _languageService.GetString("CompassStatusCText") ?? string.Empty;
+        if (tiltDegrees < 70) return _languageService.GetString("CompassStatusDText") ?? string.Empty;
+        return _languageService.GetString("CompassStatusEText") ?? string.Empty;
+    }
+
+    public void Dispose()
+    {
+        _languageService.LanguageChanged -= OnLanguageChanged;
+        _calibrationCts?.Cancel();
+        _positionCts?.Cancel();
+        _compassService.ReadingChanged -= OnCompassReadingChanged;
+        _orientationService.ReadingChanged -= OnOrientationReadingChanged;
     }
 }

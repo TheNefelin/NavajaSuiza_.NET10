@@ -4,7 +4,7 @@ public interface IOrientationService
 {
     bool IsSupported { get; }
     event EventHandler<OrientationReadingChangedEventArgs>? ReadingChanged;
-    void Start(double speed);
+    void Start();
     void Stop();
 }
 

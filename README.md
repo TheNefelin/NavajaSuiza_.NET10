@@ -331,6 +331,7 @@ NavajaSuiza_.NET10.sln
 │   │   ├── ILanguageService.cs
 │   │   ├── ILauncherService.cs
 │   │   ├── IMarkdownToHtmlConverter.cs
+│   │   ├── IMetronomePlayer.cs
 │   │   ├── IMetronomeService.cs
 │   │   ├── IMorseSignalService.cs
 │   │   ├── INavigationService.cs
@@ -352,6 +353,11 @@ NavajaSuiza_.NET10.sln
 │   │   └── Note.cs
 │   ├── Services/
 │   │   ├── FlashlightStateService.cs
+│   │   ├── MetronomeClick.cs
+│   │   ├── MetronomeEngine.cs
+│   │   ├── MetronomeSampleClock.cs
+│   │   ├── MetronomeScheduler.cs
+│   │   ├── MetronomeTempo.cs
 │   │   ├── StopwatchService.cs
 │   │   ├── MarkdownToHtmlConverter.cs
 │   │   ├── MorseSignalService.cs
@@ -392,8 +398,9 @@ NavajaSuiza_.NET10.sln
 │   │   └── *.xaml/cs
 │   ├── ViewModels/                       # Vacío — todas las VMs están en Core
 │   ├── Services/
-│   │   └── Implementations/             # 19 implementaciones (APIs de plataforma + repos de datos)
+│   │   └── Implementations/             # 22 implementaciones (APIs de plataforma + repos de datos)
 │   │       ├── AppInfoService.cs
+│   │       ├── AudioTrackMetronomePlayer.cs
 │   │       ├── CompassSensorService.cs
 │   │       ├── DeviceDisplayService.cs
 │   │       ├── DeviceStatusService.cs
@@ -404,6 +411,7 @@ NavajaSuiza_.NET10.sln
 │   │       ├── InstrumentAudioService.cs
 │   │       ├── LanguageService.cs
 │   │       ├── LauncherService.cs
+│   │       ├── MediaElementMetronomePlayer.cs
 │   │       ├── MetronomeService.cs
 │   │       ├── NavigationService.cs
 │   │       ├── NoteEntity.cs
@@ -442,6 +450,10 @@ NavajaSuiza_.NET10.sln
 │   ├── InstrumentViewModelTests.cs
 │   ├── MarkdownToHtmlConverterTests.cs
 │   ├── MenuViewModelTests.cs
+│   ├── MetronomeClickTests.cs
+│   ├── MetronomeEngineTests.cs
+│   ├── MetronomeSampleClockTests.cs
+│   ├── MetronomeTempoTests.cs
 │   ├── MetronomeViewModelTests.cs
 │   ├── MorseSignalSequenceTests.cs
 │   ├── MorseSignalServiceTests.cs

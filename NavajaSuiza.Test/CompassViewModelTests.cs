@@ -74,8 +74,8 @@ public class CompassViewModelTests
         var vm = CreateSut();
         vm.StartSensorsCommand.Execute(null);
 
-        _compassServiceMock.Verify(s => s.Start(1, true), Times.Once);
-        _orientationServiceMock.Verify(s => s.Start(1), Times.Once);
+        _compassServiceMock.Verify(s => s.Start(true), Times.Once);
+        _orientationServiceMock.Verify(s => s.Start(), Times.Once);
     }
 
     [Fact]
@@ -243,7 +243,7 @@ public class CompassViewModelTests
         Assert.False(vm.HasPosition);
         Assert.False(vm.IsLocating);
         Assert.Equal(
-            "No se pudo obtener la posición. Salí al exterior e intentá de nuevo.",
+            "No se pudo obtener la posición. Salí al exterior e intenta de nuevo.",
             vm.PositionMessage);
     }
 }

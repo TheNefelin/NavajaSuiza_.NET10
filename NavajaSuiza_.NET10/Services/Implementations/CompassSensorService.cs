@@ -8,10 +8,11 @@ public class CompassSensorService : ICompassService
 
     public event EventHandler<CompassReadingChangedEventArgs>? ReadingChanged;
 
-    public void Start(double speed, bool applyLowPassFilter)
+    public void Start(bool applyLowPassFilter)
     {
+        Compass.Default.ReadingChanged -= OnReadingChanged;
         Compass.Default.ReadingChanged += OnReadingChanged;
-        Compass.Default.Start(SensorSpeed.UI, applyLowPassFilter);
+        Compass.Default.Start(SensorSpeed.UI);
     }
 
     public void Stop()
