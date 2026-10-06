@@ -81,16 +81,19 @@
                 <!-- Indicador numérico central -->
                 <Border
                     BackgroundColor="{StaticResource MyBackground}"
-                    StrokeShape="50"
-                    WidthRequest="100" HeightRequest="100"
+                    StrokeShape="Ellipse"
+                    StrokeThickness="1"
+                    WidthRequest="100"
+                    HeightRequest="100"
                     HorizontalOptions="Center"
                     VerticalOptions="Center">
                     <Label 
                         Text="{Binding AngleText}" 
-                        FontSize="28" FontAttributes="Bold"
+                        FontSize="28" 
+                        FontAttributes="Bold"
                         TextColor="White"
                         HorizontalTextAlignment="Center"
-                        VerticalOptions="Center" />
+                        VerticalTextAlignment="Center" />
                 </Border>
             </Grid>
 
