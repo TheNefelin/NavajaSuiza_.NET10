@@ -12,193 +12,193 @@
                 HorizontalOptions="Center"
                 Padding="0,20">
 
-            <Label Text="{extensions:Translate MenuWelcomeText}" FontAttributes="Bold" FontSize="20" Padding="10"/>
+                <Label Text="{extensions:Translate MenuWelcomeText}" FontAttributes="Bold" FontSize="20" Padding="10"/>
 
-            <FlexLayout
-                Wrap="Wrap"
-                JustifyContent="Center"
-                Padding="20">
+                <FlexLayout
+                    Wrap="Wrap"
+                    JustifyContent="Center"
+                    Padding="20">
 
-                <Button
-                    Command="{Binding NavigateToTunerCommand}"                    
-                    Text="{extensions:Translate TunerText}"
-                    ImageSource="icon_tuner.png"                    
-                    FontAttributes="Bold"
-                    ContentLayout="Top, 0" 
-                    Margin="8,0,8,16"
-                    Padding="25,15,25,10"
-                    WidthRequest="120" 
-                    HeightRequest="120" />
+                    <Button
+                        Command="{Binding NavigateToTunerCommand}"                    
+                        Text="{extensions:Translate TunerText}"
+                        ImageSource="icon_tuner.png"                    
+                        FontAttributes="Bold"
+                        ContentLayout="Top, 0" 
+                        Margin="8,0,8,16"
+                        Padding="25,15,25,10"
+                        WidthRequest="130" 
+                        HeightRequest="130" />
 
-                <Button
-                    Text="{extensions:Translate MetronomeText}"
-                    Command="{Binding NavigateToMetronomeCommand}"
-                    ImageSource="icon_metronome.png"                    
-                    FontAttributes="Bold"
-                    ContentLayout="Top, 0" 
-                    Margin="8,0,8,16"
-                    Padding="25,15,25,10"
-                    WidthRequest="120" 
-                    HeightRequest="120" />
+                    <Button
+                        Text="{extensions:Translate MetronomeText}"
+                        Command="{Binding NavigateToMetronomeCommand}"
+                        ImageSource="icon_metronome.png"                    
+                        FontAttributes="Bold"
+                        ContentLayout="Top, 0" 
+                        Margin="8,0,8,16"
+                        Padding="25,15,25,10"
+                        WidthRequest="130" 
+                        HeightRequest="130" />
 
-                <Button
-                    Text="{extensions:Translate StopwatchText}"
-                    Command="{Binding NavigateToStopwatchCommand}"
-                    ImageSource="icon_stopwatch.png"                    
-                    FontAttributes="Bold"
-                    ContentLayout="Top, 0" 
-                    Margin="8,0,8,16"
-                    Padding="25,15,25,10"
-                    WidthRequest="120" 
-                    HeightRequest="120" />
+                    <Button
+                        Text="{extensions:Translate StopwatchText}"
+                        Command="{Binding NavigateToStopwatchCommand}"
+                        ImageSource="icon_stopwatch.png"                    
+                        FontAttributes="Bold"
+                        ContentLayout="Top, 0" 
+                        Margin="8,0,8,16"
+                        Padding="25,15,25,10"
+                        WidthRequest="130" 
+                        HeightRequest="130" />
 
-                <Button
-                    Command="{Binding NavigateToFlashlightCommand}"
-                    Text="{extensions:Translate FlashlightText}"
-                    ImageSource="icon_flashlight.png"
-                    FontAttributes="Bold"
-                    ContentLayout="Top, 0" 
-                    Margin="8,0,8,16"
-                    Padding="25,15,25,10"
-                    WidthRequest="120" 
-                    HeightRequest="120" />
+                    <Button
+                        Command="{Binding NavigateToFlashlightCommand}"
+                        Text="{extensions:Translate FlashlightText}"
+                        ImageSource="icon_flashlight.png"
+                        FontAttributes="Bold"
+                        ContentLayout="Top, 0" 
+                        Margin="8,0,8,16"
+                        Padding="25,15,25,10"
+                        WidthRequest="130" 
+                        HeightRequest="130" />
 
-                <Button
-                    Command="{Binding NavigateToCompassCommand}"                    
-                    Text="{extensions:Translate CompassText}"
-                    ImageSource="icon_compass.png"                    
-                    FontAttributes="Bold"
-                    ContentLayout="Top, 0" 
-                    Margin="8,0,8,16"
-                    Padding="25,15,25,10"
-                    WidthRequest="120" 
-                    HeightRequest="120" />
+                    <Button
+                        Command="{Binding NavigateToCompassCommand}"                    
+                        Text="{extensions:Translate CompassText}"
+                        ImageSource="icon_compass.png"                    
+                        FontAttributes="Bold"
+                        ContentLayout="Top, 0" 
+                        Margin="8,0,8,16"
+                        Padding="25,15,25,10"
+                        WidthRequest="130" 
+                        HeightRequest="130" />
 
-                <Button
-                    Command="{Binding NavigateToNotesCommand}"                    
-                    Text="{extensions:Translate NotesText}"
-                    ImageSource="icon_notebook.png"                    
-                    FontAttributes="Bold"
-                    ContentLayout="Top, 0" 
-                    Margin="8,0,8,16"
-                    Padding="25,15,25,10"
-                    WidthRequest="120" 
-                    HeightRequest="120" />
+                    <Button
+                        Command="{Binding NavigateToNotesCommand}"                    
+                        Text="{extensions:Translate NotesText}"
+                        ImageSource="icon_notebook.png"                    
+                        FontAttributes="Bold"
+                        ContentLayout="Top, 0" 
+                        Margin="8,0,8,16"
+                        Padding="25,15,25,10"
+                        WidthRequest="130" 
+                        HeightRequest="130" />
 
-                <Button
-                    Command="{Binding NavigateToPizarraCommand}"
-                    Text="{extensions:Translate PizarraText}"
-                    ImageSource="icon_pizarra.png"
-                    FontAttributes="Bold"
-                    ContentLayout="Top, 0"
-                    Margin="8,0,8,16"
-                    Padding="25,15,25,10"
-                    WidthRequest="120"
-                    HeightRequest="120" />
+                    <Button
+                        Command="{Binding NavigateToPizarraCommand}"
+                        Text="{extensions:Translate PizarraText}"
+                        ImageSource="icon_pizarra.png"
+                        FontAttributes="Bold"
+                        ContentLayout="Top, 0"
+                        Margin="8,0,8,16"
+                        Padding="25,15,25,10"
+                        WidthRequest="130"
+                        HeightRequest="130" />
 
-                <Button
-                    Command="{Binding NavigateToPdfReaderCommand}"
-                    Text="{extensions:Translate PdfReaderText}"
-                    ImageSource="icon_file.png"
-                    FontAttributes="Bold"
-                    ContentLayout="Top, 0"
-                    Margin="8,0,8,16"
-                    Padding="25,15,25,10"
-                    WidthRequest="120"
-                    HeightRequest="120" />
+                    <Button
+                        Command="{Binding NavigateToPdfReaderCommand}"
+                        Text="{extensions:Translate PdfReaderText}"
+                        ImageSource="icon_file.png"
+                        FontAttributes="Bold"
+                        ContentLayout="Top, 0"
+                        Margin="8,0,8,16"
+                        Padding="25,15,25,10"
+                        WidthRequest="130"
+                        HeightRequest="130" />
 
-                <Button
-                    IsVisible="{Binding IsDevelopment}"
-                    Command="{Binding NavigateToFramingCommand}"
-                    Text="{extensions:Translate FramingText}"
-                    ImageSource="icon_camera.png"                    
-                    FontAttributes="Bold"
-                    ContentLayout="Top, 0" 
-                    Margin="8,0,8,16"
-                    Padding="25,15,25,10"
-                    WidthRequest="120" 
-                    HeightRequest="120" />
+                    <Button
+                        IsVisible="{Binding IsDevelopment}"
+                        Command="{Binding NavigateToFramingCommand}"
+                        Text="{extensions:Translate FramingText}"
+                        ImageSource="icon_camera.png"                    
+                        FontAttributes="Bold"
+                        ContentLayout="Top, 0" 
+                        Margin="8,0,8,16"
+                        Padding="25,15,25,10"
+                        WidthRequest="130" 
+                        HeightRequest="130" />
 
-                <Button
-                    IsVisible="{Binding IsDevelopment}"
-                    Command="{Binding NavigateToManualCommand}"                    
-                    Text="{extensions:Translate ManualText}"
-                    ImageSource="icon_manual.png"                    
-                    FontAttributes="Bold"
-                    ContentLayout="Top, 0" 
-                    Margin="8,0,8,16"
-                    Padding="25,15,25,10"
-                    WidthRequest="120" 
-                    HeightRequest="120" 
-                />
-            </FlexLayout>
+                    <Button
+                        IsVisible="{Binding IsDevelopment}"
+                        Command="{Binding NavigateToManualCommand}"                    
+                        Text="{extensions:Translate ManualText}"
+                        ImageSource="icon_manual.png"                    
+                        FontAttributes="Bold"
+                        ContentLayout="Top, 0" 
+                        Margin="8,0,8,16"
+                        Padding="25,15,25,10"
+                        WidthRequest="130" 
+                        HeightRequest="130" 
+                    />
+                </FlexLayout>
             
-            <Label Text="{extensions:Translate MenuStatusText}" FontAttributes="Bold" FontSize="20" Padding="10,0,10,10"/>
+                <Label Text="{extensions:Translate MenuStatusText}" FontAttributes="Bold" FontSize="20" Padding="10,0,10,10"/>
 
-            <Border
-                Padding="16" 
-                StrokeShape="16"
-                Margin="0,0,0,10">
+                <Border
+                    Padding="16" 
+                    StrokeShape="16"
+                    Margin="0,0,0,10">
                 
-                <Grid ColumnDefinitions="*,Auto">
-                    <HorizontalStackLayout Grid.Column="0" Spacing="12">
-                        <Ellipse
-                            WidthRequest="10" HeightRequest="10"
-                            Fill="{StaticResource MyOff}">
-                            <Ellipse.Triggers>
-                                <DataTrigger TargetType="Ellipse" Binding="{Binding BatteryStatus}" Value="Ok">
-                                    <Setter Property="Fill" Value="{StaticResource MyAccentBlue}" />
-                                </DataTrigger>
-                                <DataTrigger TargetType="Ellipse" Binding="{Binding BatteryStatus}" Value="Warning">
-                                    <Setter Property="Fill" Value="{StaticResource MyAccentOrange}" />
-                                </DataTrigger>
-                                <DataTrigger TargetType="Ellipse" Binding="{Binding BatteryStatus}" Value="Danger">
-                                    <Setter Property="Fill" Value="{StaticResource MyOn}" />
-                                </DataTrigger>
-                            </Ellipse.Triggers>
-                        </Ellipse>
+                    <Grid ColumnDefinitions="*,Auto">
+                        <HorizontalStackLayout Grid.Column="0" Spacing="12">
+                            <Ellipse
+                                WidthRequest="10" HeightRequest="10"
+                                Fill="{StaticResource MyOff}">
+                                <Ellipse.Triggers>
+                                    <DataTrigger TargetType="Ellipse" Binding="{Binding BatteryStatus}" Value="Ok">
+                                        <Setter Property="Fill" Value="{StaticResource MyAccentBlue}" />
+                                    </DataTrigger>
+                                    <DataTrigger TargetType="Ellipse" Binding="{Binding BatteryStatus}" Value="Warning">
+                                        <Setter Property="Fill" Value="{StaticResource MyAccentOrange}" />
+                                    </DataTrigger>
+                                    <DataTrigger TargetType="Ellipse" Binding="{Binding BatteryStatus}" Value="Danger">
+                                        <Setter Property="Fill" Value="{StaticResource MyOn}" />
+                                    </DataTrigger>
+                                </Ellipse.Triggers>
+                            </Ellipse>
+                            <Label 
+                                Text="{extensions:Translate MenuBateryText}" 
+                                FontSize="14" FontAttributes="Bold"/>
+                        </HorizontalStackLayout>
                         <Label 
-                            Text="{extensions:Translate MenuBateryText}" 
-                            FontSize="14" FontAttributes="Bold"/>
-                    </HorizontalStackLayout>
-                    <Label 
-                        Text="{Binding BatteryLevel}"
-                        Grid.Column="1" FontSize="13" />
-                </Grid>
-            </Border>
+                            Text="{Binding BatteryLevel}"
+                            Grid.Column="1" FontSize="13" />
+                    </Grid>
+                </Border>
 
-            <Border
-                Padding="16" 
-                StrokeShape="16"
-                Margin="0,0,0,10">
+                <Border
+                    Padding="16" 
+                    StrokeShape="16"
+                    Margin="0,0,0,10">
 
-                <Grid ColumnDefinitions="*,Auto">
-                    <HorizontalStackLayout Grid.Column="0" Spacing="12">
-                        <Ellipse
-                            WidthRequest="10" HeightRequest="10"
-                            Fill="{StaticResource MyOff}">
-                            <Ellipse.Triggers>
-                                <DataTrigger TargetType="Ellipse" Binding="{Binding StorageStatus}" Value="Ok">
-                                    <Setter Property="Fill" Value="{StaticResource MyAccentBlue}" />
-                                </DataTrigger>
-                                <DataTrigger TargetType="Ellipse" Binding="{Binding StorageStatus}" Value="Warning">
-                                    <Setter Property="Fill" Value="{StaticResource MyAccentOrange}" />
-                                </DataTrigger>
-                                <DataTrigger TargetType="Ellipse" Binding="{Binding StorageStatus}" Value="Danger">
-                                    <Setter Property="Fill" Value="{StaticResource MyOn}" />
-                                </DataTrigger>
-                            </Ellipse.Triggers>
-                        </Ellipse>
+                    <Grid ColumnDefinitions="*,Auto">
+                        <HorizontalStackLayout Grid.Column="0" Spacing="12">
+                            <Ellipse
+                                WidthRequest="10" HeightRequest="10"
+                                Fill="{StaticResource MyOff}">
+                                <Ellipse.Triggers>
+                                    <DataTrigger TargetType="Ellipse" Binding="{Binding StorageStatus}" Value="Ok">
+                                        <Setter Property="Fill" Value="{StaticResource MyAccentBlue}" />
+                                    </DataTrigger>
+                                    <DataTrigger TargetType="Ellipse" Binding="{Binding StorageStatus}" Value="Warning">
+                                        <Setter Property="Fill" Value="{StaticResource MyAccentOrange}" />
+                                    </DataTrigger>
+                                    <DataTrigger TargetType="Ellipse" Binding="{Binding StorageStatus}" Value="Danger">
+                                        <Setter Property="Fill" Value="{StaticResource MyOn}" />
+                                    </DataTrigger>
+                                </Ellipse.Triggers>
+                            </Ellipse>
+                            <Label 
+                                Text="{extensions:Translate MenuStorageText}" 
+                                FontSize="14" FontAttributes="Bold" />
+                        </HorizontalStackLayout>
                         <Label 
-                            Text="{extensions:Translate MenuStorageText}" 
-                            FontSize="14" FontAttributes="Bold" />
-                    </HorizontalStackLayout>
-                    <Label 
-                        Text="{Binding AvailableStorage}" 
-                        Grid.Column="1" FontSize="13" />
-                </Grid>
-            </Border>
-        </VerticalStackLayout>
+                            Text="{Binding AvailableStorage}" 
+                            Grid.Column="1" FontSize="13" />
+                    </Grid>
+                </Border>
+            </VerticalStackLayout>
         </ScrollView>
 
         <Grid

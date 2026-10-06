@@ -34,8 +34,8 @@
                     ContentLayout="Top, 0" 
                     Margin="8,0,8,16"
                     Padding="25,15,25,10"
-                    WidthRequest="120" 
-                    HeightRequest="120"
+                    WidthRequest="130" 
+                    HeightRequest="130"
                     IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}" />
 
                 <Button
@@ -46,8 +46,8 @@
                     ContentLayout="Top, 0" 
                     Margin="8,0,8,16"
                     Padding="25,15,25,10"
-                    WidthRequest="120" 
-                    HeightRequest="120"
+                    WidthRequest="130" 
+                    HeightRequest="130"
                     IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}" />
 
                 <Button
@@ -58,8 +58,8 @@
                     ContentLayout="Top, 0" 
                     Margin="8,0,8,16"
                     Padding="25,15,25,10"
-                    WidthRequest="120" 
-                    HeightRequest="120"
+                    WidthRequest="130" 
+                    HeightRequest="130"
                     IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}" />
 
                 <Button
@@ -70,8 +70,8 @@
                     ContentLayout="Top, 0" 
                     Margin="8,0,8,16"
                     Padding="25,15,25,10"
-                    WidthRequest="120" 
-                    HeightRequest="120"
+                    WidthRequest="130" 
+                    HeightRequest="130"
                     IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}" />
 
                 <Button
@@ -82,8 +82,8 @@
                     ContentLayout="Top, 0" 
                     Margin="8,0,8,16"
                     Padding="25,15,25,10"
-                    WidthRequest="120" 
-                    HeightRequest="120"
+                    WidthRequest="130" 
+                    HeightRequest="130"
                     IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}" />
 
                 <Button
@@ -94,8 +94,8 @@
                     ContentLayout="Top, 0" 
                     Margin="8,0,8,16"
                     Padding="25,15,25,10"
-                    WidthRequest="120" 
-                    HeightRequest="120"
+                    WidthRequest="130" 
+                    HeightRequest="130"
                     IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}" />
             </FlexLayout>
         </VerticalStackLayout>
