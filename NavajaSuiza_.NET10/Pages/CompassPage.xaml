@@ -83,8 +83,8 @@
                     BackgroundColor="{StaticResource MyBackground}"
                     StrokeShape="50"
                     WidthRequest="100" HeightRequest="100"
-                    AbsoluteLayout.LayoutBounds="0.5,0.5"
-                    AbsoluteLayout.LayoutFlags="PositionProportional" >
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center">
                     <Label 
                         Text="{Binding AngleText}" 
                         FontSize="28" FontAttributes="Bold"

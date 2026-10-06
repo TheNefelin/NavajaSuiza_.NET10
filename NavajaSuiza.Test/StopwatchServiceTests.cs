@@ -163,5 +163,6 @@ public class StopwatchServiceTests
     private sealed class FakeTimeSource : ITimeSource
     {
         public DateTime UtcNow => DateTime.UtcNow;
+        public long ElapsedRealtimeNanos => DateTime.UtcNow.Ticks * 100;
     }
 }

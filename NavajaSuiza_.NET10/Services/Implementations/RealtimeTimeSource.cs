@@ -22,10 +22,20 @@ public sealed class RealtimeTimeSource : ITimeSource
         get
         {
 #if ANDROID
-            return DateTime.UnixEpoch.AddTicks(SystemClock.ElapsedRealtimeNanos() / 100);
+        return DateTime.UnixEpoch.AddTicks(SystemClock.ElapsedRealtimeNanos() / 100);
 #else
             return DateTime.UtcNow;
 #endif
         }
+    }
+
+    public long ElapsedRealtimeNanos
+    {
+        get
+#if ANDROID
+            => SystemClock.ElapsedRealtimeNanos();
+#else
+            => DateTime.UtcNow.Ticks * 100;
+#endif
     }
 }

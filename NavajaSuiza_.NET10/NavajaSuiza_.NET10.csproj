@@ -29,7 +29,7 @@
 		<ApplicationId>com.nefelin.navajasuiza</ApplicationId>
 
 		<!-- Versions -->
-		<ApplicationDisplayVersion>1.1.97</ApplicationDisplayVersion>
+		<ApplicationDisplayVersion>1.1.128</ApplicationDisplayVersion>
 		<ApplicationVersion>1</ApplicationVersion>
 
 		<!-- To develop, package, and publish an app to the Microsoft Store, see: https://aka.ms/MauiTemplateUnpackaged -->

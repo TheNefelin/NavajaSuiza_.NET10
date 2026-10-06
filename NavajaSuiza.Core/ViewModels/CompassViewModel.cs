@@ -14,11 +14,16 @@ public partial class CompassViewModel : BaseViewModel, IDisposable
     private readonly ICompassService _compassService;
     private readonly IOrientationService _orientationService;
     private readonly ICompassPositionService _compassPositionService;
+    private readonly ITimeSource _timeSource;
 
-    private const double SmoothingFactor = 0.3;
+    private const double DeadbandDegrees = 1.2;
+    private const double SmoothingTauSeconds = 0.2;
     private double _smoothedHeading = -1;
     private double _declinationDegrees;
     private bool _hasDeclination;
+    private long _lastUpdateNanos;
+    private double _lastAppliedHeading;
+    private bool _hasLast;
 
     private string[]? _cardinalDirections16;
 
@@ -73,7 +78,8 @@ public partial class CompassViewModel : BaseViewModel, IDisposable
         INavigationService navigationService,
         ICompassService compassService,
         IOrientationService orientationService,
-        ICompassPositionService compassPositionService)
+        ICompassPositionService compassPositionService,
+        ITimeSource timeSource)
     {
         _logger = logger;
         _languageService = languageService;
@@ -81,6 +87,7 @@ public partial class CompassViewModel : BaseViewModel, IDisposable
         _compassService = compassService;
         _orientationService = orientationService;
         _compassPositionService = compassPositionService;
+        _timeSource = timeSource;
 
         _languageService.LanguageChanged += OnLanguageChanged;
         BuildCardinalDirections();
@@ -255,17 +262,30 @@ public partial class CompassViewModel : BaseViewModel, IDisposable
             trueHeading = magneticHeading + _declinationDegrees;
         }
 
-        if (_smoothedHeading < 0)
+        var nowNanos = _timeSource.ElapsedRealtimeNanos;
+        var dt = (nowNanos - _lastUpdateNanos) / 1e9;
+        var alpha = 1.0 - Math.Exp(-dt / SmoothingTauSeconds);
+
+        if (_smoothedHeading < 0 || !_hasLast)
         {
             _smoothedHeading = trueHeading;
+            _lastAppliedHeading = trueHeading;
+            _hasLast = true;
         }
         else
         {
-            double delta = trueHeading - _smoothedHeading;
+            var delta = trueHeading - _lastAppliedHeading;
             if (delta > 180) delta -= 360;
             if (delta < -180) delta += 360;
-            _smoothedHeading += SmoothingFactor * delta;
+
+            if (Math.Abs(delta) >= DeadbandDegrees)
+            {
+                _smoothedHeading += alpha * delta;
+                _lastAppliedHeading = _smoothedHeading;
+            }
         }
+
+        _lastUpdateNanos = nowNanos;
 
         _smoothedHeading = (_smoothedHeading % 360 + 360) % 360;
 

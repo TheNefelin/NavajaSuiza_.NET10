@@ -8,4 +8,5 @@ namespace NavajaSuiza.Core.Interfaces;
 public interface ITimeSource
 {
     DateTime UtcNow { get; }
+    long ElapsedRealtimeNanos { get; }
 }

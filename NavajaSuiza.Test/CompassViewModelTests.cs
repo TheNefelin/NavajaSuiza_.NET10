@@ -14,6 +14,7 @@ public class CompassViewModelTests
     private readonly Mock<ICompassService> _compassServiceMock = new();
     private readonly Mock<IOrientationService> _orientationServiceMock = new();
     private readonly Mock<ICompassPositionService> _compassPositionServiceMock = new();
+    private readonly Mock<ITimeSource> _timeSourceMock = new();
 
     private CompassViewModel CreateSut() => new(
         _loggerMock.Object,
@@ -21,7 +22,8 @@ public class CompassViewModelTests
         _navigationServiceMock.Object,
         _compassServiceMock.Object,
         _orientationServiceMock.Object,
-        _compassPositionServiceMock.Object);
+        _compassPositionServiceMock.Object,
+        _timeSourceMock.Object);
 
     [Fact]
     public void DefaultStatusText_IsThreeDots()
