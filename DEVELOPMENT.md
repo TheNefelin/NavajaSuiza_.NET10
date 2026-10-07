@@ -26,7 +26,7 @@ Contexto técnico, arquitectura y evolución del proyecto.
 | XlsIO (conversión XLS/XLSX/CSV) | Syncfusion.XlsIORenderer.NET | 34.2.9 |
 | Licencia Syncfusion | Syncfusion.Licensing | 34.2.9 |
 | UI Components (gratuito) | Syncfusion.Maui.Toolkit | 1.0.11 |
-| Logging | Microsoft.Extensions.Logging.Debug | 10.0.12 |
+| Logging | Microsoft.Extensions.Logging.Debug / .Abstractions | 10.0.12 |
 | Controls | Microsoft.Maui.Controls | 10.0.110 |
 | Tests | xUnit.net v3 (runner in-process) | 4.0.1 |
 | Test runner | Microsoft.NET.Test.Sdk | 18.10.1 |
@@ -82,12 +82,13 @@ La aplicación sigue el patrón **MVVM** (Model-View-ViewModel) utilizing el Com
 ```
 NavajaSuiza_.NET10/                   # Solution
 ├── NavajaSuiza.Core/                 # Class Library (net10.0 puro, sin dependencias MAUI)
-│   ├── Interfaces/                   # 23 interfaces
+│   ├── Interfaces/                   # 25 interfaces
 │   │   ├── ILanguageService.cs
 │   │   ├── IThemeService.cs
 │   │   ├── IDeviceStatusService.cs
 │   │   ├── INavigationService.cs
 │   │   ├── IInstrumentAudioService.cs
+│   │   ├── IMetronomePlayer.cs
 │   │   ├── IMetronomeService.cs
 │   │   ├── ICompassService.cs
 │   │   ├── IOrientationService.cs
@@ -105,13 +106,16 @@ NavajaSuiza_.NET10/                   # Solution
 │   │   ├── IMarkdownToHtmlConverter.cs
 │   │   ├── INotesRepository.cs
 │   │   ├── IMorseSignalService.cs
-│   │   ├── IPizarraImageExporter.cs
+│   │   ├── IBoardImageExporter.cs
 │   │   └── ITimeSource.cs
 │   ├── Models/
 │   │   ├── SupportedLanguages.cs
 │   │   ├── InstrumentStringData.cs
 │   │   ├── StopwatchLap.cs
-│   │   ├── PizarraStroke.cs
+│   │   ├── StatusLevel.cs
+│   │   ├── BoardStroke.cs
+│   │   ├── BoardText.cs
+│   │   ├── BoardDefaults.cs
 │   │   ├── DocumentType.cs
 │   │   ├── PdfReaderPayload.cs
 │   │   ├── MorseSignalSequence.cs
@@ -144,7 +148,7 @@ NavajaSuiza_.NET10/                   # Solution
 │       ├── InstrumentUkuleleViewModel.cs
 │       ├── InstrumentViolinViewModel.cs
 │       ├── GuideViewModel.cs
-│       ├── PizarraViewModel.cs
+│       ├── BoardViewModel.cs
 │       ├── PdfReaderViewModel.cs
 │       ├── TextReaderViewModel.cs
 │       ├── NotesViewModel.cs
@@ -159,12 +163,14 @@ NavajaSuiza_.NET10/                   # Solution
 │   │   └── *.xaml / *.xaml.cs
 │   ├── ViewModels/                     # Vacío — todas las VMs están en Core
 │   ├── Services/
-│   │   └── Implementations/           # 20 implementaciones (las que usan APIs de plataforma + repos de datos)
+│   │   └── Implementations/           # 23 implementaciones (las que usan APIs de plataforma + repos de datos)
 │   │       ├── LanguageService.cs
 │   │       ├── ThemeService.cs
 │   │       ├── DeviceStatusService.cs
 │   │       ├── NavigationService.cs
 │   │       ├── InstrumentAudioService.cs
+│   │       ├── AudioTrackMetronomePlayer.cs    # IMetronomePlayer (Android, AudioTrack)
+│   │       ├── MediaElementMetronomePlayer.cs  # IMetronomePlayer (otras plataformas)
 │   │       ├── MetronomeService.cs
 │   │       ├── CompassSensorService.cs
 │   │       ├── OrientationSensorService.cs
@@ -177,9 +183,10 @@ NavajaSuiza_.NET10/                   # Solution
 │   │       ├── DocumentPdfConverter.cs
 │   │       ├── LauncherService.cs
 │   │       ├── AppInfoService.cs
+│   │       ├── NoteEntity.cs                # Entidad SQLite de notas
 │   │       ├── SqliteNotesRepository.cs     # INotesRepository (SQLite local)
 │   │       ├── RealtimeTimeSource.cs        # ITimeSource
-│   │       └── PizarraImageExporter.cs      # IPizarraImageExporter (SkiaSharp)
+│   │       └── BoardImageExporter.cs      # IBoardImageExporter (SkiaSharp)
 │   ├── Converters/
 │   ├── Extensions/
 │   ├── Resources/
@@ -192,10 +199,10 @@ NavajaSuiza_.NET10/                   # Solution
 │   └── MauiProgram.cs
 │
 └── NavajaSuiza.Test/                # Proyecto de tests (net10.0 puro)
-    └── *Tests.cs                     # xUnit + Moq, 264 tests
+    └── *Tests.cs                     # xUnit + Moq, 319 tests
 ```
 
-El conteo de 264 se obtiene de 247 `[Fact]` más 17 `[InlineData]`. Las cifras 229 / 230 / 232 que aparecieron en corridas locales **no eran una diferencia real de tests**: el bloqueo de Smart App Control hace fallar los constructores de las clases y altera el conteo del runner (§15.2).
+El conteo de 319 se obtiene de 268 `[Fact]` más 51 `[InlineData]`. Las cifras 229 / 230 / 232 que aparecieron en corridas locales **no eran una diferencia real de tests**: el bloqueo de Smart App Control hacía fallar los constructores de las clases y alteraba el conteo del runner (§15.2).
 
 #### Regla de separación Core vs MAUI
 
@@ -281,8 +288,9 @@ Todos los servicios están registrados en `MauiProgram.cs` e inyectados por DI.
 | `IStopwatchService` | `StopwatchService` (Core) | Singleton | Cronómetro con `Stopwatch` + `PeriodicTimer`, thread-safe con lock; persiste tiempo y marcas |
 | `IMetronomeService` | `MetronomeService` | Singleton | Fachada de persistencia (`Preferences`) que delega en `MetronomeEngine` y en el `IMetronomePlayer` de la plataforma; permite cambiar tempo/compás en caliente y persiste ambos en `Preferences` |
 | `IInstrumentAudioService` | `InstrumentAudioService` | Transient | Configuración de cuerdas, reproducción de audio, vibración |
+| `ITimeSource` | `RealtimeTimeSource` | Singleton | Reloj monotónico (`UtcNow` + `ElapsedRealtimeNanos`) para el suavizado temporal de la brújula |
 
-**ViewModels**: Todos registrados como **Transient** (cada navegación obtiene una nueva instancia, evitando estado residual).
+**ViewModels**: registrados como **Transient** (instancia nueva por navegación, sin estado residual), salvo `BoardViewModel`, que es **Singleton** porque su estado (el dibujo) debe sobrevivir a salir y volver a la página (ver §18.1).
 
 ### 5.2 Lifetime de servicios
 
@@ -303,7 +311,8 @@ Todos los servicios están registrados en `MauiProgram.cs` e inyectados por DI.
 | `StopwatchService` | Singleton | Persiste el estado del cronómetro (corriendo/pausado) y las marcas entre recreaciones de VM |
 | `MetronomeService` | Singleton | Comparte el `AudioTrack` y el hilo de render entre navegaciones; recrear el stream por navegación provocaba tirones al inicio |
 | `InstrumentAudioService` | Transient | Estado de audio y vibración por instancia, aislado por ViewModel |
-| **Todos los ViewModels** | **Transient** | Cada navegación obtiene nueva instancia; evita estado residual entre sesiones |
+| **ViewModels** (excepto `BoardViewModel`) | **Transient** | Cada navegación obtiene nueva instancia; evita estado residual entre sesiones |
+| `BoardViewModel` | Singleton | La página es Singleton y el estado del dibujo vive en el VM; con Transient se perdía al navegar fuera (§18.1) |
 
 ---
 
@@ -348,7 +357,9 @@ Todos los servicios están registrados en `MauiProgram.cs` e inyectados por DI.
 - Dirección cardinal en 16 puntos (N, N-NE, NE, etc.).
 - Indicador de inclinación del dispositivo (pitch/roll via quaternion).
 - Navega hacia atrás si los sensores no son soportados.
-- **Suavizado de ángulo**: Filtro exponencial (α=0.3) para lectura estable sin fluctuaciones rápidas. Maneja wrap-around 360°/0° correctamente.
+- **Suavizado temporal**: filtro exponencial **basado en tiempo** (`alpha = 1 - e^(-dt/τ)`, τ=0.2 s) con **deadband de 1.2°**: solo se aplica cuando el cambio supera ese umbral, lo que elimina el temblor sin retrasar giros reales. El `dt` sale de `ITimeSource.ElapsedRealtimeNanos` (reloj monotónico), no de `DateTime`. Maneja wrap-around 360°/0° correctamente.
+- **Corrección de declinación magnética**: tras obtener posición con "Mi ubicación" (`LocateAsync`), aplica `Android.Hardware.GeomagneticField` para convertir el rumbo magnético en rumbo verdadero; sin posición usa el magnético.
+- **Cardinales localizados y ciclo de vida**: las 16 direcciones se cachean por idioma y se reconstruyen en `LanguageChanged`; `CompassViewModel` implementa `IDisposable` y libera la suscripción al idioma.
 - **Eficiencia de batería**: `SensorSpeed.UI` en vez de `SensorSpeed.Fastest`. Suficiente para actualización de UI, menor consumo.
 - **Calibración manual**: Botón "Calibrar Brújula" que ejecuta flujo de 7 segundos (instrucción → calibrando → completado) con texto localizado. No se ejecuta automáticamente al entrar.
 - **Protección contra crashes**: `OnNavigatedTo` síncrono con fire-and-forget seguro (try/catch). Unsubscribe antes de Stop() para evitar eventos post-limpieza.
@@ -373,7 +384,7 @@ Todos los servicios están registrados en `MauiProgram.cs` e inyectados por DI.
 - **Versión** leída en runtime vía `IAppInfoService` (`AppInfo.Current`); única fuente de verdad: el `.csproj` (`ApplicationDisplayVersion`/`ApplicationVersion`). No duplicar versión en constantes.
 - **Enlaces**: URLs centralizadas en `AppConstants.About` (Core) y abiertas con `ILauncherService` (`Launcher.Default`). El botón de donación solo se muestra si `DonationUrl` está configurada; el botón de repositorio fue eliminado.
 - **Sitio web**: línea `© 2026 | francisco-dev.cl` completa como hipervínculo (un solo label con `TapGestureRecognizer`) hacia `AppConstants.About.WebsiteUrl`, con el color de texto del sistema (compatible tema claro/oscuro), igual que el label de versión (sin subrayado ni opacidad).
-- **Versión 3 partes**: `ApplicationDisplayVersion=1.0.1` (texto libre válido en Android/iOS) y `ApplicationVersion=3` como build interno.
+- **Versión 3 partes**: `ApplicationDisplayVersion=1.1.128` (texto libre válido en Android/iOS) y `ApplicationVersion=1` como build interno.
 
 ### 6.8.1 Indicadores de estado del menú (`MenuPage`)
 - **Batería y almacenamiento se muestran como semáforo**: un `Ellipse` de 10 px junto a cada etiqueta, más el valor numérico a la derecha. El color **refuerza** la lectura, nunca la reemplaza: el número sigue visible porque el color por sí solo no es accesible para usuarios daltónicos.
@@ -725,7 +736,7 @@ Pasos 1–6 completados: la app está publicada en Internal testing y Closed tes
 
 ### 18.1 Pizarra (dibujo)
 
-Estado: **Fases 1, 2 y 3 implementadas y verificadas** (suite total 264 tests; builds de los 4 TFMs con 0 advertencias y 0 errores). Fase 2 = export WebP a galería, ahora **transversal vía SkiaSharp** (verificado en emulador Android y en Windows). Fase 3 = texto sobre el lienzo. **Goma descartada**: Deshacer (LIFO) + Limpiar cubren el caso de esta app.
+Estado: **Fases 1, 2 y 3 implementadas y verificadas** (suite total 319 tests; builds de los 4 TFMs con 0 advertencias y 0 errores). Fase 2 = export WebP a galería, ahora **transversal vía SkiaSharp** (verificado en emulador Android y en Windows). Fase 3 = texto sobre el lienzo. **Goma descartada**: Deshacer (LIFO) + Limpiar cubren el caso de esta app.
 
 Entregado (Fase 1):
 - Lienzo a máximo espacio (`Grid` `Auto,Auto,*`), **sin `ScrollView`** (interceptaba los gestos verticales del dibujo).
@@ -733,25 +744,25 @@ Entregado (Fase 1):
 - **Paleta de 9 colores en diálogo** overlay (sin fila inline → sin overflow de su ancho), abierto desde el botón "Colores".
 - Selector de fondo de pizarra **Dark/Light** (action sheet) desde el botón "Pizarra".
 - **Adaptación automática de contraste del lápiz** al cambiar de pizarra (WCAG ≥ 2.5:1): negro sobre oscura → amarillo; blanco sobre clara → negro; rojo (default) se conserva visible en ambas.
-- `PizarraStroke`/`PizarraPoint` y `PizarraViewModel` en Core (comandos testables: `Clear`, `Undo`, `SetBoardColor`, `OpenColorPicker`/`CloseColorPicker`/`SelectColor`); `StrokeDrawable` (`IDrawable`) y `PizarraPage` en MAUI.
-- Ruta `"PizarraPage"`, ítem de menú con `icon_pizarra.png`, localización es/en/sv.
+- `BoardStroke`/`BoardPoint` y `BoardViewModel` en Core (comandos testables: `Clear`, `Undo`, `SetBoardColor`, `OpenColorPicker`/`CloseColorPicker`/`SelectColor`); `StrokeDrawable` (`IDrawable`) y `BoardPage` en MAUI.
+- Ruta `"BoardPage"`, ítem de menú con `icon_board.png`, localización es/en/sv.
 
 Entregado (Fase 2 — Guardar/export a galería):
 - **Decisión**: se descartó la persistencia JSON propuesta originalmente (generaba archivos grandes y opacos para el usuario; "no todos saben qué es un JSON"). `Guardar` **exporta el dibujo como imagen WebP a la galería** (comprensible y borrable por el usuario). La pizarra **abre siempre en blanco** (sin restauración).
-- **SkiaSharp 4.153.1** (única dependencia nueva, instalada por el usuario): `IPizarraImageExporter` (Core) + `PizarraImageExporter` (MAUI) con **raster + encode transversal** — una sola implementación para todas las plataformas usando `SKBitmap`/`SKCanvas`/`SKPathBuilder`/`SKPaint` (caps/joins redondos, antialias, mismo estilo que `StrokeDrawable`) y `SKImage.Encode(Webp, 95)`. Reemplaza el raster nativo de Android (`Bitmap`/`Canvas`/`Paint`) y corrige de paso un bug: las coordenadas de trazo ahora **se escalan** junto con el grosor (antes solo se escalaba el grosor).
+- **SkiaSharp 4.153.1** (única dependencia nueva, instalada por el usuario): `IBoardImageExporter` (Core) + `BoardImageExporter` (MAUI) con **raster + encode transversal** — una sola implementación para todas las plataformas usando `SKBitmap`/`SKCanvas`/`SKPathBuilder`/`SKPaint` (caps/joins redondos, antialias, mismo estilo que `StrokeDrawable`) y `SKImage.Encode(Webp, 95)`. Reemplaza el raster nativo de Android (`Bitmap`/`Canvas`/`Paint`) y corrige de paso un bug: las coordenadas de trazo ahora **se escalan** junto con el grosor (antes solo se escalaba el grosor).
 - Layout de la imagen: máx. 2048px con margen (padding 40 + media anchura de trazo), `scale ≤ 1` (downscale si el contenido excede; sin upscale para no degradar).
-- Guardado por plataforma: **Android** vía `MediaStore.Images` → `Pictures/pizarra.webp` (API 29+ sin permiso; API 21–28 pide `WRITE_EXTERNAL_STORAGE` en runtime, declarado en manifest con `maxSdkVersion="28"`); **Windows** → archivo WebP en Carpeta de imágenes (nombre único con fecha+guid); iOS/MacCatalyst `NotAvailable`.
-- El VM expone `PizarraExportResult` (`Saved`/`NotAvailable`/`Failed`) y la página muestra el mensaje correspondiente (resx ×3).
+- Guardado por plataforma: **Android** vía `MediaStore.Images` → `Pictures/board.webp` (API 29+ sin permiso; API 21–28 pide `WRITE_EXTERNAL_STORAGE` en runtime, declarado en manifest con `maxSdkVersion="28"`); **Windows** → archivo WebP en Carpeta de imágenes (nombre único con fecha+guid); iOS/MacCatalyst `NotAvailable`.
+- El VM expone `BoardExportResult` (`Saved`/`NotAvailable`/`Failed`) y la página muestra el mensaje correspondiente (resx ×3).
 
 Entregado (Fase 3 — Texto):
 - **Botón "Agregar texto"** al inicio de la fila de herramientas, con `icons_text.png` (placeholder, el usuario proveerá el icono definitivo). La fila ya tenía `ScrollView Orientation="Horizontal"`, así que el scroll con muchos botones no requirió trabajo.
 - **Modo texto por comando**: el botón alterna `IsTextModeActive` y se pinta de `MyAccentOrange` para signaling estado activo, con un `DataTrigger` y un aviso en la fila del slider. Con el modo activo, `StartStroke`/`AddPoint` no dibujan, de modo que el toque en el lienzo abre `DisplayPromptAsync` y escribe el texto en esa posición.
-- `PizarraText` (contenido, X, Y, `FontSize`, `ColorHex`) y `PizarraDefaults.FontSize` (28) en Core, agnósticos de plataforma. El tamaño es **fijo** por decisión del usuario y el texto hereda el color del lápiz activo.
+- `BoardText` (contenido, X, Y, `FontSize`, `ColorHex`) y `BoardDefaults.FontSize` (28) en Core, agnósticos de plataforma. El tamaño es **fijo** por decisión del usuario y el texto hereda el color del lápiz activo.
 - **Contraste aplicado también a los textos ya creados**: `ApplyContrastToTexts` recorre `Texts` cuando cambia el fondo, con el mismo umbral WCAG 2.5:1 del lápiz. Sin esto el texto quedaba invisible al pasar a pizarra oscura.
-- **Historial de undo unificado**: `PizarraUndoEntry` (record struct con `Stroke`/`Text`) registra cada elemento en orden cronológico, así que `Undo` saca el último creado sea trazo o texto. La alternativa de comparar timestamps entre colecciones se descartó por más frágil. `Clear` vacía trazos, textos e historial.
-- `IPizarraImageExporter.ExportAsync` ahora recibe `(strokes, texts, boardColorHex)`. Se eligió agregar un parámetro en vez de un tipo base `PizarraElement` para no refactorizar los trazos que ya funcionaban.
-- `PizarraImageExporter` dibuja el texto con `SKFont` + `SKTextAlign.Left` (SkiaSharp 4.153.1 ya no expone `SKPaint.TextSize` ni `DrawText(string,...)`). `TryComputeLayout` **incluye los textos** en el bounding box, lo que corrige tres fallos: una pizarra **solo con texto** no exportaba (`maxX < minX` → `false`), un texto fuera del bounding box de los trazos se recortaba, y `SaveCommand` con `Strokes.Count == 0` ni siquiera llamaba al exportador. El ancho del texto se estima con 0.6 em por carácter para no depender de SkiaSharp en el cálculo.
-- 4 claves i18n nuevas en es/en/sv (`PizarraAddTextText`, `PizarraTextModeHintText`, `PizarraEnterTextTitle`, `PizarraEnterTextPrompt`) → 134 claves por idioma, paridad exacta.
+- **Historial de undo unificado**: `BoardUndoEntry` (record struct con `Stroke`/`Text`) registra cada elemento en orden cronológico, así que `Undo` saca el último creado sea trazo o texto. La alternativa de comparar timestamps entre colecciones se descartó por más frágil. `Clear` vacía trazos, textos e historial.
+- `IBoardImageExporter.ExportAsync` ahora recibe `(strokes, texts, boardColorHex)`. Se eligió agregar un parámetro en vez de un tipo base `BoardElement` para no refactorizar los trazos que ya funcionaban.
+- `BoardImageExporter` dibuja el texto con `SKFont` + `SKTextAlign.Left` (SkiaSharp 4.153.1 ya no expone `SKPaint.TextSize` ni `DrawText(string,...)`). `TryComputeLayout` **incluye los textos** en el bounding box, lo que corrige tres fallos: una pizarra **solo con texto** no exportaba (`maxX < minX` → `false`), un texto fuera del bounding box de los trazos se recortaba, y `SaveCommand` con `Strokes.Count == 0` ni siquiera llamaba al exportador. El ancho del texto se estima con 0.6 em por carácter para no depender de SkiaSharp en el cálculo.
+- 4 claves i18n nuevas en es/en/sv (`BoardAddTextText`, `BoardTextModeHintText`, `BoardEnterTextTitle`, `BoardEnterTextPrompt`) → 139 claves por idioma, paridad exacta.
 - 13 tests nuevos: modo texto, alta con color del lápiz, contenido vacío/en blanco, rechazo con el modo apagado, trazos bloqueados en modo texto, undo en ambos sentidos (texto sobre trazo y trazo sobre texto), limpieza de historial, y contraste del texto al cambiar de pizarra.
 
 Correcciones de render detectadas en dispositivo (Android, emulador):
@@ -761,8 +772,8 @@ Correcciones de render detectadas en dispositivo (Android, emulador):
 - **Pendiente**: `SkiaTextLayout` no parte palabras sin espacios (URL, identificadores largos), que pueden desbordar. La alternativa sería medir con `GetStringSize` y reducir el tamaño de fuente en ese caso; no se implementó por no ser un requisito definido.
 - El hint de modo texto se envuelve en un `Grid` con `HeightRequest="20"` para reservar el alto: con `IsVisible` directo, el `Label` empujaba la pizarra y reducía su altura al activarse.
 - El control de grosor pasó a disposición **inline** (`Grid` de 2 columnas, texto a la izquierda y slider a la derecha) en lugar de apilado vertical.
-- **`PizarraViewModel` cambió de `AddTransient` a `AddSingleton`** en `MauiProgram.cs`: con Transient, al navegar fuera y volver se resolvía una instancia nueva y el dibujo se perdía. La página ya era Singleton; el estado vive en el VM.
-- El label del botón se acortó a "Texto" (`PizarraAddTextText` en los tres idiomas).
+- **`BoardViewModel` cambió de `AddTransient` a `AddSingleton`** en `MauiProgram.cs`: con Transient, al navegar fuera y volver se resolvía una instancia nueva y el dibujo se perdía. La página ya era Singleton; el estado vive en el VM.
+- El label del botón se acortó a "Texto" (`BoardAddTextText` en los tres idiomas).
 
 Fase 4 **descartada por decisión del usuario** (2026-09-30): no habrá botón de compartir, porque la imagen se guarda localmente en la galería y eso ya cubre el caso de uso. Tampoco se implementa el guardado en Photos de iOS, ya que el proyecto no cubre iOS por no disponer de Mac para compilar.
 
@@ -792,7 +803,7 @@ Pendiente de definir: ¿conteo solo en primer plano o en segundo plano/cerrada?;
 
 ### 18.4 Visor de PDF (Syncfusion SfPdfViewer)
 
-Estado: **implementada y verificada en dispositivo real** (Android/Windows build 0/0; suite total 264 tests; **todas las conversiones y los visores probados en runtime en dispositivo físico**: PDF directo, DOCX, XLSX, CSV→PDF, texto plano y DOC/XLS legacy).
+Estado: **implementada y verificada en dispositivo real** (Android/Windows build 0/0; suite total 319 tests; **todas las conversiones y los visores probados en runtime en dispositivo físico**: PDF directo, DOCX, XLSX, CSV→PDF, texto plano y DOC/XLS legacy).
 
 Decisión de alcance:
 - **Visor real de PDF mediante Syncfusion `SfPdfViewer`** (paquetes `Syncfusion.Maui.PdfViewer` 34.2.9 + `Syncfusion.Licensing` 34.2.9). Sustituye al visor propio con `#if ANDROID`/`#if WINDOWS` (`Android.Graphics.Pdf.PdfRenderer` + `Windows.Data.Pdf`) que se descartó por decisión del usuario tras probarla en emulador (sept 2026): no se comportaba como un visor real (scroll discreto por página rasterizada, sin búsqueda ni selección de texto).
@@ -803,7 +814,7 @@ Entregado:
 - **Router multipropósito (botón único; Fases 1-3)**: `MenuViewModel.NavigateToPdfReader` usa `IFilePickerService.PickDocumentAsync` (PDF/DOCX/XLSX/DOC/XLS/CSV/texto) y detecta el **tipo real por contenido** (`DocumentTypeDetector`: firma `%PDF-` → PDF; entradas ZIP canónicas `word/document.xml` vs `xl/workbook.xml` → DOCX/XLSX; firma OLE `D0CF11E0` → contenedor legacy, resuelto **por extensión** `.doc`/`.xls` → DOC/XLS (Fase 3, límite documentado: renombrados no se detectan); si no hay firma, lee muestra UTF-8 y decide **CSV** si ≥90% de las líneas comparten el mismo conteo de delimitadores `,`, `;` o tab (`GetBestCsvDelimiter`) o **Texto plano** en caso contrario; presencia de byte de control → `Unknown`). El router enruta: **PDF** → se pasa el `path`; **DOCX/DOC/XLSX/XLS/CSV** → `IDocumentPdfConverter.ConvertToPdfAsync` (DocIO `FormatType.Docx`/`Doc`, XlsIO; para CSV `DocumentTypeDetector.DetectDelimiter(path)` detecta el separador real que se pasa a `Workbooks.Open(path, delimitador)`) y se pasa un `MemoryStream`; **Texto plano** → `PushAsync("TextReaderPage", path)` con el path como parámetro; formato no soportado (`Ole`, `Unknown`) → se ignora; error de conversión → alert localizado (`PdfReaderOpenErrorText` + `CommonOkText`). Navegación PDF mediante objeto `PdfReaderPayload` (`Path` o `Stream` + `FileName`). El botón usa el icono `icon_file.png`.
 - Core: `PdfReaderViewModel` — overloads `Load(path)` y `Load(Stream, fileName)`; `PdfDocumentStream`, `FileName`, `HintText`, `IsFileLoaded`; `Unload()` libera el stream y resetea el estado. `TextReaderViewModel` (Fase 2) — visor de texto plano: `Content`, `FileName`, `IsFileLoaded`, `Message`; `Load(path)` lee con StreamReader UTF-8 (hasta 2 MB por `MaxBytesToRead`), `Unload()` resetea el estado; error → `TextReaderOpenErrorText` localizado vía `ILanguageService`.
 - MAUI: `PdfReaderPage.xaml` con `<syncfusion:SfPdfViewer>` (`DocumentSource="{Binding PdfDocumentStream}"`; el control aporta toolbar, navegación, zoom, búsqueda y selección de texto) + Label de hint cuando no hay documento; `PdfReaderPage.xaml.cs` resuelve el VM en `OnNavigatedTo`, lee `PdfReaderPayload`, y en **`OnDisappearing`** llama `PdfViewer.UnloadDocument()` + `viewModel.Unload()` para liberar memoria del documento. `TextReaderPage.xaml` (Fase 2): `<Editor>` de solo lectura con `FontFamily="Courier New"` y mensaje de error visible cuando `IsFileLoaded=false`; `TextReaderPage.xaml.cs` resuelve el VM en `OnNavigatedTo` con el path como parámetro (`INavigationService.TakeNavigationParameter()` devuelve `string`), `OnDisappearing` → `Unload()`. `DocumentPdfConverter` y `TextReaderPage`/`TextReaderViewModel` registrados en DI. **Indicador de conversión**: `MenuViewModel.IsConverting` (observable) activa un overlay a pantalla completa en `MenuPage` con `ActivityIndicator` (color `MyAccentBlue` para visibilidad en tema claro/oscuro) + texto `PdfReaderConvertingText` ("Convirtiendo a PDF...") durante DOCX/XLSX/CSV; solo PDF y texto directos no lo activan. resx ×3 (claves `PdfReader*` y `TextReaderOpenErrorText`; se eliminaron `PdfReaderEmptyText` y `PdfReaderPageCountText` por quedar sin uso).
-- Tests: `PdfReaderViewModelTests` (4), `DocumentTypeDetectorTests` (18: firma PDF, DOCX/XLSX por entrada ZIP canónica, `Unknown` para ZIP sin entrada esperada/bytes inválidos/stream vacío, OLE→`Ole` + por extensión `.doc`/`.xls`/otra, CSV coma/punto-y-coma/tab, texto de una línea→Texto, texto plano y código→Text, preserva posición, lectura por path, `DetectDelimiter` coma/punto-y-coma/tab/default), `MenuViewModelTests` con router (PDF directo, DOCX convertido, CSV convertido, DOC/XLS convertido, texto→`TextReaderPage`, cancelación del picker, `IsConverting` activo durante la conversión y reseteado en éxito/error) → suite total 214.
+- Tests: `PdfReaderViewModelTests` (4), `DocumentTypeDetectorTests` (18: firma PDF, DOCX/XLSX por entrada ZIP canónica, `Unknown` para ZIP sin entrada esperada/bytes inválidos/stream vacío, OLE→`Ole` + por extensión `.doc`/`.xls`/otra, CSV coma/punto-y-coma/tab, texto de una línea→Texto, texto plano y código→Text, preserva posición, lectura por path, `DetectDelimiter` coma/punto-y-coma/tab/default), `MenuViewModelTests` con router (PDF directo, DOCX convertido, CSV convertido, DOC/XLS convertido, texto→`TextReaderPage`, cancelación del picker, `IsConverting` activo durante la conversión y reseteado en éxito/error).
 
 Límites conocidos (no resueltos a propósito):
 - Sin clave de licencia válida, Syncfusion puede mostrar advertencia de licencia trial en runtime.
@@ -818,7 +829,7 @@ Límites conocidos (no resueltos a propósito):
 - **PDF en blanco al volver a la página**: con las páginas registradas como **Singleton**, salir a cargar otro documento (`OnDisappearing` → `PdfViewer.UnloadDocument()` + `viewModel.Unload()`) y volver/reabrir dejaba el visor en blanco. Referencia: Syncfusion Feedback #59237 / Foro de Syncfusion #189392 (reutilizar una instancia de `SfPdfViewer` tras `UnloadDocument` no soporta cargar documentos posteriores). **Fix aplicado (build 0 errores)**: `PdfReaderPage` ahora es **Transient** (página y control `SfPdfViewer` nuevos por navegación; el VM ya era Transient y se resuelve en `OnNavigatedTo`). **Verificado en runtime**: el flujo abrir PDF → menú → reabrir PDF funciona correctamente.
 - **Cancelación de la carga del PDF sin peligro**: verificado en runtime. No es un bug: el visor PDF funciona correctamente. El "cuelgue al cancelar el picker" observado antes en el emulador se debía a que el **emulador no tiene botón "volver"** para cancelar la carga; en **dispositivos físicos el botón volver del sistema cancela correctamente** el picker. Descartada la hipótesis de bug de MAUI (dotnet/maui #33706) y el fix propuesto de timeout en `FilePickerService`.
 
-- BUILD REAL: 0 errores / 0 advertencias; TEST REAL: 214/214 verdes.
+- BUILD REAL: 0 errores / 0 advertencias; TEST REAL: 319/319 verdes (última corrida registrada, commit 1621255).
 ## 19. GUÍA de reconstrucción (build desde cero)
 
 Repositorio real: D:\Repo\.NET\NavajaSuiza_.NET10 (sin tildes; git rev-parse y Test-Path OK - verificado §11.6-1).
@@ -838,7 +849,7 @@ Restaurar:
 Build (Android Debug):
   dotnet build NavajaSuiza_.NET10/NavajaSuiza_.NET10.csproj -f net10.0-android -c Debug
 
-Suite de tests (esperado: 264 superados / 0 fallos):
+Suite de tests (esperado: 319 superados / 0 fallos):
   dotnet run --project NavajaSuiza.Test/NavajaSuiza.Test.csproj
 La suite usa xUnit.net v3 (4.0.1) con runner **in-process**: el proyecto de tests es un
 ejecutable y no requiere `dotnet test`. `dotnet test` ya no es compatible: el SDK de .NET 10
@@ -848,9 +859,10 @@ xUnit v3 trae analyzers propios: `xUnit1051` pide pasar `TestContext.Current.Can
 a los tests que esperan un `CancellationToken`. Queda un aviso pendiente en
 `StopwatchServiceTests.cs`; no bloquea la suite.
 
-Release Android (APK): el default del csproj es AAB (para Google Play). Para generar APK de prueba:
+Release Android: el csproj fija `AndroidPackageFormat=apk`, así que el Release genera APK por defecto.
   dotnet clean NavajaSuiza_.NET10/NavajaSuiza_.NET10.csproj -f net10.0-android -c Release
-  dotnet build NavajaSuiza_.NET10/NavajaSuiza_.NET10.csproj -f net10.0-android -c Release -p:AndroidPackageFormat=apk
+  dotnet build NavajaSuiza_.NET10/NavajaSuiza_.NET10.csproj -f net10.0-android -c Release
+Para el AAB de Google Play, agregar -p:AndroidPackageFormat=aab al comando anterior.
   Ante "Error de proceso de archivado" (lista de errores vacía): limpiar obj/bin y reconstruir;
   no conservar builds previos con encoding dañado (§24).
 Licencia Syncfusion: se inyecta con la variable de entorno SYNC_FUSION_LICENSE_KEY antes del build

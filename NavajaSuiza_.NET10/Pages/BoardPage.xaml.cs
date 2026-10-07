@@ -6,16 +6,16 @@ using NavajaSuiza.Core.ViewModels;
 
 namespace NavajaSuiza_.NET10.Pages;
 
-public partial class PizarraPage : ContentPage
+public partial class BoardPage : ContentPage
 {
     private const string LightBoardHex = "#F2F2EE";
     private const string DarkBoardHex = "#17171B";
 
     private readonly IServiceProvider _serviceProvider;
-    private PizarraViewModel? _viewModel;
+    private BoardViewModel? _viewModel;
     private StrokeDrawable? _drawable;
 
-    public PizarraPage(IServiceProvider serviceProvider)
+    public BoardPage(IServiceProvider serviceProvider)
     {
         InitializeComponent();
         _serviceProvider = serviceProvider;
@@ -25,7 +25,7 @@ public partial class PizarraPage : ContentPage
     {
         base.OnNavigatedTo(args);
 
-        var viewModel = _serviceProvider.GetRequiredService<PizarraViewModel>();
+        var viewModel = _serviceProvider.GetRequiredService<BoardViewModel>();
         _viewModel = viewModel;
         viewModel.BoardColor = IsDarkThemeActive() ? DarkBoardHex : LightBoardHex;
 
@@ -71,12 +71,12 @@ public partial class PizarraPage : ContentPage
 
         var messageKey = viewModel.LastExportResult switch
         {
-            PizarraExportResult.NotAvailable => "PizarraExportUnavailableText",
-            PizarraExportResult.Failed => "PizarraExportFailedText",
-            _ => "PizarraSavedConfirmText"
+            BoardExportResult.NotAvailable => "BoardExportUnavailableText",
+            BoardExportResult.Failed => "BoardExportFailedText",
+            _ => "BoardSavedConfirmText"
         };
 
-        var title = local["PizarraText"]?.ToString() ?? string.Empty;
+        var title = local["BoardText"]?.ToString() ?? string.Empty;
         var message = local[messageKey]?.ToString() ?? string.Empty;
         var okText = local["CommonOkText"]?.ToString() ?? string.Empty;
 
@@ -88,10 +88,10 @@ public partial class PizarraPage : ContentPage
         if (_viewModel is null)
             return;
 
-        var title = LocalizationResourceManager.Instance["PizarraText"]?.ToString() ?? string.Empty;
+        var title = LocalizationResourceManager.Instance["BoardText"]?.ToString() ?? string.Empty;
         var cancelText = LocalizationResourceManager.Instance["CancelText"]?.ToString() ?? string.Empty;
-        var boardLightText = LocalizationResourceManager.Instance["PizarraBoardLightText"]?.ToString() ?? string.Empty;
-        var boardDarkText = LocalizationResourceManager.Instance["PizarraBoardDarkText"]?.ToString() ?? string.Empty;
+        var boardLightText = LocalizationResourceManager.Instance["BoardLightText"]?.ToString() ?? string.Empty;
+        var boardDarkText = LocalizationResourceManager.Instance["BoardDarkText"]?.ToString() ?? string.Empty;
 
         var result = await DisplayActionSheetAsync(title, cancelText, null, boardLightText, boardDarkText);
 
@@ -148,8 +148,8 @@ public partial class PizarraPage : ContentPage
             return;
 
         var local = LocalizationResourceManager.Instance;
-        var title = local["PizarraEnterTextTitle"]?.ToString() ?? string.Empty;
-        var prompt = local["PizarraEnterTextPrompt"]?.ToString() ?? string.Empty;
+        var title = local["BoardEnterTextTitle"]?.ToString() ?? string.Empty;
+        var prompt = local["BoardEnterTextPrompt"]?.ToString() ?? string.Empty;
         var cancelText = local["CancelText"]?.ToString() ?? string.Empty;
 
         var content = await DisplayPromptAsync(title, prompt, "OK", cancelText);

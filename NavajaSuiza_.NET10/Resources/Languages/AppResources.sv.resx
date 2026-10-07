@@ -177,40 +177,40 @@
   <data name="NotesText" xml:space="preserve">
     <value>Noteringar</value>
   </data>
-  <data name="PizarraText" xml:space="preserve">
+  <data name="BoardText" xml:space="preserve">
     <value>Whiteboard</value>
   </data>
-  <data name="PizarraClearText" xml:space="preserve">
+  <data name="BoardClearText" xml:space="preserve">
     <value>Rensa</value>
   </data>
-  <data name="PizarraUndoText" xml:space="preserve">
+  <data name="BoardUndoText" xml:space="preserve">
     <value>Ångra</value>
   </data>
-  <data name="PizarraBoardShortText" xml:space="preserve">
+  <data name="BoardShortText" xml:space="preserve">
     <value>Tavla</value>
   </data>
-  <data name="PizarraBoardLightText" xml:space="preserve">
+  <data name="BoardLightText" xml:space="preserve">
     <value>Ljus tavla</value>
   </data>
-  <data name="PizarraBoardDarkText" xml:space="preserve">
+  <data name="BoardDarkText" xml:space="preserve">
     <value>Mörk tavla</value>
   </data>
-  <data name="PizarraColorsText" xml:space="preserve">
+  <data name="BoardColorsText" xml:space="preserve">
     <value>Färger</value>
   </data>
-  <data name="PizarraWidthText" xml:space="preserve">
+  <data name="BoardWidthText" xml:space="preserve">
     <value>Tjocklek</value>
   </data>
-  <data name="PizarraSaveText" xml:space="preserve">
+  <data name="BoardSaveText" xml:space="preserve">
     <value>Spara</value>
   </data>
-  <data name="PizarraSavedConfirmText" xml:space="preserve">
+  <data name="BoardSavedConfirmText" xml:space="preserve">
     <value>Ritningen sparad i galleriet</value>
   </data>
-  <data name="PizarraExportUnavailableText" xml:space="preserve">
+  <data name="BoardExportUnavailableText" xml:space="preserve">
     <value>Bildexport är endast tillgängligt på Android</value>
   </data>
-  <data name="PizarraExportFailedText" xml:space="preserve">
+  <data name="BoardExportFailedText" xml:space="preserve">
     <value>Det gick inte att spara bilden</value>
   </data>
   <data name="PdfReaderText" xml:space="preserve">
@@ -495,16 +495,16 @@
   <data name="MenuStatusText" xml:space="preserve">
     <value>Snabbstatus</value>
   </data>
-  <data name="PizarraAddTextText" xml:space="preserve">
+  <data name="BoardAddTextText" xml:space="preserve">
     <value>Text</value>
   </data>
-  <data name="PizarraTextModeHintText" xml:space="preserve">
+  <data name="BoardTextModeHintText" xml:space="preserve">
     <value>Textlage: tryck på ytan för att skriva</value>
   </data>
-  <data name="PizarraEnterTextTitle" xml:space="preserve">
+  <data name="BoardEnterTextTitle" xml:space="preserve">
     <value>Lagg text</value>
   </data>
-  <data name="PizarraEnterTextPrompt" xml:space="preserve">
+  <data name="BoardEnterTextPrompt" xml:space="preserve">
     <value>Skriv texten</value>
   </data>
   <data name="NotesNewDescriptionText" xml:space="preserve"><value>New note</value></data>

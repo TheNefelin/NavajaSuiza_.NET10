@@ -293,6 +293,7 @@ Los valores se actualizan cada vez que abres el menú, así que no es un monitor
 | CommunityToolkit.Maui | 15.0.1 |
 | CommunityToolkit.Maui.MediaElement | 10.0.0 |
 | CommunityToolkit.Mvvm | 8.4.2 |
+| Microsoft.Extensions.Logging.Abstractions | 10.0.12 |
 | Microsoft.Extensions.Logging.Debug | 10.0.12 |
 | Microsoft.Maui.Controls | 10.0.110 |
 | SkiaSharp | 4.153.1 |
@@ -308,17 +309,20 @@ Los valores se actualizan cada vez que abres el menú, así que no es un monitor
 
 - `CAMERA`
 - `FLASHLIGHT`
+- `ACCESS_COARSE_LOCATION` / `ACCESS_FINE_LOCATION` (posición bajo demanda de la brújula; se piden en runtime solo al pulsar "Mi ubicación")
+- `WRITE_EXTERNAL_STORAGE` con `android:maxSdkVersion="28"` (solo para exportar la pizarra en Android API 21–28)
 
-`INTERNET` lo re-inyecta `CommunityToolkit.Maui` en el manifest fusionado (permiso *normal*, se conserva). Eliminados por principio de mínimo privilegio: `BATTERY_STATS`, `ACCESS_FINE_LOCATION`, `ACCESS_COARSE_LOCATION`, `ACCESS_NETWORK_STATE`.
+`INTERNET` lo re-inyecta `CommunityToolkit.Maui` en el manifest fusionado (permiso *normal*, se conserva). Eliminados por principio de mínimo privilegio: `BATTERY_STATS`, `ACCESS_NETWORK_STATE`.
 
 ## Estructura
 
 ```
-NavajaSuiza_.NET10.sln
+NavajaSuiza_.NET10.slnx
 │
 ├── NavajaSuiza.Core/                    # Class Library (net10.0 puro, sin dependencias MAUI)
-│   ├── Interfaces/                      # 23 interfaces
+│   ├── Interfaces/                      # 25 interfaces
 │   │   ├── IAppInfoService.cs
+│   │   ├── ICompassPositionService.cs
 │   │   ├── ICompassService.cs
 │   │   ├── IDeviceDisplayService.cs
 │   │   ├── IDeviceStatusService.cs
@@ -337,7 +341,7 @@ NavajaSuiza_.NET10.sln
 │   │   ├── INavigationService.cs
 │   │   ├── INotesRepository.cs
 │   │   ├── IOrientationService.cs
-│   │   ├── IPizarraImageExporter.cs
+│   │   ├── IBoardImageExporter.cs
 │   │   ├── IScreenBrightnessService.cs
 │   │   ├── IStopwatchService.cs
 │   │   ├── IThemeService.cs
@@ -345,8 +349,12 @@ NavajaSuiza_.NET10.sln
 │   ├── Models/
 │   │   ├── SupportedLanguages.cs
 │   │   ├── InstrumentStringData.cs
-│   │   ├── PizarraStroke.cs
+│   │   ├── BoardStroke.cs
+│   │   ├── BoardText.cs
+│   │   ├── BoardDefaults.cs
 │   │   ├── StopwatchLap.cs
+│   │   ├── StatusLevel.cs
+│   │   ├── PositionReading.cs
 │   │   ├── DocumentType.cs
 │   │   ├── PdfReaderPayload.cs
 │   │   ├── MorseSignalSequence.cs
@@ -376,7 +384,7 @@ NavajaSuiza_.NET10.sln
 │   │   ├── NotesViewModel.cs
 │   │   ├── PdfReaderViewModel.cs
 │   │   ├── TextReaderViewModel.cs
-│   │   ├── PizarraViewModel.cs
+│   │   ├── BoardViewModel.cs
 │   │   ├── ScreenLightViewModel.cs
 │   │   ├── StopwatchViewModel.cs
 │   │   ├── TunerViewModel.cs
@@ -396,11 +404,13 @@ NavajaSuiza_.NET10.sln
 │   │   │   ├── InstrumentStringComponent.xaml/cs
 │   │   │   └── LoadingComponent.xaml/cs
 │   │   └── *.xaml/cs
+│   ├── Components/                       # StrokeDrawable.cs (IDrawable de la pizarra)
 │   ├── ViewModels/                       # Vacío — todas las VMs están en Core
 │   ├── Services/
-│   │   └── Implementations/             # 22 implementaciones (APIs de plataforma + repos de datos)
+│   │   └── Implementations/             # 23 implementaciones (APIs de plataforma + repos de datos)
 │   │       ├── AppInfoService.cs
 │   │       ├── AudioTrackMetronomePlayer.cs
+│   │       ├── CompassPositionService.cs
 │   │       ├── CompassSensorService.cs
 │   │       ├── DeviceDisplayService.cs
 │   │       ├── DeviceStatusService.cs
@@ -416,7 +426,7 @@ NavajaSuiza_.NET10.sln
 │   │       ├── NavigationService.cs
 │   │       ├── NoteEntity.cs
 │   │       ├── OrientationSensorService.cs
-│   │       ├── PizarraImageExporter.cs
+│   │       ├── BoardImageExporter.cs
 │   │       ├── RealtimeTimeSource.cs
 │   │       ├── ScreenBrightnessService.cs
 │   │       ├── SqliteNotesRepository.cs
@@ -453,6 +463,7 @@ NavajaSuiza_.NET10.sln
 │   ├── MetronomeClickTests.cs
 │   ├── MetronomeEngineTests.cs
 │   ├── MetronomeSampleClockTests.cs
+│   ├── MetronomeSchedulerTests.cs
 │   ├── MetronomeTempoTests.cs
 │   ├── MetronomeViewModelTests.cs
 │   ├── MorseSignalSequenceTests.cs
@@ -460,7 +471,7 @@ NavajaSuiza_.NET10.sln
 │   ├── NoteEditorViewModelTests.cs
 │   ├── NotesViewModelTests.cs
 │   ├── PdfReaderViewModelTests.cs
-│   ├── PizarraViewModelTests.cs
+│   ├── BoardViewModelTests.cs
 │   ├── ScreenLightViewModelTests.cs
 │   ├── StopwatchServiceTests.cs
 │   ├── StopwatchViewModelTests.cs
@@ -476,7 +487,7 @@ NavajaSuiza_.NET10.sln
 
 ### AAB (Google Play)
 
-Google Play **no acepta APK**, requiere un **App Bundle (.aab)** firmado. El `csproj` genera `.aab` en Release Android por defecto.
+Google Play **no acepta APK**, requiere un **App Bundle (.aab)** firmado. El `.csproj` fija `AndroidPackageFormat=apk` en Release, así que el `.aab` se genera compilando con `-p:AndroidPackageFormat=aab` (ver sección APK más abajo).
 
 1. Cambiar configuración de **Debug** a **Release**
 2. Click derecho al proyecto `NavajaSuiza_.NET10` → **Archive**
@@ -491,7 +502,7 @@ Google Play **no acepta APK**, requiere un **App Bundle (.aab)** firmado. El `cs
 
 > **El diálogo Ad Hoc no lleva la clave Syncfusion**: ahí solo van los datos del keystore (alias, contraseña, archivo). La licencia va en la variable `SYNC_FUSION_LICENSE_KEY` (ver arriba).
 
-> Para generar un **APK** de prueba (instalación directa en dispositivo), compilar Release con `-p:AndroidPackageFormat=apk`. El APK Release es **multirarquitectura** (fat APK): incluye `arm64-v8a`, `armeabi-v7a` (32-bit) y `x86_64` gracias a los `RuntimeIdentifiers` del `.csproj`.
+> El Release genera **APK por defecto** (el `.csproj` fija `AndroidPackageFormat=apk`); para el `.aab` de Play usar `-p:AndroidPackageFormat=aab`. El APK Release es **multirarquitectura** (fat APK): incluye `arm64-v8a`, `armeabi-v7a` (32-bit) y `x86_64` gracias a los `RuntimeIdentifiers` del `.csproj`.
 
 > Si no tienes keystore, créalo con `keytool -genkey -v -keystore filename.keystore -alias alias -keyalg RSA -keysize 2048 -validity 10000` (requiere un JDK en la máquina), o desde el wizard de **Archive** de Visual Studio (Tools → Android → Archive → "+" en Signing).
 
@@ -526,11 +537,11 @@ Antes de subir el `.aab`, la app debe existir en **Play Console** y cumplir el t
 3. Esperar la compilación → **Distribuir → Ad Hoc**
 4. Seleccionar/crear el keystore (mismo que se usará para el AAB final)
 5. Instalar el APK en el dispositivo, o compilar por CLI:
-   - Estado del arte: con `-p:AndroidPackageFormat=apk`, el Release genera el APK firmado en:
+   - Con la configuración actual del `.csproj`, el Release genera el APK firmado en:
    ```
    bin/Release/net10.0-android/com.nefelin.navajasuiza-Signed.apk
    ```
-   - Sin ese parámetro (default), el Release genera el AAB en:
+   - Para el AAB de Play, compilar con `-p:AndroidPackageFormat=aab`:
    ```
    bin/Release/net10.0-android/com.nefelin.navajasuiza.aab
    ```
@@ -567,8 +578,8 @@ var cancelText = LocalizationResourceManager.Instance["CancelText"]?.ToString();
 ## CI/CD
 
 GitHub Actions workflow en `.github/workflows/build.yml`:
-- Ejecuta en push y PR a `main`
-- Steps: `dotnet restore` → `dotnet build` → `dotnet run --project NavajaSuiza.Test/NavajaSuiza.Test.csproj` (la suite usa xUnit.net v3 con runner in-process; `dotnet test` no es compatible con el SDK de .NET 10)
+- Ejecuta en push y PR a `master`, ignorando cambios en `README.md` (`paths-ignore`)
+- Step: `dotnet run --project NavajaSuiza.Test/NavajaSuiza.Test.csproj --configuration Release` (restaura y compila `Core` + `Test`; **no** compila la app MAUI). La suite usa xUnit.net v3 con runner in-process; `dotnet test` no es compatible con el SDK de .NET 10
 
 ## Convenciones de código
 

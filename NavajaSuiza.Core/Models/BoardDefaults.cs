@@ -1,9 +1,9 @@
 namespace NavajaSuiza.Core.Models;
 
 /// <summary>
-/// Valores por defecto compartidos entre la pizarra y el ViewModel.
+/// Default values shared between the board and the ViewModel.
 /// </summary>
-public static class PizarraDefaults
+public static class BoardDefaults
 {
     public const float FontSize = 28f;
 }

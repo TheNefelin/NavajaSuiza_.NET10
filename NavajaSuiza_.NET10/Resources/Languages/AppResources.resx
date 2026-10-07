@@ -177,40 +177,40 @@
   <data name="NotesText" xml:space="preserve">
     <value>Notas</value>
   </data>
-  <data name="PizarraText" xml:space="preserve">
+  <data name="BoardText" xml:space="preserve">
     <value>Pizarra</value>
   </data>
-  <data name="PizarraClearText" xml:space="preserve">
+  <data name="BoardClearText" xml:space="preserve">
     <value>Limpiar</value>
   </data>
-  <data name="PizarraUndoText" xml:space="preserve">
+  <data name="BoardUndoText" xml:space="preserve">
     <value>Deshacer</value>
   </data>
-  <data name="PizarraBoardShortText" xml:space="preserve">
+  <data name="BoardShortText" xml:space="preserve">
     <value>Pizarra</value>
   </data>
-  <data name="PizarraBoardLightText" xml:space="preserve">
+  <data name="BoardLightText" xml:space="preserve">
     <value>Pizarra clara</value>
   </data>
-  <data name="PizarraBoardDarkText" xml:space="preserve">
+  <data name="BoardDarkText" xml:space="preserve">
     <value>Pizarra oscura</value>
   </data>
-  <data name="PizarraColorsText" xml:space="preserve">
+  <data name="BoardColorsText" xml:space="preserve">
     <value>Colores</value>
   </data>
-  <data name="PizarraWidthText" xml:space="preserve">
+  <data name="BoardWidthText" xml:space="preserve">
     <value>Grosor</value>
   </data>
-  <data name="PizarraSaveText" xml:space="preserve">
+  <data name="BoardSaveText" xml:space="preserve">
     <value>Guardar</value>
   </data>
-  <data name="PizarraSavedConfirmText" xml:space="preserve">
+  <data name="BoardSavedConfirmText" xml:space="preserve">
     <value>Dibujo guardado en la galería</value>
   </data>
-  <data name="PizarraExportUnavailableText" xml:space="preserve">
+  <data name="BoardExportUnavailableText" xml:space="preserve">
     <value>El export de imagen solo está disponible en Android</value>
   </data>
-  <data name="PizarraExportFailedText" xml:space="preserve">
+  <data name="BoardExportFailedText" xml:space="preserve">
     <value>No se pudo guardar la imagen</value>
   </data>
   <data name="PdfReaderText" xml:space="preserve">
@@ -495,16 +495,16 @@
   <data name="MenuStatusText" xml:space="preserve">
     <value>Estado Rápido</value>
   </data>
-  <data name="PizarraAddTextText" xml:space="preserve">
+  <data name="BoardAddTextText" xml:space="preserve">
     <value>Texto</value>
   </data>
-  <data name="PizarraTextModeHintText" xml:space="preserve">
+  <data name="BoardTextModeHintText" xml:space="preserve">
     <value>Modo texto: toca el lienzo para escribir</value>
   </data>
-  <data name="PizarraEnterTextTitle" xml:space="preserve">
+  <data name="BoardEnterTextTitle" xml:space="preserve">
     <value>Agregar texto</value>
   </data>
-  <data name="PizarraEnterTextPrompt" xml:space="preserve">
+  <data name="BoardEnterTextPrompt" xml:space="preserve">
     <value>Escribe el texto</value>
   </data>
   <data name="NotesNewDescriptionText" xml:space="preserve">

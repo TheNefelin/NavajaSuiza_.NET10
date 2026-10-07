@@ -86,9 +86,9 @@
                         HeightRequest="130" />
 
                     <Button
-                        Command="{Binding NavigateToPizarraCommand}"
-                        Text="{extensions:Translate PizarraText}"
-                        ImageSource="icon_pizarra.png"
+                        Command="{Binding NavigateToBoardCommand}"
+                        Text="{extensions:Translate BoardText}"
+                        ImageSource="icon_board.png"
                         FontAttributes="Bold"
                         ContentLayout="Top, 0"
                         Margin="8,0,8,16"

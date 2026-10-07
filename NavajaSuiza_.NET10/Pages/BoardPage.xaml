@@ -2,8 +2,8 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:extensions="clr-namespace:NavajaSuiza_.NET10.Extensions"
-             x:Class="NavajaSuiza_.NET10.Pages.PizarraPage"
-             Title="{extensions:Translate PizarraText}">
+             x:Class="NavajaSuiza_.NET10.Pages.BoardPage"
+             Title="{extensions:Translate BoardText}">
 
     <Grid RowDefinitions="Auto,Auto,*" RowSpacing="10">
         <ScrollView
@@ -16,7 +16,7 @@
                 Spacing="20">
 
                 <VerticalStackLayout Spacing="5">
-                    <Label HorizontalOptions="Center" Text="{extensions:Translate PizarraClearText}" />
+                    <Label HorizontalOptions="Center" Text="{extensions:Translate BoardClearText}" />
                     <Button
                         Command="{Binding ClearCommand}"
                         BackgroundColor="{StaticResource MyAccentBlue}"
@@ -29,7 +29,7 @@
                 </VerticalStackLayout>
 
                 <VerticalStackLayout Spacing="5">
-                    <Label HorizontalOptions="Center" Text="{extensions:Translate PizarraUndoText}" />
+                    <Label HorizontalOptions="Center" Text="{extensions:Translate BoardUndoText}" />
                     <Button
                         Command="{Binding UndoCommand}"
                         BackgroundColor="{StaticResource MyAccentBlue}"
@@ -42,7 +42,7 @@
                 </VerticalStackLayout>
 
                 <VerticalStackLayout Spacing="5">
-                    <Label HorizontalOptions="Center" Text="{extensions:Translate PizarraColorsText}" />
+                    <Label HorizontalOptions="Center" Text="{extensions:Translate BoardColorsText}" />
                     <Button
                         Command="{Binding OpenColorPickerCommand}"
                         BackgroundColor="{StaticResource MyAccentBlue}"
@@ -57,7 +57,7 @@
                 <VerticalStackLayout Spacing="5">
                     <Label
                         HorizontalOptions="Center"
-                        Text="{extensions:Translate PizarraAddTextText}" />
+                        Text="{extensions:Translate BoardAddTextText}" />
                     <Button
                         Command="{Binding ToggleTextModeCommand}"
                         BackgroundColor="{StaticResource MyAccentBlue}"
@@ -87,7 +87,7 @@
                 </VerticalStackLayout>                
 
                 <VerticalStackLayout Spacing="5">
-                    <Label HorizontalOptions="Center" Text="{extensions:Translate PizarraSaveText}" />
+                    <Label HorizontalOptions="Center" Text="{extensions:Translate BoardSaveText}" />
                     <Button
                         Clicked="OnSaveClicked"
                         BackgroundColor="{StaticResource MyAccentBlue}"
@@ -100,7 +100,7 @@
                 </VerticalStackLayout>
 
                 <VerticalStackLayout Spacing="5">
-                    <Label HorizontalOptions="Center" Text="{extensions:Translate PizarraBoardShortText}" />
+                    <Label HorizontalOptions="Center" Text="{extensions:Translate BoardShortText}" />
                     <Button
                         Clicked="OnBoardClicked"
                         BackgroundColor="{StaticResource MyAccentBlue}"
@@ -121,7 +121,7 @@
 
             <Grid HeightRequest="20">
                 <Label
-                    Text="{extensions:Translate PizarraTextModeHintText}"
+                    Text="{extensions:Translate BoardTextModeHintText}"
                     FontSize="14"
                     FontAttributes="Bold"
                     IsVisible="{Binding IsTextModeActive}"
@@ -132,7 +132,7 @@
             <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
                 <Label
                     Grid.Column="0"
-                    Text="{extensions:Translate PizarraWidthText}"
+                    Text="{extensions:Translate BoardWidthText}"
                     FontSize="14"
                     FontAttributes="Bold"
                     Opacity="0.7"
@@ -184,7 +184,7 @@
                 <VerticalStackLayout Spacing="16">
 
                     <Label
-                        Text="{extensions:Translate PizarraColorsText}"
+                        Text="{extensions:Translate BoardColorsText}"
                         FontSize="18"
                         FontAttributes="Bold"
                         HorizontalTextAlignment="Center" />

@@ -7,19 +7,19 @@ using NavajaSuiza.Core.Models;
 
 namespace NavajaSuiza.Core.ViewModels;
 
-public partial class PizarraViewModel : BaseViewModel
+public partial class BoardViewModel : BaseViewModel
 {
     private const double PenContrastThreshold = 2.5d;
     private const string DarkBoardPenHex = "#FDD835";
     private const string LightBoardPenHex = "#1F1F1F";
 
-    private readonly ILogger<PizarraViewModel> _logger;
-    private readonly IPizarraImageExporter _exporter;
-    private readonly List<PizarraUndoEntry> _undoHistory = new();
+    private readonly ILogger<BoardViewModel> _logger;
+    private readonly IBoardImageExporter _exporter;
+    private readonly List<BoardUndoEntry> _undoHistory = new();
 
-    public ObservableCollection<PizarraStroke> Strokes { get; } = new();
+    public ObservableCollection<BoardStroke> Strokes { get; } = new();
 
-    public ObservableCollection<PizarraText> Texts { get; } = new();
+    public ObservableCollection<BoardText> Texts { get; } = new();
 
     [ObservableProperty]
     public partial bool IsTextModeActive { get; set; }
@@ -36,11 +36,11 @@ public partial class PizarraViewModel : BaseViewModel
     [ObservableProperty]
     public partial bool IsColorPickerVisible { get; set; }
 
-    public PizarraExportResult LastExportResult { get; private set; } = PizarraExportResult.Saved;
+    public BoardExportResult LastExportResult { get; private set; } = BoardExportResult.Saved;
 
     public event Action? CanvasChanged;
 
-    public PizarraViewModel(ILogger<PizarraViewModel> logger, IPizarraImageExporter exporter)
+    public BoardViewModel(ILogger<BoardViewModel> logger, IBoardImageExporter exporter)
     {
         _logger = logger;
         _exporter = exporter;
@@ -51,14 +51,14 @@ public partial class PizarraViewModel : BaseViewModel
         if (IsTextModeActive)
             return;
 
-        var stroke = new PizarraStroke
+        var stroke = new BoardStroke
         {
             ColorHex = SelectedColor,
             Width = (float)StrokeWidth
         };
         stroke.AddPoint(x, y);
         Strokes.Add(stroke);
-        _undoHistory.Add(PizarraUndoEntry.ForStroke(stroke));
+        _undoHistory.Add(BoardUndoEntry.ForStroke(stroke));
         RaiseCanvasChanged();
     }
 
@@ -87,19 +87,19 @@ public partial class PizarraViewModel : BaseViewModel
         if (!IsTextModeActive || string.IsNullOrWhiteSpace(content))
             return false;
 
-        var text = new PizarraText
+        var text = new BoardText
         {
             Content = content.Trim(),
             X = x,
             Y = y,
-            FontSize = PizarraDefaults.FontSize,
+            FontSize = BoardDefaults.FontSize,
             ColorHex = SelectedColor
         };
 
         Texts.Add(text);
-        _undoHistory.Add(PizarraUndoEntry.ForText(text));
+        _undoHistory.Add(BoardUndoEntry.ForText(text));
         RaiseCanvasChanged();
-        _logger.LogInformation("Pizarra: texto agregado");
+        _logger.LogInformation("Board: text added");
         return true;
     }
 
@@ -107,7 +107,7 @@ public partial class PizarraViewModel : BaseViewModel
     private void ToggleTextMode()
     {
         IsTextModeActive = !IsTextModeActive;
-        _logger.LogInformation("Pizarra: modo texto {Estado}", IsTextModeActive ? "activado" : "desactivado");
+        _logger.LogInformation("Board: text mode {State}", IsTextModeActive ? "on" : "off");
     }
 
     [RelayCommand]
@@ -200,7 +200,7 @@ public partial class PizarraViewModel : BaseViewModel
         Texts.Clear();
         _undoHistory.Clear();
         RaiseCanvasChanged();
-        _logger.LogInformation("Pizarra limpiada");
+        _logger.LogInformation("Board cleared");
     }
 
     /// <summary>
@@ -220,12 +220,12 @@ public partial class PizarraViewModel : BaseViewModel
         if (entry.Stroke is not null)
         {
             Strokes.Remove(entry.Stroke);
-            _logger.LogInformation("Pizarra: trazo deshecho");
+            _logger.LogInformation("Board: stroke undone");
         }
         else if (entry.Text is not null)
         {
             Texts.Remove(entry.Text);
-            _logger.LogInformation("Pizarra: texto deshecho");
+            _logger.LogInformation("Board: text undone");
         }
 
         RaiseCanvasChanged();
@@ -236,20 +236,20 @@ public partial class PizarraViewModel : BaseViewModel
     {
         if (Strokes.Count == 0 && Texts.Count == 0)
         {
-            LastExportResult = PizarraExportResult.Failed;
+            LastExportResult = BoardExportResult.Failed;
             return;
         }
 
         LastExportResult = await _exporter.ExportAsync(Strokes.ToArray(), Texts.ToArray(), BoardColor);
-        _logger.LogInformation("Export de pizarra: {Result}", LastExportResult);
+        _logger.LogInformation("Board export: {Result}", LastExportResult);
     }
 
     private void RaiseCanvasChanged() => CanvasChanged?.Invoke();
 
-    private readonly record struct PizarraUndoEntry(PizarraStroke? Stroke, PizarraText? Text)
+    private readonly record struct BoardUndoEntry(BoardStroke? Stroke, BoardText? Text)
     {
-        public static PizarraUndoEntry ForStroke(PizarraStroke stroke) => new(stroke, null);
+        public static BoardUndoEntry ForStroke(BoardStroke stroke) => new(stroke, null);
 
-        public static PizarraUndoEntry ForText(PizarraText text) => new(null, text);
+        public static BoardUndoEntry ForText(BoardText text) => new(null, text);
     }
 }

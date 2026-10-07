@@ -5,9 +5,9 @@ namespace NavajaSuiza_.NET10.Components;
 
 public partial class StrokeDrawable : IDrawable
 {
-    private readonly PizarraViewModel _viewModel;
+    private readonly BoardViewModel _viewModel;
 
-    public StrokeDrawable(PizarraViewModel viewModel)
+    public StrokeDrawable(BoardViewModel viewModel)
     {
         _viewModel = viewModel;
     }

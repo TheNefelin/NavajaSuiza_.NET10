@@ -5,45 +5,45 @@ using SkiaSharp;
 
 namespace NavajaSuiza_.NET10.Services.Implementations;
 
-public sealed class PizarraImageExporter : IPizarraImageExporter
+public sealed class BoardImageExporter : IBoardImageExporter
 {
-    private const string FileNamePrefix = "pizarra";
+    private const string FileNamePrefix = "board";
     private const string WebpMimeType = "image/webp";
     private const int MaxDimension = 2048;
     private const int LayoutPadding = 40;
     private const int WebpQuality = 95;
 
-    private readonly ILogger<PizarraImageExporter> _logger;
+    private readonly ILogger<BoardImageExporter> _logger;
 
-    public PizarraImageExporter(ILogger<PizarraImageExporter> logger)
+    public BoardImageExporter(ILogger<BoardImageExporter> logger)
     {
         _logger = logger;
     }
 
-    public async Task<PizarraExportResult> ExportAsync(
-        IReadOnlyList<PizarraStroke> strokes,
-        IReadOnlyList<PizarraText> texts,
+    public async Task<BoardExportResult> ExportAsync(
+        IReadOnlyList<BoardStroke> strokes,
+        IReadOnlyList<BoardText> texts,
         string boardColorHex)
     {
         if (strokes.Count == 0 && texts.Count == 0)
-            return PizarraExportResult.Failed;
+            return BoardExportResult.Failed;
 
         try
         {
             var webpBytes = RenderWebP(strokes, texts, boardColorHex);
             if (webpBytes is null)
-                return PizarraExportResult.Failed;
+                return BoardExportResult.Failed;
 
             return await SaveAsync(webpBytes).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error al exportar la pizarra");
-            return PizarraExportResult.Failed;
+            _logger.LogError(ex, "Error exporting the board");
+            return BoardExportResult.Failed;
         }
     }
 
-    private static byte[]? RenderWebP(IReadOnlyList<PizarraStroke> strokes, IReadOnlyList<PizarraText> texts, string boardColorHex)
+    private static byte[]? RenderWebP(IReadOnlyList<BoardStroke> strokes, IReadOnlyList<BoardText> texts, string boardColorHex)
     {
         using var bitmap = RenderBitmap(strokes, texts, boardColorHex);
         if (bitmap is null)
@@ -57,7 +57,7 @@ public sealed class PizarraImageExporter : IPizarraImageExporter
         return data.ToArray();
     }
 
-    private static SKBitmap? RenderBitmap(IReadOnlyList<PizarraStroke> strokes, IReadOnlyList<PizarraText> texts, string boardColorHex)
+    private static SKBitmap? RenderBitmap(IReadOnlyList<BoardStroke> strokes, IReadOnlyList<BoardText> texts, string boardColorHex)
     {
         if (!TryComputeLayout(strokes, texts, out var width, out var height, out var offsetX, out var offsetY, out var scale))
             return null;
@@ -125,13 +125,13 @@ public sealed class PizarraImageExporter : IPizarraImageExporter
     }
 
     /// <summary>
-    /// Calcula el bounding box del contenido combinando trazos y textos. Sin los
-    /// textos una pizarra que solo tenga texto devolveria false y la exportacion
-    /// fallaria, y un texto fuera del bounding box de los trazos se recortaria.
+    /// Computes the bounding box of the content combining strokes and texts.
+    /// Without the texts a board that only has text would return false and the
+    /// export would fail, and a text outside the strokes bounding box would be clipped.
     /// </summary>
     private static bool TryComputeLayout(
-        IReadOnlyList<PizarraStroke> strokes,
-        IReadOnlyList<PizarraText> texts,
+        IReadOnlyList<BoardStroke> strokes,
+        IReadOnlyList<BoardText> texts,
         out int width,
         out int height,
         out float offsetX,
@@ -195,16 +195,16 @@ public sealed class PizarraImageExporter : IPizarraImageExporter
     }
 
     #if ANDROID
-    private async Task<PizarraExportResult> SaveAsync(byte[] webpBytes)
+    private async Task<BoardExportResult> SaveAsync(byte[] webpBytes)
     {
         if (Android.OS.Build.VERSION.SdkInt < Android.OS.BuildVersionCodes.Q)
         {
             var status = await Permissions.RequestAsync<Permissions.StorageWrite>().ConfigureAwait(false);
             if (status != PermissionStatus.Granted)
-                return PizarraExportResult.Failed;
+                return BoardExportResult.Failed;
         }
 
-        return InsertToGallery(webpBytes) ? PizarraExportResult.Saved : PizarraExportResult.Failed;
+        return InsertToGallery(webpBytes) ? BoardExportResult.Saved : BoardExportResult.Failed;
     }
 
     private static bool InsertToGallery(byte[] webpBytes)
@@ -238,32 +238,32 @@ public sealed class PizarraImageExporter : IPizarraImageExporter
         return true;
     }
 #elif WINDOWS
-    private Task<PizarraExportResult> SaveAsync(byte[] webpBytes)
+    private Task<BoardExportResult> SaveAsync(byte[] webpBytes)
     {
         try
         {
             var picturesPath = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
             if (string.IsNullOrEmpty(picturesPath))
-                return Task.FromResult(PizarraExportResult.Failed);
+                return Task.FromResult(BoardExportResult.Failed);
 
             Directory.CreateDirectory(picturesPath);
 
             var fileName = $"{FileNamePrefix}_{DateTime.Now:yyyyMMddHHmmss}_{Guid.NewGuid():N}.webp";
             var filePath = Path.Combine(picturesPath, fileName);
             File.WriteAllBytes(filePath, webpBytes);
-            return Task.FromResult(PizarraExportResult.Saved);
+            return Task.FromResult(BoardExportResult.Saved);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error al guardar la pizarra en Carpeta de imágenes");
-            return Task.FromResult(PizarraExportResult.Failed);
+            _logger.LogError(ex, "Error saving the board to the Pictures folder");
+            return Task.FromResult(BoardExportResult.Failed);
         }
     }
 #else
-    private Task<PizarraExportResult> SaveAsync(byte[] webpBytes)
+    private Task<BoardExportResult> SaveAsync(byte[] webpBytes)
     {
-        _logger.LogInformation("Export de pizarra a galería no disponible en esta plataforma");
-        return Task.FromResult(PizarraExportResult.NotAvailable);
+        _logger.LogInformation("Board export to gallery not available on this platform");
+        return Task.FromResult(BoardExportResult.NotAvailable);
     }
 #endif
 }

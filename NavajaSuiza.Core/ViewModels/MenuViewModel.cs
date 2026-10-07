@@ -194,7 +194,7 @@ public partial class MenuViewModel : BaseViewModel
     private async Task NavigateToNotes() => await _navigationService.PushAsync("NotesPage");
 
     [RelayCommand]
-    private async Task NavigateToPizarra() => await _navigationService.PushAsync("PizarraPage");
+    private async Task NavigateToBoard() => await _navigationService.PushAsync("BoardPage");
 
     [RelayCommand]
     private async Task NavigateToTuner() => await _navigationService.PushAsync("TunerPage");

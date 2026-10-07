@@ -6,12 +6,12 @@ using NavajaSuiza.Core.ViewModels;
 
 namespace NavajaSuiza.Test;
 
-public class PizarraViewModelTests
+public class BoardViewModelTests
 {
-    private readonly Mock<ILogger<PizarraViewModel>> _loggerMock = new();
-    private readonly Mock<IPizarraImageExporter> _exporterMock = new();
+    private readonly Mock<ILogger<BoardViewModel>> _loggerMock = new();
+    private readonly Mock<IBoardImageExporter> _exporterMock = new();
 
-    private PizarraViewModel CreateSut() => new(_loggerMock.Object, _exporterMock.Object);
+    private BoardViewModel CreateSut() => new(_loggerMock.Object, _exporterMock.Object);
 
     [Fact]
     public void Strokes_StartsEmpty()
@@ -238,10 +238,10 @@ public class PizarraViewModelTests
     public async Task SaveCommand_ExportsStrokesAndBoardColor()
     {
         _exporterMock.Setup(e => e.ExportAsync(
-                It.IsAny<IReadOnlyList<PizarraStroke>>(),
-                It.IsAny<IReadOnlyList<PizarraText>>(),
+                It.IsAny<IReadOnlyList<BoardStroke>>(),
+                It.IsAny<IReadOnlyList<BoardText>>(),
                 It.IsAny<string>()))
-            .ReturnsAsync(PizarraExportResult.Saved);
+            .ReturnsAsync(BoardExportResult.Saved);
 
         var vm = CreateSut();
         vm.SetBoardColorCommand.Execute("#17171B");
@@ -251,73 +251,73 @@ public class PizarraViewModelTests
         await vm.SaveCommand.ExecuteAsync(null);
 
         _exporterMock.Verify(e => e.ExportAsync(
-            It.Is<IReadOnlyList<PizarraStroke>>(s => s.Count == 1 && s[0].Points.Count == 2),
-            It.Is<IReadOnlyList<PizarraText>>(t => t.Count == 0),
+            It.Is<IReadOnlyList<BoardStroke>>(s => s.Count == 1 && s[0].Points.Count == 2),
+            It.Is<IReadOnlyList<BoardText>>(t => t.Count == 0),
             "#17171B"), Times.Once);
-        Assert.Equal(PizarraExportResult.Saved, vm.LastExportResult);
+        Assert.Equal(BoardExportResult.Saved, vm.LastExportResult);
     }
 
     [Fact]
     public async Task SaveCommand_OnEmptyBoard_DoesNotExportAndFlagsFailed()
     {
         _exporterMock.Setup(e => e.ExportAsync(
-                It.IsAny<IReadOnlyList<PizarraStroke>>(),
-                It.IsAny<IReadOnlyList<PizarraText>>(),
+                It.IsAny<IReadOnlyList<BoardStroke>>(),
+                It.IsAny<IReadOnlyList<BoardText>>(),
                 It.IsAny<string>()))
-            .ReturnsAsync(PizarraExportResult.Saved);
+            .ReturnsAsync(BoardExportResult.Saved);
 
         var vm = CreateSut();
         await vm.SaveCommand.ExecuteAsync(null);
 
         _exporterMock.Verify(e => e.ExportAsync(
-            It.IsAny<IReadOnlyList<PizarraStroke>>(),
-            It.IsAny<IReadOnlyList<PizarraText>>(),
+            It.IsAny<IReadOnlyList<BoardStroke>>(),
+            It.IsAny<IReadOnlyList<BoardText>>(),
             It.IsAny<string>()), Times.Never);
-        Assert.Equal(PizarraExportResult.Failed, vm.LastExportResult);
+        Assert.Equal(BoardExportResult.Failed, vm.LastExportResult);
     }
 
     [Fact]
     public async Task SaveCommand_WhenExporterUnavailable_SetsNotAvailable()
     {
         _exporterMock.Setup(e => e.ExportAsync(
-                It.IsAny<IReadOnlyList<PizarraStroke>>(),
-                It.IsAny<IReadOnlyList<PizarraText>>(),
+                It.IsAny<IReadOnlyList<BoardStroke>>(),
+                It.IsAny<IReadOnlyList<BoardText>>(),
                 It.IsAny<string>()))
-            .ReturnsAsync(PizarraExportResult.NotAvailable);
+            .ReturnsAsync(BoardExportResult.NotAvailable);
 
         var vm = CreateSut();
         vm.StartStroke(10f, 20f);
 
         await vm.SaveCommand.ExecuteAsync(null);
 
-        Assert.Equal(PizarraExportResult.NotAvailable, vm.LastExportResult);
+        Assert.Equal(BoardExportResult.NotAvailable, vm.LastExportResult);
     }
 
     [Fact]
     public async Task SaveCommand_WhenExporterFails_SetsFailed()
     {
         _exporterMock.Setup(e => e.ExportAsync(
-                It.IsAny<IReadOnlyList<PizarraStroke>>(),
-                It.IsAny<IReadOnlyList<PizarraText>>(),
+                It.IsAny<IReadOnlyList<BoardStroke>>(),
+                It.IsAny<IReadOnlyList<BoardText>>(),
                 It.IsAny<string>()))
-            .ReturnsAsync(PizarraExportResult.Failed);
+            .ReturnsAsync(BoardExportResult.Failed);
 
         var vm = CreateSut();
         vm.StartStroke(10f, 20f);
 
         await vm.SaveCommand.ExecuteAsync(null);
 
-        Assert.Equal(PizarraExportResult.Failed, vm.LastExportResult);
+        Assert.Equal(BoardExportResult.Failed, vm.LastExportResult);
     }
 
     [Fact]
     public async Task SaveCommand_WithOnlyText_ExportsWithoutStrokes()
     {
         _exporterMock.Setup(e => e.ExportAsync(
-                It.IsAny<IReadOnlyList<PizarraStroke>>(),
-                It.IsAny<IReadOnlyList<PizarraText>>(),
+                It.IsAny<IReadOnlyList<BoardStroke>>(),
+                It.IsAny<IReadOnlyList<BoardText>>(),
                 It.IsAny<string>()))
-            .ReturnsAsync(PizarraExportResult.Saved);
+            .ReturnsAsync(BoardExportResult.Saved);
 
         var vm = CreateSut();
         vm.ToggleTextModeCommand.Execute(null);
@@ -326,10 +326,10 @@ public class PizarraViewModelTests
         await vm.SaveCommand.ExecuteAsync(null);
 
         _exporterMock.Verify(e => e.ExportAsync(
-            It.Is<IReadOnlyList<PizarraStroke>>(s => s.Count == 0),
-            It.Is<IReadOnlyList<PizarraText>>(t => t.Count == 1 && t[0].Content == "Hola"),
+            It.Is<IReadOnlyList<BoardStroke>>(s => s.Count == 0),
+            It.Is<IReadOnlyList<BoardText>>(t => t.Count == 1 && t[0].Content == "Hola"),
             It.IsAny<string>()), Times.Once);
-        Assert.Equal(PizarraExportResult.Saved, vm.LastExportResult);
+        Assert.Equal(BoardExportResult.Saved, vm.LastExportResult);
     }
 
     [Fact]
@@ -361,7 +361,7 @@ public class PizarraViewModelTests
         Assert.Equal(15f, text.X);
         Assert.Equal(25f, text.Y);
         Assert.Equal("#E53935", text.ColorHex);
-        Assert.Equal(PizarraDefaults.FontSize, text.FontSize);
+        Assert.Equal(BoardDefaults.FontSize, text.FontSize);
     }
 
     [Theory]
