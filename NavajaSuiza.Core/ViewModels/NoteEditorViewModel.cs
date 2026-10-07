@@ -13,8 +13,8 @@ public partial class NoteEditorViewModel : BaseViewModel
     private readonly ILanguageService _languageService;
     private readonly ILogger<NoteEditorViewModel> _logger;
 
-    private Note? _editingNote;
-    private bool _isTask;
+    private int _editingId;
+    private DateTime _editingCreatedAt;
 
     [ObservableProperty]
     public partial string TitleText { get; set; } = string.Empty;
@@ -40,29 +40,16 @@ public partial class NoteEditorViewModel : BaseViewModel
         _logger = logger;
     }
 
-    public void Initialize(bool isTask)
+    public void Initialize()
     {
-        _editingNote = _navigationService.TakeNavigationParameter() as Note;
-        IsEditing = _editingNote is not null;
+        var item = _navigationService.TakeNavigationParameter() as NoteListItem;
 
-        if (_editingNote is null)
-        {
-            _isTask = isTask;
-            TitleText = string.Empty;
-            ContentText = string.Empty;
-            PageTitle = isTask
-                ? _languageService.GetString("NotesCreateTaskTitleText")
-                : _languageService.GetString("NotesCreateNoteTitleText");
-        }
-        else
-        {
-            _isTask = _editingNote.IsTask;
-            TitleText = _editingNote.Title;
-            ContentText = _editingNote.Content;
-            PageTitle = _editingNote.IsTask
-                ? _languageService.GetString("NotesEditTaskTitleText")
-                : _languageService.GetString("NotesEditTitleText");
-        }
+        IsEditing = item is not null;
+        _editingId = item?.Id ?? 0;
+        _editingCreatedAt = item?.CreatedAt ?? default;
+        TitleText = item?.Title ?? string.Empty;
+        ContentText = item?.Content ?? string.Empty;
+        PageTitle = _languageService.GetString(IsEditing ? "NotesEditTitleText" : "NotesCreateNoteTitleText");
     }
 
     [RelayCommand]
@@ -75,25 +62,15 @@ public partial class NoteEditorViewModel : BaseViewModel
         {
             IsBusy = true;
 
-            if (_editingNote is null)
+            var note = new Note
             {
-                var note = new Note
-                {
-                    Title = TitleText.Trim(),
-                    Content = ContentText.Trim(),
-                    CreatedAt = DateTime.UtcNow,
-                    IsTask = _isTask
-                };
+                Id = _editingId,
+                Title = TitleText.Trim(),
+                Content = ContentText.Trim(),
+                CreatedAt = IsEditing ? _editingCreatedAt : DateTime.UtcNow
+            };
 
-                await _notesRepository.SaveAsync(note);
-            }
-            else
-            {
-                _editingNote.Title = TitleText.Trim();
-                _editingNote.Content = ContentText.Trim();
-                _editingNote.IsTask = _isTask;
-                await _notesRepository.SaveAsync(_editingNote);
-            }
+            await _notesRepository.SaveAsync(note);
 
             await _navigationService.PopAsync();
         }

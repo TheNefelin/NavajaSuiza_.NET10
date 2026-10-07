@@ -8,11 +8,9 @@ public class SqliteNotesRepository : INotesRepository
 {
     private readonly SQLiteAsyncConnection _database;
 
-    public SqliteNotesRepository()
+    public SqliteNotesRepository(NotesDatabase database)
     {
-        var databasePath = Path.Combine(FileSystem.AppDataDirectory, "navajasuiza.db3");
-        _database = new SQLiteAsyncConnection(databasePath);
-        _database.CreateTableAsync<NoteEntity>().Wait();
+        _database = database.Connection;
     }
 
     public async Task<List<Note>> GetAllAsync()
@@ -51,8 +49,7 @@ public class SqliteNotesRepository : INotesRepository
         Id = note.Id,
         Title = note.Title,
         Content = note.Content,
-        CreatedAt = note.CreatedAt,
-        IsTask = note.IsTask
+        CreatedAt = note.CreatedAt
     };
 
     private static Note FromEntity(NoteEntity entity) => new()
@@ -60,7 +57,6 @@ public class SqliteNotesRepository : INotesRepository
         Id = entity.Id,
         Title = entity.Title,
         Content = entity.Content,
-        CreatedAt = entity.CreatedAt,
-        IsTask = entity.IsTask
+        CreatedAt = entity.CreatedAt
     };
 }

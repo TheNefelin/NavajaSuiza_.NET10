@@ -182,7 +182,7 @@ Kompassen visar magnetisk norr och den exakta vinkeln i grader, med utjämnade a
 
 ## 7. Anteckningar
 
-Med anteckningsverktyget kan du skriva ner idéer, uppgifter eller valfri text och hålla dem ordnade och sökbara.
+Med anteckningsverktyget kan du skriva ner idéer eller valfri text och hålla dem ordnade och sökbara. Du kan också skapa **uppgiftslistor** med kryssrutor.
 
 | | |
 |---|---|
@@ -190,16 +190,18 @@ Med anteckningsverktyget kan du skriva ner idéer, uppgifter eller valfri text o
 
 ### Så här använder du det
 
-- Tryck på knappen **ny anteckning** för att skapa en anteckning.
-- Skriv en titel och innehållet.
+- Skärmen visar två avsnitt: **Uppgifter** och **Anteckningar**.
+- Tryck på knappen **ny anteckning** för att skapa en anteckning med titel och innehåll.
+- Tryck på knappen **ny uppgift** för att skapa en uppgiftslista: ge listan ett namn och lägg till objekten med deras kryssruta.
 - Tryck på **spara** för att spara eller **tillbaka** för att avbryta utan att spara.
-- Tryck på en befintlig anteckning för att redigera den.
-- Använd förstoringsglaset för att söka på titel eller innehåll.
-- Tryck på radera-knappen (papperskorgen) för att ta bort en anteckning; appen ber om bekräftelse.
+- Tryck på en befintlig anteckning eller uppgiftslista för att redigera den.
+- I en uppgiftslista markerar du varje objekts kryssruta för att slutföra det; ändringen sparas direkt.
+- Använd förstoringsglaset för att söka på titel eller innehåll (i listor även på deras objekts text).
+- Tryck på radera-knappen (papperskorgen) för att ta bort en anteckning eller lista; appen ber om bekräftelse.
 
 ### Tips
 
-- Anteckningar sorteras från den nyaste till den äldsta.
+- Anteckningar och listor sorteras från den nyaste till den äldsta.
 - Om en anteckning saknar både titel och innehåll sparas den inte.
 
 ---

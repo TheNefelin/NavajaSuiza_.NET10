@@ -22,7 +22,7 @@ public partial class NoteEditorPage : ContentPage
 
         if (_viewModel is not null)
         {
-            _viewModel.Initialize(isTask: false);
+            _viewModel.Initialize();
         }
     }
 }

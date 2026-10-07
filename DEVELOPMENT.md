@@ -105,6 +105,7 @@ NavajaSuiza_.NET10/                   # Solution
 │   │   ├── ILauncherService.cs
 │   │   ├── IMarkdownToHtmlConverter.cs
 │   │   ├── INotesRepository.cs
+│   │   ├── ITaskGroupsRepository.cs
 │   │   ├── IMorseSignalService.cs
 │   │   ├── IBoardImageExporter.cs
 │   │   └── ITimeSource.cs
@@ -120,7 +121,10 @@ NavajaSuiza_.NET10/                   # Solution
 │   │   ├── PdfReaderPayload.cs
 │   │   ├── MorseSignalSequence.cs
 │   │   ├── PositionReading.cs
-│   │   └── Note.cs
+│   │   ├── Note.cs
+│   │   ├── TaskGroup.cs
+│   │   ├── TaskItem.cs
+│   │   └── TaskImportance.cs
 │   ├── Services/
 │   │   ├── FlashlightStateService.cs   # Singleton: persiste estado flash entre VM recreations
 │   │   ├── StopwatchService.cs         # Singleton: cronómetro (Stopwatch + PeriodicTimer), thread-safe
@@ -128,7 +132,7 @@ NavajaSuiza_.NET10/                   # Solution
 │   │   ├── MorseSignalService.cs       # Generación/parsing de secuencias Morse
 │   │   └── DocumentTypeDetector.cs     # Detección de tipo real por contenido (PDF/DOCX/XLSX/CSV/Texto)
 │   ├── AppConstants.cs
-│   └── ViewModels/                     # 24 ViewModels (todas testables, sin dependencias MAUI)
+│   └── ViewModels/                     # 30 ViewModels (todas testables, sin dependencias MAUI)
 │       ├── BaseViewModel.cs
 │       ├── AboutViewModel.cs
 │       ├── MenuViewModel.cs
@@ -152,7 +156,13 @@ NavajaSuiza_.NET10/                   # Solution
 │       ├── PdfReaderViewModel.cs
 │       ├── TextReaderViewModel.cs
 │       ├── NotesViewModel.cs
-│       └── NoteEditorViewModel.cs
+│       ├── NotesListItem.cs
+│       ├── NoteListItem.cs
+│       ├── TaskGroupListItem.cs
+│       ├── TaskItemListItem.cs
+│       ├── NotesSection.cs
+│       ├── NoteEditorViewModel.cs
+│       └── TaskEditorViewModel.cs
 │
 ├── NavajaSuiza_.NET10/               # Proyecto MAUI
 │   ├── Pages/
@@ -163,7 +173,7 @@ NavajaSuiza_.NET10/                   # Solution
 │   │   └── *.xaml / *.xaml.cs
 │   ├── ViewModels/                     # Vacío — todas las VMs están en Core
 │   ├── Services/
-│   │   └── Implementations/           # 23 implementaciones (las que usan APIs de plataforma + repos de datos)
+│   │   └── Implementations/           # 27 implementaciones (las que usan APIs de plataforma + repos de datos)
 │   │       ├── LanguageService.cs
 │   │       ├── ThemeService.cs
 │   │       ├── DeviceStatusService.cs
@@ -184,10 +194,16 @@ NavajaSuiza_.NET10/                   # Solution
 │   │       ├── LauncherService.cs
 │   │       ├── AppInfoService.cs
 │   │       ├── NoteEntity.cs                # Entidad SQLite de notas
+│   │       ├── NotesDatabase.cs             # Conexión SQLite única (3 tablas)
 │   │       ├── SqliteNotesRepository.cs     # INotesRepository (SQLite local)
+│   │       ├── TaskGroupEntity.cs           # Entidad SQLite de listas de tareas
+│   │       ├── TaskItemEntity.cs            # Entidad SQLite de ítems de tarea
+│   │       ├── SqliteTaskGroupsRepository.cs # ITaskGroupsRepository (SQLite local)
 │   │       ├── RealtimeTimeSource.cs        # ITimeSource
 │   │       └── BoardImageExporter.cs      # IBoardImageExporter (SkiaSharp)
 │   ├── Converters/
+│   ├── Selectors/
+│   │   └── NotesItemTemplateSelector.cs
 │   ├── Extensions/
 │   ├── Resources/
 │   │   ├── Languages/
@@ -199,23 +215,24 @@ NavajaSuiza_.NET10/                   # Solution
 │   └── MauiProgram.cs
 │
 └── NavajaSuiza.Test/                # Proyecto de tests (net10.0 puro)
-    └── *Tests.cs                     # xUnit + Moq, 319 tests
+    └── *Tests.cs                     # xUnit + Moq, 335 tests
 ```
 
-El conteo de 319 se obtiene de 268 `[Fact]` más 51 `[InlineData]`. Las cifras 229 / 230 / 232 que aparecieron en corridas locales **no eran una diferencia real de tests**: el bloqueo de Smart App Control hacía fallar los constructores de las clases y alteraba el conteo del runner (§15.2).
+El conteo de 335 se obtiene de 284 `[Fact]` más 51 `[InlineData]`. Las cifras 229 / 230 / 232 que aparecieron en corridas locales **no eran una diferencia real de tests**: el bloqueo de Smart App Control hacía fallar los constructores de las clases y alteraba el conteo del runner (§15.2).
 
 #### Regla de separación Core vs MAUI
 
 | Va a Core (reutilizable, net10.0 puro) | Se queda en MAUI (depende de APIs de plataforma) |
 |----------------------------------------|--------------------------------------------------|
 | `BaseViewModel` | `NavigationService` (usa `Shell.Current`) |
-| Todos los ViewModels (24) | `LanguageService` (usa `Preferences`, `CultureInfo`) |
+| Todos los ViewModels (30) | `LanguageService` (usa `Preferences`, `CultureInfo`) |
 | `ICompassService`, `IOrientationService` | `ThemeService` (usa `Application.Current`, Android Window) |
 | `IFlashlightService`, `IFlashlightStateService` | `DeviceStatusService` (usa `Battery.Default`, Android APIs) |
 | `IDeviceDisplayService`, `IImagePickerService` | `CompassSensorService` (usa `Compass.Default`, `OrientationSensor`) |
 | `ICompassPositionService` | `CompassPositionService` (usa `Geolocation.Default`, `Permissions`) |
 | `IScreenBrightnessService` | `OrientationSensorService` (usa `OrientationSensor.Default`) |
 | `INavigationService`, `ILanguageService`, `IThemeService` | `FlashlightService` (usa `Flashlight.Default`) |
+| `INotesRepository`, `ITaskGroupsRepository` | `SqliteNotesRepository`, `SqliteTaskGroupsRepository`, `NotesDatabase` |
 | `IInstrumentAudioService`, `IMetronomeService` | `DeviceDisplayService` (usa `DeviceDisplay.Current`) |
 | `InstrumentStringData`, `SupportedLanguages` | `ImagePickerService` (usa `FilePicker`) |
 | `AppConstants` | `ScreenBrightnessService` (usa Android brightness APIs) |
@@ -289,6 +306,8 @@ Todos los servicios están registrados en `MauiProgram.cs` e inyectados por DI.
 | `IMetronomeService` | `MetronomeService` | Singleton | Fachada de persistencia (`Preferences`) que delega en `MetronomeEngine` y en el `IMetronomePlayer` de la plataforma; permite cambiar tempo/compás en caliente y persiste ambos en `Preferences` |
 | `IInstrumentAudioService` | `InstrumentAudioService` | Transient | Configuración de cuerdas, reproducción de audio, vibración |
 | `ITimeSource` | `RealtimeTimeSource` | Singleton | Reloj monotónico (`UtcNow` + `ElapsedRealtimeNanos`) para el suavizado temporal de la brújula |
+| `INotesRepository` | `SqliteNotesRepository` | Singleton | CRUD de notas en SQLite local |
+| `ITaskGroupsRepository` | `SqliteTaskGroupsRepository` | Singleton | CRUD de listas de tareas (con sus ítems) en SQLite local, guardado transaccional |
 
 **ViewModels**: registrados como **Transient** (instancia nueva por navegación, sin estado residual), salvo `BoardViewModel`, que es **Singleton** porque su estado (el dibujo) debe sobrevivir a salir y volver a la página (ver §18.1).
 
@@ -439,6 +458,19 @@ Todos los servicios están registrados en `MauiProgram.cs` e inyectados por DI.
 - **DI**: `IMarkdownToHtmlConverter` (Singleton), `GuideViewModel` (Transient) y `GuidePage` (Singleton) registrados en `MauiProgram.cs`.
 - **Identidad de app**: `ApplicationTitle` = "Navaja Suiza" y `ApplicationId` = `com.nefelin.navajasuiza` (consistente con `AndroidManifest.xml`; el README ya documentaba ese ID en el APK firmado).
 
+### 6.11 Notas y tareas (`NotesPage`)
+- **Dos conceptos separados**: una **nota** (`Note`: título + contenido) y una **lista de tareas** (`TaskGroup`: título + `CreatedAt` + ítems `TaskItem`). Cada uno tiene su propio modelo de dominio, entidad de persistencia, repositorio y ViewModel (SOLID), en lugar de una sola entidad "nota" con un flag `IsTask` y una colección de ítems serializada.
+- **Dominio** (Core.Models): `Note`, `TaskGroup`, `TaskItem` y `TaskImportance` (Alta/Media/Baja). Cada `TaskItem` lleva `Id` propio para poder identificarlo y editarlo. Las listas de tareas no tienen campo de contenido.
+- **Persistencia** (MAUI): `NotesDatabase` concentra la conexión `SQLiteAsyncConnection` (`sqlite-net-pcl`, archivo `navajasuiza.db3` en `FileSystem.AppDataDirectory`) y crea las tres tablas (`NoteEntity`, `TaskGroupEntity`, `TaskItemEntity`). `TaskItemEntity` referencia a su grupo con `TaskGroupId` (`[Indexed]`) y conserva `Position` para el orden. `SqliteNotesRepository` implementa `INotesRepository`; `SqliteTaskGroupsRepository` implementa `ITaskGroupsRepository`.
+- **Guardado transaccional**: `SqliteTaskGroupsRepository.SaveAsync` corre dentro de `RunInTransactionAsync`: inserta/actualiza el grupo, borra los ítems que ya no están (comparando `Id`) y hace upsert de los ítems por `Id` reasignando `Position` según el orden de la lista. `DeleteAsync` borra los ítems del grupo y el grupo en la misma transacción (sin depender de FK en cascada de SQLite).
+- **Sin migración legacy**: el esquema anterior (una tabla de notas con `IsTask`/`ItemsJson`) no se migró; se recrea la base desde cero. **No hay auto-borrado de la base en código**: un cambio de esquema requiere resetear `navajasuiza.db3` de forma explícita.
+- **Read-models + selector**: `NotesPage` usa un `DataTemplateSelector` (`NotesItemTemplateSelector`) sobre read-models `NotesListItem` (`NoteListItem`/`TaskGroupListItem`), de modo que el dominio no se expone a la vista. `NotesViewModel` hace dos consultas (notas y grupos) y arma las `NotesSection` con **Tareas** primero y luego **Notas**, ordenadas por `CreatedAt` descendente.
+- **Checklist interactivo**: los ítems de la tarjeta se envuelven en `TaskItemListItem` (ObservableObject); al marcar la casilla actualiza el `TaskItem` origen y dispara el guardado del grupo. La tarjeta muestra la fecha en formato `dd-MM-yyyy` (`CreatedAtText`) y solo navega al editor al tocar el encabezado, para no chocar con los checkboxes.
+- **Búsqueda**: filtra notas por título/contenido y listas por título o por el texto de sus ítems.
+- **Editores separados**: `NoteEditorViewModel`/`NoteEditorPage` y `TaskEditorViewModel`/`TaskEditorPage`. `NotesViewModel` navega pasando el read-model como parámetro (`INavigationService.PushAsync("TaskEditorPage", task)`, recuperado con `TakeNavigationParameter`).
+- **i18n**: claves `NotesCreateNoteTitleText`, `NotesEditTitleText`, `NotesCreateTaskTitleText`, `NotesEditTaskTitleText`, `NotesSectionTasksText`, `NotesSectionNotesText` en los tres `.resx`.
+- **DI** (`MauiProgram.cs`): `NotesDatabase` (Singleton), `INotesRepository`→`SqliteNotesRepository` y `ITaskGroupsRepository`→`SqliteTaskGroupsRepository` (Singleton), y `NotesViewModel`/`NoteEditorViewModel`/`TaskEditorViewModel` (Transient).
+
 ---
 
 ## 7. Localización
@@ -567,6 +599,7 @@ MAUI `Battery.Default` en Android exige `BATTERY_STATS` (permiso protegido `sign
 | Audio via MediaElement | Componente nativo del CommunityToolkit.Maui con soporte multiplataforma |
 | `StopwatchService` Singleton + UI por evento `Tick` | Lógica de cronómetro 100% pura (testeable) en Core; la VM Transient se suscribe/resincroniza en cada navegación |
 | `allowBackup="false"` en Android | Las Notas son datos locales sensibles; sin respaldo automático ni transmisión (formulario Data Safety simple). Evaluado SQLCipher para cifrado en reposo, descartado por ahora: cifrar sin poder exportar la clave impide restaurar notas en otro dispositivo; respaldar la clave anula la protección |
+| Separación Nota / lista de tareas (`Note`, `TaskGroup`, `TaskItem`) | Cada concepto con dominio, persistencia, repositorio y ViewModel propios, en vez de una sola entidad "nota" con flag `IsTask` e ítems serializados en JSON; más limpio, testeable y alineado con SOLID (§6.11) |
 
 ---
 

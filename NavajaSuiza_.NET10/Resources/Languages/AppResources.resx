@@ -546,4 +546,10 @@
   <data name="NotesTaskEmptyText" xml:space="preserve">
     <value>Sin tareas aún</value>
   </data>
+  <data name="NotesSectionTasksText" xml:space="preserve">
+    <value>Tareas</value>
+  </data>
+  <data name="NotesSectionNotesText" xml:space="preserve">
+    <value>Notas</value>
+  </data>
 </root>

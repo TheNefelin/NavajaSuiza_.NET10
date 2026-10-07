@@ -520,4 +520,6 @@
   <data name="NotesImportanceMediumText" xml:space="preserve"><value>Medel</value></data>
   <data name="NotesImportanceLowText" xml:space="preserve"><value>Låg</value></data>
   <data name="NotesTaskEmptyText" xml:space="preserve"><value>Inga uppgifter ännu</value></data>
+  <data name="NotesSectionTasksText" xml:space="preserve"><value>Uppgifter</value></data>
+  <data name="NotesSectionNotesText" xml:space="preserve"><value>Anteckningar</value></data>
 </root>

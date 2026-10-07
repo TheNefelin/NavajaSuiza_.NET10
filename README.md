@@ -188,7 +188,7 @@ La brújula te indica el norte magnético y el ángulo exacto en grados, con lec
 
 ### 7. Notas
 
-La herramienta de notas te permite anotar ideas, tareas o cualquier texto, y mantenerlas ordenadas y buscables.
+La herramienta de notas te permite anotar ideas o cualquier texto y también crear **listas de tareas** con casillas. Todo queda ordenado y buscable.
 
 | | |
 |---|---|
@@ -196,16 +196,18 @@ La herramienta de notas te permite anotar ideas, tareas o cualquier texto, y man
 
 #### Cómo se usa
 
-- Toca el botón **nueva nota** para crear una nota.
-- Escribe un título y el contenido.
-- Toca **guardar** para guardarla o **atrás** para cancelar sin guardar.
-- Toca una nota existente para editarla.
-- Usa la lupa para buscar por título o contenido.
-- Toca el botón de borrar (papelera) para eliminar una nota; la app te pide confirmación.
+- La pantalla muestra dos secciones: **Tareas** y **Notas**.
+- Toca **nueva nota** para escribir una nota con título y contenido.
+- Toca **nueva tarea** para crear una lista de tareas: ponele un nombre a la lista y agregá los ítems con su casilla.
+- Toca **guardar** para guardar o **atrás** para cancelar sin guardar.
+- Toca una nota o una lista de tareas existente para editarla.
+- En una lista de tareas, marca la casilla de cada ítem para completarlo; el cambio se guarda al instante.
+- Usa la lupa para buscar por título o contenido (en las listas, también por el texto de sus ítems).
+- Toca el botón de borrar (papelera) para eliminar una nota o una lista; la app te pide confirmación.
 
 #### Consejos
 
-- Las notas se ordenan de la más reciente a la más antigua.
+- Las notas y las listas se ordenan de la más reciente a la más antigua.
 - Si una nota no tiene título ni contenido, no se guarda.
 
 ---
@@ -320,7 +322,7 @@ Los valores se actualizan cada vez que abres el menú, así que no es un monitor
 NavajaSuiza_.NET10.slnx
 │
 ├── NavajaSuiza.Core/                    # Class Library (net10.0 puro, sin dependencias MAUI)
-│   ├── Interfaces/                      # 25 interfaces
+│   ├── Interfaces/                      # 26 interfaces
 │   │   ├── IAppInfoService.cs
 │   │   ├── ICompassPositionService.cs
 │   │   ├── ICompassService.cs
@@ -340,6 +342,7 @@ NavajaSuiza_.NET10.slnx
 │   │   ├── IMorseSignalService.cs
 │   │   ├── INavigationService.cs
 │   │   ├── INotesRepository.cs
+│   │   ├── ITaskGroupsRepository.cs
 │   │   ├── IOrientationService.cs
 │   │   ├── IBoardImageExporter.cs
 │   │   ├── IScreenBrightnessService.cs
@@ -358,7 +361,10 @@ NavajaSuiza_.NET10.slnx
 │   │   ├── DocumentType.cs
 │   │   ├── PdfReaderPayload.cs
 │   │   ├── MorseSignalSequence.cs
-│   │   └── Note.cs
+│   │   ├── Note.cs
+│   │   ├── TaskGroup.cs
+│   │   ├── TaskItem.cs
+│   │   └── TaskImportance.cs
 │   ├── Services/
 │   │   ├── FlashlightStateService.cs
 │   │   ├── MetronomeClick.cs
@@ -370,7 +376,7 @@ NavajaSuiza_.NET10.slnx
 │   │   ├── MarkdownToHtmlConverter.cs
 │   │   ├── MorseSignalService.cs
 │   │   └── DocumentTypeDetector.cs
-│   ├── ViewModels/                       # 24 archivos (testables, sin dependencias MAUI)
+│   ├── ViewModels/                       # 30 archivos (testables, sin dependencias MAUI)
 │   │   ├── BaseViewModel.cs
 │   │   ├── AboutViewModel.cs
 │   │   ├── CompassViewModel.cs
@@ -382,6 +388,12 @@ NavajaSuiza_.NET10.slnx
 │   │   ├── ManualViewModel.cs
 │   │   ├── NoteEditorViewModel.cs
 │   │   ├── NotesViewModel.cs
+│   │   ├── NotesListItem.cs
+│   │   ├── NoteListItem.cs
+│   │   ├── TaskGroupListItem.cs
+│   │   ├── TaskItemListItem.cs
+│   │   ├── NotesSection.cs
+│   │   ├── TaskEditorViewModel.cs
 │   │   ├── PdfReaderViewModel.cs
 │   │   ├── TextReaderViewModel.cs
 │   │   ├── BoardViewModel.cs
@@ -407,7 +419,7 @@ NavajaSuiza_.NET10.slnx
 │   ├── Components/                       # StrokeDrawable.cs (IDrawable de la pizarra)
 │   ├── ViewModels/                       # Vacío — todas las VMs están en Core
 │   ├── Services/
-│   │   └── Implementations/             # 23 implementaciones (APIs de plataforma + repos de datos)
+│   │   └── Implementations/             # 27 implementaciones (APIs de plataforma + repos de datos)
 │   │       ├── AppInfoService.cs
 │   │       ├── AudioTrackMetronomePlayer.cs
 │   │       ├── CompassPositionService.cs
@@ -425,13 +437,18 @@ NavajaSuiza_.NET10.slnx
 │   │       ├── MetronomeService.cs
 │   │       ├── NavigationService.cs
 │   │       ├── NoteEntity.cs
+│   │       ├── NotesDatabase.cs
 │   │       ├── OrientationSensorService.cs
 │   │       ├── BoardImageExporter.cs
 │   │       ├── RealtimeTimeSource.cs
 │   │       ├── ScreenBrightnessService.cs
 │   │       ├── SqliteNotesRepository.cs
+│   │       ├── SqliteTaskGroupsRepository.cs
+│   │       ├── TaskGroupEntity.cs
+│   │       ├── TaskItemEntity.cs
 │   │       └── ThemeService.cs
 │   ├── Converters/
+│   ├── Selectors/                        # NotesItemTemplateSelector.cs
 │   ├── Extensions/
 │   ├── Resources/
 │   │   ├── Languages/
@@ -470,6 +487,8 @@ NavajaSuiza_.NET10.slnx
 │   ├── MorseSignalServiceTests.cs
 │   ├── NoteEditorViewModelTests.cs
 │   ├── NotesViewModelTests.cs
+│   ├── TaskEditorViewModelTests.cs
+│   ├── TaskItemListItemTests.cs
 │   ├── PdfReaderViewModelTests.cs
 │   ├── BoardViewModelTests.cs
 │   ├── ScreenLightViewModelTests.cs

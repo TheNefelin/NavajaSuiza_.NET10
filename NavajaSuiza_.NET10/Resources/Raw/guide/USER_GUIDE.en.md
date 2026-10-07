@@ -182,7 +182,7 @@ The compass shows you magnetic north and the exact angle in degrees, with smooth
 
 ## 7. Notes
 
-The notes tool lets you write down ideas, tasks or any text, and keep them organized and searchable.
+The notes tool lets you write down ideas or any text, and keep them organized and searchable. You can also create **task lists** with checkboxes.
 
 | | |
 |---|---|
@@ -190,16 +190,18 @@ The notes tool lets you write down ideas, tasks or any text, and keep them organ
 
 ### How to use it
 
-- Tap the **new note** button to create a note.
-- Write a title and the content.
+- The screen shows two sections: **Tasks** and **Notes**.
+- Tap the **new note** button to create a note with a title and content.
+- Tap the **new task** button to create a task list: give the list a name and add items with their checkbox.
 - Tap **save** to save it or **back** to cancel without saving.
-- Tap an existing note to edit it.
-- Use the magnifier to search by title or content.
-- Tap the delete (trash) button to remove a note; the app asks for confirmation.
+- Tap an existing note or task list to edit it.
+- In a task list, check each item's box to mark it complete; the change is saved instantly.
+- Use the magnifier to search by title or content (in lists, also by the text of their items).
+- Tap the delete (trash) button to remove a note or a list; the app asks for confirmation.
 
 ### Tips
 
-- Notes are sorted from the most recent to the oldest.
+- Notes and lists are sorted from the most recent to the oldest.
 - If a note has no title or content, it is not saved.
 
 ---

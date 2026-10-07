@@ -9,6 +9,7 @@ namespace NavajaSuiza.Test;
 public class NotesViewModelTests
 {
     private readonly Mock<INotesRepository> _repositoryMock = new();
+    private readonly Mock<ITaskGroupsRepository> _taskGroupsRepositoryMock = new();
     private readonly Mock<INavigationService> _navigationServiceMock = new();
     private readonly Mock<ILanguageService> _languageServiceMock = new();
     private readonly Mock<ILogger<NotesViewModel>> _loggerMock = new();
@@ -16,8 +17,11 @@ public class NotesViewModelTests
     private NotesViewModel CreateSut()
     {
         _languageServiceMock.Setup(s => s.GetString(It.IsAny<string>())).Returns("test");
+        _repositoryMock.Setup(r => r.GetAllAsync()).ReturnsAsync(new List<Note>());
+        _taskGroupsRepositoryMock.Setup(r => r.GetAllAsync()).ReturnsAsync(new List<TaskGroup>());
         return new NotesViewModel(
             _repositoryMock.Object,
+            _taskGroupsRepositoryMock.Object,
             _navigationServiceMock.Object,
             _languageServiceMock.Object,
             _loggerMock.Object);
@@ -34,7 +38,32 @@ public class NotesViewModelTests
         await vm.OnPageAppearingAsync();
 
         Assert.True(vm.HasNotes);
-        Assert.Equal([2, 1], vm.Notes.Select(n => n.Id).ToArray());
+        Assert.Equal([2, 1], vm.Sections.SelectMany(s => s).Select(n => n.Id).ToArray());
+    }
+
+    [Fact]
+    public async Task OnPageAppearing_SeparatesTasksAndNotesSections()
+    {
+        _repositoryMock.Setup(r => r.GetAllAsync()).ReturnsAsync([
+            new Note { Id = 1, Title = "Nota", CreatedAt = DateTime.UtcNow }
+        ]);
+        _taskGroupsRepositoryMock.Setup(r => r.GetAllAsync()).ReturnsAsync([
+            new TaskGroup { Id = 2, Title = "Tarea", CreatedAt = DateTime.UtcNow }
+        ]);
+
+        var vm = CreateSut();
+        _languageServiceMock.Setup(s => s.GetString("NotesSectionTasksText")).Returns("Tareas");
+        _languageServiceMock.Setup(s => s.GetString("NotesSectionNotesText")).Returns("Notas");
+
+        await vm.OnPageAppearingAsync();
+
+        Assert.Equal(2, vm.Sections.Count);
+        Assert.Equal("Tareas", vm.Sections[0].Name);
+        Assert.IsType<TaskGroupListItem>(Assert.Single(vm.Sections[0]));
+        Assert.Equal(2, vm.Sections[0][0].Id);
+        Assert.Equal("Notas", vm.Sections[1].Name);
+        Assert.IsType<NoteListItem>(Assert.Single(vm.Sections[1]));
+        Assert.Equal(1, vm.Sections[1][0].Id);
     }
 
     [Fact]
@@ -47,8 +76,9 @@ public class NotesViewModelTests
 
         var vm = CreateSut();
         await vm.OnPageAppearingAsync();
+        var item = (NoteListItem)vm.Sections.SelectMany(s => s).Single();
 
-        await vm.DeleteNoteCommand.ExecuteAsync(note);
+        await vm.DeleteNoteCommand.ExecuteAsync(item);
 
         _repositoryMock.Verify(r => r.DeleteAsync(3), Times.Once);
     }
@@ -63,18 +93,37 @@ public class NotesViewModelTests
 
         var vm = CreateSut();
         await vm.OnPageAppearingAsync();
+        var item = (NoteListItem)vm.Sections.SelectMany(s => s).Single();
 
-        await vm.DeleteNoteCommand.ExecuteAsync(note);
+        await vm.DeleteNoteCommand.ExecuteAsync(item);
 
-        _repositoryMock.Verify(r => r.DeleteAsync(3), Times.Never);
+        _repositoryMock.Verify(r => r.DeleteAsync(It.IsAny<int>()), Times.Never);
     }
 
     [Fact]
-    public async Task SearchText_FiltersNotes()
+    public async Task DeleteTask_WhenConfirmed_DeletesTaskGroupAndReloads()
+    {
+        _taskGroupsRepositoryMock.Setup(r => r.GetAllAsync()).ReturnsAsync([
+            new TaskGroup { Id = 9, Title = "Grupo", CreatedAt = DateTime.UtcNow }
+        ]);
+        _navigationServiceMock.Setup(n => n.DisplayAlertConfirmAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+            .ReturnsAsync(true);
+
+        var vm = CreateSut();
+        await vm.OnPageAppearingAsync();
+        var item = (TaskGroupListItem)vm.Sections.SelectMany(s => s).Single();
+
+        await vm.DeleteTaskCommand.ExecuteAsync(item);
+
+        _taskGroupsRepositoryMock.Verify(r => r.DeleteAsync(9), Times.Once);
+    }
+
+    [Fact]
+    public async Task SearchText_FiltersNotesByContent()
     {
         _repositoryMock.Setup(r => r.GetAllAsync()).ReturnsAsync([
             new Note { Id = 1, Title = "Compra", Content = "Leche", CreatedAt = DateTime.UtcNow },
-            new Note { Id = 2, Title = "Tarea", Content = "Estudiar", CreatedAt = DateTime.UtcNow }
+            new Note { Id = 2, Title = "Otra", Content = "Estudiar", CreatedAt = DateTime.UtcNow }
         ]);
 
         var vm = CreateSut();
@@ -82,8 +131,30 @@ public class NotesViewModelTests
 
         vm.SearchText = "leche";
 
-        Assert.Single(vm.Notes);
-        Assert.Equal(1, vm.Notes[0].Id);
+        var filtered = vm.Sections.SelectMany(s => s).ToList();
+        Assert.Single(filtered);
+        Assert.Equal(1, filtered[0].Id);
+    }
+
+    [Fact]
+    public async Task SearchText_FiltersTaskGroupsByItemTitle()
+    {
+        _taskGroupsRepositoryMock.Setup(r => r.GetAllAsync()).ReturnsAsync([
+            new TaskGroup
+            {
+                Id = 5,
+                Title = "Semana",
+                CreatedAt = DateTime.UtcNow,
+                Items = [new TaskItem { Title = "Comprar leche" }]
+            }
+        ]);
+
+        var vm = CreateSut();
+        await vm.OnPageAppearingAsync();
+
+        vm.SearchText = "leche";
+
+        Assert.Single(vm.Sections.SelectMany(s => s));
     }
 
     [Fact]
@@ -97,14 +168,14 @@ public class NotesViewModelTests
     }
 
     [Fact]
-    public async Task NavigateToEditNote_NavigatesWithSelectedNote()
+    public async Task NavigateToEditNote_NavigatesWithSelectedItem()
     {
-        var note = new Note { Id = 5, Title = "TituloX", Content = "ContenidoX", CreatedAt = DateTime.UtcNow };
+        var item = new NoteListItem { Id = 5, Title = "TituloX", Content = "ContenidoX", CreatedAt = DateTime.UtcNow };
         var vm = CreateSut();
 
-        await vm.NavigateToEditNoteCommand.ExecuteAsync(note);
+        await vm.NavigateToEditNoteCommand.ExecuteAsync(item);
 
-        _navigationServiceMock.Verify(n => n.PushAsync("NoteEditorPage", note), Times.Once);
+        _navigationServiceMock.Verify(n => n.PushAsync("NoteEditorPage", item), Times.Once);
     }
 
     [Fact]
@@ -120,11 +191,11 @@ public class NotesViewModelTests
     [Fact]
     public async Task NavigateToEditTask_NavigatesToTaskEditorPage()
     {
-        var task = new Note { Id = 8, Title = "Tarea", Content = "Hacer algo", CreatedAt = DateTime.UtcNow, IsTask = true };
+        var item = new TaskGroupListItem { Id = 8, Title = "Tarea", CreatedAt = DateTime.UtcNow };
         var vm = CreateSut();
 
-        await vm.NavigateToEditNoteCommand.ExecuteAsync(task);
+        await vm.NavigateToEditTaskCommand.ExecuteAsync(item);
 
-        _navigationServiceMock.Verify(n => n.PushAsync("TaskEditorPage", task), Times.Once);
+        _navigationServiceMock.Verify(n => n.PushAsync("TaskEditorPage", item), Times.Once);
     }
 }

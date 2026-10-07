@@ -520,4 +520,6 @@
   <data name="NotesImportanceMediumText" xml:space="preserve"><value>Medium</value></data>
   <data name="NotesImportanceLowText" xml:space="preserve"><value>Low</value></data>
   <data name="NotesTaskEmptyText" xml:space="preserve"><value>No tasks yet</value></data>
+  <data name="NotesSectionTasksText" xml:space="preserve"><value>Tasks</value></data>
+  <data name="NotesSectionNotesText" xml:space="preserve"><value>Notes</value></data>
 </root>

@@ -182,7 +182,7 @@ La brújula te indica el norte magnético y el ángulo exacto en grados, con lec
 
 ## 7. Notas
 
-La herramienta de notas te permite anotar ideas, tareas o cualquier texto, y mantenerlas ordenadas y buscables.
+La herramienta de notas te permite anotar ideas o cualquier texto y también crear **listas de tareas** con casillas. Todo queda ordenado y buscable.
 
 | | |
 |---|---|
@@ -190,16 +190,18 @@ La herramienta de notas te permite anotar ideas, tareas o cualquier texto, y man
 
 ### Cómo se usa
 
-- Toca el botón **nueva nota** para crear una nota.
-- Escribe un título y el contenido.
-- Toca **guardar** para guardarla o **atrás** para cancelar sin guardar.
-- Toca una nota existente para editarla.
-- Usa la lupa para buscar por título o contenido.
-- Toca el botón de borrar (papelera) para eliminar una nota; la app te pide confirmación.
+- La pantalla muestra dos secciones: **Tareas** y **Notas**.
+- Toca el botón **nueva nota** para crear una nota con título y contenido.
+- Toca el botón **nueva tarea** para crear una lista de tareas: ponele un nombre a la lista y agregá los ítems con su casilla.
+- Toca **guardar** para guardar o **atrás** para cancelar sin guardar.
+- Toca una nota o una lista de tareas existente para editarla.
+- En una lista de tareas, marca la casilla de cada ítem para completarlo; el cambio se guarda al instante.
+- Usa la lupa para buscar por título o contenido (en las listas, también por el texto de sus ítems).
+- Toca el botón de borrar (papelera) para eliminar una nota o una lista; la app te pide confirmación.
 
 ### Consejos
 
-- Las notas se ordenan de la más reciente a la más antigua.
+- Las notas y las listas se ordenan de la más reciente a la más antigua.
 - Si una nota no tiene título ni contenido, no se guarda.
 
 ---

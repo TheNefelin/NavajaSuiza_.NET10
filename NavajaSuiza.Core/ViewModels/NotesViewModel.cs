@@ -10,13 +10,15 @@ namespace NavajaSuiza.Core.ViewModels;
 public partial class NotesViewModel : BaseViewModel
 {
     private readonly INotesRepository _notesRepository;
+    private readonly ITaskGroupsRepository _taskGroupsRepository;
     private readonly INavigationService _navigationService;
     private readonly ILanguageService _languageService;
     private readonly ILogger<NotesViewModel> _logger;
 
-    private List<Note>? _allNotes;
+    private List<Note> _allNotes = [];
+    private List<TaskGroup> _allTaskGroups = [];
 
-    public ObservableCollection<Note> Notes { get; } = new();
+    public ObservableCollection<NotesSection> Sections { get; } = new();
 
     [ObservableProperty]
     public partial string SearchText { get; set; } = string.Empty;
@@ -26,11 +28,13 @@ public partial class NotesViewModel : BaseViewModel
 
     public NotesViewModel(
         INotesRepository notesRepository,
+        ITaskGroupsRepository taskGroupsRepository,
         INavigationService navigationService,
         ILanguageService languageService,
         ILogger<NotesViewModel> logger)
     {
         _notesRepository = notesRepository;
+        _taskGroupsRepository = taskGroupsRepository;
         _navigationService = navigationService;
         _languageService = languageService;
         _logger = logger;
@@ -50,31 +54,27 @@ public partial class NotesViewModel : BaseViewModel
     }
 
     [RelayCommand]
-    private async Task NavigateToEditNoteAsync(Note note)
-    {
-        var page = note.IsTask ? "TaskEditorPage" : "NoteEditorPage";
-        await _navigationService.PushAsync(page, note);
-    }
-
-    [RelayCommand]
     private async Task NavigateToNewTaskAsync()
     {
         await _navigationService.PushAsync("TaskEditorPage");
     }
 
     [RelayCommand]
-    private async Task DeleteNoteAsync(Note note)
+    private async Task NavigateToEditNoteAsync(NoteListItem note)
     {
-        if (note is null)
-            return;
+        await _navigationService.PushAsync("NoteEditorPage", note);
+    }
 
-        var confirmed = await _navigationService.DisplayAlertConfirmAsync(
-            _languageService.GetString("NotesDeleteTitleText"),
-            _languageService.GetString("NotesDeleteConfirmationText"),
-            _languageService.GetString("CommonYesText"),
-            _languageService.GetString("CommonNoText"));
+    [RelayCommand]
+    private async Task NavigateToEditTaskAsync(TaskGroupListItem task)
+    {
+        await _navigationService.PushAsync("TaskEditorPage", task);
+    }
 
-        if (!confirmed)
+    [RelayCommand]
+    private async Task DeleteNoteAsync(NoteListItem note)
+    {
+        if (note is null || !await ConfirmDeleteAsync())
             return;
 
         try
@@ -85,16 +85,50 @@ public partial class NotesViewModel : BaseViewModel
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error al eliminar la nota");
-            await _navigationService.DisplayAlertAsync(
-                _languageService.GetString("NotesErrorTitleText"),
-                _languageService.GetString("NotesErrorDeleteText"),
-                _languageService.GetString("CommonOkText"));
+            await HandleErrorAsync(ex, "NotesErrorDeleteText", "Error al eliminar la nota");
         }
         finally
         {
             IsBusy = false;
         }
+    }
+
+    [RelayCommand]
+    private async Task DeleteTaskAsync(TaskGroupListItem task)
+    {
+        if (task is null || !await ConfirmDeleteAsync())
+            return;
+
+        try
+        {
+            IsBusy = true;
+            await _taskGroupsRepository.DeleteAsync(task.Id);
+            await LoadNotesAsync();
+        }
+        catch (Exception ex)
+        {
+            await HandleErrorAsync(ex, "NotesErrorDeleteText", "Error al eliminar el grupo de tareas");
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
+    private Task<bool> ConfirmDeleteAsync() =>
+        _navigationService.DisplayAlertConfirmAsync(
+            _languageService.GetString("NotesDeleteTitleText"),
+            _languageService.GetString("NotesDeleteConfirmationText"),
+            _languageService.GetString("CommonYesText"),
+            _languageService.GetString("CommonNoText"));
+
+    private async Task HandleErrorAsync(Exception ex, string messageKey, string logMessage)
+    {
+        _logger.LogError(ex, logMessage);
+        await _navigationService.DisplayAlertAsync(
+            _languageService.GetString("NotesErrorTitleText"),
+            _languageService.GetString(messageKey),
+            _languageService.GetString("CommonOkText"));
     }
 
     private async Task LoadNotesAsync()
@@ -103,15 +137,12 @@ public partial class NotesViewModel : BaseViewModel
         {
             IsBusy = true;
             _allNotes = await _notesRepository.GetAllAsync();
+            _allTaskGroups = await _taskGroupsRepository.GetAllAsync();
             ApplyFilter();
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error al cargar las notas");
-            await _navigationService.DisplayAlertAsync(
-                _languageService.GetString("NotesErrorTitleText"),
-                _languageService.GetString("NotesErrorLoadText"),
-                _languageService.GetString("CommonOkText"));
+            await HandleErrorAsync(ex, "NotesErrorLoadText", "Error al cargar las notas");
         }
         finally
         {
@@ -121,21 +152,66 @@ public partial class NotesViewModel : BaseViewModel
 
     private void ApplyFilter()
     {
-        var source = _allNotes ?? [];
+        var search = SearchText?.Trim() ?? string.Empty;
 
-        if (!string.IsNullOrWhiteSpace(SearchText))
-        {
-            source = source
-                .Where(n => n.Title.Contains(SearchText, StringComparison.OrdinalIgnoreCase)
-                            || n.Content.Contains(SearchText, StringComparison.OrdinalIgnoreCase))
-                .ToList();
-        }
+        var tasks = _allTaskGroups
+            .Where(group => Matches(search, group.Title, group.Items.Select(item => item.Title)))
+            .OrderByDescending(group => group.CreatedAt)
+            .Select(CreateTaskListItem)
+            .ToList();
 
-        Notes.Clear();
+        var notes = _allNotes
+            .Where(note => Matches(search, note.Title, note.Content))
+            .OrderByDescending(note => note.CreatedAt)
+            .Select(note => (NotesListItem)new NoteListItem
+            {
+                Id = note.Id,
+                Title = note.Title,
+                Content = note.Content,
+                CreatedAt = note.CreatedAt
+            })
+            .ToList();
 
-        foreach (var note in source.OrderByDescending(n => n.CreatedAt))
-            Notes.Add(note);
+        Sections.Clear();
 
-        HasNotes = Notes.Count > 0;
+        if (tasks.Count > 0)
+            Sections.Add(new NotesSection(_languageService.GetString("NotesSectionTasksText"), tasks));
+
+        if (notes.Count > 0)
+            Sections.Add(new NotesSection(_languageService.GetString("NotesSectionNotesText"), notes));
+
+        HasNotes = Sections.Count > 0;
     }
+
+    private NotesListItem CreateTaskListItem(TaskGroup group) => new TaskGroupListItem
+    {
+        Id = group.Id,
+        Title = group.Title,
+        CreatedAt = group.CreatedAt,
+        Items = group.Items
+            .Select(item => new TaskItemListItem(item, () => _ = PersistTaskGroupAsync(group)))
+            .ToList()
+    };
+
+    private async Task PersistTaskGroupAsync(TaskGroup group)
+    {
+        try
+        {
+            await _taskGroupsRepository.SaveAsync(group);
+        }
+        catch (Exception ex)
+        {
+            await HandleErrorAsync(ex, "NotesErrorSaveText", "Error al guardar el grupo de tareas");
+        }
+    }
+
+    private static bool Matches(string search, string title, string content) =>
+        string.IsNullOrWhiteSpace(search)
+        || title.Contains(search, StringComparison.OrdinalIgnoreCase)
+        || content.Contains(search, StringComparison.OrdinalIgnoreCase);
+
+    private static bool Matches(string search, string title, IEnumerable<string> contents) =>
+        string.IsNullOrWhiteSpace(search)
+        || title.Contains(search, StringComparison.OrdinalIgnoreCase)
+        || contents.Any(content => content.Contains(search, StringComparison.OrdinalIgnoreCase));
 }
