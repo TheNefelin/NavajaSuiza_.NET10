@@ -240,8 +240,8 @@
   <data name="NotesSaveText" xml:space="preserve">
     <value>Guardar</value>
   </data>
-  <data name="NotesNewTitleText" xml:space="preserve">
-    <value>Nueva nota</value>
+  <data name="NotesCreateNoteTitleText" xml:space="preserve">
+    <value>Crear Nota</value>
   </data>
   <data name="NotesEditTitleText" xml:space="preserve">
     <value>Editar nota</value>
@@ -517,12 +517,33 @@
     <value>Crear nueva tarea</value>
   </data>
   <data name="NotesCreateTaskText" xml:space="preserve">
-    <value>+ Crear Tarea</value>
+    <value>+ Crear Tareas</value>
   </data>
-  <data name="NotesNewTaskPageTitleText" xml:space="preserve">
-    <value>Nueva tarea</value>
+  <data name="NotesCreateTaskTitleText" xml:space="preserve">
+    <value>Crear Tareas</value>
   </data>
   <data name="NotesEditTaskTitleText" xml:space="preserve">
     <value>Editar tarea</value>
+  </data>
+  <data name="NotesTaskGroupNamePlaceholderText" xml:space="preserve">
+    <value>Nombre del Grupo de Tareas</value>
+  </data>
+  <data name="NotesTaskItemPlaceholderText" xml:space="preserve">
+    <value>Nombre de la tarea</value>
+  </data>
+  <data name="NotesAddTaskText" xml:space="preserve">
+    <value>+ Agregar</value>
+  </data>
+  <data name="NotesImportanceHighText" xml:space="preserve">
+    <value>Alta</value>
+  </data>
+  <data name="NotesImportanceMediumText" xml:space="preserve">
+    <value>Media</value>
+  </data>
+  <data name="NotesImportanceLowText" xml:space="preserve">
+    <value>Baja</value>
+  </data>
+  <data name="NotesTaskEmptyText" xml:space="preserve">
+    <value>Sin tareas aún</value>
   </data>
 </root>

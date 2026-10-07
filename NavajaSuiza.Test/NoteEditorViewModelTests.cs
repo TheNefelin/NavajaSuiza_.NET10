@@ -15,9 +15,9 @@ public class NoteEditorViewModelTests
 
     private NoteEditorViewModel CreateSut(Note? parameter = null)
     {
-        _languageServiceMock.Setup(s => s.GetString("NotesNewTitleText")).Returns("Nueva nota");
+        _languageServiceMock.Setup(s => s.GetString("NotesCreateNoteTitleText")).Returns("Crear Nota");
         _languageServiceMock.Setup(s => s.GetString("NotesEditTitleText")).Returns("Editar nota");
-        _languageServiceMock.Setup(s => s.GetString("NotesNewTaskPageTitleText")).Returns("Nueva tarea");
+        _languageServiceMock.Setup(s => s.GetString("NotesCreateTaskTitleText")).Returns("Crear Tareas");
         _languageServiceMock.Setup(s => s.GetString("NotesEditTaskTitleText")).Returns("Editar tarea");
 
         if (parameter is not null)
@@ -41,7 +41,7 @@ public class NoteEditorViewModelTests
         Assert.False(vm.IsEditing);
         Assert.Equal(string.Empty, vm.TitleText);
         Assert.Equal(string.Empty, vm.ContentText);
-        Assert.Equal("Nueva nota", vm.PageTitle);
+        Assert.Equal("Crear Nota", vm.PageTitle);
     }
 
     [Fact]
@@ -51,7 +51,7 @@ public class NoteEditorViewModelTests
         vm.Initialize(isTask: true);
 
         Assert.False(vm.IsEditing);
-        Assert.Equal("Nueva tarea", vm.PageTitle);
+        Assert.Equal("Crear Tareas", vm.PageTitle);
     }
 
     [Fact]

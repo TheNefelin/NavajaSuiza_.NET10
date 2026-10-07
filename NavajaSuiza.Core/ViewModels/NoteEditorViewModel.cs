@@ -51,8 +51,8 @@ public partial class NoteEditorViewModel : BaseViewModel
             TitleText = string.Empty;
             ContentText = string.Empty;
             PageTitle = isTask
-                ? _languageService.GetString("NotesNewTaskPageTitleText")
-                : _languageService.GetString("NotesNewTitleText");
+                ? _languageService.GetString("NotesCreateTaskTitleText")
+                : _languageService.GetString("NotesCreateNoteTitleText");
         }
         else
         {
