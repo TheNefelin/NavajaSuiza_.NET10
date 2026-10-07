@@ -2,12 +2,12 @@ using NavajaSuiza.Core.ViewModels;
 
 namespace NavajaSuiza_.NET10.Pages;
 
-public partial class NoteEditorPage : ContentPage
+public partial class TaskEditorPage : ContentPage
 {
     private readonly IServiceProvider _serviceProvider;
     private NoteEditorViewModel? _viewModel;
 
-    public NoteEditorPage(IServiceProvider serviceProvider)
+    public TaskEditorPage(IServiceProvider serviceProvider)
     {
         InitializeComponent();
         _serviceProvider = serviceProvider;
@@ -22,7 +22,7 @@ public partial class NoteEditorPage : ContentPage
 
         if (_viewModel is not null)
         {
-            _viewModel.Initialize(isTask: false);
+            _viewModel.Initialize(isTask: true);
         }
     }
 }

@@ -510,16 +510,19 @@
   <data name="NotesNewDescriptionText" xml:space="preserve">
     <value>Crear nueva nota</value>
   </data>
-  <data name="NotesNewTaskTitleText" xml:space="preserve">
-    <value>Crear tarea</value>
+  <data name="NotesCreateNoteText" xml:space="preserve">
+    <value>+ Crear Nota</value>
   </data>
   <data name="NotesNewTaskDescriptionText" xml:space="preserve">
     <value>Crear nueva tarea</value>
   </data>
+  <data name="NotesCreateTaskText" xml:space="preserve">
+    <value>+ Crear Tarea</value>
+  </data>
+  <data name="NotesNewTaskPageTitleText" xml:space="preserve">
+    <value>Nueva tarea</value>
+  </data>
   <data name="NotesEditTaskTitleText" xml:space="preserve">
     <value>Editar tarea</value>
-  </data>
-  <data name="NotesTaskLabelText" xml:space="preserve">
-    <value>Es una tarea</value>
   </data>
 </root>

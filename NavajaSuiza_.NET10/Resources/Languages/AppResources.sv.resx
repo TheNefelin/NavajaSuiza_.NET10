@@ -508,8 +508,9 @@
     <value>Skriv texten</value>
   </data>
   <data name="NotesNewDescriptionText" xml:space="preserve"><value>New note</value></data>
-  <data name="NotesNewTaskTitleText" xml:space="preserve"><value>Create task</value></data>
+  <data name="NotesCreateNoteText" xml:space="preserve"><value>+ Skapa anteckning</value></data>
   <data name="NotesNewTaskDescriptionText" xml:space="preserve"><value>Create new task</value></data>
+  <data name="NotesCreateTaskText" xml:space="preserve"><value>+ Skapa uppgift</value></data>
+  <data name="NotesNewTaskPageTitleText" xml:space="preserve"><value>Ny uppgift</value></data>
   <data name="NotesEditTaskTitleText" xml:space="preserve"><value>Edit task</value></data>
-  <data name="NotesTaskLabelText" xml:space="preserve"><value>Is a task</value></data>
 </root>

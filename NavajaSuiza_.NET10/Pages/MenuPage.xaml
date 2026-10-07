@@ -137,7 +137,7 @@
 
                 <Border
                     Padding="16" 
-                    StrokeShape="16"
+                    StrokeShape="Rectangle"
                     Margin="0,0,0,10">
                 
                     <Grid ColumnDefinitions="*,Auto">
@@ -169,7 +169,7 @@
 
                 <Border
                     Padding="16" 
-                    StrokeShape="16"
+                    StrokeShape="Rectangle"
                     Margin="0,0,0,10">
 
                     <Grid ColumnDefinitions="*,Auto">

@@ -52,14 +52,14 @@ public partial class NotesViewModel : BaseViewModel
     [RelayCommand]
     private async Task NavigateToEditNoteAsync(Note note)
     {
-        await _navigationService.PushAsync("NoteEditorPage", note);
+        var page = note.IsTask ? "TaskEditorPage" : "NoteEditorPage";
+        await _navigationService.PushAsync(page, note);
     }
 
     [RelayCommand]
     private async Task NavigateToNewTaskAsync()
     {
-        var note = new Note { IsTask = true, Title = string.Empty, Content = string.Empty };
-        await _navigationService.PushAsync("NoteEditorPage", note);
+        await _navigationService.PushAsync("TaskEditorPage");
     }
 
     [RelayCommand]

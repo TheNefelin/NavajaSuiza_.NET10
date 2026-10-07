@@ -14,6 +14,7 @@ public partial class NoteEditorViewModel : BaseViewModel
     private readonly ILogger<NoteEditorViewModel> _logger;
 
     private Note? _editingNote;
+    private bool _isTask;
 
     [ObservableProperty]
     public partial string TitleText { get; set; } = string.Empty;
@@ -27,9 +28,6 @@ public partial class NoteEditorViewModel : BaseViewModel
     [ObservableProperty]
     public partial string PageTitle { get; set; } = string.Empty;
 
-    [ObservableProperty]
-    public partial bool IsTask { get; set; }
-
     public NoteEditorViewModel(
         INotesRepository notesRepository,
         INavigationService navigationService,
@@ -42,23 +40,25 @@ public partial class NoteEditorViewModel : BaseViewModel
         _logger = logger;
     }
 
-    public void Initialize()
+    public void Initialize(bool isTask)
     {
         _editingNote = _navigationService.TakeNavigationParameter() as Note;
         IsEditing = _editingNote is not null;
 
         if (_editingNote is null)
         {
+            _isTask = isTask;
             TitleText = string.Empty;
             ContentText = string.Empty;
-            IsTask = false;
-            PageTitle = _languageService.GetString("NotesNewTitleText");
+            PageTitle = isTask
+                ? _languageService.GetString("NotesNewTaskPageTitleText")
+                : _languageService.GetString("NotesNewTitleText");
         }
         else
         {
+            _isTask = _editingNote.IsTask;
             TitleText = _editingNote.Title;
             ContentText = _editingNote.Content;
-            IsTask = _editingNote.IsTask;
             PageTitle = _editingNote.IsTask
                 ? _languageService.GetString("NotesEditTaskTitleText")
                 : _languageService.GetString("NotesEditTitleText");
@@ -81,7 +81,8 @@ public partial class NoteEditorViewModel : BaseViewModel
                 {
                     Title = TitleText.Trim(),
                     Content = ContentText.Trim(),
-                    CreatedAt = DateTime.UtcNow
+                    CreatedAt = DateTime.UtcNow,
+                    IsTask = _isTask
                 };
 
                 await _notesRepository.SaveAsync(note);
@@ -90,6 +91,7 @@ public partial class NoteEditorViewModel : BaseViewModel
             {
                 _editingNote.Title = TitleText.Trim();
                 _editingNote.Content = ContentText.Trim();
+                _editingNote.IsTask = _isTask;
                 await _notesRepository.SaveAsync(_editingNote);
             }
 

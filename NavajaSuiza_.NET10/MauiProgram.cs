@@ -127,6 +127,7 @@ public static class MauiProgram
             .AddSingleton<NotesPage>()
             .AddTransient<NoteEditorViewModel>()
             .AddSingleton<NoteEditorPage>()
+            .AddSingleton<TaskEditorPage>()
             .AddSingleton<BoardViewModel>()
             .AddSingleton<BoardPage>()
             .AddTransient<PdfReaderViewModel>()

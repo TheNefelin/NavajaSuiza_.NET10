@@ -13,15 +13,16 @@ public class NoteEditorViewModelTests
     private readonly Mock<ILanguageService> _languageServiceMock = new();
     private readonly Mock<ILogger<NoteEditorViewModel>> _loggerMock = new();
 
-    private NoteEditorViewModel CreateSut(bool withParameter = false)
+    private NoteEditorViewModel CreateSut(Note? parameter = null)
     {
         _languageServiceMock.Setup(s => s.GetString("NotesNewTitleText")).Returns("Nueva nota");
         _languageServiceMock.Setup(s => s.GetString("NotesEditTitleText")).Returns("Editar nota");
+        _languageServiceMock.Setup(s => s.GetString("NotesNewTaskPageTitleText")).Returns("Nueva tarea");
+        _languageServiceMock.Setup(s => s.GetString("NotesEditTaskTitleText")).Returns("Editar tarea");
 
-        if (withParameter)
+        if (parameter is not null)
         {
-            _navigationServiceMock.Setup(n => n.TakeNavigationParameter())
-                .Returns(new Note { Id = 7, Title = "Antes", Content = "Texto" });
+            _navigationServiceMock.Setup(n => n.TakeNavigationParameter()).Returns(parameter);
         }
 
         return new NoteEditorViewModel(
@@ -35,7 +36,7 @@ public class NoteEditorViewModelTests
     public void Initialize_WithoutParameter_EntersCreateMode()
     {
         var vm = CreateSut();
-        vm.Initialize();
+        vm.Initialize(isTask: false);
 
         Assert.False(vm.IsEditing);
         Assert.Equal(string.Empty, vm.TitleText);
@@ -44,10 +45,20 @@ public class NoteEditorViewModelTests
     }
 
     [Fact]
+    public void Initialize_AsTaskWithoutParameter_UsesNewTaskTitle()
+    {
+        var vm = CreateSut();
+        vm.Initialize(isTask: true);
+
+        Assert.False(vm.IsEditing);
+        Assert.Equal("Nueva tarea", vm.PageTitle);
+    }
+
+    [Fact]
     public void Initialize_WithParameter_LoadsNoteIntoEditor()
     {
-        var vm = CreateSut(withParameter: true);
-        vm.Initialize();
+        var vm = CreateSut(new Note { Id = 7, Title = "Antes", Content = "Texto" });
+        vm.Initialize(isTask: false);
 
         Assert.True(vm.IsEditing);
         Assert.Equal("Editar nota", vm.PageTitle);
@@ -56,10 +67,20 @@ public class NoteEditorViewModelTests
     }
 
     [Fact]
+    public void Initialize_WithTaskParameter_UsesEditTaskTitle()
+    {
+        var vm = CreateSut(new Note { Id = 7, Title = "Tarea", Content = "Texto", IsTask = true });
+        vm.Initialize(isTask: true);
+
+        Assert.True(vm.IsEditing);
+        Assert.Equal("Editar tarea", vm.PageTitle);
+    }
+
+    [Fact]
     public async Task Save_WithEmptyTitleAndContent_DoesNotCallRepository()
     {
         var vm = CreateSut();
-        vm.Initialize();
+        vm.Initialize(isTask: false);
 
         await vm.SaveCommand.ExecuteAsync(null);
 
@@ -67,25 +88,40 @@ public class NoteEditorViewModelTests
     }
 
     [Fact]
-    public async Task Save_NewNote_InsertsAndPops()
+    public async Task Save_NewNote_InsertsWithoutIsTaskAndPops()
     {
         var vm = CreateSut();
-        vm.Initialize();
+        vm.Initialize(isTask: false);
         vm.TitleText = "Título";
         vm.ContentText = "Contenido";
 
         await vm.SaveCommand.ExecuteAsync(null);
 
         _repositoryMock.Verify(r => r.SaveAsync(It.Is<Note>(n =>
-            n.Id == 0 && n.Title == "Título" && n.Content == "Contenido" && n.CreatedAt != default)), Times.Once);
+            n.Id == 0 && n.Title == "Título" && n.Content == "Contenido"
+            && n.CreatedAt != default && !n.IsTask)), Times.Once);
         _navigationServiceMock.Verify(n => n.PopAsync(), Times.Once);
+    }
+
+    [Fact]
+    public async Task Save_NewTask_InsertsWithIsTask()
+    {
+        var vm = CreateSut();
+        vm.Initialize(isTask: true);
+        vm.TitleText = "Tarea";
+        vm.ContentText = "Contenido";
+
+        await vm.SaveCommand.ExecuteAsync(null);
+
+        _repositoryMock.Verify(r => r.SaveAsync(It.Is<Note>(n =>
+            n.Id == 0 && n.Title == "Tarea" && n.IsTask)), Times.Once);
     }
 
     [Fact]
     public async Task Save_ExistingNote_UpdatesInPlaceAndPops()
     {
-        var vm = CreateSut(withParameter: true);
-        vm.Initialize();
+        var vm = CreateSut(new Note { Id = 7, Title = "Antes", Content = "Texto" });
+        vm.Initialize(isTask: false);
         vm.TitleText = "Después";
         vm.ContentText = "Texto nuevo";
 
@@ -93,5 +129,17 @@ public class NoteEditorViewModelTests
 
         _repositoryMock.Verify(r => r.SaveAsync(It.Is<Note>(n => n.Id == 7 && n.Title == "Después")), Times.Once);
         _navigationServiceMock.Verify(n => n.PopAsync(), Times.Once);
+    }
+
+    [Fact]
+    public async Task Save_ExistingTask_PreservesIsTask()
+    {
+        var vm = CreateSut(new Note { Id = 7, Title = "Antes", Content = "Texto", IsTask = true });
+        vm.Initialize(isTask: true);
+        vm.TitleText = "Después";
+
+        await vm.SaveCommand.ExecuteAsync(null);
+
+        _repositoryMock.Verify(r => r.SaveAsync(It.Is<Note>(n => n.Id == 7 && n.IsTask)), Times.Once);
     }
 }

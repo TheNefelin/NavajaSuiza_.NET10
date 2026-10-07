@@ -106,4 +106,25 @@ public class NotesViewModelTests
 
         _navigationServiceMock.Verify(n => n.PushAsync("NoteEditorPage", note), Times.Once);
     }
+
+    [Fact]
+    public async Task NavigateToNewTask_NavigatesToTaskEditorPageWithoutParameter()
+    {
+        var vm = CreateSut();
+
+        await vm.NavigateToNewTaskCommand.ExecuteAsync(null);
+
+        _navigationServiceMock.Verify(n => n.PushAsync("TaskEditorPage", It.Is<object?>(p => p == null)), Times.Once);
+    }
+
+    [Fact]
+    public async Task NavigateToEditTask_NavigatesToTaskEditorPage()
+    {
+        var task = new Note { Id = 8, Title = "Tarea", Content = "Hacer algo", CreatedAt = DateTime.UtcNow, IsTask = true };
+        var vm = CreateSut();
+
+        await vm.NavigateToEditNoteCommand.ExecuteAsync(task);
+
+        _navigationServiceMock.Verify(n => n.PushAsync("TaskEditorPage", task), Times.Once);
+    }
 }

@@ -3,8 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:converters="clr-namespace:NavajaSuiza_.NET10.Converters"
              xmlns:extensions="clr-namespace:NavajaSuiza_.NET10.Extensions"
-             x:Name="NoteEditorPageRoot"
-             x:Class="NavajaSuiza_.NET10.Pages.NoteEditorPage"
+             x:Name="TaskEditorPageRoot"
+             x:Class="NavajaSuiza_.NET10.Pages.TaskEditorPage"
              Title="{Binding PageTitle}">
 
     <ContentPage.Resources>

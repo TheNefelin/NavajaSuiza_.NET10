@@ -31,7 +31,7 @@
 
             <Button
                 Grid.Column="0"
-                Text="{extensions:Translate NotesNewTitleText}"
+                Text="{extensions:Translate NotesCreateNoteText}"
                 Command="{Binding NavigateToNewNoteCommand}"
                 Style="{StaticResource ActionButton}"
                 BackgroundColor="{StaticResource MyAccentBlue}"
@@ -42,7 +42,7 @@
 
             <Button
                 Grid.Column="1"
-                Text="{extensions:Translate NotesNewTaskTitleText}"
+                Text="{extensions:Translate NotesCreateTaskText}"
                 Command="{Binding NavigateToNewTaskCommand}"
                 Style="{StaticResource ActionButton}"
                 BackgroundColor="{StaticResource MyAccentBlue}"
@@ -143,28 +143,6 @@
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
-
-            <!-- Botón flotante Nueva -->
-            <Button Grid.Row="2"
-                    Text="+"
-                    SemanticProperties.Description="{extensions:Translate NotesNewTitleText}"
-                    Command="{Binding NavigateToNewNoteCommand}"
-                    BackgroundColor="{StaticResource MyAccentBlue}"
-                    TextColor="White"
-                    FontSize="30"
-                    HeightRequest="60"
-                    WidthRequest="60"
-                    CornerRadius="50"
-                    HorizontalOptions="End"
-                    VerticalOptions="End"
-                    Margin="0,0,20,20">
-                <Button.Shadow>
-                    <Shadow Radius="10"
-                            Opacity="0.3"
-                            Brush="{StaticResource Black}"
-                            Offset="0,3" />
-                </Button.Shadow>
-            </Button>
         </Grid>
     </Grid>
 
