@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -507,4 +507,9 @@
   <data name="PizarraEnterTextPrompt" xml:space="preserve">
     <value>Enter the text</value>
   </data>
+  <data name="NotesNewDescriptionText" xml:space="preserve"><value>New note</value></data>
+  <data name="NotesNewTaskTitleText" xml:space="preserve"><value>Create task</value></data>
+  <data name="NotesNewTaskDescriptionText" xml:space="preserve"><value>Create new task</value></data>
+  <data name="NotesEditTaskTitleText" xml:space="preserve"><value>Edit task</value></data>
+  <data name="NotesTaskLabelText" xml:space="preserve"><value>Is a task</value></data>
 </root>

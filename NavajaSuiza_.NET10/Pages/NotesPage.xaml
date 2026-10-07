@@ -18,18 +18,48 @@
         </Style>
     </ContentPage.Resources>
 
-    <Grid RowDefinitions="Auto,*"
+    <Grid RowDefinitions="Auto,Auto,*"
           Padding="0,10"
           RowSpacing="10">
 
+        <!-- Acciones principales -->
+        <Grid
+            Grid.Row="0"
+            Margin="15,0"
+            ColumnDefinitions="*,*"
+            ColumnSpacing="10">
+
+            <Button
+                Grid.Column="0"
+                Text="{extensions:Translate NotesNewTitleText}"
+                Command="{Binding NavigateToNewNoteCommand}"
+                Style="{StaticResource ActionButton}"
+                BackgroundColor="{StaticResource MyAccentBlue}"
+                FontSize="16"                
+                HeightRequest="50"
+                TextColor="White"
+                SemanticProperties.Description="{extensions:Translate NotesNewDescriptionText}" />
+
+            <Button
+                Grid.Column="1"
+                Text="{extensions:Translate NotesNewTaskTitleText}"
+                Command="{Binding NavigateToNewTaskCommand}"
+                Style="{StaticResource ActionButton}"
+                BackgroundColor="{StaticResource MyAccentBlue}"
+                FontSize="16"                
+                HeightRequest="50"                
+                TextColor="White"
+                SemanticProperties.Description="{extensions:Translate NotesNewTaskDescriptionText}" />
+        </Grid>
+
         <!-- Búsqueda -->
-        <Border Grid.Row="0"
-                Margin="15,0"
-                Padding="8,0"
-                StrokeThickness="1"
-                Stroke="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray600}}"
-                StrokeShape="RoundRectangle 24"
-                BackgroundColor="{AppThemeBinding Light={StaticResource MyPrimaryLight}, Dark={StaticResource MyPrimaryDark}}">
+        <Border Grid.Row="1"
+                  Margin="15,0"
+                  Padding="8,0"
+                  StrokeThickness="1"
+                  Stroke="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray600}}"
+                  StrokeShape="RoundRectangle 24"
+                  BackgroundColor="{AppThemeBinding Light={StaticResource MyPrimaryLight}, Dark={StaticResource MyPrimaryDark}}">
             <SearchBar
                 Text="{Binding SearchText}"
                 Placeholder="{extensions:Translate NotesSearchPlaceholderText}"
@@ -37,7 +67,7 @@
                 FontSize="14" />
         </Border>
 
-        <Grid Grid.Row="1" RowDefinitions="*,*">
+        <Grid Grid.Row="2" RowDefinitions="*,*">
 
             <!-- Estado vacío -->
             <Label Grid.Row="0"
@@ -97,7 +127,7 @@
                                              VerticalOptions="Center"
                                              Spacing="4">
 
-<Button
+                                <Button
                                         ImageSource="icon_delete.png"
                                         BackgroundColor="{StaticResource MyOn}"
                                         CornerRadius="8"
@@ -115,7 +145,7 @@
             </CollectionView>
 
             <!-- Botón flotante Nueva -->
-<Button Grid.Row="1"
+            <Button Grid.Row="2"
                     Text="+"
                     SemanticProperties.Description="{extensions:Translate NotesNewTitleText}"
                     Command="{Binding NavigateToNewNoteCommand}"

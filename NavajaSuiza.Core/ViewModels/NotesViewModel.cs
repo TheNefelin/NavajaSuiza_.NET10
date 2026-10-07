@@ -56,6 +56,13 @@ public partial class NotesViewModel : BaseViewModel
     }
 
     [RelayCommand]
+    private async Task NavigateToNewTaskAsync()
+    {
+        var note = new Note { IsTask = true, Title = string.Empty, Content = string.Empty };
+        await _navigationService.PushAsync("NoteEditorPage", note);
+    }
+
+    [RelayCommand]
     private async Task DeleteNoteAsync(Note note)
     {
         if (note is null)

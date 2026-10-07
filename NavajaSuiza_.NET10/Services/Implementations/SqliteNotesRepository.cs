@@ -1,4 +1,4 @@
-using NavajaSuiza.Core.Interfaces;
+﻿using NavajaSuiza.Core.Interfaces;
 using NavajaSuiza.Core.Models;
 using SQLite;
 
@@ -51,7 +51,8 @@ public class SqliteNotesRepository : INotesRepository
         Id = note.Id,
         Title = note.Title,
         Content = note.Content,
-        CreatedAt = note.CreatedAt
+        CreatedAt = note.CreatedAt,
+        IsTask = note.IsTask
     };
 
     private static Note FromEntity(NoteEntity entity) => new()
@@ -59,6 +60,7 @@ public class SqliteNotesRepository : INotesRepository
         Id = entity.Id,
         Title = entity.Title,
         Content = entity.Content,
-        CreatedAt = entity.CreatedAt
+        CreatedAt = entity.CreatedAt,
+        IsTask = entity.IsTask
     };
 }

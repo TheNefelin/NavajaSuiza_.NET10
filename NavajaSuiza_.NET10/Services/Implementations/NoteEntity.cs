@@ -1,4 +1,4 @@
-using SQLite;
+﻿using SQLite;
 
 namespace NavajaSuiza_.NET10.Services.Implementations;
 
@@ -12,4 +12,6 @@ public class NoteEntity
     public string Content { get; set; } = string.Empty;
 
     public DateTime CreatedAt { get; set; }
+
+    public bool IsTask { get; set; }
 }

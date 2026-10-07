@@ -11,7 +11,7 @@
         <converters:InvertedBoolConverter x:Key="InvertedBoolConverter" />
     </ContentPage.Resources>
 
-    <Grid RowDefinitions="Auto,Auto,*,Auto"
+    <Grid RowDefinitions="Auto,Auto,Auto,*,Auto"
           Padding="20"
           RowSpacing="12">
 
@@ -26,14 +26,23 @@
                  HeightRequest="1"
                  Color="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray600}}" />
 
-        <Editor Grid.Row="2"
+        <StackLayout Grid.Row="2"
+                     Orientation="Horizontal"
+                     Spacing="10"
+                     VerticalOptions="Center">
+            <Switch IsToggled="{Binding IsTask}" />
+            <Label Text="{extensions:Translate NotesTaskLabelText}"
+                   VerticalOptions="Center" />
+        </StackLayout>
+
+        <Editor Grid.Row="3"
                 Text="{Binding ContentText}"
                 Placeholder="{extensions:Translate NotesContentPlaceholderText}"
                 AutoSize="TextChanges"
                 VerticalOptions="Fill"
                 BackgroundColor="Transparent" />
 
-        <Button Grid.Row="3"
+        <Button Grid.Row="4"
                 Text="{extensions:Translate NotesSaveText}"
                 Command="{Binding SaveCommand}"
                 BackgroundColor="{StaticResource MyAccentBlue}"

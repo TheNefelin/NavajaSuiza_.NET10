@@ -27,6 +27,9 @@ public partial class NoteEditorViewModel : BaseViewModel
     [ObservableProperty]
     public partial string PageTitle { get; set; } = string.Empty;
 
+    [ObservableProperty]
+    public partial bool IsTask { get; set; }
+
     public NoteEditorViewModel(
         INotesRepository notesRepository,
         INavigationService navigationService,
@@ -48,13 +51,17 @@ public partial class NoteEditorViewModel : BaseViewModel
         {
             TitleText = string.Empty;
             ContentText = string.Empty;
+            IsTask = false;
             PageTitle = _languageService.GetString("NotesNewTitleText");
         }
         else
         {
             TitleText = _editingNote.Title;
             ContentText = _editingNote.Content;
-            PageTitle = _languageService.GetString("NotesEditTitleText");
+            IsTask = _editingNote.IsTask;
+            PageTitle = _editingNote.IsTask
+                ? _languageService.GetString("NotesEditTaskTitleText")
+                : _languageService.GetString("NotesEditTitleText");
         }
     }
 
