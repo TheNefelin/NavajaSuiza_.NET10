@@ -240,9 +240,6 @@
   <data name="NotesSaveText" xml:space="preserve">
     <value>Spara</value>
   </data>
-  <data name="NotesCreateNoteTitleText" xml:space="preserve">
-    <value>Skapa anteckning</value>
-  </data>
   <data name="NotesEditTitleText" xml:space="preserve">
     <value>Redigera anteckning</value>
   </data>
@@ -250,10 +247,19 @@
     <value>Inga anteckningar ännu. Tryck på "Ny" för att skapa en.</value>
   </data>
   <data name="NotesDeleteTitleText" xml:space="preserve">
-    <value>Ta bort anteckning</value>
+    <value>Ta bort</value>
   </data>
   <data name="NotesDeleteConfirmationText" xml:space="preserve">
-    <value>Är du säker på att du vill ta bort denna anteckning?</value>
+    <value>Är du säker på att du vill ta bort det här objektet?</value>
+  </data>
+  <data name="NotesValidationTitleText" xml:space="preserve">
+    <value>Information saknas</value>
+  </data>
+  <data name="NotesValidationNoteText" xml:space="preserve">
+    <value>Skriv en titel eller något innehåll.</value>
+  </data>
+  <data name="NotesValidationTaskText" xml:space="preserve">
+    <value>Skriv ett namn för uppgiftsgruppen.</value>
   </data>
   <data name="NotesErrorTitleText" xml:space="preserve">
     <value>Fel</value>
@@ -508,14 +514,13 @@
     <value>Skriv texten</value>
   </data>
   <data name="NotesNewDescriptionText" xml:space="preserve"><value>New note</value></data>
-  <data name="NotesCreateNoteText" xml:space="preserve"><value>+ Skapa anteckning</value></data>
+  <data name="NotesCreateNoteText" xml:space="preserve"><value>Skapa anteckning</value></data>
   <data name="NotesNewTaskDescriptionText" xml:space="preserve"><value>Create new task</value></data>
-  <data name="NotesCreateTaskText" xml:space="preserve"><value>+ Skapa uppgifter</value></data>
-  <data name="NotesCreateTaskTitleText" xml:space="preserve"><value>Skapa uppgifter</value></data>
+  <data name="NotesCreateTaskText" xml:space="preserve"><value>Skapa uppgifter</value></data>
   <data name="NotesEditTaskTitleText" xml:space="preserve"><value>Edit task</value></data>
   <data name="NotesTaskGroupNamePlaceholderText" xml:space="preserve"><value>Namn på uppgiftsgrupp</value></data>
   <data name="NotesTaskItemPlaceholderText" xml:space="preserve"><value>Uppgiftens namn</value></data>
-  <data name="NotesAddTaskText" xml:space="preserve"><value>+ Lägg till</value></data>
+  <data name="NotesAddTaskText" xml:space="preserve"><value>Lägg till</value></data>
   <data name="NotesImportanceHighText" xml:space="preserve"><value>Hög</value></data>
   <data name="NotesImportanceMediumText" xml:space="preserve"><value>Medel</value></data>
   <data name="NotesImportanceLowText" xml:space="preserve"><value>Låg</value></data>

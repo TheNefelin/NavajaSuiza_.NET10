@@ -14,11 +14,15 @@ public class NotesViewModelTests
     private readonly Mock<ILanguageService> _languageServiceMock = new();
     private readonly Mock<ILogger<NotesViewModel>> _loggerMock = new();
 
-    private NotesViewModel CreateSut()
+    public NotesViewModelTests()
     {
         _languageServiceMock.Setup(s => s.GetString(It.IsAny<string>())).Returns("test");
         _repositoryMock.Setup(r => r.GetAllAsync()).ReturnsAsync(new List<Note>());
         _taskGroupsRepositoryMock.Setup(r => r.GetAllAsync()).ReturnsAsync(new List<TaskGroup>());
+    }
+
+    private NotesViewModel CreateSut()
+    {
         return new NotesViewModel(
             _repositoryMock.Object,
             _taskGroupsRepositoryMock.Object,

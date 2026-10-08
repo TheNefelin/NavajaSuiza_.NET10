@@ -49,14 +49,20 @@ public partial class NoteEditorViewModel : BaseViewModel
         _editingCreatedAt = item?.CreatedAt ?? default;
         TitleText = item?.Title ?? string.Empty;
         ContentText = item?.Content ?? string.Empty;
-        PageTitle = _languageService.GetString(IsEditing ? "NotesEditTitleText" : "NotesCreateNoteTitleText");
+        PageTitle = _languageService.GetString(IsEditing ? "NotesEditTitleText" : "NotesCreateNoteText");
     }
 
     [RelayCommand]
     private async Task SaveAsync()
     {
         if (string.IsNullOrWhiteSpace(TitleText) && string.IsNullOrWhiteSpace(ContentText))
+        {
+            await _navigationService.DisplayAlertAsync(
+                _languageService.GetString("NotesValidationTitleText"),
+                _languageService.GetString("NotesValidationNoteText"),
+                _languageService.GetString("CommonOkText"));
             return;
+        }
 
         try
         {

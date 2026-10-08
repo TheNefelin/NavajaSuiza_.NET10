@@ -468,7 +468,9 @@ Todos los servicios están registrados en `MauiProgram.cs` e inyectados por DI.
 - **Checklist interactivo**: los ítems de la tarjeta se envuelven en `TaskItemListItem` (ObservableObject); al marcar la casilla actualiza el `TaskItem` origen y dispara el guardado del grupo. La tarjeta muestra la fecha en formato `dd-MM-yyyy` (`CreatedAtText`) y solo navega al editor al tocar el encabezado, para no chocar con los checkboxes.
 - **Búsqueda**: filtra notas por título/contenido y listas por título o por el texto de sus ítems.
 - **Editores separados**: `NoteEditorViewModel`/`NoteEditorPage` y `TaskEditorViewModel`/`TaskEditorPage`. `NotesViewModel` navega pasando el read-model como parámetro (`INavigationService.PushAsync("TaskEditorPage", task)`, recuperado con `TakeNavigationParameter`).
-- **i18n**: claves `NotesCreateNoteTitleText`, `NotesEditTitleText`, `NotesCreateTaskTitleText`, `NotesEditTaskTitleText`, `NotesSectionTasksText`, `NotesSectionNotesText` en los tres `.resx`.
+- **Validaciones al guardar**: una nota requiere título **o** contenido (`NotesValidationNoteText`); una lista de tareas requiere el nombre del grupo (`NotesValidationTaskText`). Si falta, se muestra un aviso con título `NotesValidationTitleText` en vez de fallar en silencio.
+- **Confirmación de borrado**: notas, listas de tareas y cada tarea dentro del formulario piden confirmación reutilizando el texto genérico `NotesDeleteTitleText`/`NotesDeleteConfirmationText` con `CommonYesText`/`CommonNoText`. El borrado de una tarea en `TaskEditorViewModel.DeleteTaskAsync` es asíncrono por este motivo.
+- **i18n**: claves `NotesCreateNoteText`, `NotesEditTitleText`, `NotesCreateTaskText`, `NotesEditTaskTitleText`, `NotesSectionTasksText`, `NotesSectionNotesText`, `NotesDeleteTitleText`, `NotesDeleteConfirmationText`, `NotesValidationTitleText`, `NotesValidationNoteText` y `NotesValidationTaskText` en los tres `.resx`.
 - **DI** (`MauiProgram.cs`): `NotesDatabase` (Singleton), `INotesRepository`→`SqliteNotesRepository` y `ITaskGroupsRepository`→`SqliteTaskGroupsRepository` (Singleton), y `NotesViewModel`/`NoteEditorViewModel`/`TaskEditorViewModel` (Transient).
 
 ---

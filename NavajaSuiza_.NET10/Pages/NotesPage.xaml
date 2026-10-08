@@ -61,8 +61,8 @@
                             CornerRadius="8"
                             BorderWidth="0"
                             Padding="8"
-                            WidthRequest="50"
-                            HeightRequest="50"
+                            WidthRequest="40"
+                            HeightRequest="40"
                             VerticalOptions="Center"
                             SemanticProperties.Description="{extensions:Translate NotesDeleteTitleText}"
                             Command="{Binding BindingContext.DeleteNoteCommand, Source={x:Reference NotesPageRoot}}"
@@ -115,8 +115,8 @@
                                 CornerRadius="8"
                                 BorderWidth="0"
                                 Padding="8"
-                                WidthRequest="50"
-                                HeightRequest="50"
+                                WidthRequest="40"
+                                HeightRequest="40"
                                 VerticalOptions="Center"
                                 SemanticProperties.Description="{extensions:Translate NotesDeleteTitleText}"
                                 Command="{Binding BindingContext.DeleteTaskCommand, Source={x:Reference NotesPageRoot}}"
@@ -125,16 +125,15 @@
 
                     <!-- Ítems del grupo -->
                     <VerticalStackLayout Grid.Row="1"
-                                         Spacing="2"
                                          BindableLayout.ItemsSource="{Binding Items}">
                         <BindableLayout.ItemTemplate>
                             <DataTemplate>
                                 <Grid ColumnDefinitions="Auto,Auto,*" ColumnSpacing="8">
                                     <Border Grid.Column="0"
-                                            WidthRequest="10"
-                                            HeightRequest="10"
+                                            WidthRequest="15"
+                                            HeightRequest="15"
                                             StrokeThickness="0"
-                                            StrokeShape="RoundRectangle 5"
+                                            StrokeShape="Ellipse"
                                             VerticalOptions="Center"
                                             BackgroundColor="{StaticResource MyAccentBlue}">
                                         <Border.Triggers>
@@ -152,13 +151,12 @@
 
                                     <CheckBox Grid.Column="1"
                                               IsChecked="{Binding IsCompleted, Mode=TwoWay}"
-                                              Scale="0.85"
+                                              Scale="1"
                                               VerticalOptions="Center" />
 
                                     <Label Grid.Column="2"
                                            Text="{Binding Title}"
                                            FontSize="13"
-                                           Opacity="0.8"
                                            LineBreakMode="TailTruncation"
                                            VerticalOptions="Center" />
                                 </Grid>

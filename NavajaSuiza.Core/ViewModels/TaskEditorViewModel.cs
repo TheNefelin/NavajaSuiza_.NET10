@@ -55,7 +55,7 @@ public partial class TaskEditorViewModel : BaseViewModel
         _editingId = item?.Id ?? 0;
         _editingCreatedAt = item?.CreatedAt ?? default;
         TitleText = item?.Title ?? string.Empty;
-        PageTitle = _languageService.GetString(IsEditing ? "NotesEditTaskTitleText" : "NotesCreateTaskTitleText");
+        PageTitle = _languageService.GetString(IsEditing ? "NotesEditTaskTitleText" : "NotesCreateTaskText");
 
         NewTaskTitle = string.Empty;
         SelectedImportance = TaskImportance.Low;
@@ -78,7 +78,13 @@ public partial class TaskEditorViewModel : BaseViewModel
     private async Task SaveAsync()
     {
         if (string.IsNullOrWhiteSpace(TitleText))
+        {
+            await _navigationService.DisplayAlertAsync(
+                _languageService.GetString("NotesValidationTitleText"),
+                _languageService.GetString("NotesValidationTaskText"),
+                _languageService.GetString("CommonOkText"));
             return;
+        }
 
         try
         {
@@ -128,9 +134,18 @@ public partial class TaskEditorViewModel : BaseViewModel
     }
 
     [RelayCommand]
-    private void DeleteTask(TaskItem? taskItem)
+    private async Task DeleteTaskAsync(TaskItem? taskItem)
     {
-        if (taskItem is not null)
+        if (taskItem is null)
+            return;
+
+        var confirmed = await _navigationService.DisplayAlertConfirmAsync(
+            _languageService.GetString("NotesDeleteTitleText"),
+            _languageService.GetString("NotesDeleteConfirmationText"),
+            _languageService.GetString("CommonYesText"),
+            _languageService.GetString("CommonNoText"));
+
+        if (confirmed)
             TaskItems.Remove(taskItem);
     }
 }

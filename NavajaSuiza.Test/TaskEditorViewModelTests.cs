@@ -15,7 +15,7 @@ public class TaskEditorViewModelTests
 
     private TaskEditorViewModel CreateSut(TaskGroupListItem? parameter = null)
     {
-        _languageServiceMock.Setup(s => s.GetString("NotesCreateTaskTitleText")).Returns("Crear Tareas");
+        _languageServiceMock.Setup(s => s.GetString("NotesCreateTaskText")).Returns("Crear Tareas");
         _languageServiceMock.Setup(s => s.GetString("NotesEditTaskTitleText")).Returns("Editar tarea");
 
         _navigationServiceMock.Setup(n => n.TakeNavigationParameter()).Returns(parameter);
@@ -90,17 +90,35 @@ public class TaskEditorViewModelTests
     }
 
     [Fact]
-    public void DeleteTask_RemovesItem()
+    public async Task DeleteTask_WhenConfirmed_RemovesItem()
     {
+        _navigationServiceMock.Setup(n => n.DisplayAlertConfirmAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+            .ReturnsAsync(true);
         var vm = CreateSut();
         vm.Initialize();
         vm.NewTaskTitle = "Tarea";
         vm.AddTaskCommand.Execute(null);
         var item = Assert.Single(vm.TaskItems);
 
-        vm.DeleteTaskCommand.Execute(item);
+        await vm.DeleteTaskCommand.ExecuteAsync(item);
 
         Assert.Empty(vm.TaskItems);
+    }
+
+    [Fact]
+    public async Task DeleteTask_WhenCancelled_KeepsItem()
+    {
+        _navigationServiceMock.Setup(n => n.DisplayAlertConfirmAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+            .ReturnsAsync(false);
+        var vm = CreateSut();
+        vm.Initialize();
+        vm.NewTaskTitle = "Tarea";
+        vm.AddTaskCommand.Execute(null);
+        var item = Assert.Single(vm.TaskItems);
+
+        await vm.DeleteTaskCommand.ExecuteAsync(item);
+
+        Assert.Single(vm.TaskItems);
     }
 
     [Fact]
@@ -112,6 +130,18 @@ public class TaskEditorViewModelTests
         await vm.SaveCommand.ExecuteAsync(null);
 
         _repositoryMock.Verify(r => r.SaveAsync(It.IsAny<TaskGroup>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task Save_WithEmptyTitle_ShowsValidationAlert()
+    {
+        var vm = CreateSut();
+        vm.Initialize();
+
+        await vm.SaveCommand.ExecuteAsync(null);
+
+        _navigationServiceMock.Verify(n => n.DisplayAlertAsync(
+            It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once);
     }
 
     [Fact]

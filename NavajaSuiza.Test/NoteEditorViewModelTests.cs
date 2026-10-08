@@ -15,7 +15,7 @@ public class NoteEditorViewModelTests
 
     private NoteEditorViewModel CreateSut(NoteListItem? parameter = null)
     {
-        _languageServiceMock.Setup(s => s.GetString("NotesCreateNoteTitleText")).Returns("Crear Nota");
+        _languageServiceMock.Setup(s => s.GetString("NotesCreateNoteText")).Returns("Crear Nota");
         _languageServiceMock.Setup(s => s.GetString("NotesEditTitleText")).Returns("Editar nota");
 
         _navigationServiceMock.Setup(n => n.TakeNavigationParameter()).Returns(parameter);
@@ -60,6 +60,18 @@ public class NoteEditorViewModelTests
         await vm.SaveCommand.ExecuteAsync(null);
 
         _repositoryMock.Verify(r => r.SaveAsync(It.IsAny<Note>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task Save_WithEmptyTitleAndContent_ShowsValidationAlert()
+    {
+        var vm = CreateSut();
+        vm.Initialize();
+
+        await vm.SaveCommand.ExecuteAsync(null);
+
+        _navigationServiceMock.Verify(n => n.DisplayAlertAsync(
+            It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once);
     }
 
     [Fact]

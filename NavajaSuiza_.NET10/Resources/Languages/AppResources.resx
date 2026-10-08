@@ -240,9 +240,6 @@
   <data name="NotesSaveText" xml:space="preserve">
     <value>Guardar</value>
   </data>
-  <data name="NotesCreateNoteTitleText" xml:space="preserve">
-    <value>Crear Nota</value>
-  </data>
   <data name="NotesEditTitleText" xml:space="preserve">
     <value>Editar nota</value>
   </data>
@@ -250,10 +247,19 @@
     <value>Sin notas aún. Toca en "Nueva" para crear una.</value>
   </data>
   <data name="NotesDeleteTitleText" xml:space="preserve">
-    <value>Eliminar nota</value>
+    <value>Eliminar</value>
   </data>
   <data name="NotesDeleteConfirmationText" xml:space="preserve">
-    <value>¿Estás seguro que deseas eliminar esta nota?</value>
+    <value>¿Estás seguro que deseas eliminar este elemento?</value>
+  </data>
+  <data name="NotesValidationTitleText" xml:space="preserve">
+    <value>Falta información</value>
+  </data>
+  <data name="NotesValidationNoteText" xml:space="preserve">
+    <value>Escribe un título o algún contenido.</value>
+  </data>
+  <data name="NotesValidationTaskText" xml:space="preserve">
+    <value>Escribe un nombre para el grupo de tareas.</value>
   </data>
   <data name="NotesErrorTitleText" xml:space="preserve">
     <value>Error</value>
@@ -511,15 +517,12 @@
     <value>Crear nueva nota</value>
   </data>
   <data name="NotesCreateNoteText" xml:space="preserve">
-    <value>+ Crear Nota</value>
+    <value>Crear Nota</value>
   </data>
   <data name="NotesNewTaskDescriptionText" xml:space="preserve">
     <value>Crear nueva tarea</value>
   </data>
   <data name="NotesCreateTaskText" xml:space="preserve">
-    <value>+ Crear Tareas</value>
-  </data>
-  <data name="NotesCreateTaskTitleText" xml:space="preserve">
     <value>Crear Tareas</value>
   </data>
   <data name="NotesEditTaskTitleText" xml:space="preserve">
@@ -532,7 +535,7 @@
     <value>Nombre de la tarea</value>
   </data>
   <data name="NotesAddTaskText" xml:space="preserve">
-    <value>+ Agregar</value>
+    <value>Agregar</value>
   </data>
   <data name="NotesImportanceHighText" xml:space="preserve">
     <value>Alta</value>

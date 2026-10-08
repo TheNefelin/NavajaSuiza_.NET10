@@ -240,9 +240,6 @@
   <data name="NotesSaveText" xml:space="preserve">
     <value>Save</value>
   </data>
-  <data name="NotesCreateNoteTitleText" xml:space="preserve">
-    <value>Create note</value>
-  </data>
   <data name="NotesEditTitleText" xml:space="preserve">
     <value>Edit note</value>
   </data>
@@ -250,10 +247,19 @@
     <value>No notes yet. Tap "New" to create one.</value>
   </data>
   <data name="NotesDeleteTitleText" xml:space="preserve">
-    <value>Delete note</value>
+    <value>Delete</value>
   </data>
   <data name="NotesDeleteConfirmationText" xml:space="preserve">
-    <value>Are you sure you want to delete this note?</value>
+    <value>Are you sure you want to delete this item?</value>
+  </data>
+  <data name="NotesValidationTitleText" xml:space="preserve">
+    <value>Missing information</value>
+  </data>
+  <data name="NotesValidationNoteText" xml:space="preserve">
+    <value>Write a title or some content.</value>
+  </data>
+  <data name="NotesValidationTaskText" xml:space="preserve">
+    <value>Write a name for the task group.</value>
   </data>
   <data name="NotesErrorTitleText" xml:space="preserve">
     <value>Error</value>
@@ -508,14 +514,13 @@
     <value>Enter the text</value>
   </data>
   <data name="NotesNewDescriptionText" xml:space="preserve"><value>New note</value></data>
-  <data name="NotesCreateNoteText" xml:space="preserve"><value>+ Create note</value></data>
+  <data name="NotesCreateNoteText" xml:space="preserve"><value>Create note</value></data>
   <data name="NotesNewTaskDescriptionText" xml:space="preserve"><value>Create new task</value></data>
-  <data name="NotesCreateTaskText" xml:space="preserve"><value>+ Create tasks</value></data>
-  <data name="NotesCreateTaskTitleText" xml:space="preserve"><value>Create tasks</value></data>
+  <data name="NotesCreateTaskText" xml:space="preserve"><value>Create tasks</value></data>
   <data name="NotesEditTaskTitleText" xml:space="preserve"><value>Edit task</value></data>
   <data name="NotesTaskGroupNamePlaceholderText" xml:space="preserve"><value>Task group name</value></data>
   <data name="NotesTaskItemPlaceholderText" xml:space="preserve"><value>Task name</value></data>
-  <data name="NotesAddTaskText" xml:space="preserve"><value>+ Add</value></data>
+  <data name="NotesAddTaskText" xml:space="preserve"><value>Add</value></data>
   <data name="NotesImportanceHighText" xml:space="preserve"><value>High</value></data>
   <data name="NotesImportanceMediumText" xml:space="preserve"><value>Medium</value></data>
   <data name="NotesImportanceLowText" xml:space="preserve"><value>Low</value></data>
