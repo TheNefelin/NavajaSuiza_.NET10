@@ -87,6 +87,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <AndroidResource Remove="Platforms\Android\Resources\values\styles.xml" />
+	</ItemGroup>
+
+	<ItemGroup>
 	<PackageReference Include="CommunityToolkit.Maui" />
 	<PackageReference Include="CommunityToolkit.Maui.MediaElement" />
 	<PackageReference Include="CommunityToolkit.Mvvm" />
