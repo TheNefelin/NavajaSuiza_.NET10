@@ -988,6 +988,13 @@ Google Play anunció (ago-2026) un requisito de calidad técnica: las apps deben
 - **Acción correcta**: ignorar la advertencia hasta la fecha de enforcement, documentarla como limitación conocida (§11.18) y vigilar el issue de Microsoft. Si en el futuro se habilita la ofuscación, medir DEX antes/después y decidir ahí.
 - **No confundir** con otras métricas de app quality sí accionables y exigibles hoy: targetSdk 36, soporte 64-bit y alineación a 16 KB pages.
 
+### 11.19 Publicación: minSdkVersion ≥ 24 (protección automática de Play)
+
+- Google Play rechaza la subida si el manifest declara `minSdkVersion < 24`, con el error: "La protección automática de Play requiere una versión mínima del SDK de 24 o una versión posterior".
+- En .NET MAUI se controla con **`SupportedOSPlatformVersion`** (solo para la plataforma android; no toca iOS/MacCatalyst/Windows). Con `21.0` el manifest sale `android:minSdkVersion="21"` y Play lo bloquea.
+- Verificar en el manifest generado (`obj/.../AndroidManifest.xml`): `android:minSdkVersion="24"`.
+- Sin pérdida real de dispositivos: API 24 = Android 7.0. No confundir con `targetSdkVersion` (requisito distinto; aquí ya es 36).
+
 ---
 
 ## 12. Tests
@@ -1035,6 +1042,7 @@ Google Play anunció (ago-2026) un requisito de calidad técnica: las apps deben
 - [ ] MAUI: Status bar en Android 15+ resuelta con override de `MauiAppBarLayout` (no con `SetStatusBarColor`, que el sistema ignora) y guard `!OperatingSystem.IsAndroidVersionAtLeast(35)` para Android ≤14; botones de diálogos de fecha/hora vía handler, sin tocar `colorAccent` (§11.16).
 - [ ] MAUI: Recordatorios programados con IDs scopeados por tipo de entidad en requestCode/id de notificación (`(kind << 24) | id`), cancelación al borrar y permiso `POST_NOTIFICATIONS` antes de agendar (§11.17).
 - [ ] Publicación: advertencia de ofuscación/DEX de Play **no corregible** en .NET MAUI (límite del toolchain); ignorar hasta feb-2027 y verificar el resto de métricas accionables (targetSdk, 64-bit, 16 KB pages) (§11.18).
+- [ ] Publicación: Play Protect exige `minSdkVersion ≥ 24`; se controla con `SupportedOSPlatformVersion` (solo android), no con targetSdk (§11.19).
 
 ---
 

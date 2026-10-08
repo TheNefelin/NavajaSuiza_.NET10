@@ -695,6 +695,7 @@ MAUI `Battery.Default` en Android exige `BATTERY_STATS` (permiso protegido `sign
 
 - **Advertencia de DEX/ofuscación en Play Console**: la app la muestra (ofuscación ~1%) porque supera 10 MB de DEX sin comprimir. Es una **limitación estructural de .NET for Android** (R8 fijado en `-dontobfuscate`, issue `dotnet/android#12535`): no se corrige desde el proyecto, y el umbral de 25% rige recién en **feb-2027** (detalles y verificación en SKILL §11.18). No bloquea la subida de 1.10.0.
 - **Release 1.10.0 (pendiente de subir)**: agregar recordatorios por notificación a listas de tareas, campana en tarjeta de lista, guía con imágenes `board_01/02`, `notes_03/04` y texto de recordatorios; `ApplicationDisplayVersion=1.10.0`, `ApplicationVersion=2` (máximo histórico 1).
+- **Play Protect (minSdk)**: la primera subida de 1.10.0 fue rechazada por `minSdkVersion=21`; corregido a **24** en `SupportedOSPlatformVersion` (android) del csproj. Detalle y verificación en SKILL §11.19.
 
 ---
 
