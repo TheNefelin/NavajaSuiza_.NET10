@@ -26,7 +26,7 @@ Ritplattan låter dig rita fritt för hand på en vit yta och spara din teckning
 
 | | |
 |---|---|
-| ![Ritplatta](blackboard_01.jpg) | ![Ritplatta](blackboard_02.jpg) |
+| ![Ritplatta](board_01.jpg) | ![Ritplatta](board_02.jpg) |
 
 ### Så här använder du den
 
@@ -187,6 +187,7 @@ Med anteckningsverktyget kan du skriva ner idéer eller valfri text och hålla d
 | | |
 |---|---|
 | ![Anteckningar](notes_01.jpg) | ![Anteckningar](notes_02.jpg) |
+| ![Anteckningar](notes_03.jpg) | ![Anteckningar](notes_04.jpg) |
 
 ### Så här använder du det
 
@@ -198,6 +199,8 @@ Med anteckningsverktyget kan du skriva ner idéer eller valfri text och hålla d
 - I en uppgiftslista markerar du varje objekts kryssruta för att slutföra det; ändringen sparas direkt.
 - Använd förstoringsglaset för att söka på titel eller innehåll (i listor även på deras objekts text).
 - Tryck på radera-knappen (papperskorgen) för att ta bort en anteckning eller lista; appen ber om bekräftelse.
+- Du kan lägga till en **påminnelse** på en anteckning eller en uppgiftslista: öppna den, aktivera *påminnelse*–reglaget och välj datum och tid. Appen meddelar dig vid den tidpunkten, även om den är stängd.
+- Påminnelsen avbryts automatiskt om du raderar anteckningen eller listan.
 
 ### Tips
 

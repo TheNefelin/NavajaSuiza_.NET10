@@ -693,6 +693,9 @@ MAUI `Battery.Default` en Android exige `BATTERY_STATS` (permiso protegido `sign
 
 **Estado de release (2026-09-30)**: app **publicada en Google Play, en Internal testing y Closed testing** (pista `Prueba cerrada - Alpha`, release `1.1.97-prueba-cerrada`, AAB firmado aceptado; la vía de Internal testing está activa y se puede subir una versión nueva cuando haga falta). Privacy Policy **publicada** en `https://www.francisco-dev.cl/navaja-suiza/privacy-policy` (fuente en `PRIVACY_POLICY.md`, trilingüe + bloque Astro), **`allowBackup=false` decidido** (Notas solo locales, sin transmisión) y targetSdk 36 (cumple). **Siguiente paso**: completar los 12 testers opted-in durante 14 días continuos en la pista cerrada y luego solicitar la revisión de producción.
 
+- **Advertencia de DEX/ofuscación en Play Console**: la app la muestra (ofuscación ~1%) porque supera 10 MB de DEX sin comprimir. Es una **limitación estructural de .NET for Android** (R8 fijado en `-dontobfuscate`, issue `dotnet/android#12535`): no se corrige desde el proyecto, y el umbral de 25% rige recién en **feb-2027** (detalles y verificación en SKILL §11.18). No bloquea la subida de 1.10.0.
+- **Release 1.10.0 (pendiente de subir)**: agregar recordatorios por notificación a listas de tareas, campana en tarjeta de lista, guía con imágenes `board_01/02`, `notes_03/04` y texto de recordatorios; `ApplicationDisplayVersion=1.10.0`, `ApplicationVersion=2` (máximo histórico 1).
+
 ---
 
 ## 15. Hallazgos y deuda técnica

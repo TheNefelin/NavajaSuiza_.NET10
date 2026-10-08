@@ -978,6 +978,16 @@ static string ToNotificationKey(ReminderKind kind, int id) => $"{kind}:{id}";   
 - **Ciclo de vida**: cancelar explícitamente al borrar la entidad; persistir `ReminderAt` en la entidad para restaurar la UI. sqlite-net agrega la columna con `ALTER TABLE ADD COLUMN` al abrir bases existentes (verificar con una base preexistente).
 - **Diferencias platform**: Android convierte hora local a UTC y **pierde las alarmas al reiniciar** (sin `BOOT_COMPLETED`); iOS conserva las pendientes entre reinicios. Tocar la notificación abre la app (sin deep link) salvo que se implemente uno aparte.
 
+### 11.18 Publicación y métrica DEX de Google Play (ofuscación/R8)
+
+Google Play anunció (ago-2026) un requisito de calidad técnica: las apps deben lograr **≥25% de optimización, ofuscación y shrinking del código DEX** ("DEX code optimisation"). Puntos validados para .NET MAUI:
+
+- **Plazo**: es un requisito *upcoming*; la aplicación del umbral comienza en **febrero 2027**. Hasta entonces es una advertencia informativa en Play Console que **no bloquea** subidas ni revisión de producción (la pista de internal testing la muestra igual; no indica un defecto de la app).
+- **Cuándo aplica**: solo a apps con **≥10 MB de DEX sin comprimir**. Verificarlo en el bundle: `unzip -l app.aab | grep -E '\.dex$'` y sumar el tamaño *uncompressed* de `classes*.dex`. En esta app ~21 MB → la métrica aplica.
+- **No corregible desde el proyecto**: .NET for Android fija R8 con `-dontobfuscate` incondicional, así que la ofuscación queda en 0% por diseño. No hay propiedad de MSBuild ni configuración de ProGuard que la suba, y no aporta "emparcharla" de otra forma. Es un límite del toolchain (issue `dotnet/android#12535`); .NET 11/CoreCLR tampoco lo resuelve por sí solo.
+- **Acción correcta**: ignorar la advertencia hasta la fecha de enforcement, documentarla como limitación conocida (§11.18) y vigilar el issue de Microsoft. Si en el futuro se habilita la ofuscación, medir DEX antes/después y decidir ahí.
+- **No confundir** con otras métricas de app quality sí accionables y exigibles hoy: targetSdk 36, soporte 64-bit y alineación a 16 KB pages.
+
 ---
 
 ## 12. Tests
@@ -1024,6 +1034,7 @@ static string ToNotificationKey(ReminderKind kind, int id) => $"{kind}:{id}";   
 - [ ] MAUI: Empaquetado Android con `RuntimeIdentifiers` (`AndroidSupportedAbis` obsoleta en .NET 10); validar ABI en dispositivo real con `ro.product.cpu.abi` (cuidado con 32-bit).
 - [ ] MAUI: Status bar en Android 15+ resuelta con override de `MauiAppBarLayout` (no con `SetStatusBarColor`, que el sistema ignora) y guard `!OperatingSystem.IsAndroidVersionAtLeast(35)` para Android ≤14; botones de diálogos de fecha/hora vía handler, sin tocar `colorAccent` (§11.16).
 - [ ] MAUI: Recordatorios programados con IDs scopeados por tipo de entidad en requestCode/id de notificación (`(kind << 24) | id`), cancelación al borrar y permiso `POST_NOTIFICATIONS` antes de agendar (§11.17).
+- [ ] Publicación: advertencia de ofuscación/DEX de Play **no corregible** en .NET MAUI (límite del toolchain); ignorar hasta feb-2027 y verificar el resto de métricas accionables (targetSdk, 64-bit, 16 KB pages) (§11.18).
 
 ---
 

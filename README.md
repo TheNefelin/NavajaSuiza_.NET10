@@ -32,7 +32,7 @@ La pizarra te permite dibujar a mano alzada sobre una superficie blanca y guarda
 
 | | |
 |---|---|
-| ![Pizarra](NavajaSuiza_.NET10/Resources/Raw/guide/blackboard_01.jpg) | ![Pizarra](NavajaSuiza_.NET10/Resources/Raw/guide/blackboard_02.jpg) |
+| ![Pizarra](NavajaSuiza_.NET10/Resources/Raw/guide/board_01.jpg) | ![Pizarra](NavajaSuiza_.NET10/Resources/Raw/guide/board_02.jpg) |
 
 #### Cómo se usa
 
@@ -193,6 +193,7 @@ La herramienta de notas te permite anotar ideas o cualquier texto y también cre
 | | |
 |---|---|
 | ![Notas](NavajaSuiza_.NET10/Resources/Raw/guide/notes_01.jpg) | ![Notas](NavajaSuiza_.NET10/Resources/Raw/guide/notes_02.jpg) |
+| ![Notas](NavajaSuiza_.NET10/Resources/Raw/guide/notes_03.jpg) | ![Notas](NavajaSuiza_.NET10/Resources/Raw/guide/notes_04.jpg) |
 
 #### Cómo se usa
 
@@ -204,6 +205,8 @@ La herramienta de notas te permite anotar ideas o cualquier texto y también cre
 - En una lista de tareas, marca la casilla de cada ítem para completarlo; el cambio se guarda al instante.
 - Usa la lupa para buscar por título o contenido (en las listas, también por el texto de sus ítems).
 - Toca el botón de borrar (papelera) para eliminar una nota o una lista; la app te pide confirmación.
+- Puedes agregar un **recordatorio** a una nota o a una lista de tareas: ábrela, activa el interruptor de *recordatorio* y elige la fecha y la hora. La app te avisará con una notificación en ese momento, aunque no esté abierta.
+- El recordatorio se cancela automáticamente si borras la nota o la lista.
 
 #### Consejos
 

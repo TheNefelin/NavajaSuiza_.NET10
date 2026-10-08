@@ -26,7 +26,7 @@ The sketchpad lets you draw freehand on a white surface and save your drawing as
 
 | | |
 |---|---|
-| ![Sketchpad](blackboard_01.jpg) | ![Sketchpad](blackboard_02.jpg) |
+| ![Sketchpad](board_01.jpg) | ![Sketchpad](board_02.jpg) |
 
 ### How to use it
 
@@ -187,6 +187,7 @@ The notes tool lets you write down ideas or any text, and keep them organized an
 | | |
 |---|---|
 | ![Notes](notes_01.jpg) | ![Notes](notes_02.jpg) |
+| ![Notes](notes_03.jpg) | ![Notes](notes_04.jpg) |
 
 ### How to use it
 
@@ -198,6 +199,8 @@ The notes tool lets you write down ideas or any text, and keep them organized an
 - In a task list, check each item's box to mark it complete; the change is saved instantly.
 - Use the magnifier to search by title or content (in lists, also by the text of their items).
 - Tap the delete (trash) button to remove a note or a list; the app asks for confirmation.
+- You can add a **reminder** to a note or a task list: open it, turn on the *reminder* switch and pick the date and time. The app will notify you at that moment, even if it is closed.
+- The reminder is canceled automatically if you delete the note or the list.
 
 ### Tips
 
