@@ -1,6 +1,7 @@
 using System.Reflection;
 using CommunityToolkit.Maui;
 using Microsoft.Extensions.Logging;
+using Microsoft.Maui.Hosting;
 using NavajaSuiza_.NET10.Pages;
 using NavajaSuiza_.NET10.Services.Implementations;
 using NavajaSuiza.Core.Interfaces;
@@ -9,6 +10,9 @@ using NavajaSuiza.Core.ViewModels;
 using Syncfusion.Licensing;
 using Syncfusion.Maui.Core.Hosting;
 using Syncfusion.Maui.Toolkit.Hosting;
+#if ANDROID
+using NavajaSuiza_.NET10.Platforms.Android.Handlers;
+#endif
 
 namespace NavajaSuiza_.NET10;
 
@@ -41,6 +45,14 @@ public static class MauiProgram
                 fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
             })
             .ConfigureServices();
+
+#if ANDROID
+        builder.ConfigureMauiHandlers(handlers =>
+        {
+            handlers.AddHandler<Microsoft.Maui.Controls.DatePicker, NavajaDatePickerHandler>();
+            handlers.AddHandler<Microsoft.Maui.Controls.TimePicker, NavajaTimePickerHandler>();
+        });
+#endif
 
 #if DEBUG
         builder.Logging.AddDebug();
