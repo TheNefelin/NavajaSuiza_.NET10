@@ -1,7 +1,6 @@
 using System.Reflection;
 using CommunityToolkit.Maui;
 using Microsoft.Extensions.Logging;
-using Microsoft.Maui.Hosting;
 using NavajaSuiza_.NET10.Pages;
 using NavajaSuiza_.NET10.Services.Implementations;
 using NavajaSuiza.Core.Interfaces;

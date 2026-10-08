@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <resources>
 
-    <style name="Maui.MainTheme" parent="Maui.MainTheme.Base">
-        <item name="android:statusBarColor">#243042</item>
-        <item name="android:navigationBarColor">#243042</item>
-    </style>
-
     <style name="MauiAppBarLayout" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
         <item name="android:background">#243042</item>
     </style>
