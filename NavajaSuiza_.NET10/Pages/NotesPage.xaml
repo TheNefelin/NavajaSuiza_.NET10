@@ -39,7 +39,7 @@
                                           CommandParameter="{Binding .}" />
                 </Border.GestureRecognizers>
 
-                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10" RowDefinitions="Auto,Auto" RowSpacing="2">
+                <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10" RowDefinitions="Auto,Auto" RowSpacing="2">
 
                     <Label Grid.Row="0" Grid.Column="0"
                            Text="{Binding Title}"
@@ -47,14 +47,23 @@
                            FontSize="16"
                            LineBreakMode="TailTruncation" />
 
+                    <Image Grid.Row="0" Grid.Column="1"
+                           Source="icon_bell_ring.png"
+                           WidthRequest="16"
+                           HeightRequest="16"
+                           IsVisible="{Binding HasReminder}"
+                           VerticalOptions="Center"
+                           SemanticProperties.Description="{extensions:Translate NotesReminderSectionText}" />
+
                     <Label Grid.Row="1" Grid.Column="0"
+                           Grid.ColumnSpan="2"
                            Text="{Binding Content}"
                            FontSize="13"
                            Opacity="0.7"
                            MaxLines="2"
                            LineBreakMode="TailTruncation" />
 
-                    <Button Grid.Row="0" Grid.Column="1"
+                    <Button Grid.Row="0" Grid.Column="2"
                             Grid.RowSpan="2"
                             ImageSource="icon_delete.png"
                             BackgroundColor="{StaticResource MyOn}"

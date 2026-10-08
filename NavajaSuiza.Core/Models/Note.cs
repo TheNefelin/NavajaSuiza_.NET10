@@ -9,4 +9,6 @@ public class Note
     public string Content { get; set; } = string.Empty;
 
     public DateTime CreatedAt { get; set; }
+
+    public DateTime? ReminderAt { get; set; }
 }

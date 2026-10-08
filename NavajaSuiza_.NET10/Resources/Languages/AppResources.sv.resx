@@ -527,4 +527,9 @@
   <data name="NotesTaskEmptyText" xml:space="preserve"><value>Inga uppgifter ännu</value></data>
   <data name="NotesSectionTasksText" xml:space="preserve"><value>Uppgifter</value></data>
   <data name="NotesSectionNotesText" xml:space="preserve"><value>Anteckningar</value></data>
+  <data name="NotesReminderSectionText" xml:space="preserve"><value>Påminnelse</value></data>
+  <data name="NotesReminderNotificationTitleText" xml:space="preserve"><value>Anteckning</value></data>
+  <data name="NotesReminderNotificationBodyText" xml:space="preserve"><value>Påminnelse om din anteckning</value></data>
+  <data name="NotesReminderPastText" xml:space="preserve"><value>Påminnelsetiden måste vara i framtiden.</value></data>
+  <data name="NotesReminderPermissionText" xml:space="preserve"><value>Behörighet krävs för att visa påminnelser.</value></data>
 </root>

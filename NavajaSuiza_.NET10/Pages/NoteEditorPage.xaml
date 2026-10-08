@@ -11,7 +11,7 @@
         <converters:InvertedBoolConverter x:Key="InvertedBoolConverter" />
     </ContentPage.Resources>
 
-    <Grid RowDefinitions="Auto,Auto,*,Auto"
+    <Grid RowDefinitions="Auto,Auto,*,Auto,Auto"
           Padding="20"
           RowSpacing="12">
 
@@ -33,7 +33,32 @@
                 VerticalOptions="Fill"
                 BackgroundColor="Transparent" />
 
-        <Button Grid.Row="3"
+        <!-- Recordatorio -->
+        <VerticalStackLayout Grid.Row="3" Spacing="8">
+
+            <Grid ColumnDefinitions="*,Auto">
+                <Label Text="{extensions:Translate NotesReminderSectionText}"
+                       FontSize="14"
+                       Opacity="0.8"
+                       VerticalOptions="Center" />
+
+                <Switch Grid.Column="1"
+                        IsToggled="{Binding HasReminder}"
+                        OnColor="{StaticResource MyAccentBlue}" />
+            </Grid>
+
+            <HorizontalStackLayout IsVisible="{Binding HasReminder}" Spacing="8">
+                <DatePicker Date="{Binding ReminderDate}"
+                            FontSize="14"
+                            VerticalOptions="Center" />
+
+                <TimePicker Time="{Binding ReminderTime}"
+                            FontSize="14"
+                            VerticalOptions="Center" />
+            </HorizontalStackLayout>
+        </VerticalStackLayout>
+
+        <Button Grid.Row="4"
                 Text="{extensions:Translate NotesSaveText}"
                 Command="{Binding SaveCommand}"
                 BackgroundColor="{StaticResource MyAccentBlue}"

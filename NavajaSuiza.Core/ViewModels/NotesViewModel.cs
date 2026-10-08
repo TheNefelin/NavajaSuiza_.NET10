@@ -13,6 +13,7 @@ public partial class NotesViewModel : BaseViewModel
     private readonly ITaskGroupsRepository _taskGroupsRepository;
     private readonly INavigationService _navigationService;
     private readonly ILanguageService _languageService;
+    private readonly IReminderScheduler _reminderScheduler;
     private readonly ILogger<NotesViewModel> _logger;
 
     private List<Note> _allNotes = [];
@@ -31,12 +32,14 @@ public partial class NotesViewModel : BaseViewModel
         ITaskGroupsRepository taskGroupsRepository,
         INavigationService navigationService,
         ILanguageService languageService,
+        IReminderScheduler reminderScheduler,
         ILogger<NotesViewModel> logger)
     {
         _notesRepository = notesRepository;
         _taskGroupsRepository = taskGroupsRepository;
         _navigationService = navigationService;
         _languageService = languageService;
+        _reminderScheduler = reminderScheduler;
         _logger = logger;
     }
 
@@ -81,6 +84,7 @@ public partial class NotesViewModel : BaseViewModel
         {
             IsBusy = true;
             await _notesRepository.DeleteAsync(note.Id);
+            await CancelReminderAsync(note.Id);
             await LoadNotesAsync();
         }
         catch (Exception ex)
@@ -121,6 +125,18 @@ public partial class NotesViewModel : BaseViewModel
             _languageService.GetString("NotesDeleteConfirmationText"),
             _languageService.GetString("CommonYesText"),
             _languageService.GetString("CommonNoText"));
+
+    private async Task CancelReminderAsync(int noteId)
+    {
+        try
+        {
+            await _reminderScheduler.CancelAsync(noteId);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error al cancelar el recordatorio de la nota {NoteId}", noteId);
+        }
+    }
 
     private async Task HandleErrorAsync(Exception ex, string messageKey, string logMessage)
     {
@@ -168,7 +184,8 @@ public partial class NotesViewModel : BaseViewModel
                 Id = note.Id,
                 Title = note.Title,
                 Content = note.Content,
-                CreatedAt = note.CreatedAt
+                CreatedAt = note.CreatedAt,
+                ReminderAt = note.ReminderAt
             })
             .ToList();
 

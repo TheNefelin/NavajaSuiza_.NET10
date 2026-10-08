@@ -527,4 +527,9 @@
   <data name="NotesTaskEmptyText" xml:space="preserve"><value>No tasks yet</value></data>
   <data name="NotesSectionTasksText" xml:space="preserve"><value>Tasks</value></data>
   <data name="NotesSectionNotesText" xml:space="preserve"><value>Notes</value></data>
+  <data name="NotesReminderSectionText" xml:space="preserve"><value>Reminder</value></data>
+  <data name="NotesReminderNotificationTitleText" xml:space="preserve"><value>Note</value></data>
+  <data name="NotesReminderNotificationBodyText" xml:space="preserve"><value>Reminder for your note</value></data>
+  <data name="NotesReminderPastText" xml:space="preserve"><value>The reminder time must be in the future.</value></data>
+  <data name="NotesReminderPermissionText" xml:space="preserve"><value>Notification permission is required to show reminders.</value></data>
 </root>

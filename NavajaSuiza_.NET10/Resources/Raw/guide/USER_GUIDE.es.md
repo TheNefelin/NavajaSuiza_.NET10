@@ -192,7 +192,7 @@ La herramienta de notas te permite anotar ideas o cualquier texto y también cre
 
 - La pantalla muestra dos secciones: **Tareas** y **Notas**.
 - Toca el botón **nueva nota** para crear una nota con título y contenido.
-- Toca el botón **nueva tarea** para crear una lista de tareas: ponele un nombre a la lista y agregá los ítems con su casilla.
+- Toca el botón **nueva tarea** para crear una lista de tareas: ponle un nombre a la lista y agrega los ítems con su casilla.
 - Toca **guardar** para guardar o **atrás** para cancelar sin guardar.
 - Toca una nota o una lista de tareas existente para editarla.
 - En una lista de tareas, marca la casilla de cada ítem para completarlo; el cambio se guarda al instante.

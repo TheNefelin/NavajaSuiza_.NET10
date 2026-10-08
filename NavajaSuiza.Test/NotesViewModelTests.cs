@@ -12,6 +12,7 @@ public class NotesViewModelTests
     private readonly Mock<ITaskGroupsRepository> _taskGroupsRepositoryMock = new();
     private readonly Mock<INavigationService> _navigationServiceMock = new();
     private readonly Mock<ILanguageService> _languageServiceMock = new();
+    private readonly Mock<IReminderScheduler> _reminderSchedulerMock = new();
     private readonly Mock<ILogger<NotesViewModel>> _loggerMock = new();
 
     public NotesViewModelTests()
@@ -28,6 +29,7 @@ public class NotesViewModelTests
             _taskGroupsRepositoryMock.Object,
             _navigationServiceMock.Object,
             _languageServiceMock.Object,
+            _reminderSchedulerMock.Object,
             _loggerMock.Object);
     }
 
@@ -85,6 +87,23 @@ public class NotesViewModelTests
         await vm.DeleteNoteCommand.ExecuteAsync(item);
 
         _repositoryMock.Verify(r => r.DeleteAsync(3), Times.Once);
+    }
+
+    [Fact]
+    public async Task DeleteNote_WhenConfirmed_CancelsReminder()
+    {
+        var note = new Note { Id = 3, Title = "Borrar", CreatedAt = DateTime.UtcNow };
+        _repositoryMock.Setup(r => r.GetAllAsync()).ReturnsAsync([note]);
+        _navigationServiceMock.Setup(n => n.DisplayAlertConfirmAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+            .ReturnsAsync(true);
+
+        var vm = CreateSut();
+        await vm.OnPageAppearingAsync();
+        var item = (NoteListItem)vm.Sections.SelectMany(s => s).Single();
+
+        await vm.DeleteNoteCommand.ExecuteAsync(item);
+
+        _reminderSchedulerMock.Verify(r => r.CancelAsync(3), Times.Once);
     }
 
     [Fact]

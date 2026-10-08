@@ -473,6 +473,15 @@ Todos los servicios están registrados en `MauiProgram.cs` e inyectados por DI.
 - **i18n**: claves `NotesCreateNoteText`, `NotesEditTitleText`, `NotesCreateTaskText`, `NotesEditTaskTitleText`, `NotesSectionTasksText`, `NotesSectionNotesText`, `NotesDeleteTitleText`, `NotesDeleteConfirmationText`, `NotesValidationTitleText`, `NotesValidationNoteText` y `NotesValidationTaskText` en los tres `.resx`.
 - **DI** (`MauiProgram.cs`): `NotesDatabase` (Singleton), `INotesRepository`→`SqliteNotesRepository` y `ITaskGroupsRepository`→`SqliteTaskGroupsRepository` (Singleton), y `NotesViewModel`/`NoteEditorViewModel`/`TaskEditorViewModel` (Transient).
 
+### 6.12 Recordatorios de notas
+- **Alcance**: solo notas. Disparo **único** e **inexacto** (sin alarmas exactas). Se cancela automáticamente al borrar la nota. Tocar la notificación **abre la app** (sin deep link a la nota concreta).
+- **Implementación propia por plataforma** (sin NuGet): `IReminderScheduler` en Core; `ReminderScheduler` en MAUI con `#if ANDROID` (`AlarmManager.SetAndAllowWhileIdle` + receiver `NoteReminderReceiver` + `NotificationChannel`) / `#elif IOS || MACCATALYST` (`UNUserNotificationCenter`) / no-op en Windows. En Android las horas locales se convierten a UTC (`ToUniversalTime()`); iOS conserva las notificaciones pendientes entre reinicios.
+- **Permisos**: Android solicita `POST_NOTIFICATIONS` (API 33+) mediante `RequestPermissionAsync`; **no** se usa `SCHEDULE_EXACT_ALARM`.
+- **Persistencia**: columna `ReminderAt` (`DateTime?`) agregada a `NoteEntity`/`Note`/`NoteListItem`; sqlite-net la incorpora a bases existentes con `ALTER TABLE ADD COLUMN` al abrir (verificar en el emulador con una base de datos preexistente).
+- **UI**: fila con `Switch` + `DatePicker` + `TimePicker` en `NoteEditorPage`; campana (`icon_bell_ring.png`) como indicador en la tarjeta de la nota. Una hora en el pasado bloquea el guardado con `NotesReminderPastText`.
+- **i18n**: `NotesReminderSectionText`, `NotesReminderNotificationTitleText`, `NotesReminderNotificationBodyText`, `NotesReminderPastText` y `NotesReminderPermissionText` en los tres `.resx`.
+- **Limitación**: sin re-agendado tras reinicio (`BOOT_COMPLETED` diferido): las alarmas de Android se pierden al apagar el equipo.
+
 ---
 
 ## 7. Localización

@@ -555,4 +555,19 @@
   <data name="NotesSectionNotesText" xml:space="preserve">
     <value>Notas</value>
   </data>
+  <data name="NotesReminderSectionText" xml:space="preserve">
+    <value>Recordatorio</value>
+  </data>
+  <data name="NotesReminderNotificationTitleText" xml:space="preserve">
+    <value>Nota</value>
+  </data>
+  <data name="NotesReminderNotificationBodyText" xml:space="preserve">
+    <value>Recordatorio de tu nota</value>
+  </data>
+  <data name="NotesReminderPastText" xml:space="preserve">
+    <value>La hora del recordatorio debe ser futura.</value>
+  </data>
+  <data name="NotesReminderPermissionText" xml:space="preserve">
+    <value>Se necesita permiso para mostrar notificaciones.</value>
+  </data>
 </root>

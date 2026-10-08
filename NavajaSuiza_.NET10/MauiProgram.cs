@@ -83,6 +83,7 @@ public static class MauiProgram
             .AddSingleton<NotesDatabase>()
             .AddSingleton<INotesRepository, SqliteNotesRepository>()
             .AddSingleton<ITaskGroupsRepository, SqliteTaskGroupsRepository>()
+            .AddSingleton<IReminderScheduler, ReminderScheduler>()
             .AddSingleton<IBoardImageExporter, BoardImageExporter>()
             .AddSingleton<IFilePickerService, FilePickerService>()
             .AddSingleton<IDocumentPdfConverter, DocumentPdfConverter>()

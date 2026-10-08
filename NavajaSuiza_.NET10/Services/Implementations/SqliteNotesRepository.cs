@@ -49,7 +49,8 @@ public class SqliteNotesRepository : INotesRepository
         Id = note.Id,
         Title = note.Title,
         Content = note.Content,
-        CreatedAt = note.CreatedAt
+        CreatedAt = note.CreatedAt,
+        ReminderAt = note.ReminderAt
     };
 
     private static Note FromEntity(NoteEntity entity) => new()
@@ -57,6 +58,7 @@ public class SqliteNotesRepository : INotesRepository
         Id = entity.Id,
         Title = entity.Title,
         Content = entity.Content,
-        CreatedAt = entity.CreatedAt
+        CreatedAt = entity.CreatedAt,
+        ReminderAt = entity.ReminderAt
     };
 }
