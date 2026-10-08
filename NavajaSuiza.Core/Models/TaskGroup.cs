@@ -8,5 +8,7 @@ public class TaskGroup
 
     public DateTime CreatedAt { get; set; }
 
+    public DateTime? ReminderAt { get; set; }
+
     public List<TaskItem> Items { get; set; } = [];
 }

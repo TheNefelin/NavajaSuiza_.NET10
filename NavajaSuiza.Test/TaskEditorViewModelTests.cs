@@ -11,12 +11,15 @@ public class TaskEditorViewModelTests
     private readonly Mock<ITaskGroupsRepository> _repositoryMock = new();
     private readonly Mock<INavigationService> _navigationServiceMock = new();
     private readonly Mock<ILanguageService> _languageServiceMock = new();
+    private readonly Mock<IReminderScheduler> _reminderSchedulerMock = new();
     private readonly Mock<ILogger<TaskEditorViewModel>> _loggerMock = new();
 
     private TaskEditorViewModel CreateSut(TaskGroupListItem? parameter = null)
     {
+        _languageServiceMock.Setup(s => s.GetString(It.IsAny<string>())).Returns("test");
         _languageServiceMock.Setup(s => s.GetString("NotesCreateTaskText")).Returns("Crear Tareas");
         _languageServiceMock.Setup(s => s.GetString("NotesEditTaskTitleText")).Returns("Editar tarea");
+        _languageServiceMock.Setup(s => s.GetString("TasksReminderNotificationBodyText")).Returns("Recordatorio de tu lista de tareas");
 
         _navigationServiceMock.Setup(n => n.TakeNavigationParameter()).Returns(parameter);
 
@@ -24,6 +27,7 @@ public class TaskEditorViewModelTests
             _repositoryMock.Object,
             _navigationServiceMock.Object,
             _languageServiceMock.Object,
+            _reminderSchedulerMock.Object,
             _loggerMock.Object);
     }
 
@@ -58,6 +62,18 @@ public class TaskEditorViewModelTests
         Assert.Equal(42, item.Id);
         Assert.Equal("Primera", item.Title);
         Assert.Equal(TaskImportance.Medium, item.Importance);
+    }
+
+    [Fact]
+    public void Initialize_WithParameterWithReminder_RestoresReminderControls()
+    {
+        var reminderAt = new DateTime(2026, 10, 15, 9, 30, 0);
+        var vm = CreateSut(new TaskGroupListItem { Id = 9, Title = "Con recordatorio", ReminderAt = reminderAt });
+        vm.Initialize();
+
+        Assert.True(vm.HasReminder);
+        Assert.Equal(reminderAt.Date, vm.ReminderDate);
+        Assert.Equal(reminderAt.TimeOfDay, vm.ReminderTime);
     }
 
     [Fact]
@@ -158,6 +174,7 @@ public class TaskEditorViewModelTests
 
         _repositoryMock.Verify(r => r.SaveAsync(It.Is<TaskGroup>(g =>
             g.Id == 0 && g.Title == "Grupo" && g.CreatedAt != default
+            && g.ReminderAt == null
             && g.Items.Count == 1
             && g.Items[0].Title == "Comprar leche"
             && g.Items[0].Importance == TaskImportance.High)), Times.Once);
@@ -176,5 +193,78 @@ public class TaskEditorViewModelTests
 
         _repositoryMock.Verify(r => r.SaveAsync(It.Is<TaskGroup>(g =>
             g.Id == 7 && g.Title == "Después" && g.CreatedAt == createdAt)), Times.Once);
+    }
+
+    [Fact]
+    public async Task Save_WithFutureReminder_SchedulesNotification()
+    {
+        _reminderSchedulerMock.Setup(r => r.RequestPermissionAsync()).ReturnsAsync(true);
+        var future = DateTime.Now.AddDays(1);
+        var reminderAt = future.Date.Add(future.TimeOfDay);
+        var vm = CreateSut();
+        vm.Initialize();
+        vm.TitleText = "Título";
+        vm.HasReminder = true;
+        vm.ReminderDate = future.Date;
+        vm.ReminderTime = future.TimeOfDay;
+
+        await vm.SaveCommand.ExecuteAsync(null);
+
+        _repositoryMock.Verify(r => r.SaveAsync(It.Is<TaskGroup>(g => g.ReminderAt == reminderAt)), Times.Once);
+        _reminderSchedulerMock.Verify(r => r.ScheduleAsync(ReminderKind.TaskGroup, 0, "Título", "Recordatorio de tu lista de tareas", reminderAt), Times.Once);
+        _reminderSchedulerMock.Verify(r => r.CancelAsync(ReminderKind.TaskGroup, It.IsAny<int>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task Save_WithPastReminder_ShowsAlertAndDoesNotSchedule()
+    {
+        var past = DateTime.Now.AddMinutes(-5);
+        var vm = CreateSut();
+        vm.Initialize();
+        vm.TitleText = "Título";
+        vm.HasReminder = true;
+        vm.ReminderDate = past.Date;
+        vm.ReminderTime = past.TimeOfDay;
+
+        await vm.SaveCommand.ExecuteAsync(null);
+
+        _navigationServiceMock.Verify(n => n.DisplayAlertAsync(
+            It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once);
+        _repositoryMock.Verify(r => r.SaveAsync(It.IsAny<TaskGroup>()), Times.Never);
+        _reminderSchedulerMock.Verify(r => r.ScheduleAsync(
+            It.IsAny<ReminderKind>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task Save_WithoutReminder_CancelsExisting()
+    {
+        var vm = CreateSut();
+        vm.Initialize();
+        vm.TitleText = "Título";
+
+        await vm.SaveCommand.ExecuteAsync(null);
+
+        _reminderSchedulerMock.Verify(r => r.CancelAsync(ReminderKind.TaskGroup, 0), Times.Once);
+    }
+
+    [Fact]
+    public async Task Save_WhenPermissionDenied_ShowsAlertAndDoesNotSchedule()
+    {
+        _reminderSchedulerMock.Setup(r => r.RequestPermissionAsync()).ReturnsAsync(false);
+        var future = DateTime.Now.AddDays(1);
+        var vm = CreateSut();
+        vm.Initialize();
+        vm.TitleText = "Título";
+        vm.HasReminder = true;
+        vm.ReminderDate = future.Date;
+        vm.ReminderTime = future.TimeOfDay;
+
+        await vm.SaveCommand.ExecuteAsync(null);
+
+        _navigationServiceMock.Verify(n => n.DisplayAlertAsync(
+            It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once);
+        _repositoryMock.Verify(r => r.SaveAsync(It.IsAny<TaskGroup>()), Times.Never);
+        _reminderSchedulerMock.Verify(r => r.ScheduleAsync(
+            It.IsAny<ReminderKind>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>()), Times.Never);
     }
 }

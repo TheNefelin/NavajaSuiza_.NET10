@@ -570,4 +570,10 @@
   <data name="NotesReminderPermissionText" xml:space="preserve">
     <value>Se necesita permiso para mostrar notificaciones.</value>
   </data>
+  <data name="TasksReminderNotificationTitleText" xml:space="preserve">
+    <value>Lista de tareas</value>
+  </data>
+  <data name="TasksReminderNotificationBodyText" xml:space="preserve">
+    <value>Recordatorio de tu lista de tareas</value>
+  </data>
 </root>

@@ -532,4 +532,6 @@
   <data name="NotesReminderNotificationBodyText" xml:space="preserve"><value>Påminnelse om din anteckning</value></data>
   <data name="NotesReminderPastText" xml:space="preserve"><value>Påminnelsetiden måste vara i framtiden.</value></data>
   <data name="NotesReminderPermissionText" xml:space="preserve"><value>Behörighet krävs för att visa påminnelser.</value></data>
+  <data name="TasksReminderNotificationTitleText" xml:space="preserve"><value>Uppgiftsgrupp</value></data>
+  <data name="TasksReminderNotificationBodyText" xml:space="preserve"><value>Påminnelse om din uppgiftsgrupp</value></data>
 </root>

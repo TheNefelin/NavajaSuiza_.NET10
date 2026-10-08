@@ -145,12 +145,12 @@ public partial class NoteEditorViewModel : BaseViewModel
                     ? _languageService.GetString("NotesReminderNotificationTitleText")
                     : note.Title;
 
-                await _reminderScheduler.ScheduleAsync(noteId, notificationTitle,
+                await _reminderScheduler.ScheduleAsync(ReminderKind.Note, noteId, notificationTitle,
                     _languageService.GetString("NotesReminderNotificationBodyText"), scheduledAt);
             }
             else
             {
-                await _reminderScheduler.CancelAsync(noteId);
+                await _reminderScheduler.CancelAsync(ReminderKind.Note, noteId);
             }
         }
         catch (Exception ex)

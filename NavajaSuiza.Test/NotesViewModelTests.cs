@@ -103,7 +103,7 @@ public class NotesViewModelTests
 
         await vm.DeleteNoteCommand.ExecuteAsync(item);
 
-        _reminderSchedulerMock.Verify(r => r.CancelAsync(3), Times.Once);
+        _reminderSchedulerMock.Verify(r => r.CancelAsync(ReminderKind.Note, 3), Times.Once);
     }
 
     [Fact]
@@ -139,6 +139,24 @@ public class NotesViewModelTests
         await vm.DeleteTaskCommand.ExecuteAsync(item);
 
         _taskGroupsRepositoryMock.Verify(r => r.DeleteAsync(9), Times.Once);
+    }
+
+    [Fact]
+    public async Task DeleteTask_WhenConfirmed_CancelsReminder()
+    {
+        _taskGroupsRepositoryMock.Setup(r => r.GetAllAsync()).ReturnsAsync([
+            new TaskGroup { Id = 9, Title = "Grupo", CreatedAt = DateTime.UtcNow }
+        ]);
+        _navigationServiceMock.Setup(n => n.DisplayAlertConfirmAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+            .ReturnsAsync(true);
+
+        var vm = CreateSut();
+        await vm.OnPageAppearingAsync();
+        var item = (TaskGroupListItem)vm.Sections.SelectMany(s => s).Single();
+
+        await vm.DeleteTaskCommand.ExecuteAsync(item);
+
+        _reminderSchedulerMock.Verify(r => r.CancelAsync(ReminderKind.TaskGroup, 9), Times.Once);
     }
 
     [Fact]

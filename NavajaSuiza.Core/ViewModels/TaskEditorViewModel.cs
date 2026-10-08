@@ -12,6 +12,7 @@ public partial class TaskEditorViewModel : BaseViewModel
     private readonly ITaskGroupsRepository _taskGroupsRepository;
     private readonly INavigationService _navigationService;
     private readonly ILanguageService _languageService;
+    private readonly IReminderScheduler _reminderScheduler;
     private readonly ILogger<TaskEditorViewModel> _logger;
 
     private int _editingId;
@@ -35,15 +36,26 @@ public partial class TaskEditorViewModel : BaseViewModel
     [ObservableProperty]
     public partial string PageTitle { get; set; } = string.Empty;
 
+    [ObservableProperty]
+    public partial bool HasReminder { get; set; }
+
+    [ObservableProperty]
+    public partial DateTime ReminderDate { get; set; } = DateTime.Today;
+
+    [ObservableProperty]
+    public partial TimeSpan ReminderTime { get; set; }
+
     public TaskEditorViewModel(
         ITaskGroupsRepository taskGroupsRepository,
         INavigationService navigationService,
         ILanguageService languageService,
+        IReminderScheduler reminderScheduler,
         ILogger<TaskEditorViewModel> logger)
     {
         _taskGroupsRepository = taskGroupsRepository;
         _navigationService = navigationService;
         _languageService = languageService;
+        _reminderScheduler = reminderScheduler;
         _logger = logger;
     }
 
@@ -59,6 +71,9 @@ public partial class TaskEditorViewModel : BaseViewModel
 
         NewTaskTitle = string.Empty;
         SelectedImportance = TaskImportance.Low;
+        HasReminder = item?.ReminderAt is not null;
+        ReminderDate = item?.ReminderAt is DateTime reminder ? reminder.Date : DateTime.Today;
+        ReminderTime = item?.ReminderAt is DateTime reminderTime ? reminderTime.TimeOfDay : default;
         TaskItems.Clear();
 
         if (item is not null)
@@ -86,6 +101,29 @@ public partial class TaskEditorViewModel : BaseViewModel
             return;
         }
 
+        var reminderAt = HasReminder ? ReminderDate.Date.Add(ReminderTime) : (DateTime?)null;
+        if (reminderAt is DateTime fireTime && fireTime <= DateTime.Now)
+        {
+            await _navigationService.DisplayAlertAsync(
+                _languageService.GetString("NotesValidationTitleText"),
+                _languageService.GetString("NotesReminderPastText"),
+                _languageService.GetString("CommonOkText"));
+            return;
+        }
+
+        if (HasReminder)
+        {
+            var granted = await _reminderScheduler.RequestPermissionAsync();
+            if (!granted)
+            {
+                await _navigationService.DisplayAlertAsync(
+                    _languageService.GetString("NotesValidationTitleText"),
+                    _languageService.GetString("NotesReminderPermissionText"),
+                    _languageService.GetString("CommonOkText"));
+                return;
+            }
+        }
+
         try
         {
             IsBusy = true;
@@ -95,10 +133,13 @@ public partial class TaskEditorViewModel : BaseViewModel
                 Id = _editingId,
                 Title = TitleText.Trim(),
                 CreatedAt = IsEditing ? _editingCreatedAt : DateTime.UtcNow,
+                ReminderAt = reminderAt,
                 Items = TaskItems.ToList()
             };
 
-            await _taskGroupsRepository.SaveAsync(group);
+            var savedId = await _taskGroupsRepository.SaveAsync(group);
+
+            await UpsertReminderAsync(savedId, group);
 
             await _navigationService.PopAsync();
         }
@@ -113,6 +154,30 @@ public partial class TaskEditorViewModel : BaseViewModel
         finally
         {
             IsBusy = false;
+        }
+    }
+
+    private async Task UpsertReminderAsync(int groupId, TaskGroup group)
+    {
+        try
+        {
+            if (group.ReminderAt is DateTime scheduledAt)
+            {
+                var notificationTitle = string.IsNullOrWhiteSpace(group.Title)
+                    ? _languageService.GetString("TasksReminderNotificationTitleText")
+                    : group.Title;
+
+                await _reminderScheduler.ScheduleAsync(ReminderKind.TaskGroup, groupId, notificationTitle,
+                    _languageService.GetString("TasksReminderNotificationBodyText"), scheduledAt);
+            }
+            else
+            {
+                await _reminderScheduler.CancelAsync(ReminderKind.TaskGroup, groupId);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error al programar el recordatorio del grupo de tareas {GroupId}", groupId);
         }
     }
 

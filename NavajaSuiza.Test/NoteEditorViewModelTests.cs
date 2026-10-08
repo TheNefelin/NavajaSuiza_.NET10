@@ -138,8 +138,8 @@ public class NoteEditorViewModelTests
         await vm.SaveCommand.ExecuteAsync(null);
 
         _repositoryMock.Verify(r => r.SaveAsync(It.Is<Note>(n => n.ReminderAt == reminderAt)), Times.Once);
-        _reminderSchedulerMock.Verify(r => r.ScheduleAsync(0, "Título", "Recordatorio de tu nota", reminderAt), Times.Once);
-        _reminderSchedulerMock.Verify(r => r.CancelAsync(It.IsAny<int>()), Times.Never);
+        _reminderSchedulerMock.Verify(r => r.ScheduleAsync(ReminderKind.Note, 0, "Título", "Recordatorio de tu nota", reminderAt), Times.Once);
+        _reminderSchedulerMock.Verify(r => r.CancelAsync(ReminderKind.Note, It.IsAny<int>()), Times.Never);
     }
 
     [Fact]
@@ -160,7 +160,7 @@ public class NoteEditorViewModelTests
             It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once);
         _repositoryMock.Verify(r => r.SaveAsync(It.IsAny<Note>()), Times.Never);
         _reminderSchedulerMock.Verify(r => r.ScheduleAsync(
-            It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>()), Times.Never);
+            It.IsAny<ReminderKind>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>()), Times.Never);
     }
 
     [Fact]
@@ -173,7 +173,7 @@ public class NoteEditorViewModelTests
 
         await vm.SaveCommand.ExecuteAsync(null);
 
-        _reminderSchedulerMock.Verify(r => r.CancelAsync(0), Times.Once);
+        _reminderSchedulerMock.Verify(r => r.CancelAsync(ReminderKind.Note, 0), Times.Once);
     }
 
     [Fact]
@@ -195,6 +195,6 @@ public class NoteEditorViewModelTests
             It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once);
         _repositoryMock.Verify(r => r.SaveAsync(It.IsAny<Note>()), Times.Never);
         _reminderSchedulerMock.Verify(r => r.ScheduleAsync(
-            It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>()), Times.Never);
+            It.IsAny<ReminderKind>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>()), Times.Never);
     }
 }

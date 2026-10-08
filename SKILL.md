@@ -962,6 +962,24 @@ dialog.ShowEvent += (_, _) =>
 
 ---
 
+### 11.17 Recordatorios programados (notas y listas de tareas)
+
+Implementación propia por plataforma, sin NuGet: `IReminderScheduler` en Core (recibe `ReminderKind` + `Id` de la entidad) y `ReminderScheduler` en MAUI con `#if ANDROID` (`AlarmManager.SetAndAllowWhileIdle` + receiver + `NotificationChannel`) / `#elif IOS || MACCATALYST` (`UNUserNotificationCenter`) / no-op en Windows. Reglas validadas:
+
+- **Gotcha de scope de IDs (crítico)**: las tablas autoincrement independientes comparten valores de `Id` (la nota Id=3 y la lista Id=3). El `PendingIntent` de Android compara `requestCode` y **ignora los extras**, y iOS usa el `identifier` → sin scope, un recordatorio pisa al otro. Mapear siempre por tipo:
+
+```csharp
+static int ToNotificationId(ReminderKind kind, int id) => ((int)kind << 24) | (id & 0x00FFFFFF);
+static string ToNotificationKey(ReminderKind kind, int id) => $"{kind}:{id}";   // iOS identifier
+```
+
+  El receiver recibe el id ya scopeado en el extra (el action+extras no distinguen suficientemente a los PendingIntents).
+- **Disparo único e inexacto**: `SetAndAllowWhileIdle` sin `SCHEDULE_EXACT_ALARM`; permiso `POST_NOTIFICATIONS` (API 33+) solicitado antes de agendar y **bloquear el guardado** si se niega, en vez de fallar en silencio.
+- **Ciclo de vida**: cancelar explícitamente al borrar la entidad; persistir `ReminderAt` en la entidad para restaurar la UI. sqlite-net agrega la columna con `ALTER TABLE ADD COLUMN` al abrir bases existentes (verificar con una base preexistente).
+- **Diferencias platform**: Android convierte hora local a UTC y **pierde las alarmas al reiniciar** (sin `BOOT_COMPLETED`); iOS conserva las pendientes entre reinicios. Tocar la notificación abre la app (sin deep link) salvo que se implemente uno aparte.
+
+---
+
 ## 12. Tests
 
 - **xUnit + `WebApplicationFactory<T>`** para tests de integración de la API.
@@ -1005,6 +1023,7 @@ dialog.ShowEvent += (_, _) =>
 - [ ] MAUI: Permisos Android mínimos; usar APIs de plataforma sin permisos protegidos (batería con `BatteryManager`/`BatteryProperty`, no con `Battery.Default` + `BATTERY_STATS`); revisar el manifest fusionado.
 - [ ] MAUI: Empaquetado Android con `RuntimeIdentifiers` (`AndroidSupportedAbis` obsoleta en .NET 10); validar ABI en dispositivo real con `ro.product.cpu.abi` (cuidado con 32-bit).
 - [ ] MAUI: Status bar en Android 15+ resuelta con override de `MauiAppBarLayout` (no con `SetStatusBarColor`, que el sistema ignora) y guard `!OperatingSystem.IsAndroidVersionAtLeast(35)` para Android ≤14; botones de diálogos de fecha/hora vía handler, sin tocar `colorAccent` (§11.16).
+- [ ] MAUI: Recordatorios programados con IDs scopeados por tipo de entidad en requestCode/id de notificación (`(kind << 24) | id`), cancelación al borrar y permiso `POST_NOTIFICATIONS` antes de agendar (§11.17).
 
 ---
 

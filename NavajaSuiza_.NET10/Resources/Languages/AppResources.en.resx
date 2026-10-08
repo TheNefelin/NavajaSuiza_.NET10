@@ -532,4 +532,6 @@
   <data name="NotesReminderNotificationBodyText" xml:space="preserve"><value>Reminder for your note</value></data>
   <data name="NotesReminderPastText" xml:space="preserve"><value>The reminder time must be in the future.</value></data>
   <data name="NotesReminderPermissionText" xml:space="preserve"><value>Notification permission is required to show reminders.</value></data>
+  <data name="TasksReminderNotificationTitleText" xml:space="preserve"><value>Task list</value></data>
+  <data name="TasksReminderNotificationBodyText" xml:space="preserve"><value>Reminder for your task list</value></data>
 </root>

@@ -8,7 +8,7 @@ namespace NavajaSuiza_.NET10.Services.Implementations;
 [IntentFilter(new[] { ReminderScheduler.ActionReminder })]
 public class NoteReminderReceiver : BroadcastReceiver
 {
-    public const string ExtraNoteId = "noteId";
+    public const string ExtraNotificationId = "notificationId";
     public const string ExtraTitle = "title";
     public const string ExtraBody = "body";
 
@@ -17,7 +17,7 @@ public class NoteReminderReceiver : BroadcastReceiver
         if (context is null || intent?.Action != ReminderScheduler.ActionReminder)
             return;
 
-        var noteId = intent.GetIntExtra(ExtraNoteId, 0);
+        var notificationId = intent.GetIntExtra(ExtraNotificationId, 0);
         var title = intent.GetStringExtra(ExtraTitle) ?? string.Empty;
         var body = intent.GetStringExtra(ExtraBody) ?? string.Empty;
 
@@ -55,7 +55,7 @@ public class NoteReminderReceiver : BroadcastReceiver
         if (contentIntent is not null)
             builder.SetContentIntent(contentIntent);
 
-        notificationManager.Notify(noteId, builder.Build());
+        notificationManager.Notify(notificationId, builder.Build());
     }
 
     private static void CreateChannel(NotificationManager manager)

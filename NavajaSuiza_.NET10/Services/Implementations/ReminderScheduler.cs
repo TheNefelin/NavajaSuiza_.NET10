@@ -1,5 +1,6 @@
 using Microsoft.Maui.ApplicationModel;
 using NavajaSuiza.Core.Interfaces;
+using NavajaSuiza.Core.Models;
 
 namespace NavajaSuiza_.NET10.Services.Implementations;
 
@@ -7,6 +8,12 @@ public class ReminderScheduler : IReminderScheduler
 {
     public const string ChannelId = "notes_reminders";
     internal const string ActionReminder = "com.nefelin.navajasuiza.REMINDER";
+
+    internal static int ToNotificationId(ReminderKind kind, int id) =>
+        ((int)kind << 24) | (id & 0x00FFFFFF);
+
+    internal static string ToNotificationKey(ReminderKind kind, int id) =>
+        $"{kind}:{id}";
 
     public async Task<bool> RequestPermissionAsync()
     {
@@ -37,7 +44,7 @@ public class ReminderScheduler : IReminderScheduler
 #endif
     }
 
-    public Task ScheduleAsync(int noteId, string title, string body, DateTime localFireTime)
+    public Task ScheduleAsync(ReminderKind kind, int id, string title, string body, DateTime localFireTime)
     {
 #if ANDROID
         var context = Android.App.Application.Context;
@@ -45,16 +52,17 @@ public class ReminderScheduler : IReminderScheduler
         if (alarmManager is null)
             return Task.CompletedTask;
 
+        var notificationId = ToNotificationId(kind, id);
         var intent = new Android.Content.Intent(context, typeof(NoteReminderReceiver))
             .SetAction(ActionReminder)
-            .PutExtra(NoteReminderReceiver.ExtraNoteId, noteId)
+            .PutExtra(NoteReminderReceiver.ExtraNotificationId, notificationId)
             .PutExtra(NoteReminderReceiver.ExtraTitle, title)
             .PutExtra(NoteReminderReceiver.ExtraBody, body);
 
         var flags = Android.App.PendingIntentFlags.UpdateCurrent;
         if (OperatingSystem.IsAndroidVersionAtLeast(23))
             flags |= Android.App.PendingIntentFlags.Immutable;
-        var pendingIntent = Android.App.PendingIntent.GetBroadcast(context, noteId, intent, flags);
+        var pendingIntent = Android.App.PendingIntent.GetBroadcast(context, notificationId, intent, flags);
         if (pendingIntent is null)
             return Task.CompletedTask;
 
@@ -84,14 +92,14 @@ public class ReminderScheduler : IReminderScheduler
 
         var trigger = UserNotifications.UNCalendarNotificationTrigger.CreateTrigger(components, false);
         var request = UserNotifications.UNNotificationRequest.FromIdentifier(
-            noteId.ToString(System.Globalization.CultureInfo.InvariantCulture), content, trigger);
+            ToNotificationKey(kind, id), content, trigger);
         return UserNotifications.UNUserNotificationCenter.Current.AddNotificationRequestAsync(request);
 #else
         return Task.CompletedTask; // Windows fuera de alcance: recordatorios no soportados
 #endif
     }
 
-    public Task CancelAsync(int noteId)
+    public Task CancelAsync(ReminderKind kind, int id)
     {
 #if ANDROID
         var context = Android.App.Application.Context;
@@ -99,17 +107,18 @@ public class ReminderScheduler : IReminderScheduler
         if (alarmManager is null)
             return Task.CompletedTask;
 
+        var notificationId = ToNotificationId(kind, id);
         var intent = new Android.Content.Intent(context, typeof(NoteReminderReceiver)).SetAction(ActionReminder);
         var flags = Android.App.PendingIntentFlags.NoCreate;
         if (OperatingSystem.IsAndroidVersionAtLeast(23))
             flags |= Android.App.PendingIntentFlags.Immutable;
-        var pendingIntent = Android.App.PendingIntent.GetBroadcast(context, noteId, intent, flags);
+        var pendingIntent = Android.App.PendingIntent.GetBroadcast(context, notificationId, intent, flags);
         if (pendingIntent is not null)
             alarmManager.Cancel(pendingIntent);
         return Task.CompletedTask;
 #elif IOS || MACCATALYST
-        var id = noteId.ToString(System.Globalization.CultureInfo.InvariantCulture);
-        UserNotifications.UNUserNotificationCenter.Current.RemovePendingNotificationRequests(new[] { id });
+        UserNotifications.UNUserNotificationCenter.Current.RemovePendingNotificationRequests(
+            new[] { ToNotificationKey(kind, id) });
         return Task.CompletedTask;
 #else
         return Task.CompletedTask; // Windows fuera de alcance: recordatorios no soportados

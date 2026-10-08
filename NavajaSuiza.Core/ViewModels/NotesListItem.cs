@@ -7,4 +7,8 @@ public abstract class NotesListItem
     public string Title { get; init; } = string.Empty;
 
     public DateTime CreatedAt { get; init; }
+
+    public DateTime? ReminderAt { get; init; }
+
+    public bool HasReminder => ReminderAt.HasValue;
 }

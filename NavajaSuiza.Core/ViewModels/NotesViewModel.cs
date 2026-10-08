@@ -84,7 +84,7 @@ public partial class NotesViewModel : BaseViewModel
         {
             IsBusy = true;
             await _notesRepository.DeleteAsync(note.Id);
-            await CancelReminderAsync(note.Id);
+            await CancelReminderAsync(ReminderKind.Note, note.Id);
             await LoadNotesAsync();
         }
         catch (Exception ex)
@@ -107,6 +107,7 @@ public partial class NotesViewModel : BaseViewModel
         {
             IsBusy = true;
             await _taskGroupsRepository.DeleteAsync(task.Id);
+            await CancelReminderAsync(ReminderKind.TaskGroup, task.Id);
             await LoadNotesAsync();
         }
         catch (Exception ex)
@@ -126,15 +127,15 @@ public partial class NotesViewModel : BaseViewModel
             _languageService.GetString("CommonYesText"),
             _languageService.GetString("CommonNoText"));
 
-    private async Task CancelReminderAsync(int noteId)
+    private async Task CancelReminderAsync(ReminderKind kind, int id)
     {
         try
         {
-            await _reminderScheduler.CancelAsync(noteId);
+            await _reminderScheduler.CancelAsync(kind, id);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error al cancelar el recordatorio de la nota {NoteId}", noteId);
+            _logger.LogError(ex, "Error al cancelar el recordatorio {Kind} {Id}", kind, id);
         }
     }
 
@@ -205,6 +206,7 @@ public partial class NotesViewModel : BaseViewModel
         Id = group.Id,
         Title = group.Title,
         CreatedAt = group.CreatedAt,
+        ReminderAt = group.ReminderAt,
         Items = group.Items
             .Select(item => new TaskItemListItem(item, () => _ = PersistTaskGroupAsync(group)))
             .ToList()

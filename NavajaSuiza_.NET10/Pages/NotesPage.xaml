@@ -97,8 +97,8 @@
 
                 <Grid RowDefinitions="Auto,Auto" RowSpacing="4">
 
-                    <!-- Encabezado: nombre + fecha (tap) y eliminar -->
-                    <Grid Grid.Row="0" ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                    <!-- Encabezado: nombre + fecha (tap), recordatorio y eliminar -->
+                    <Grid Grid.Row="0" ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10">
 
                         <VerticalStackLayout Grid.Column="0"
                                              Spacing="1"
@@ -118,7 +118,15 @@
                                    Opacity="0.6" />
                         </VerticalStackLayout>
 
-                        <Button Grid.Column="1"
+                        <Image Grid.Column="1"
+                               Source="icon_bell_ring.png"
+                               WidthRequest="16"
+                               HeightRequest="16"
+                               IsVisible="{Binding HasReminder}"
+                               VerticalOptions="Center"
+                               SemanticProperties.Description="{extensions:Translate NotesReminderSectionText}" />
+
+                        <Button Grid.Column="2"
                                 ImageSource="icon_delete.png"
                                 BackgroundColor="{StaticResource MyOn}"
                                 CornerRadius="8"

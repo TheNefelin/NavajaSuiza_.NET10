@@ -27,6 +27,7 @@ public class SqliteTaskGroupsRepository : ITaskGroupsRepository
             Id = group.Id,
             Title = group.Title,
             CreatedAt = group.CreatedAt,
+            ReminderAt = group.ReminderAt,
             Items = itemsByGroup.TryGetValue(group.Id, out var groupItems) ? groupItems : []
         }).ToList();
     }
@@ -46,6 +47,7 @@ public class SqliteTaskGroupsRepository : ITaskGroupsRepository
             Id = group.Id,
             Title = group.Title,
             CreatedAt = group.CreatedAt,
+            ReminderAt = group.ReminderAt,
             Items = items.OrderBy(i => i.Position).Select(FromItemEntity).ToList()
         };
     }
@@ -56,7 +58,8 @@ public class SqliteTaskGroupsRepository : ITaskGroupsRepository
         {
             Id = group.Id,
             Title = group.Title,
-            CreatedAt = group.CreatedAt
+            CreatedAt = group.CreatedAt,
+            ReminderAt = group.ReminderAt
         };
 
         await _database.RunInTransactionAsync(connection =>

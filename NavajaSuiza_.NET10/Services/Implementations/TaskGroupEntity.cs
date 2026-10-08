@@ -10,4 +10,6 @@ public class TaskGroupEntity
     public string Title { get; set; } = string.Empty;
 
     public DateTime CreatedAt { get; set; }
+
+    public DateTime? ReminderAt { get; set; }
 }
