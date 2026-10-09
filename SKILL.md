@@ -923,28 +923,28 @@ public static int GetBatteryLevel(Android.Content.Context ctx) =>
 - La clave se **inyecta en build como `AssemblyMetadata`** (propiedad de MSBuild pasada por línea de comandos o variable de entorno de la máquina) y se lee por reflexión en `MauiProgram.cs` solo si trae valor. **Nunca hardcodear ni versionar la clave**. Separar de la CI/CD cuando corresponda.
 - Diferenciar **Trial** (con expiración y aviso en runtime) de la **licencia gratuita definitiva** (sin expirar, sujeta a los límites de ingresos y tamaño de equipo que declare el proveedor). Verificar el tipo en el panel de cuentas del proveedor; no publicar en producción con clave trial.
 
-### 11.16 Android edge-to-edge (API 35+): status bar y diálogos
+### 11.16 Android edge-to-edge (API 35+): barras del sistema
 
-Con `targetSdk` 35+, Android 15+ fuerza edge-to-edge y `Window.SetStatusBarColor`/`SetNavigationBarColor` **se ignoran** (obsoletos desde API 35; el compilador lo advierte con CA1422). Reglas validadas:
+Con `targetSdk` 35+, Android 15+ fuerza edge-to-edge y el sistema **ignora** `Window.SetStatusBarColor`/`SetNavigationBarColor` (obsoletas desde API 35; el compilador lo advierte con CA1422). Decisión del proyecto: **optar por NO aplicar edge-to-edge**, manteniendo barras opacas `#243042` consistentes en todos los Android (incluidos 15/16). Reglas validadas:
 
-- En Android ≤14 las llamadas siguen funcionando: conservarlas tras un guard explícito, que además silencia CA1422:
-
-```csharp
-if (!OperatingSystem.IsAndroidVersionAtLeast(35))
-{
-    Window?.SetStatusBarColor(Android.Graphics.Color.ParseColor("#243042"));
-    Window?.SetNavigationBarColor(Android.Graphics.Color.ParseColor("#243042"));
-}
-```
-
-- En Android 15+ el color visible detrás de la status bar no lo decide la app sino el tema de MAUI: `MauiAppBarLayout` pinta `?attr/colorPrimary` (el accent de la app). Si ese accent es un color de marca, la franja queda con ese color → sobrescribir el style en `Platforms/Android/Resources/values/styles.xml`:
+- En el tema MAUI (`Platforms/Android/Resources/values/styles.xml`), el tema `Maui.MainTheme` (parent `Maui.MainTheme.Base`):
 
 ```xml
-<style name="MauiAppBarLayout" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
-    <item name="android:background">#243042</item>
+<style name="Maui.MainTheme" parent="Maui.MainTheme.Base">
+    <item name="android:windowOptOutEdgeToEdgeEnforcement">true</item>
 </style>
 ```
 
+- En `MainActivity.OnCreate`, las llamadas se ejecutan **sin guard** (con el opt-out funcionan en todas las versiones); silenciar CA1422 porque las APIs siguen deprecadas desde API 35:
+
+```csharp
+#pragma warning disable CA1422
+Window?.SetStatusBarColor(Android.Graphics.Color.ParseColor("#243042"));
+Window?.SetNavigationBarColor(Android.Graphics.Color.ParseColor("#243042"));
+#pragma warning restore CA1422
+```
+
+- El style `MauiAppBarLayout` (parent `ThemeOverlay.AppCompat.Dark.ActionBar`, `android:background` `#243042`) se **mantiene**: es el toolbar superior de MAUI, no la franja del edge-to-edge.
 - **Gotcha**: una línea `<AndroidResource Remove="..."/>` en el `.csproj` excluye el recurso del build **sin error**; verificar siempre el recurso compilado en `obj/.../res/values/*.xml`.
 - **Diálogos `DatePicker`/`TimePicker`**: los botones OK/Cancel se pintan con `colorAccent`, y cambiarlo colorea todos los controles de la app. Alternativa mínima: handler de MAUI que pise `CreateDatePickerDialog`/`CreateTimePickerDialog` y pinte en `ShowEvent` (los botones no existen antes del `Show()`):
 
@@ -1039,7 +1039,7 @@ Google Play anunció (ago-2026) un requisito de calidad técnica: las apps deben
 - [ ] MAUI: Colores y estilos con `AppThemeBinding` (claro/oscuro desde el origen).
 - [ ] MAUI: Permisos Android mínimos; usar APIs de plataforma sin permisos protegidos (batería con `BatteryManager`/`BatteryProperty`, no con `Battery.Default` + `BATTERY_STATS`); revisar el manifest fusionado.
 - [ ] MAUI: Empaquetado Android con `RuntimeIdentifiers` (`AndroidSupportedAbis` obsoleta en .NET 10); validar ABI en dispositivo real con `ro.product.cpu.abi` (cuidado con 32-bit).
-- [ ] MAUI: Status bar en Android 15+ resuelta con override de `MauiAppBarLayout` (no con `SetStatusBarColor`, que el sistema ignora) y guard `!OperatingSystem.IsAndroidVersionAtLeast(35)` para Android ≤14; botones de diálogos de fecha/hora vía handler, sin tocar `colorAccent` (§11.16).
+- [ ] MAUI: Barras del sistema en Android resueltas con opt-out de edge-to-edge (`windowOptOutEdgeToEdgeEnforcement` en `Maui.MainTheme`) + `SetStatusBarColor`/`SetNavigationBarColor` sin guard y `#pragma` CA1422; botones de diálogos de fecha/hora vía handler, sin tocar `colorAccent` (§11.16).
 - [ ] MAUI: Recordatorios programados con IDs scopeados por tipo de entidad en requestCode/id de notificación (`(kind << 24) | id`), cancelación al borrar y permiso `POST_NOTIFICATIONS` antes de agendar (§11.17).
 - [ ] Publicación: advertencia de ofuscación/DEX de Play **no corregible** en .NET MAUI (límite del toolchain); ignorar hasta feb-2027 y verificar el resto de métricas accionables (targetSdk, 64-bit, 16 KB pages) (§11.18).
 - [ ] Publicación: Play Protect exige `minSdkVersion ≥ 24`; se controla con `SupportedOSPlatformVersion` (solo android), no con targetSdk (§11.19).
