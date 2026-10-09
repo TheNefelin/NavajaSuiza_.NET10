@@ -927,22 +927,20 @@ public static int GetBatteryLevel(Android.Content.Context ctx) =>
 
 Con `targetSdk` 35+, Android 15+ fuerza edge-to-edge y el sistema **ignora** `Window.SetStatusBarColor`/`SetNavigationBarColor` (obsoletas desde API 35; el compilador lo advierte con CA1422). Decisión del proyecto: **optar por NO aplicar edge-to-edge**, manteniendo barras opacas `#243042` consistentes en todos los Android (incluidos 15/16). Reglas validadas:
 
-- En el tema MAUI (`Platforms/Android/Resources/values/styles.xml`), el tema `Maui.MainTheme` (parent `Maui.MainTheme.Base`):
+- En el tema MAUI (`Platforms/Android/Resources/values/styles.xml`), el tema `Maui.MainTheme` (parent `Maui.MainTheme.Base`). El color de ambas barras se define **en el tema, no en runtime**:
 
 ```xml
 <style name="Maui.MainTheme" parent="Maui.MainTheme.Base">
+    <item name="android:statusBarColor">#243042</item>
+    <item name="android:windowLightStatusBar">false</item>
+    <item name="android:navigationBarColor">#243042</item>
+    <item name="android:windowLightNavigationBar">false</item>
     <item name="android:windowOptOutEdgeToEdgeEnforcement">true</item>
 </style>
 ```
 
-- En `MainActivity.OnCreate`, las llamadas se ejecutan **sin guard** (con el opt-out funcionan en todas las versiones); silenciar CA1422 porque las APIs siguen deprecadas desde API 35:
-
-```csharp
-#pragma warning disable CA1422
-Window?.SetStatusBarColor(Android.Graphics.Color.ParseColor("#243042"));
-Window?.SetNavigationBarColor(Android.Graphics.Color.ParseColor("#243042"));
-#pragma warning restore CA1422
-```
+- Con el opt-out activo, la app queda en modo legacy y **el tema aplica los colores en todas las versiones** (incluidas Android 15/16).
+- **No usar `Window.SetStatusBarColor`/`SetNavigationBarColor` en runtime**: además de deprecadas desde API 35, Google Play avisa "la app usa APIs o parámetros obsoletos para la pantalla de borde a borde"; definir el color en el tema no dispara ese aviso y evita el `#pragma` CA1422.
 
 - El style `MauiAppBarLayout` (parent `ThemeOverlay.AppCompat.Dark.ActionBar`, `android:background` `#243042`) se **mantiene**: es el toolbar superior de MAUI, no la franja del edge-to-edge.
 - **Gotcha**: una línea `<AndroidResource Remove="..."/>` en el `.csproj` excluye el recurso del build **sin error**; verificar siempre el recurso compilado en `obj/.../res/values/*.xml`.
@@ -1039,7 +1037,7 @@ Google Play anunció (ago-2026) un requisito de calidad técnica: las apps deben
 - [ ] MAUI: Colores y estilos con `AppThemeBinding` (claro/oscuro desde el origen).
 - [ ] MAUI: Permisos Android mínimos; usar APIs de plataforma sin permisos protegidos (batería con `BatteryManager`/`BatteryProperty`, no con `Battery.Default` + `BATTERY_STATS`); revisar el manifest fusionado.
 - [ ] MAUI: Empaquetado Android con `RuntimeIdentifiers` (`AndroidSupportedAbis` obsoleta en .NET 10); validar ABI en dispositivo real con `ro.product.cpu.abi` (cuidado con 32-bit).
-- [ ] MAUI: Barras del sistema en Android resueltas con opt-out de edge-to-edge (`windowOptOutEdgeToEdgeEnforcement` en `Maui.MainTheme`) + `SetStatusBarColor`/`SetNavigationBarColor` sin guard y `#pragma` CA1422; botones de diálogos de fecha/hora vía handler, sin tocar `colorAccent` (§11.16).
+- [ ] MAUI: Barras del sistema en Android resueltas con opt-out de edge-to-edge (`windowOptOutEdgeToEdgeEnforcement` en `Maui.MainTheme`) + color de barras `#243042` definido en el tema (`statusBarColor`/`navigationBarColor`), sin llamadas runtime (evita el aviso de Play de APIs obsoletas); botones de diálogos de fecha/hora vía handler, sin tocar `colorAccent` (§11.16).
 - [ ] MAUI: Recordatorios programados con IDs scopeados por tipo de entidad en requestCode/id de notificación (`(kind << 24) | id`), cancelación al borrar y permiso `POST_NOTIFICATIONS` antes de agendar (§11.17).
 - [ ] Publicación: advertencia de ofuscación/DEX de Play **no corregible** en .NET MAUI (límite del toolchain); ignorar hasta feb-2027 y verificar el resto de métricas accionables (targetSdk, 64-bit, 16 KB pages) (§11.18).
 - [ ] Publicación: Play Protect exige `minSdkVersion ≥ 24`; se controla con `SupportedOSPlatformVersion` (solo android), no con targetSdk (§11.19).

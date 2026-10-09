@@ -2,6 +2,10 @@
 <resources>
 
     <style name="Maui.MainTheme" parent="Maui.MainTheme.Base">
+        <item name="android:statusBarColor">#243042</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:navigationBarColor">#243042</item>
+        <item name="android:windowLightNavigationBar">false</item>
         <item name="android:windowOptOutEdgeToEdgeEnforcement">true</item>
     </style>
 
