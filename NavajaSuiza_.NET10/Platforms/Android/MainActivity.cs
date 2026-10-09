@@ -11,10 +11,10 @@ public class MainActivity : MauiAppCompatActivity
     {
         base.OnCreate(savedInstanceState);
 
-        if (!OperatingSystem.IsAndroidVersionAtLeast(35))
-        {
-            Window?.SetStatusBarColor(Android.Graphics.Color.ParseColor("#243042"));
-            Window?.SetNavigationBarColor(Android.Graphics.Color.ParseColor("#243042"));
-        }
+        //if (!OperatingSystem.IsAndroidVersionAtLeast(35))
+        //{
+        Window?.SetStatusBarColor(Android.Graphics.Color.ParseColor("#243042"));
+        Window?.SetNavigationBarColor(Android.Graphics.Color.ParseColor("#243042"));
+        //}
     }
 }
