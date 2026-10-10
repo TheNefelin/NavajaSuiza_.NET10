@@ -11,62 +11,61 @@
         <converters:InvertedBoolConverter x:Key="InvertedBoolConverter" />
     </ContentPage.Resources>
 
-    <Grid RowDefinitions="Auto,Auto,*,Auto,Auto"
-          Padding="20"
-          RowSpacing="12">
+    <ScrollView>
+        <Grid RowDefinitions="Auto,*,Auto"
+              RowSpacing="12"
+              Padding="20">
 
-        <Entry Grid.Row="0"
-               Text="{Binding TitleText}"
-               Placeholder="{extensions:Translate NotesTitlePlaceholderText}"
-               FontAttributes="Bold"
-               FontSize="18"
-               BackgroundColor="Transparent" />
+            <!-- Título: siempre al principio -->
+            <Entry Grid.Row="0"
+                   Text="{Binding TitleText}"
+                   Placeholder="{extensions:Translate NotesTitlePlaceholderText}"
+                   FontAttributes="Bold"
+                   FontSize="18"
+                   BackgroundColor="Transparent" />
 
-        <BoxView Grid.Row="1"
-                 HeightRequest="1"
-                 Color="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray600}}" />
+            <!-- Área de texto: crece con el contenido, empuja las acciones hacia abajo -->
+            <Editor Grid.Row="1"
+                    Text="{Binding ContentText}"
+                    Placeholder="{extensions:Translate NotesContentPlaceholderText}"
+                    AutoSize="TextChanges"
+                    VerticalOptions="Start"
+                    BackgroundColor="Transparent" />
 
-        <Editor Grid.Row="2"
-                Text="{Binding ContentText}"
-                Placeholder="{extensions:Translate NotesContentPlaceholderText}"
-                AutoSize="TextChanges"
-                VerticalOptions="Fill"
-                BackgroundColor="Transparent" />
+            <!-- Acciones: recordatorio + botón, al final -->
+            <VerticalStackLayout Grid.Row="2" Spacing="8">
 
-        <!-- Recordatorio -->
-        <VerticalStackLayout Grid.Row="3" Spacing="8">
+                <Grid ColumnDefinitions="*,Auto">
+                    <Label Text="{extensions:Translate NotesReminderSectionText}"
+                           FontSize="14"
+                           Opacity="0.8"
+                           VerticalOptions="Center" />
 
-            <Grid ColumnDefinitions="*,Auto">
-                <Label Text="{extensions:Translate NotesReminderSectionText}"
-                       FontSize="14"
-                       Opacity="0.8"
-                       VerticalOptions="Center" />
+                    <Switch Grid.Column="1"
+                            IsToggled="{Binding HasReminder}"
+                            OnColor="{StaticResource MyAccentBlue}" />
+                </Grid>
 
-                <Switch Grid.Column="1"
-                        IsToggled="{Binding HasReminder}"
-                        OnColor="{StaticResource MyAccentBlue}" />
-            </Grid>
+                <HorizontalStackLayout IsVisible="{Binding HasReminder}" Spacing="8">
+                    <DatePicker Date="{Binding ReminderDate}"
+                                FontSize="14"
+                                VerticalOptions="Center" />
 
-            <HorizontalStackLayout IsVisible="{Binding HasReminder}" Spacing="8">
-                <DatePicker Date="{Binding ReminderDate}"
-                            FontSize="14"
-                            VerticalOptions="Center" />
+                    <TimePicker Time="{Binding ReminderTime}"
+                                FontSize="14"
+                                VerticalOptions="Center" />
+                </HorizontalStackLayout>
 
-                <TimePicker Time="{Binding ReminderTime}"
-                            FontSize="14"
-                            VerticalOptions="Center" />
-            </HorizontalStackLayout>
-        </VerticalStackLayout>
-
-        <Button Grid.Row="4"
-                Text="{extensions:Translate NotesSaveText}"
-                Command="{Binding SaveCommand}"
-                BackgroundColor="{StaticResource MyAccentBlue}"
-                TextColor="White"
-                FontSize="16"
-                HeightRequest="48"
-                CornerRadius="12"
-                IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}" />
-    </Grid>
+                <Button Text="{extensions:Translate NotesSaveText}"
+                        Command="{Binding SaveCommand}"
+                        BackgroundColor="{StaticResource MyAccentBlue}"
+                        TextColor="White"
+                        FontSize="16"
+                        HeightRequest="48"
+                        CornerRadius="12"
+                        IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}" />
+            </VerticalStackLayout>
+        </Grid>
+    </ScrollView>
 
 </ContentPage>

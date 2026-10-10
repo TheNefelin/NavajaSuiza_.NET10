@@ -13,165 +13,174 @@
         <converters:EnumToBoolConverter x:Key="EnumToBoolConverter" />
     </ContentPage.Resources>
 
-    <Grid RowDefinitions="Auto,Auto,*,Auto,Auto"
-          Padding="20"
-          RowSpacing="12">
+    <ScrollView>
+        <Grid RowDefinitions="Auto,*,Auto"
+              RowSpacing="12"
+              Padding="20">
 
-        <!-- Nombre del grupo de tareas -->
-        <Entry Grid.Row="0"
-               Text="{Binding TitleText}"
-               Placeholder="{extensions:Translate NotesTaskGroupNamePlaceholderText}"
-               FontAttributes="Bold"
-               FontSize="18"
-               BackgroundColor="Transparent" />
+            <!-- Título del grupo: siempre al principio -->
+            <Entry Grid.Row="0"
+                   Text="{Binding TitleText}"
+                   Placeholder="{extensions:Translate NotesTaskGroupNamePlaceholderText}"
+                   FontAttributes="Bold"
+                   FontSize="18"
+                   BackgroundColor="Transparent" />
 
-        <!-- Sub-formulario incrustado para crear una tarea -->
-        <Border Grid.Row="1"
-                Padding="12"
-                StrokeShape="Rectangle"
-                StrokeThickness="1"
-                Stroke="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray600}}"
-                BackgroundColor="{AppThemeBinding Light={StaticResource MyPrimaryLight}, Dark={StaticResource MyPrimaryDark}}">
-            <Grid RowDefinitions="Auto,Auto" RowSpacing="10">
+            <!-- Sub-formulario incrustado + lista de tareas: crecen con el contenido -->
+            <VerticalStackLayout Grid.Row="1" Spacing="12">
 
-                <Entry Grid.Row="0"
-                       Text="{Binding NewTaskTitle}"
-                       Placeholder="{extensions:Translate NotesTaskItemPlaceholderText}"
-                       BackgroundColor="Transparent" />
+                <Border Padding="12"
+                        StrokeShape="Rectangle"
+                        StrokeThickness="1"
+                        Stroke="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray600}}"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource MyPrimaryLight}, Dark={StaticResource MyPrimaryDark}}">
+                    <Grid RowDefinitions="Auto,Auto" RowSpacing="10">
 
-                <Grid Grid.Row="1" ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                        <Entry Grid.Row="0"
+                               Text="{Binding NewTaskTitle}"
+                               Placeholder="{extensions:Translate NotesTaskItemPlaceholderText}"
+                               BackgroundColor="Transparent" />
 
-                    <HorizontalStackLayout Grid.Column="0" Spacing="12" VerticalOptions="Center">
-                        <RadioButton Content="{extensions:Translate NotesImportanceHighText}"
-                                     GroupName="TaskImportance"
-                                     FontAttributes="Bold"
-                                     TextColor="{StaticResource MyOn}"
-                                     BorderColor="{StaticResource MyOn}"
-                                     IsChecked="{Binding SelectedImportance, Converter={StaticResource EnumToBoolConverter}, ConverterParameter=High}" />
-                        <RadioButton Content="{extensions:Translate NotesImportanceMediumText}"
-                                     GroupName="TaskImportance"
-                                     FontAttributes="Bold"
-                                     TextColor="{StaticResource MyAccentOrange}"
-                                     BorderColor="{StaticResource MyAccentOrange}"
-                                     IsChecked="{Binding SelectedImportance, Converter={StaticResource EnumToBoolConverter}, ConverterParameter=Medium}" />
-                        <RadioButton Content="{extensions:Translate NotesImportanceLowText}"
-                                     GroupName="TaskImportance"
-                                     FontAttributes="Bold"
-                                     TextColor="{StaticResource MyAccentBlue}"
-                                     BorderColor="{StaticResource MyAccentBlue}"
-                                     IsChecked="{Binding SelectedImportance, Converter={StaticResource EnumToBoolConverter}, ConverterParameter=Low}" />
-                    </HorizontalStackLayout>
+                        <Grid Grid.Row="1" ColumnDefinitions="*,Auto" ColumnSpacing="10">
 
-                    <Button Grid.Column="1"
-                            Text="{extensions:Translate NotesAddTaskText}"
-                            Command="{Binding AddTaskCommand}"
-                            BackgroundColor="{StaticResource MyAccentBlue}"
-                            TextColor="White"
-                            FontSize="14"
-                            CornerRadius="8"
-                            Padding="12,6" />
-                </Grid>
-            </Grid>
-        </Border>
+                            <FlexLayout Grid.Column="0"
+                                        Direction="Row"
+                                        Wrap="Wrap"
+                                        AlignItems="Center">
+                                <RadioButton Content="{extensions:Translate NotesImportanceHighText}"
+                                             GroupName="TaskImportance"
+                                             FontAttributes="Bold"
+                                             TextColor="{StaticResource MyOn}"
+                                             BorderColor="{StaticResource MyOn}"
+                                             Margin="0,3,12,3"
+                                             IsChecked="{Binding SelectedImportance, Converter={StaticResource EnumToBoolConverter}, ConverterParameter=High}" />
+                                <RadioButton Content="{extensions:Translate NotesImportanceMediumText}"
+                                             GroupName="TaskImportance"
+                                             FontAttributes="Bold"
+                                             TextColor="{StaticResource MyAccentOrange}"
+                                             BorderColor="{StaticResource MyAccentOrange}"
+                                             Margin="0,3,12,3"
+                                             IsChecked="{Binding SelectedImportance, Converter={StaticResource EnumToBoolConverter}, ConverterParameter=Medium}" />
+                                <RadioButton Content="{extensions:Translate NotesImportanceLowText}"
+                                             GroupName="TaskImportance"
+                                             FontAttributes="Bold"
+                                             TextColor="{StaticResource MyAccentBlue}"
+                                             BorderColor="{StaticResource MyAccentBlue}"
+                                             Margin="0,3,12,3"
+                                             IsChecked="{Binding SelectedImportance, Converter={StaticResource EnumToBoolConverter}, ConverterParameter=Low}" />
+                            </FlexLayout>
 
-        <!-- Lista de registros del grupo -->
-        <CollectionView Grid.Row="2"
-                        ItemsSource="{Binding TaskItems}"
-                        SelectionMode="None">
-            <CollectionView.EmptyView>
-                <Label Text="{extensions:Translate NotesTaskEmptyText}"
-                       HorizontalTextAlignment="Center"
-                       Opacity="0.6"
-                       Padding="20,40" />
-            </CollectionView.EmptyView>
-            <CollectionView.ItemTemplate>
-                <DataTemplate>
-                    <Border StrokeShape="Rectangle"
-                            StrokeThickness="1"
-                            Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}"
-                            BackgroundColor="{AppThemeBinding Light={StaticResource MyPrimaryLight}, Dark={StaticResource MyPrimaryDark}}"
-                            Margin="0,3"
-                            Padding="10,6">
-                        <Grid ColumnDefinitions="Auto,Auto,*,Auto" ColumnSpacing="10">
-                            <Border Grid.Column="0"
-                                    WidthRequest="14"
-                                    HeightRequest="14"
-                                    StrokeThickness="0"
-                                    StrokeShape="Ellipse"
-                                    VerticalOptions="Center"
-                                    BackgroundColor="{StaticResource MyAccentBlue}">
-                                <Border.Triggers>
-                                    <DataTrigger TargetType="Border" Binding="{Binding Importance}" Value="{x:Static models:TaskImportance.High}">
-                                        <Setter Property="BackgroundColor" Value="{StaticResource MyOn}" />
-                                    </DataTrigger>
-                                    <DataTrigger TargetType="Border" Binding="{Binding Importance}" Value="{x:Static models:TaskImportance.Medium}">
-                                        <Setter Property="BackgroundColor" Value="{StaticResource MyAccentOrange}" />
-                                    </DataTrigger>
-                                    <DataTrigger TargetType="Border" Binding="{Binding Importance}" Value="{x:Static models:TaskImportance.Low}">
-                                        <Setter Property="BackgroundColor" Value="{StaticResource MyAccentBlue}" />
-                                    </DataTrigger>
-                                </Border.Triggers>
-                            </Border>
-                            
-                            <CheckBox Grid.Column="1"
-                                      IsChecked="{Binding IsCompleted}"
-                                      VerticalOptions="Center" />
-
-                            <Label Grid.Column="2"
-                                   Text="{Binding Title}"
-                                   VerticalOptions="Center"
-                                   LineBreakMode="TailTruncation" />
-
-                            <Button Grid.Column="3"
-                                    ImageSource="icon_delete.png"
-                                    BackgroundColor="{StaticResource MyOn}"
+                            <Button Grid.Column="1"
+                                    Text="{extensions:Translate NotesAddTaskText}"
+                                    Command="{Binding AddTaskCommand}"
+                                    BackgroundColor="{StaticResource MyAccentBlue}"
+                                    TextColor="White"
+                                    FontSize="14"
                                     CornerRadius="8"
-                                    Padding="8"
-                                    BorderWidth="0"
-                                    WidthRequest="44"
-                                    HeightRequest="44"
-                                    Command="{Binding BindingContext.DeleteTaskCommand, Source={x:Reference TaskEditorPageRoot}}"
-                                    CommandParameter="{Binding .}" />
+                                    Padding="12,6"
+                                    VerticalOptions="Center" />
                         </Grid>
-                    </Border>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
+                    </Grid>
+                </Border>
 
-        <!-- Recordatorio -->
-        <VerticalStackLayout Grid.Row="3" Spacing="8">
+                <!-- Lista de registros del grupo: crece y empuja las acciones hacia abajo -->
+                <CollectionView ItemsSource="{Binding TaskItems}"
+                                SelectionMode="None">
+                    <CollectionView.EmptyView>
+                        <Label Text="{extensions:Translate NotesTaskEmptyText}"
+                               HorizontalTextAlignment="Center"
+                               Opacity="0.6"
+                               Padding="20,40" />
+                    </CollectionView.EmptyView>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Border StrokeShape="Rectangle"
+                                    StrokeThickness="1"
+                                    Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}"
+                                    BackgroundColor="{AppThemeBinding Light={StaticResource MyPrimaryLight}, Dark={StaticResource MyPrimaryDark}}"
+                                    Margin="0,3"
+                                    Padding="10,6">
+                                <Grid ColumnDefinitions="Auto,Auto,*,Auto" ColumnSpacing="10">
+                                    <Border Grid.Column="0"
+                                            WidthRequest="14"
+                                            HeightRequest="14"
+                                            StrokeThickness="0"
+                                            StrokeShape="Ellipse"
+                                            VerticalOptions="Center"
+                                            BackgroundColor="{StaticResource MyAccentBlue}">
+                                        <Border.Triggers>
+                                            <DataTrigger TargetType="Border" Binding="{Binding Importance}" Value="{x:Static models:TaskImportance.High}">
+                                                <Setter Property="BackgroundColor" Value="{StaticResource MyOn}" />
+                                            </DataTrigger>
+                                            <DataTrigger TargetType="Border" Binding="{Binding Importance}" Value="{x:Static models:TaskImportance.Medium}">
+                                                <Setter Property="BackgroundColor" Value="{StaticResource MyAccentOrange}" />
+                                            </DataTrigger>
+                                            <DataTrigger TargetType="Border" Binding="{Binding Importance}" Value="{x:Static models:TaskImportance.Low}">
+                                                <Setter Property="BackgroundColor" Value="{StaticResource MyAccentBlue}" />
+                                            </DataTrigger>
+                                        </Border.Triggers>
+                                    </Border>
 
-            <Grid ColumnDefinitions="*,Auto">
-                <Label Text="{extensions:Translate NotesReminderSectionText}"
-                       FontSize="14"
-                       Opacity="0.8"
-                       VerticalOptions="Center" />
+                                    <CheckBox Grid.Column="1"
+                                              IsChecked="{Binding IsCompleted}"
+                                              VerticalOptions="Center" />
 
-                <Switch Grid.Column="1"
-                        IsToggled="{Binding HasReminder}"
-                        OnColor="{StaticResource MyAccentBlue}" />
-            </Grid>
+                                    <Label Grid.Column="2"
+                                           Text="{Binding Title}"
+                                           VerticalOptions="Center"
+                                           LineBreakMode="TailTruncation" />
 
-            <HorizontalStackLayout IsVisible="{Binding HasReminder}" Spacing="8">
-                <DatePicker Date="{Binding ReminderDate}"
-                            FontSize="14"
-                            VerticalOptions="Center" />
+                                    <Button Grid.Column="3"
+                                            ImageSource="icon_delete.png"
+                                            BackgroundColor="{StaticResource MyOn}"
+                                            CornerRadius="8"
+                                            Padding="8"
+                                            BorderWidth="0"
+                                            WidthRequest="44"
+                                            HeightRequest="44"
+                                            Command="{Binding BindingContext.DeleteTaskCommand, Source={x:Reference TaskEditorPageRoot}}"
+                                            CommandParameter="{Binding .}" />
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </VerticalStackLayout>
 
-                <TimePicker Time="{Binding ReminderTime}"
-                            FontSize="14"
-                            VerticalOptions="Center" />
-            </HorizontalStackLayout>
-        </VerticalStackLayout>
+            <!-- Acciones: recordatorio + botón, al final -->
+            <VerticalStackLayout Grid.Row="2" Spacing="8">
 
-        <Button Grid.Row="4"
-                Text="{extensions:Translate NotesSaveText}"
-                Command="{Binding SaveCommand}"
-                BackgroundColor="{StaticResource MyAccentBlue}"
-                TextColor="White"
-                FontSize="16"
-                HeightRequest="48"
-                CornerRadius="12"
-                IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}" />
-    </Grid>
+                <Grid ColumnDefinitions="*,Auto">
+                    <Label Text="{extensions:Translate NotesReminderSectionText}"
+                           FontSize="14"
+                           Opacity="0.8"
+                           VerticalOptions="Center" />
+
+                    <Switch Grid.Column="1"
+                            IsToggled="{Binding HasReminder}"
+                            OnColor="{StaticResource MyAccentBlue}" />
+                </Grid>
+
+                <HorizontalStackLayout IsVisible="{Binding HasReminder}" Spacing="8">
+                    <DatePicker Date="{Binding ReminderDate}"
+                                FontSize="14"
+                                VerticalOptions="Center" />
+
+                    <TimePicker Time="{Binding ReminderTime}"
+                                FontSize="14"
+                                VerticalOptions="Center" />
+                </HorizontalStackLayout>
+
+                <Button Text="{extensions:Translate NotesSaveText}"
+                        Command="{Binding SaveCommand}"
+                        BackgroundColor="{StaticResource MyAccentBlue}"
+                        TextColor="White"
+                        FontSize="16"
+                        HeightRequest="48"
+                        CornerRadius="12"
+                        IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}" />
+            </VerticalStackLayout>
+        </Grid>
+    </ScrollView>
 
 </ContentPage>

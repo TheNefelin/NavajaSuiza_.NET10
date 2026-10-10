@@ -8,7 +8,7 @@
 
     <ScrollView>
         <VerticalStackLayout
-            Padding="0,20"
+            Padding="0,15"
             Spacing="30">
 
             <Label
@@ -18,8 +18,8 @@
                 Padding="10" />
 
             <Border
-                Padding="20"
-                Margin="30,0"
+                Padding="0,20"
+                Margin="20,0"
                 StrokeThickness="2"
                 Stroke="{StaticResource MyAccentBlue}"
                 StrokeShape="RoundRectangle 20">

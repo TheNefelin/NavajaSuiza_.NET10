@@ -9,24 +9,24 @@
     <Grid>
         <ScrollView>
             <VerticalStackLayout
-                HorizontalOptions="Center"
                 Padding="0,20">
-
-                <Label Text="{extensions:Translate MenuWelcomeText}" FontAttributes="Bold" FontSize="20" Padding="10"/>
+                
+                <Label Text="{extensions:Translate MenuWelcomeText}" FontAttributes="Bold" FontSize="20" Padding="20,0"/>
 
                 <FlexLayout
                     Wrap="Wrap"
                     JustifyContent="Center"
-                    Padding="20">
+                    Padding="0,20">
 
                     <Button
                         Command="{Binding NavigateToTunerCommand}"                    
                         Text="{extensions:Translate TunerText}"
                         ImageSource="icon_tuner.png"                    
                         FontAttributes="Bold"
+                        FontSize="12"
                         ContentLayout="Top, 0" 
-                        Margin="8,0,8,16"
-                        Padding="25,15,25,10"
+                        Margin="8,5"
+                        Padding="25,15"
                         WidthRequest="130" 
                         HeightRequest="130" />
 
@@ -35,9 +35,10 @@
                         Command="{Binding NavigateToMetronomeCommand}"
                         ImageSource="icon_metronome.png"                    
                         FontAttributes="Bold"
-                        ContentLayout="Top, 0" 
-                        Margin="8,0,8,16"
-                        Padding="25,15,25,10"
+                        FontSize="12"
+                        ContentLayout="Top, 0"
+                        Margin="8,5"
+                        Padding="25,15"
                         WidthRequest="130" 
                         HeightRequest="130" />
 
@@ -46,9 +47,10 @@
                         Command="{Binding NavigateToStopwatchCommand}"
                         ImageSource="icon_stopwatch.png"                    
                         FontAttributes="Bold"
+                        FontSize="12"
                         ContentLayout="Top, 0" 
-                        Margin="8,0,8,16"
-                        Padding="25,15,25,10"
+                        Margin="8,5"
+                        Padding="25,15"
                         WidthRequest="130" 
                         HeightRequest="130" />
 
@@ -57,9 +59,10 @@
                         Text="{extensions:Translate FlashlightText}"
                         ImageSource="icon_flashlight.png"
                         FontAttributes="Bold"
+                        FontSize="12"
                         ContentLayout="Top, 0" 
-                        Margin="8,0,8,16"
-                        Padding="25,15,25,10"
+                        Margin="8,5"
+                        Padding="25,15"
                         WidthRequest="130" 
                         HeightRequest="130" />
 
@@ -68,9 +71,10 @@
                         Text="{extensions:Translate CompassText}"
                         ImageSource="icon_compass.png"                    
                         FontAttributes="Bold"
+                        FontSize="12"
                         ContentLayout="Top, 0" 
-                        Margin="8,0,8,16"
-                        Padding="25,15,25,10"
+                        Margin="8,5"
+                        Padding="25,15"
                         WidthRequest="130" 
                         HeightRequest="130" />
 
@@ -79,9 +83,10 @@
                         Text="{extensions:Translate NotesText}"
                         ImageSource="icon_notebook.png"                    
                         FontAttributes="Bold"
+                        FontSize="12"
                         ContentLayout="Top, 0" 
-                        Margin="8,0,8,16"
-                        Padding="25,15,25,10"
+                        Margin="8,5"
+                        Padding="25,15"
                         WidthRequest="130" 
                         HeightRequest="130" />
 
@@ -90,9 +95,10 @@
                         Text="{extensions:Translate BoardText}"
                         ImageSource="icon_board.png"
                         FontAttributes="Bold"
+                        FontSize="12"
                         ContentLayout="Top, 0"
-                        Margin="8,0,8,16"
-                        Padding="25,15,25,10"
+                        Margin="8,5"
+                        Padding="25,15"
                         WidthRequest="130"
                         HeightRequest="130" />
 
@@ -101,9 +107,10 @@
                         Text="{extensions:Translate PdfReaderText}"
                         ImageSource="icon_file.png"
                         FontAttributes="Bold"
+                        FontSize="12"
                         ContentLayout="Top, 0"
-                        Margin="8,0,8,16"
-                        Padding="25,15,25,10"
+                        Margin="8,5"
+                        Padding="25,15"
                         WidthRequest="130"
                         HeightRequest="130" />
 
@@ -114,8 +121,8 @@
                         ImageSource="icon_camera.png"                    
                         FontAttributes="Bold"
                         ContentLayout="Top, 0" 
-                        Margin="8,0,8,16"
-                        Padding="25,15,25,10"
+                        Margin="8,5"
+                        Padding="25,15"
                         WidthRequest="130" 
                         HeightRequest="130" />
 
@@ -125,20 +132,20 @@
                         Text="{extensions:Translate ManualText}"
                         ImageSource="icon_manual.png"                    
                         FontAttributes="Bold"
+                        FontSize="12"
                         ContentLayout="Top, 0" 
-                        Margin="8,0,8,16"
-                        Padding="25,15,25,10"
+                        Margin="8,5"
+                        Padding="25,15"
                         WidthRequest="130" 
-                        HeightRequest="130" 
-                    />
+                        HeightRequest="130" />
                 </FlexLayout>
             
-                <Label Text="{extensions:Translate MenuStatusText}" FontAttributes="Bold" FontSize="20" Padding="10,0,10,10"/>
+                <Label Text="{extensions:Translate MenuStatusText}" FontAttributes="Bold" FontSize="20" Padding="20,0"/>
 
                 <Border
-                    Padding="16" 
+                    Padding="20,15" 
                     StrokeShape="Rectangle"
-                    Margin="0,0,0,10">
+                    Margin="20,10">
                 
                     <Grid ColumnDefinitions="*,Auto">
                         <HorizontalStackLayout Grid.Column="0" Spacing="12">
@@ -168,9 +175,9 @@
                 </Border>
 
                 <Border
-                    Padding="16" 
+                    Padding="20,15" 
                     StrokeShape="Rectangle"
-                    Margin="0,0,0,10">
+                    Margin="20,0">
 
                     <Grid ColumnDefinitions="*,Auto">
                         <HorizontalStackLayout Grid.Column="0" Spacing="12">

@@ -13,7 +13,7 @@
     <ScrollView>
         <VerticalStackLayout 
             HorizontalOptions="Center" 
-            Padding="0,20,0,0">
+            Padding="0,20">
 
             <Label 
                 Text="{extensions:Translate TunerOptionsText}"
@@ -24,16 +24,17 @@
             <FlexLayout
                 Wrap="Wrap"
                 JustifyContent="Center"
-                Padding="20">
+                Padding="0,20">
 
                 <Button
                     Text="{extensions:Translate TunerNylonText}"
                     Command="{Binding NavigateToNylonCommand}"
                     ImageSource="instrument_gn.png"
                     FontAttributes="Bold"
+                    FontSize="12"
                     ContentLayout="Top, 0" 
-                    Margin="8,0,8,16"
-                    Padding="25,15,25,10"
+                    Margin="8,5"
+                    Padding="25,15"
                     WidthRequest="130" 
                     HeightRequest="130"
                     IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}" />
@@ -43,9 +44,10 @@
                     Command="{Binding NavigateToSteelCommand}"
                     ImageSource="instrument_gs.png"
                     FontAttributes="Bold"
+                    FontSize="12"
                     ContentLayout="Top, 0" 
-                    Margin="8,0,8,16"
-                    Padding="25,15,25,10"
+                    Margin="8,5"
+                    Padding="25,15"
                     WidthRequest="130" 
                     HeightRequest="130"
                     IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}" />
@@ -55,9 +57,10 @@
                     Command="{Binding NavigateToBassCommand}"
                     ImageSource="instrument_b.png"
                     FontAttributes="Bold"
+                    FontSize="12"
                     ContentLayout="Top, 0" 
-                    Margin="8,0,8,16"
-                    Padding="25,15,25,10"
+                    Margin="8,5"
+                    Padding="25,15"
                     WidthRequest="130" 
                     HeightRequest="130"
                     IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}" />
@@ -67,9 +70,10 @@
                     Command="{Binding NavigateToUkeleleCommand}"
                     ImageSource="instrument_u.png"
                     FontAttributes="Bold"
+                    FontSize="12"
                     ContentLayout="Top, 0" 
-                    Margin="8,0,8,16"
-                    Padding="25,15,25,10"
+                    Margin="8,5"
+                    Padding="25,15"
                     WidthRequest="130" 
                     HeightRequest="130"
                     IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}" />
@@ -79,9 +83,10 @@
                     Command="{Binding NavigateToViolinCommand}"
                     ImageSource="instrument_v.png"
                     FontAttributes="Bold"
+                    FontSize="12"
                     ContentLayout="Top, 0" 
-                    Margin="8,0,8,16"
-                    Padding="25,15,25,10"
+                    Margin="8,5"
+                    Padding="25,15"
                     WidthRequest="130" 
                     HeightRequest="130"
                     IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}" />
@@ -91,9 +96,10 @@
                     Command="{Binding NavigateToCharangoCommand}"
                     ImageSource="instrument_c.png"
                     FontAttributes="Bold"
+                    FontSize="12"
                     ContentLayout="Top, 0" 
-                    Margin="8,0,8,16"
-                    Padding="25,15,25,10"
+                    Margin="8,5"
+                    Padding="25,15"
                     WidthRequest="130" 
                     HeightRequest="130"
                     IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}" />
