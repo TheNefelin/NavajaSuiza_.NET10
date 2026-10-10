@@ -9,8 +9,6 @@ public sealed class BoardImageExporter : IBoardImageExporter
 {
     private const string FileNamePrefix = "board";
     private const string WebpMimeType = "image/webp";
-    private const int MaxDimension = 2048;
-    private const int LayoutPadding = 40;
     private const int WebpQuality = 95;
 
     private readonly ILogger<BoardImageExporter> _logger;
@@ -23,14 +21,20 @@ public sealed class BoardImageExporter : IBoardImageExporter
     public async Task<BoardExportResult> ExportAsync(
         IReadOnlyList<BoardStroke> strokes,
         IReadOnlyList<BoardText> texts,
-        string boardColorHex)
+        string boardColorHex,
+        float canvasWidth,
+        float canvasHeight,
+        float renderScale)
     {
         if (strokes.Count == 0 && texts.Count == 0)
             return BoardExportResult.Failed;
 
+        if (canvasWidth <= 0f || canvasHeight <= 0f)
+            return BoardExportResult.Failed;
+
         try
         {
-            var webpBytes = RenderWebP(strokes, texts, boardColorHex);
+            var webpBytes = RenderWebP(strokes, texts, boardColorHex, canvasWidth, canvasHeight, renderScale);
             if (webpBytes is null)
                 return BoardExportResult.Failed;
 
@@ -43,9 +47,15 @@ public sealed class BoardImageExporter : IBoardImageExporter
         }
     }
 
-    private static byte[]? RenderWebP(IReadOnlyList<BoardStroke> strokes, IReadOnlyList<BoardText> texts, string boardColorHex)
+    private static byte[]? RenderWebP(
+        IReadOnlyList<BoardStroke> strokes,
+        IReadOnlyList<BoardText> texts,
+        string boardColorHex,
+        float canvasWidth,
+        float canvasHeight,
+        float renderScale)
     {
-        using var bitmap = RenderBitmap(strokes, texts, boardColorHex);
+        using var bitmap = RenderBitmap(strokes, texts, boardColorHex, canvasWidth, canvasHeight, renderScale);
         if (bitmap is null)
             return null;
 
@@ -57,10 +67,17 @@ public sealed class BoardImageExporter : IBoardImageExporter
         return data.ToArray();
     }
 
-    private static SKBitmap? RenderBitmap(IReadOnlyList<BoardStroke> strokes, IReadOnlyList<BoardText> texts, string boardColorHex)
+    private static SKBitmap? RenderBitmap(
+        IReadOnlyList<BoardStroke> strokes,
+        IReadOnlyList<BoardText> texts,
+        string boardColorHex,
+        float canvasWidth,
+        float canvasHeight,
+        float renderScale)
     {
-        if (!TryComputeLayout(strokes, texts, out var width, out var height, out var offsetX, out var offsetY, out var scale))
-            return null;
+        var scale = renderScale > 0f ? renderScale : 1f;
+        var width = Math.Max(1, (int)Math.Round(canvasWidth * scale));
+        var height = Math.Max(1, (int)Math.Round(canvasHeight * scale));
 
         var bitmap = new SKBitmap(width, height);
         using var canvas = new SKCanvas(bitmap);
@@ -86,8 +103,8 @@ public sealed class BoardImageExporter : IBoardImageExporter
             for (var i = 0; i < stroke.Points.Count; i++)
             {
                 var point = stroke.Points[i];
-                var x = (point.X + offsetX) * scale;
-                var y = (point.Y + offsetY) * scale;
+                var x = point.X * scale;
+                var y = point.Y * scale;
 
                 if (i == 0)
                     builder.MoveTo(x, y);
@@ -111,87 +128,18 @@ public sealed class BoardImageExporter : IBoardImageExporter
             };
 
             using var font = new SKFont(SKTypeface.Default, text.FontSize * scale);
+            font.GetFontMetrics(out var metrics);
 
             canvas.DrawText(
                 text.Content,
-                (text.X + offsetX) * scale,
-                (text.Y + offsetY) * scale,
+                text.X * scale,
+                (text.Y * scale) - metrics.Ascent,
                 SKTextAlign.Left,
                 font,
                 paint);
         }
 
         return bitmap;
-    }
-
-    /// <summary>
-    /// Computes the bounding box of the content combining strokes and texts.
-    /// Without the texts a board that only has text would return false and the
-    /// export would fail, and a text outside the strokes bounding box would be clipped.
-    /// </summary>
-    private static bool TryComputeLayout(
-        IReadOnlyList<BoardStroke> strokes,
-        IReadOnlyList<BoardText> texts,
-        out int width,
-        out int height,
-        out float offsetX,
-        out float offsetY,
-        out float scale)
-    {
-        var minX = float.MaxValue;
-        var minY = float.MaxValue;
-        var maxX = float.MinValue;
-        var maxY = float.MinValue;
-        var maxHalfWidth = 0f;
-
-        foreach (var stroke in strokes)
-        {
-            maxHalfWidth = Math.Max(maxHalfWidth, stroke.Width / 2f);
-
-            foreach (var point in stroke.Points)
-            {
-                minX = Math.Min(minX, point.X);
-                minY = Math.Min(minY, point.Y);
-                maxX = Math.Max(maxX, point.X);
-                maxY = Math.Max(maxY, point.Y);
-            }
-        }
-
-        foreach (var text in texts)
-        {
-            if (string.IsNullOrWhiteSpace(text.Content))
-                continue;
-
-            // Se estima el ancho con 0.6 em por caracter, que es la media habitual
-            // para Helvetica/Arial y evita depender de SkiaSharp en el calculo.
-            var estimatedWidth = text.Content.Length * text.FontSize * 0.6f;
-
-            minX = Math.Min(minX, text.X);
-            minY = Math.Min(minY, text.Y);
-            maxX = Math.Max(maxX, text.X + estimatedWidth);
-            maxY = Math.Max(maxY, text.Y + text.FontSize);
-        }
-
-        if (maxX < minX || maxY < minY)
-        {
-            width = 0;
-            height = 0;
-            offsetX = 0f;
-            offsetY = 0f;
-            scale = 0f;
-            return false;
-        }
-
-        var contentWidth = (maxX - minX) + (2f * maxHalfWidth) + (2f * LayoutPadding);
-        var contentHeight = (maxY - minY) + (2f * maxHalfWidth) + (2f * LayoutPadding);
-        scale = Math.Min(1f, MaxDimension / Math.Max(contentWidth, contentHeight));
-
-        width = Math.Clamp((int)Math.Ceiling(contentWidth * scale), 1, MaxDimension);
-        height = Math.Clamp((int)Math.Ceiling(contentHeight * scale), 1, MaxDimension);
-
-        offsetX = maxHalfWidth + LayoutPadding - minX;
-        offsetY = maxHalfWidth + LayoutPadding - minY;
-        return true;
     }
 
     #if ANDROID

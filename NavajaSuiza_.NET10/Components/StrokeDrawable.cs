@@ -40,6 +40,7 @@ public partial class StrokeDrawable : IDrawable
                 continue;
 
             canvas.FontColor = Color.FromArgb(text.ColorHex);
+            canvas.Font = Microsoft.Maui.Graphics.Font.Default;
             canvas.FontSize = text.FontSize;
 
             var availableWidth = Math.Max(dirtyRect.Width - text.X, 1f);

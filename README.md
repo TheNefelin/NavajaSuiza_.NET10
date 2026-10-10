@@ -315,9 +315,10 @@ Los valores se actualizan cada vez que abres el menú, así que no es un monitor
 - `CAMERA`
 - `FLASHLIGHT`
 - `ACCESS_COARSE_LOCATION` / `ACCESS_FINE_LOCATION` (posición bajo demanda de la brújula; se piden en runtime solo al pulsar "Mi ubicación")
+- `POST_NOTIFICATIONS` (recordatorios de notas y listas de tareas)
 - `WRITE_EXTERNAL_STORAGE` con `android:maxSdkVersion="28"` (solo para exportar la pizarra en Android API 21–28)
 
-`INTERNET` lo re-inyecta `CommunityToolkit.Maui` en el manifest fusionado (permiso *normal*, se conserva). Eliminados por principio de mínimo privilegio: `BATTERY_STATS`, `ACCESS_NETWORK_STATE`.
+`ACCESS_NETWORK_STATE` lo re-inyectaba `CommunityToolkit.Maui.MediaElement` (ExoPlayer/androidx.media3) y ahora se elimina del manifest fusionado con `tools:node="remove"`. `BATTERY_STATS` no se declara y `INTERNET` no está presente en el manifest fusionado.
 
 ## Estructura
 
@@ -325,12 +326,13 @@ Los valores se actualizan cada vez que abres el menú, así que no es un monitor
 NavajaSuiza_.NET10.slnx
 │
 ├── NavajaSuiza.Core/                    # Class Library (net10.0 puro, sin dependencias MAUI)
-│   ├── Interfaces/                      # 26 interfaces
+│   ├── Interfaces/                      # 27 interfaces
 │   │   ├── IAppInfoService.cs
 │   │   ├── ICompassPositionService.cs
 │   │   ├── ICompassService.cs
 │   │   ├── IDeviceDisplayService.cs
 │   │   ├── IDeviceStatusService.cs
+│   │   ├── IDeviceStatusSource.cs
 │   │   ├── IDocumentPdfConverter.cs
 │   │   ├── IFilePickerService.cs
 │   │   ├── IFlashlightService.cs
@@ -370,6 +372,7 @@ NavajaSuiza_.NET10.slnx
 │   │   └── TaskImportance.cs
 │   ├── Services/
 │   │   ├── FlashlightStateService.cs
+│   │   ├── DeviceStatusService.cs
 │   │   ├── MetronomeClick.cs
 │   │   ├── MetronomeEngine.cs
 │   │   ├── MetronomeSampleClock.cs
@@ -428,7 +431,7 @@ NavajaSuiza_.NET10.slnx
 │   │       ├── CompassPositionService.cs
 │   │       ├── CompassSensorService.cs
 │   │       ├── DeviceDisplayService.cs
-│   │       ├── DeviceStatusService.cs
+│   │       ├── PlatformDeviceStatusSource.cs
 │   │       ├── DocumentPdfConverter.cs
 │   │       ├── FilePickerService.cs
 │   │       ├── FlashlightService.cs
@@ -497,6 +500,7 @@ NavajaSuiza_.NET10.slnx
 │   ├── ScreenLightViewModelTests.cs
 │   ├── StopwatchServiceTests.cs
 │   ├── StopwatchViewModelTests.cs
+│   ├── DeviceStatusServiceTests.cs
 │   └── TunerViewModelTests.cs
 │
 ├── .editorconfig                        # Convenciones de código

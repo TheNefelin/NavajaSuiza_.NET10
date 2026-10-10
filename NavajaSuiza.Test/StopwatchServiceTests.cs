@@ -94,7 +94,7 @@ public class StopwatchServiceTests
         service.Start();
         try
         {
-            Assert.True(signal.Wait(2000), "No Tick event within 2s");
+            Assert.True(signal.Wait(2000, TestContext.Current.CancellationToken), "No Tick event within 2s");
             Assert.NotNull(received);
             Assert.NotEqual(TimeSpan.Zero, received);
         }
@@ -155,6 +155,21 @@ public class StopwatchServiceTests
         service.ClearLaps();
 
         Assert.Empty(service.Laps);
+    }
+
+    [Fact]
+    public void RapidStartStopCycles_LeavesStoppedAndResetState()
+    {
+        var service = CreateService();
+
+        for (var i = 0; i < 300; i++)
+        {
+            service.Start();
+            service.Stop();
+        }
+
+        Assert.False(service.IsRunning);
+        Assert.Equal(TimeSpan.Zero, service.Elapsed);
     }
 
     private static StopwatchService CreateService()

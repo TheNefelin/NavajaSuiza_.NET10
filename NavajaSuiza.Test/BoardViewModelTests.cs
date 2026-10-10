@@ -240,7 +240,10 @@ public class BoardViewModelTests
         _exporterMock.Setup(e => e.ExportAsync(
                 It.IsAny<IReadOnlyList<BoardStroke>>(),
                 It.IsAny<IReadOnlyList<BoardText>>(),
-                It.IsAny<string>()))
+                It.IsAny<string>(),
+                It.IsAny<float>(),
+                It.IsAny<float>(),
+                It.IsAny<float>()))
             .ReturnsAsync(BoardExportResult.Saved);
 
         var vm = CreateSut();
@@ -253,7 +256,7 @@ public class BoardViewModelTests
         _exporterMock.Verify(e => e.ExportAsync(
             It.Is<IReadOnlyList<BoardStroke>>(s => s.Count == 1 && s[0].Points.Count == 2),
             It.Is<IReadOnlyList<BoardText>>(t => t.Count == 0),
-            "#17171B"), Times.Once);
+            "#17171B", It.IsAny<float>(), It.IsAny<float>(), It.IsAny<float>()), Times.Once);
         Assert.Equal(BoardExportResult.Saved, vm.LastExportResult);
     }
 
@@ -263,7 +266,10 @@ public class BoardViewModelTests
         _exporterMock.Setup(e => e.ExportAsync(
                 It.IsAny<IReadOnlyList<BoardStroke>>(),
                 It.IsAny<IReadOnlyList<BoardText>>(),
-                It.IsAny<string>()))
+                It.IsAny<string>(),
+                It.IsAny<float>(),
+                It.IsAny<float>(),
+                It.IsAny<float>()))
             .ReturnsAsync(BoardExportResult.Saved);
 
         var vm = CreateSut();
@@ -272,7 +278,7 @@ public class BoardViewModelTests
         _exporterMock.Verify(e => e.ExportAsync(
             It.IsAny<IReadOnlyList<BoardStroke>>(),
             It.IsAny<IReadOnlyList<BoardText>>(),
-            It.IsAny<string>()), Times.Never);
+            It.IsAny<string>(), It.IsAny<float>(), It.IsAny<float>(), It.IsAny<float>()), Times.Never);
         Assert.Equal(BoardExportResult.Failed, vm.LastExportResult);
     }
 
@@ -282,7 +288,10 @@ public class BoardViewModelTests
         _exporterMock.Setup(e => e.ExportAsync(
                 It.IsAny<IReadOnlyList<BoardStroke>>(),
                 It.IsAny<IReadOnlyList<BoardText>>(),
-                It.IsAny<string>()))
+                It.IsAny<string>(),
+                It.IsAny<float>(),
+                It.IsAny<float>(),
+                It.IsAny<float>()))
             .ReturnsAsync(BoardExportResult.NotAvailable);
 
         var vm = CreateSut();
@@ -299,7 +308,10 @@ public class BoardViewModelTests
         _exporterMock.Setup(e => e.ExportAsync(
                 It.IsAny<IReadOnlyList<BoardStroke>>(),
                 It.IsAny<IReadOnlyList<BoardText>>(),
-                It.IsAny<string>()))
+                It.IsAny<string>(),
+                It.IsAny<float>(),
+                It.IsAny<float>(),
+                It.IsAny<float>()))
             .ReturnsAsync(BoardExportResult.Failed);
 
         var vm = CreateSut();
@@ -316,7 +328,10 @@ public class BoardViewModelTests
         _exporterMock.Setup(e => e.ExportAsync(
                 It.IsAny<IReadOnlyList<BoardStroke>>(),
                 It.IsAny<IReadOnlyList<BoardText>>(),
-                It.IsAny<string>()))
+                It.IsAny<string>(),
+                It.IsAny<float>(),
+                It.IsAny<float>(),
+                It.IsAny<float>()))
             .ReturnsAsync(BoardExportResult.Saved);
 
         var vm = CreateSut();
@@ -328,7 +343,7 @@ public class BoardViewModelTests
         _exporterMock.Verify(e => e.ExportAsync(
             It.Is<IReadOnlyList<BoardStroke>>(s => s.Count == 0),
             It.Is<IReadOnlyList<BoardText>>(t => t.Count == 1 && t[0].Content == "Hola"),
-            It.IsAny<string>()), Times.Once);
+            It.IsAny<string>(), It.IsAny<float>(), It.IsAny<float>(), It.IsAny<float>()), Times.Once);
         Assert.Equal(BoardExportResult.Saved, vm.LastExportResult);
     }
 

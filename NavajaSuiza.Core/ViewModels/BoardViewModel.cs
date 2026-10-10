@@ -36,6 +36,12 @@ public partial class BoardViewModel : BaseViewModel
     [ObservableProperty]
     public partial bool IsColorPickerVisible { get; set; }
 
+    public float CanvasWidth { get; set; }
+
+    public float CanvasHeight { get; set; }
+
+    public float RenderScale { get; set; } = 1f;
+
     public BoardExportResult LastExportResult { get; private set; } = BoardExportResult.Saved;
 
     public event Action? CanvasChanged;
@@ -240,7 +246,13 @@ public partial class BoardViewModel : BaseViewModel
             return;
         }
 
-        LastExportResult = await _exporter.ExportAsync(Strokes.ToArray(), Texts.ToArray(), BoardColor);
+        LastExportResult = await _exporter.ExportAsync(
+            Strokes.ToArray(),
+            Texts.ToArray(),
+            BoardColor,
+            CanvasWidth,
+            CanvasHeight,
+            RenderScale);
         _logger.LogInformation("Board export: {Result}", LastExportResult);
     }
 

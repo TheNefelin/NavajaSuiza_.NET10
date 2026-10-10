@@ -69,6 +69,7 @@ public static class MauiProgram
         builder.Services
             .AddSingleton<ILanguageService, LanguageService>()
             .AddSingleton<IThemeService, ThemeService>()
+            .AddSingleton<IDeviceStatusSource, PlatformDeviceStatusSource>()
             .AddSingleton<IDeviceStatusService, DeviceStatusService>()
             .AddTransient<IInstrumentAudioService, InstrumentAudioService>()
             .AddSingleton<IMetronomeService, MetronomeService>()

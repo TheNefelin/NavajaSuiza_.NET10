@@ -14,5 +14,8 @@ public interface IBoardImageExporter
     Task<BoardExportResult> ExportAsync(
         IReadOnlyList<BoardStroke> strokes,
         IReadOnlyList<BoardText> texts,
-        string boardColorHex);
+        string boardColorHex,
+        float canvasWidth,
+        float canvasHeight,
+        float renderScale);
 }

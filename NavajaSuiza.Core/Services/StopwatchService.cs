@@ -90,6 +90,7 @@ public class StopwatchService : IStopwatchService
 
     public void Start()
     {
+        CancellationTokenSource cts;
         lock (_lock)
         {
             if (_isRunning)
@@ -97,10 +98,10 @@ public class StopwatchService : IStopwatchService
 
             _isRunning = true;
             _startedAt = _timeSource.UtcNow;
+            cts = _cts ??= new CancellationTokenSource();
         }
 
-        _cts ??= new CancellationTokenSource();
-        _ = RunTickerAsync(_cts.Token);
+        _ = RunTickerAsync(cts);
     }
 
     public void Pause()
@@ -132,14 +133,21 @@ public class StopwatchService : IStopwatchService
 
     private void CancelTicker()
     {
-        var cts = _cts;
-        _cts = null;
+        CancellationTokenSource? cts;
+        lock (_lock)
+        {
+            cts = _cts;
+            _cts = null;
+        }
+
+        // No se libera aquí: el ticker aún puede estar usando el token.
+        // RunTickerAsync lo libera en su finally, una vez que terminó.
         cts?.Cancel();
-        cts?.Dispose();
     }
 
-    private async Task RunTickerAsync(CancellationToken ct)
+    private async Task RunTickerAsync(CancellationTokenSource cts)
     {
+        var ct = cts.Token;
         using var timer = new PeriodicTimer(TimeSpan.FromMilliseconds(AppConstants.Stopwatch.TICK_INTERVAL_MS));
 
         try
@@ -155,5 +163,9 @@ public class StopwatchService : IStopwatchService
             }
         }
         catch (OperationCanceledException) { }
+        finally
+        {
+            cts.Dispose();
+        }
     }
 }

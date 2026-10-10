@@ -34,6 +34,8 @@ public partial class BoardPage : ContentPage
         BindingContext = viewModel;
 
         viewModel.CanvasChanged += OnCanvasChanged;
+        DrawingSurface.SizeChanged += OnDrawingSurfaceSizeChanged;
+        UpdateCanvasSize();
     }
 
     protected override void OnDisappearing()
@@ -43,11 +45,24 @@ public partial class BoardPage : ContentPage
         if (_viewModel is not null)
         {
             _viewModel.CanvasChanged -= OnCanvasChanged;
+            DrawingSurface.SizeChanged -= OnDrawingSurfaceSizeChanged;
             _viewModel.Cleanup();
         }
     }
 
     private void OnCanvasChanged() => DrawingSurface.Invalidate();
+
+    private void OnDrawingSurfaceSizeChanged(object? sender, EventArgs e) => UpdateCanvasSize();
+
+    private void UpdateCanvasSize()
+    {
+        if (_viewModel is null)
+            return;
+
+        _viewModel.CanvasWidth = (float)DrawingSurface.Width;
+        _viewModel.CanvasHeight = (float)DrawingSurface.Height;
+        _viewModel.RenderScale = (float)DeviceDisplay.Current.MainDisplayInfo.Density;
+    }
 
     private void OnBoardClicked(object? sender, EventArgs e)
     {
