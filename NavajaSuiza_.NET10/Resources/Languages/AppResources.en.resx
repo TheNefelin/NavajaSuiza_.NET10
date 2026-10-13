@@ -132,6 +132,30 @@
   <data name="AboutOpenGuideText" xml:space="preserve">
     <value>Open user manual</value>
   </data>
+  <data name="AboutDiagnosticsText" xml:space="preserve">
+    <value>Diagnostics</value>
+  </data>
+  <data name="AboutViewDiagnosticsText" xml:space="preserve">
+    <value>View diagnostics</value>
+  </data>
+  <data name="AboutShareDiagnosticsText" xml:space="preserve">
+    <value>Share diagnostics</value>
+  </data>
+  <data name="DiagnosticsNoLogTitleText" xml:space="preserve">
+    <value>Navaja Suiza diagnostics</value>
+  </data>
+  <data name="DiagnosticsNoLogText" xml:space="preserve">
+    <value>No diagnostic information has been recorded yet.</value>
+  </data>
+  <data name="AboutSaveDiagnosticsText" xml:space="preserve">
+    <value>Save to device</value>
+  </data>
+  <data name="DiagnosticsSaveErrorTitleText" xml:space="preserve">
+    <value>Could not save</value>
+  </data>
+  <data name="DiagnosticsSaveErrorText" xml:space="preserve">
+    <value>An error occurred while saving the diagnostics.</value>
+  </data>
   <data name="CancelText" xml:space="preserve">
     <value>Cancel</value>
   </data>

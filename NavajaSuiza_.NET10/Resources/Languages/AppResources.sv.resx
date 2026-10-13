@@ -132,6 +132,30 @@
   <data name="AboutOpenGuideText" xml:space="preserve">
     <value>Öppna användarmanual</value>
   </data>
+  <data name="AboutDiagnosticsText" xml:space="preserve">
+    <value>Diagnostik</value>
+  </data>
+  <data name="AboutViewDiagnosticsText" xml:space="preserve">
+    <value>Visa diagnostik</value>
+  </data>
+  <data name="AboutShareDiagnosticsText" xml:space="preserve">
+    <value>Dela diagnostik</value>
+  </data>
+  <data name="DiagnosticsNoLogTitleText" xml:space="preserve">
+    <value>Navaja Suiza-diagnostik</value>
+  </data>
+  <data name="DiagnosticsNoLogText" xml:space="preserve">
+    <value>Ingen diagnostikinformation har registrerats än.</value>
+  </data>
+  <data name="AboutSaveDiagnosticsText" xml:space="preserve">
+    <value>Spara till enheten</value>
+  </data>
+  <data name="DiagnosticsSaveErrorTitleText" xml:space="preserve">
+    <value>Det gick inte att spara</value>
+  </data>
+  <data name="DiagnosticsSaveErrorText" xml:space="preserve">
+    <value>Ett fel uppstod när diagnostiken skulle sparas.</value>
+  </data>
   <data name="CancelText" xml:space="preserve">
     <value>Avbryt</value>
   </data>

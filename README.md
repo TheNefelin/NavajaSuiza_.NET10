@@ -381,7 +381,8 @@ NavajaSuiza_.NET10.slnx
 │   │   ├── StopwatchService.cs
 │   │   ├── MarkdownToHtmlConverter.cs
 │   │   ├── MorseSignalService.cs
-│   │   └── DocumentTypeDetector.cs
+│   │   ├── DocumentTypeDetector.cs
+│   │   └── FileLoggerProvider.cs
 │   ├── ViewModels/                       # 30 archivos (testables, sin dependencias MAUI)
 │   │   ├── BaseViewModel.cs
 │   │   ├── AboutViewModel.cs
@@ -423,6 +424,7 @@ NavajaSuiza_.NET10.slnx
 │   │   │   └── LoadingComponent.xaml/cs
 │   │   └── *.xaml/cs
 │   ├── Components/                       # StrokeDrawable.cs (IDrawable de la pizarra)
+│   ├── Diagnostics/                      # DiagnosticsPaths.cs (ruta del log de diagnóstico)
 │   ├── ViewModels/                       # Vacío — todas las VMs están en Core
 │   ├── Services/
 │   │   └── Implementations/             # 27 implementaciones (APIs de plataforma + repos de datos)
@@ -476,6 +478,7 @@ NavajaSuiza_.NET10.slnx
 │   ├── BaseViewModelTests.cs
 │   ├── CompassViewModelTests.cs
 │   ├── DocumentTypeDetectorTests.cs
+│   ├── FileLoggerProviderTests.cs
 │   ├── FlashlightStateServiceTests.cs
 │   ├── FlashlightViewModelTests.cs
 │   ├── FramingViewModelTests.cs

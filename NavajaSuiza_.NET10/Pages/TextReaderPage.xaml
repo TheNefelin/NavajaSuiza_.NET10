@@ -23,7 +23,6 @@
                 IsTextPredictionEnabled="False"
                 AutoSize="TextChanges"
                 VerticalOptions="Fill"
-                FontFamily="Courier New"
                 BackgroundColor="Transparent" />
 
         <Label Grid.Row="1"

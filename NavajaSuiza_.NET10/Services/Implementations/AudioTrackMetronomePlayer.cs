@@ -1,6 +1,7 @@
 #if ANDROID
 using Android.Media;
 using Android.OS;
+using Microsoft.Extensions.Logging;
 using NavajaSuiza.Core.Interfaces;
 using NavajaSuiza.Core.Services;
 using AudioStream = Android.Media.Stream;
@@ -25,6 +26,7 @@ public sealed class AudioTrackMetronomePlayer : IMetronomePlayer
     private const int StopJoinTimeoutMs = 400;
 
     private readonly object _clockLock = new();
+    private readonly ILogger<AudioTrackMetronomePlayer> _logger;
 
     private AudioTrack? _track;
     private MetronomeSampleClock? _clock;
@@ -39,28 +41,48 @@ public sealed class AudioTrackMetronomePlayer : IMetronomePlayer
     private volatile bool _isRunning;
     private int _generation;
 
+    public AudioTrackMetronomePlayer(ILogger<AudioTrackMetronomePlayer> logger)
+    {
+        _logger = logger;
+    }
+
     public void Start(int bpm, int beatsPerMeasure)
     {
         Stop();
 
-        _sampleRate = ResolveNativeSampleRate();
-        _bufferFrames = ResolveBufferFrames(_sampleRate);
+        _logger.LogInformation("Metrónomo: inicio solicitado ({Bpm} BPM, {Beats} pulsos)", bpm, beatsPerMeasure);
 
-        _accentClick = RenderClick(MetronomeClick.ACCENT_FREQUENCY_HZ);
-        _normalClick = RenderClick(MetronomeClick.NORMAL_FREQUENCY_HZ);
-        _pendingTail = new short[_accentClick.Length];
-        _pendingLength = 0;
-        _writePosition = 0;
-
-        _clock = new MetronomeSampleClock(_sampleRate, bpm, beatsPerMeasure);
-
-        if (_track is null || _track.State != AudioTrackState.Initialized)
+        try
         {
-            _track?.Dispose();
-            _track = CreateTrack();
-        }
+            _sampleRate = ResolveNativeSampleRate();
+            _bufferFrames = ResolveBufferFrames(_sampleRate);
 
-        _track.Play();
+            _accentClick = RenderClick(MetronomeClick.ACCENT_FREQUENCY_HZ);
+            _normalClick = RenderClick(MetronomeClick.NORMAL_FREQUENCY_HZ);
+            _pendingTail = new short[_accentClick.Length];
+            _pendingLength = 0;
+            _writePosition = 0;
+
+            _clock = new MetronomeSampleClock(_sampleRate, bpm, beatsPerMeasure);
+
+            if (_track is null || _track.State != AudioTrackState.Initialized)
+            {
+                _track?.Dispose();
+                _track = CreateTrack();
+            }
+
+            _logger.LogInformation(
+                "Metrónomo: AudioTrack inicializado ({SampleRate} Hz, buffer {BufferFrames} frames)",
+                _sampleRate,
+                _bufferFrames);
+
+            _track.Play();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Metrónomo: fallo al iniciar el AudioTrack");
+            throw;
+        }
 
         var generation = Interlocked.Increment(ref _generation);
         _isRunning = true;
@@ -122,21 +144,29 @@ public sealed class AudioTrackMetronomePlayer : IMetronomePlayer
 
     private void RenderLoop(int generation)
     {
-        Process.SetThreadPriority(Android.OS.ThreadPriority.UrgentAudio);
-
-        var buffer = new short[_bufferFrames];
-
-        while (_isRunning && Volatile.Read(ref _generation) == generation)
+        try
         {
-            lock (_clockLock)
-                FillBuffer(buffer);
+            Process.SetThreadPriority(Android.OS.ThreadPriority.UrgentAudio);
 
-            var track = _track;
-            if (track is null || track.State != AudioTrackState.Initialized)
-                break;
+            var buffer = new short[_bufferFrames];
 
-            if (track.Write(buffer, 0, buffer.Length) < 0)
-                break;
+            while (_isRunning && Volatile.Read(ref _generation) == generation)
+            {
+                lock (_clockLock)
+                    FillBuffer(buffer);
+
+                var track = _track;
+                if (track is null || track.State != AudioTrackState.Initialized)
+                    break;
+
+                if (track.Write(buffer, 0, buffer.Length) < 0)
+                    break;
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Metrónomo: fallo en el hilo de render de audio");
+            _isRunning = false;
         }
     }
 

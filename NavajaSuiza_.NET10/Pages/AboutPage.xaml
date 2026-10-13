@@ -87,7 +87,45 @@
                 </VerticalStackLayout>
             </Border>
 
-            
+            <Border 
+                Grid.Row="3"
+                Padding="10" VerticalOptions="Start">
+                
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                
+                <VerticalStackLayout Spacing="10" VerticalOptions="Center">
+                    <Label
+                        Text="{extensions:Translate AboutDiagnosticsText}"
+                        FontSize="18"
+                        FontAttributes="Bold" />
+
+                    <Button
+                        Text="{extensions:Translate AboutViewDiagnosticsText}"
+                        Clicked="OnViewDiagnosticsClicked"
+                        CornerRadius="8"
+                        BackgroundColor="{StaticResource MyAccentBlue}"
+                        TextColor="White"
+                        HeightRequest="44" />
+
+                    <Button
+                        Text="{extensions:Translate AboutSaveDiagnosticsText}"
+                        Clicked="OnSaveDiagnosticsClicked"
+                        CornerRadius="8"
+                        BackgroundColor="{StaticResource MyAccentBlue}"
+                        TextColor="White"
+                        HeightRequest="44" />
+
+                    <Button
+                        Text="{extensions:Translate AboutShareDiagnosticsText}"
+                        Clicked="OnShareDiagnosticsClicked"
+                        CornerRadius="8"
+                        BackgroundColor="{StaticResource MyAccentBlue}"
+                        TextColor="White"
+                        HeightRequest="44" />
+                </VerticalStackLayout>
+            </Border>
 
             <VerticalStackLayout Grid.Row="4" Spacing="10">
                 <Image Source="logo.svg" HeightRequest="100" HorizontalOptions="Center"/>

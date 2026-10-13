@@ -24,6 +24,7 @@ public partial class App : Application
         _logger = logger;
 
         SetupGlobalErrorHandling();
+        LogStartupInfo();
     }
 
     protected override Window CreateWindow(IActivationState? activationState)
@@ -51,5 +52,25 @@ public partial class App : Application
             _logger.LogError(args.Exception, "Unobserved task exception: {Message}", args.Exception.Message);
             args.SetObserved();
         };
+
+#if ANDROID
+        // En Android las excepciones no controladas pasan por este hook (además del de AppDomain).
+        // No se marca args.Handled: la intención es registrar, no alterar el comportamiento del runtime.
+        Android.Runtime.AndroidEnvironment.UnhandledExceptionRaiser += (sender, args) =>
+        {
+            _logger.LogCritical(args.Exception, "Unhandled Android exception: {Message}", args.Exception.Message);
+        };
+#endif
+    }
+
+    private void LogStartupInfo()
+    {
+        _logger.LogInformation(
+            "Navaja Suiza v{Version} (build {Build}) en {Platform} {PlatformVersion}, modelo {Model}",
+            AppInfo.Current.VersionString,
+            AppInfo.Current.BuildString,
+            DeviceInfo.Current.Platform,
+            DeviceInfo.Current.VersionString,
+            DeviceInfo.Current.Model);
     }
 }

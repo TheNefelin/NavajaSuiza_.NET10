@@ -1,6 +1,7 @@
 using System.Reflection;
 using CommunityToolkit.Maui;
 using Microsoft.Extensions.Logging;
+using NavajaSuiza_.NET10.Diagnostics;
 using NavajaSuiza_.NET10.Pages;
 using NavajaSuiza_.NET10.Services.Implementations;
 using NavajaSuiza.Core.Interfaces;
@@ -60,6 +61,10 @@ public static class MauiProgram
                 .AddDebug()
                 .SetMinimumLevel(LogLevel.Trace));
 #endif
+
+        // Log a archivo para diagnóstico en dispositivos sin depurador (ver DiagnosticsPaths).
+        // En Release no hay otro proveedor, así que este es el que conserva el rastro de un crash.
+        builder.Logging.AddProvider(new FileLoggerProvider(DiagnosticsPaths.LogFilePath));
 
         return builder.Build();
     }

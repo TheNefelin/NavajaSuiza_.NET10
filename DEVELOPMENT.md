@@ -217,10 +217,10 @@ NavajaSuiza_.NET10/                   # Solution
 │   └── MauiProgram.cs
 │
 └── NavajaSuiza.Test/                # Proyecto de tests (net10.0 puro)
-    └── *Tests.cs                     # xUnit + Moq, 364 tests
+    └── *Tests.cs                     # xUnit + Moq, 375 tests
 ```
 
-El conteo de 364 se obtiene de 305 `[Fact]` más 59 `[InlineData]` (repartidos en 14 `[Theory]`). Las cifras 229 / 230 / 232 que aparecieron en corridas locales **no eran una diferencia real de tests**: el bloqueo de Smart App Control hacía fallar los constructores de las clases y alteraba el conteo del runner (§15.2).
+El conteo de 375 se obtiene de 312 `[Fact]` más 63 `[InlineData]` (repartidos en 15 `[Theory]`). Las cifras 229 / 230 / 232 que aparecieron en corridas locales **no eran una diferencia real de tests**: el bloqueo de Smart App Control hacía fallar los constructores de las clases y alteraba el conteo del runner (§15.2).
 
 #### Regla de separación Core vs MAUI
 
@@ -335,6 +335,14 @@ Todos los servicios están registrados en `MauiProgram.cs` e inyectados por DI.
 | **ViewModels** (excepto `BoardViewModel`) | **Transient** | Cada navegación obtiene nueva instancia; evita estado residual entre sesiones |
 | `BoardViewModel` | Singleton | La página es Singleton y el estado del dibujo vive en el VM; con Transient se perdía al navegar fuera (§18.1) |
 
+### 5.3 Logging y diagnóstico
+
+- **Configuración de logging** en `MauiProgram.cs`. En Debug se usa `AddDebug()`; en **todas** las configuraciones se registra además `FileLoggerProvider` (Core), que escribe una línea por entrada en `DiagnosticsPaths.LogFilePath` (`FileSystem.AppDataDirectory/NavajaSuiza.log`). En Release este es el **único** proveedor, así que es el que conserva el rastro de un crash en dispositivos sin depurador.
+- **`FileLoggerProvider`** (`NavajaSuiza.Core/Services/FileLoggerProvider.cs`, cubierto por `NavajaSuiza.Test/FileLoggerProviderTests.cs`): thread-safe con `lock`, crea el directorio si falta y **recorta por tamaño** (borra el archivo al superar 512 KB) para no crecer sin límite. Nunca propaga excepciones de E/S.
+- **Excepciones no controladas**: `App.SetupGlobalErrorHandling()` cuelga `AppDomain.CurrentDomain.UnhandledException` y `TaskScheduler.UnobservedTaskException`, y en Android además `AndroidEnvironment.UnhandledExceptionRaiser` (`#if ANDROID`, sin marcar `Handled`). Todas se registran como `Critical`/`Error` en el archivo.
+- **Info de arranque**: `App.LogStartupInfo()` escribe versión, build, plataforma y modelo al iniciar, para contextualizar el log.
+- **Exponerlo al usuario**: en `AboutPage`, botón **"Ver diagnóstico"** (abre el log interno directamente en `TextReaderPage` vía `INavigationService`, sin picker ni exportar), botón **"Compartir diagnóstico"** (share sheet `Share.Default`, con `ContentType="text/plain"` para que WhatsApp y otras apps acepten el `.log`) y botón **"Guardar en el dispositivo"** (`FileSaver.Default.SaveAsync` de CommunityToolkit.Maui: diálogo nativo "Guardar en…" / SAF, sin permisos adicionales). Si aún no existe el log, muestran un aviso. Claves de texto en `AppResources` (es/en/sv). Límite: solo captura excepciones **managed** (incluidas las del binding de Java); un crash puramente nativo no aparece y requiere `logcat` o el informe de errores del dispositivo.
+
 ---
 
 ## 6. Herramientas (Features)
@@ -405,7 +413,8 @@ Todos los servicios están registrados en `MauiProgram.cs` e inyectados por DI.
 - **Versión** leída en runtime vía `IAppInfoService` (`AppInfo.Current`); única fuente de verdad: el `.csproj` (`ApplicationDisplayVersion`/`ApplicationVersion`). No duplicar versión en constantes.
 - **Enlaces**: URLs centralizadas en `AppConstants.About` (Core) y abiertas con `ILauncherService` (`Launcher.Default`). El botón de donación solo se muestra si `DonationUrl` está configurada; el botón de repositorio fue eliminado.
 - **Sitio web**: línea `© 2026 | francisco-dev.cl` completa como hipervínculo (un solo label con `TapGestureRecognizer`) hacia `AppConstants.About.WebsiteUrl`, con el color de texto del sistema (compatible tema claro/oscuro), igual que el label de versión (sin subrayado ni opacidad).
-- **Versión 3 partes**: `ApplicationDisplayVersion=1.1.128` (texto libre válido en Android/iOS) y `ApplicationVersion=1` como build interno.
+- **Versión 3 partes**: `ApplicationDisplayVersion=1.10.2` (texto libre válido en Android/iOS) y `ApplicationVersion=4` como build interno.
+- **Diagnóstico**: botones "Ver diagnóstico" (abre el log interno en el lector de texto), "Guardar en el dispositivo" (`FileSaver`, diálogo nativo) y "Compartir diagnóstico" (share sheet) para el log de la app (`NavajaSuiza.log`); ver §5.3.
 
 ### 6.8.1 Indicadores de estado del menú (`MenuPage`)
 - **Batería y almacenamiento se muestran como semáforo**: un `Ellipse` de 10 px junto a cada etiqueta, más el valor numérico a la derecha. El color **refuerza** la lectura, nunca la reemplaza: el número sigue visible porque el color por sí solo no es accesible para usuarios daltónicos.
@@ -752,6 +761,8 @@ MAUI `Battery.Default` en Android exige `BATTERY_STATS` (permiso protegido `sign
 
 - **Status bar naranja en Android 16 y botones OK/Cancel de los diálogos de fecha/hora con color equivocado**: dos síntomas con causa común en `colorPrimary`/`colorAccent` = `#FF990A` (`values/colors.xml`). (1) Los botones de `DatePicker`/`TimePicker` se pintaban con `colorAccent`; cambiarlo afectaría a todos los controles de la app, así que se crearon `Platforms/Android/Handlers/NavajaDatePickerHandler.cs` y `NavajaTimePickerHandler.cs` (override de `CreateDatePickerDialog`/`CreateTimePickerDialog`, pintado con `GetButton(...).SetTextColor("#FF990A")` en `ShowEvent`), registrados en `MauiProgram.cs` con `ConfigureMauiHandlers` bajo `#if ANDROID`. (2) En Android 16 la status bar quedaba naranja porque el edge-to-edge forzado ignora `SetStatusBarColor` y la franja mostraba `MauiAppBarLayout` con `?attr/colorPrimary`; primero se sobrescribió ese style con `#243042` en `values/styles.xml` (archivo que estaba excluido del build por una línea `AndroidResource Remove` en el `.csproj`, eliminada). Después se fue a la raíz desactivando el edge-to-edge en el tema (`Maui.MainTheme` con `windowOptOutEdgeToEdgeEnforcement=true`) y el color `#243042` de ambas barras se define como items del tema — ver "Barras del sistema (Android)" y SKILL §11.16 —: la franja naranja deja de existir porque la status bar vuelve a ser opaca. **Verificado en runtime** por el usuario en emulador, Galaxy S22 y Pixel 7 (Android 16) y Galaxy A11 (Android 12). Detalle del diagnóstico: por inspección de IL, el único `Window.SetStatusBarColor` de `Microsoft.Maui.Controls` está en `ModalFragment.OnCreateDialog` (páginas modales, no usadas), así que nadie re-pinta la barra en reposo.
 
+26. **`TextReaderPage` se cerraba al abrir un archivo de texto**: el `Editor` declaraba `FontFamily="Courier New"`, que no está incluida como asset; MAUI lanzaba `Java.Lang.RuntimeException: Font asset not found Courier New` (`Android.Graphics.Typeface.createFromAsset`) y la app se cerraba. Se detectó porque quedó en `NavajaSuiza.log` como `[Warning] [Microsoft.Maui.FontManager]` (las caídas managed no controladas sí se registran como `[Critical]`; esta no apareció así). Corregido quitando la fuente (queda la por defecto).
+
 ---
 
 ### 15.2 Issues pendientes (Backlog)
@@ -760,6 +771,7 @@ MAUI `Battery.Default` en Android exige `BATTERY_STATS` (permiso protegido `sign
 - ~~**Pruebas sin poder ejecutar localmente por Smart App Control**~~ **Resuelto** al migrar a xUnit.net v3 (ver §19). El bloqueo era `Code Integrity` contra `xunit.runner.visualstudio.testadapter.dll`, que venía sin firma digital en todas las versiones publicadas (verificado en 4.0.0 y 3.1.5, con `Get-AuthenticodeSignature`). xUnit v3 usa un runner in-process que no carga ese assembly sin firmar, por lo que la suite ahora corre local y en CI con el mismo comando. Nota: `dotnet remove package` solo borra la referencia del `.csproj`; la `PackageVersion` centralizada en `Directory.Packages.props` hay que eliminarla a mano, y el archivo queda sin salto de línea final.
 - ~~**Sin pruebas directas de `DeviceStatusService`**~~ **Resuelto**: las lecturas de plataforma se extrajeron a `IDeviceStatusSource` (`PlatformDeviceStatusSource` en MAUI) y la lógica de validación/fallback se movió a `NavajaSuiza.Core/Services/DeviceStatusService.cs`, ahora con cobertura directa en `NavajaSuiza.Test/DeviceStatusServiceTests.cs` (mapeo batería/fallback de nivel, storage y `-1` ante excepciones).
 - ~~**Inconsistencia de wrapping en el export de la Pizarra**~~ **Resuelto por decisión**: el export ya respeta el tamaño del lienzo (mismo encuadre que la pantalla) y el texto se dibuja a tamaño pleno; el desborde a la derecha es el comportamiento esperado, así que no se envuelve ni se encoge en el export. Detalle en §18.1.
+- **Metrónomo: cierre de la app al reproducir, solo en un Motorola One Fusion (Android 11)** — **Pendiente de diagnóstico**. Al abrir el metrónomo y pulsar reproducir, la app se cierra en ese dispositivo; en el resto de dispositivos funciona. La cadena `MetronomeViewModel.PlayMetronome` → `MetronomeService.StartAsync` → `MetronomeEngine.StartAsync` → `AudioTrackMetronomePlayer.Start` no tiene `try/catch`, y en Android hay varios puntos que lanzan sin protección (`new AudioTrack`, `CreateTrack` si el estado no es `Initialized`, `track.Play`, `Process.SetThreadPriority(URGENT_AUDIO)` y `track.Write` en el hilo de render). Play Console (Android vitals) no registra el cierre, así que la captura queda a cargo del **log a archivo de §5.3** (o `logcat`/informe de errores del dispositivo si el crash resulta nativo). Sin stack trace real no se fija la causa ni el fix.
 
 ---
 
@@ -791,7 +803,7 @@ Pasos 1–6 completados: la app está publicada en Internal testing y Closed tes
 
 ### 18.1 Pizarra (dibujo)
 
-Estado: **Fases 1, 2 y 3 implementadas y verificadas** (suite total 364 tests; builds de Android y Windows sin errores, con warnings XamlC no bloqueantes). Fase 2 = export WebP a galería, ahora **transversal vía SkiaSharp** (verificado en emulador Android y en Windows). Fase 3 = texto sobre el lienzo. **Goma descartada**: Deshacer (LIFO) + Limpiar cubren el caso de esta app.
+Estado: **Fases 1, 2 y 3 implementadas y verificadas** (suite total 375 tests; builds de Android y Windows sin errores, con warnings XamlC no bloqueantes). Fase 2 = export WebP a galería, ahora **transversal vía SkiaSharp** (verificado en emulador Android y en Windows). Fase 3 = texto sobre el lienzo. **Goma descartada**: Deshacer (LIFO) + Limpiar cubren el caso de esta app.
 
 Entregado (Fase 1):
 - Lienzo a máximo espacio (`Grid` `Auto,Auto,*`), **sin `ScrollView`** (interceptaba los gestos verticales del dibujo).
@@ -858,7 +870,7 @@ Pendiente de definir: ¿conteo solo en primer plano o en segundo plano/cerrada?;
 
 ### 18.4 Visor de PDF (Syncfusion SfPdfViewer)
 
-Estado: **implementada y verificada en dispositivo real** (Android/Windows build 0 errores; suite total 364 tests; **todas las conversiones y los visores probados en runtime en dispositivo físico**: PDF directo, DOCX, XLSX, CSV→PDF, texto plano y DOC/XLS legacy).
+Estado: **implementada y verificada en dispositivo real** (Android/Windows build 0 errores; suite total 375 tests; **todas las conversiones y los visores probados en runtime en dispositivo físico**: PDF directo, DOCX, XLSX, CSV→PDF, texto plano y DOC/XLS legacy).
 
 Decisión de alcance:
 - **Visor real de PDF mediante Syncfusion `SfPdfViewer`** (paquetes `Syncfusion.Maui.PdfViewer` 34.2.9 + `Syncfusion.Licensing` 34.2.9). Sustituye al visor propio con `#if ANDROID`/`#if WINDOWS` (`Android.Graphics.Pdf.PdfRenderer` + `Windows.Data.Pdf`) que se descartó por decisión del usuario tras probarla en emulador (sept 2026): no se comportaba como un visor real (scroll discreto por página rasterizada, sin búsqueda ni selección de texto).
@@ -884,7 +896,7 @@ Límites conocidos (no resueltos a propósito):
 - **PDF en blanco al volver a la página**: con las páginas registradas como **Singleton**, salir a cargar otro documento (`OnDisappearing` → `PdfViewer.UnloadDocument()` + `viewModel.Unload()`) y volver/reabrir dejaba el visor en blanco. Referencia: Syncfusion Feedback #59237 / Foro de Syncfusion #189392 (reutilizar una instancia de `SfPdfViewer` tras `UnloadDocument` no soporta cargar documentos posteriores). **Fix aplicado (build 0 errores)**: `PdfReaderPage` ahora es **Transient** (página y control `SfPdfViewer` nuevos por navegación; el VM ya era Transient y se resuelve en `OnNavigatedTo`). **Verificado en runtime**: el flujo abrir PDF → menú → reabrir PDF funciona correctamente.
 - **Cancelación de la carga del PDF sin peligro**: verificado en runtime. No es un bug: el visor PDF funciona correctamente. El "cuelgue al cancelar el picker" observado antes en el emulador se debía a que el **emulador no tiene botón "volver"** para cancelar la carga; en **dispositivos físicos el botón volver del sistema cancela correctamente** el picker. Descartada la hipótesis de bug de MAUI (dotnet/maui #33706) y el fix propuesto de timeout en `FilePickerService`.
 
-- BUILD REAL: 0 errores (400 warnings XamlC no bloqueantes); TEST REAL: 364/364 verdes (corrida local con los fixes de los issues 1 y 2 y el cambio del export de la Pizarra a tamaño de lienzo; aún sin commitear).
+- BUILD REAL: 0 errores (400 warnings XamlC no bloqueantes); TEST REAL: 375/375 verdes (corrida local con los fixes de los issues 1 y 2, el export de la Pizarra a tamaño de lienzo y el logging de diagnóstico a archivo).
 ## 19. GUÍA de reconstrucción (build desde cero)
 
 Repositorio real: D:\Repo\.NET\NavajaSuiza_.NET10 (sin tildes; git rev-parse y Test-Path OK - verificado §11.6-1).
@@ -904,7 +916,7 @@ Restaurar:
 Build (Android Debug):
   dotnet build NavajaSuiza_.NET10/NavajaSuiza_.NET10.csproj -f net10.0-android -c Debug
 
-Suite de tests (esperado: 364 superados / 0 fallos):
+Suite de tests (esperado: 375 superados / 0 fallos):
   dotnet run --project NavajaSuiza.Test/NavajaSuiza.Test.csproj
 La suite usa xUnit.net v3 (4.0.1) con runner **in-process**: el proyecto de tests es un
 ejecutable y no requiere `dotnet test`. `dotnet test` ya no es compatible: el SDK de .NET 10

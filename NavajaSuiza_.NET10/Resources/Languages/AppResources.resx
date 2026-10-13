@@ -132,6 +132,30 @@
   <data name="AboutOpenGuideText" xml:space="preserve">
     <value>Abrir manual de usuario</value>
   </data>
+  <data name="AboutDiagnosticsText" xml:space="preserve">
+    <value>Diagnóstico</value>
+  </data>
+  <data name="AboutViewDiagnosticsText" xml:space="preserve">
+    <value>Ver diagnóstico</value>
+  </data>
+  <data name="AboutShareDiagnosticsText" xml:space="preserve">
+    <value>Compartir diagnóstico</value>
+  </data>
+  <data name="DiagnosticsNoLogTitleText" xml:space="preserve">
+    <value>Diagnóstico de Navaja Suiza</value>
+  </data>
+  <data name="DiagnosticsNoLogText" xml:space="preserve">
+    <value>Aún no hay información de diagnóstico registrada.</value>
+  </data>
+  <data name="AboutSaveDiagnosticsText" xml:space="preserve">
+    <value>Guardar en el dispositivo</value>
+  </data>
+  <data name="DiagnosticsSaveErrorTitleText" xml:space="preserve">
+    <value>No se pudo guardar</value>
+  </data>
+  <data name="DiagnosticsSaveErrorText" xml:space="preserve">
+    <value>Ocurrió un error al guardar el diagnóstico.</value>
+  </data>
   <data name="CancelText" xml:space="preserve">
     <value>Cancelar</value>
   </data>

@@ -58,7 +58,15 @@ public partial class MetronomeViewModel : BaseViewModel
     {
         IsEnabled = false;
 
-        await _metronomeService.StartAsync(CurrentBPM, SelectedTimeSignature);
+        try
+        {
+            await _metronomeService.StartAsync(CurrentBPM, SelectedTimeSignature);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error al iniciar el metrónomo");
+            IsEnabled = true;
+        }
     }
 
     [RelayCommand]
