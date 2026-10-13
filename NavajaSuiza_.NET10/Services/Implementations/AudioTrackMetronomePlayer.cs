@@ -30,16 +30,8 @@ public sealed class AudioTrackMetronomePlayer : IMetronomePlayer
 
     private AudioTrack? _track;
     private MetronomeSampleClock? _clock;
+    private Session? _session;
     private Thread? _renderThread;
-    private short[] _accentClick = [];
-    private short[] _normalClick = [];
-    private short[] _pendingTail = [];
-    private int _pendingLength;
-    private int _bufferFrames;
-    private int _sampleRate = FallbackSampleRate;
-    private long _writePosition;
-    private volatile bool _isRunning;
-    private int _generation;
 
     public AudioTrackMetronomePlayer(ILogger<AudioTrackMetronomePlayer> logger)
     {
@@ -52,31 +44,30 @@ public sealed class AudioTrackMetronomePlayer : IMetronomePlayer
 
         _logger.LogInformation("Metrónomo: inicio solicitado ({Bpm} BPM, {Beats} pulsos)", bpm, beatsPerMeasure);
 
+        Session session;
         try
         {
-            _sampleRate = ResolveNativeSampleRate();
-            _bufferFrames = ResolveBufferFrames(_sampleRate);
+            var sampleRate = ResolveNativeSampleRate();
+            var bufferFrames = Math.Max(
+                ResolveBufferFrames(sampleRate),
+                MetronomeClick.SampleCount(MetronomeClick.DURATION_MS, sampleRate));
 
-            _accentClick = RenderClick(MetronomeClick.ACCENT_FREQUENCY_HZ);
-            _normalClick = RenderClick(MetronomeClick.NORMAL_FREQUENCY_HZ);
-            _pendingTail = new short[_accentClick.Length];
-            _pendingLength = 0;
-            _writePosition = 0;
+            var accentClick = RenderClick(sampleRate, MetronomeClick.ACCENT_FREQUENCY_HZ);
+            var normalClick = RenderClick(sampleRate, MetronomeClick.NORMAL_FREQUENCY_HZ);
 
-            _clock = new MetronomeSampleClock(_sampleRate, bpm, beatsPerMeasure);
+            var track = GetOrCreateTrack(sampleRate, bufferFrames);
 
-            if (_track is null || _track.State != AudioTrackState.Initialized)
-            {
-                _track?.Dispose();
-                _track = CreateTrack();
-            }
+            session = new Session(track, new MetronomeSampleClock(sampleRate, bpm, beatsPerMeasure), bufferFrames, accentClick, normalClick);
+
+            lock (_clockLock)
+                _clock = session.Clock;
 
             _logger.LogInformation(
                 "Metrónomo: AudioTrack inicializado ({SampleRate} Hz, buffer {BufferFrames} frames)",
-                _sampleRate,
-                _bufferFrames);
+                sampleRate,
+                bufferFrames);
 
-            _track.Play();
+            track.Play();
         }
         catch (Exception ex)
         {
@@ -84,10 +75,9 @@ public sealed class AudioTrackMetronomePlayer : IMetronomePlayer
             throw;
         }
 
-        var generation = Interlocked.Increment(ref _generation);
-        _isRunning = true;
+        _session = session;
 
-        _renderThread = new Thread(() => RenderLoop(generation))
+        _renderThread = new Thread(() => RenderLoop(session))
         {
             IsBackground = true,
             Name = "MetronomeRender"
@@ -110,7 +100,10 @@ public sealed class AudioTrackMetronomePlayer : IMetronomePlayer
 
     public void Stop()
     {
-        _isRunning = false;
+        Interlocked.Exchange(ref _session, null);
+
+        lock (_clockLock)
+            _clock = null;
 
         var track = _track;
         if (track is not null)
@@ -126,8 +119,12 @@ public sealed class AudioTrackMetronomePlayer : IMetronomePlayer
         }
 
         var thread = Interlocked.Exchange(ref _renderThread, null);
-        if (thread is not null && thread.IsAlive && !ReferenceEquals(thread, Thread.CurrentThread))
-            thread.Join(StopJoinTimeoutMs);
+        if (thread is not null && thread.IsAlive && !ReferenceEquals(thread, Thread.CurrentThread) && !thread.Join(StopJoinTimeoutMs))
+        {
+            // El hilo viejo no murió: se suelta el track para que Start cree uno nuevo y el hilo
+            // viejo libere el suyo al salir. Evita dos escritores sobre el mismo AudioTrack.
+            Interlocked.CompareExchange(ref _track, null, track);
+        }
     }
 
     public void AttachMediaSinks(object? accentMediaElement, object? normalMediaElement)
@@ -142,62 +139,64 @@ public sealed class AudioTrackMetronomePlayer : IMetronomePlayer
         _track = null;
     }
 
-    private void RenderLoop(int generation)
+    private void RenderLoop(Session session)
     {
         try
         {
             Process.SetThreadPriority(Android.OS.ThreadPriority.UrgentAudio);
 
-            var buffer = new short[_bufferFrames];
-
-            while (_isRunning && Volatile.Read(ref _generation) == generation)
+            while (ReferenceEquals(Volatile.Read(ref _session), session))
             {
-                lock (_clockLock)
-                    FillBuffer(buffer);
+                FillBuffer(session);
 
-                var track = _track;
-                if (track is null || track.State != AudioTrackState.Initialized)
+                var track = session.Track;
+                if (track.State != AudioTrackState.Initialized)
                     break;
 
-                if (track.Write(buffer, 0, buffer.Length) < 0)
+                if (track.Write(session.Buffer, 0, session.Buffer.Length) < 0)
                     break;
             }
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Metrónomo: fallo en el hilo de render de audio");
-            _isRunning = false;
+            Interlocked.CompareExchange(ref _session, null, session);
+        }
+        finally
+        {
+            if (!ReferenceEquals(session.Track, Volatile.Read(ref _track)))
+                session.Track.Dispose();
         }
     }
 
     /// <summary>
-    /// Rellena el buffer con los clics que caen dentro de él. Un clic que se parte contra el borde
-    /// del buffer arrastra su cola al siguiente: sin esto el corte se oye como un chasquido seco.
+    /// Rellena el buffer de la sesión con los clics que caen dentro de él. Un clic que se parte contra
+    /// el borde del buffer arrastra su cola al siguiente: sin esto el corte se oye como un chasquido seco.
     /// </summary>
-    private void FillBuffer(short[] buffer)
+    private void FillBuffer(Session session)
     {
+        var buffer = session.Buffer;
         Array.Clear(buffer);
 
-        if (_pendingLength > 0)
+        if (session.PendingLength > 0)
         {
-            Accumulate(buffer, 0, _pendingTail, _pendingLength);
-            _pendingLength = 0;
+            Accumulate(buffer, 0, session.PendingTail, session.PendingLength);
+            session.PendingLength = 0;
         }
 
-        var clock = _clock;
-        if (clock is null)
-            return;
-
-        var beats = clock.ConsumeBeats(_writePosition, buffer.Length);
+        IReadOnlyList<MetronomeBeat> beats;
+        lock (_clockLock)
+            beats = session.Clock.ConsumeBeats(session.WritePosition, buffer.Length);
 
         foreach (var beat in beats)
-            PlaceClick(buffer, beat.OffsetInBuffer, beat.IsAccent ? _accentClick : _normalClick);
+            PlaceClick(session, beat.OffsetInBuffer, beat.IsAccent ? session.AccentClick : session.NormalClick);
 
-        _writePosition += buffer.Length;
+        session.WritePosition += buffer.Length;
     }
 
-    private void PlaceClick(short[] buffer, int offsetInBuffer, short[] click)
+    private static void PlaceClick(Session session, int offsetInBuffer, short[] click)
     {
+        var buffer = session.Buffer;
         var room = buffer.Length - offsetInBuffer;
         var toCopy = Math.Min(click.Length, room);
 
@@ -207,8 +206,8 @@ public sealed class AudioTrackMetronomePlayer : IMetronomePlayer
         if (remainder <= 0)
             return;
 
-        Array.Copy(click, toCopy, _pendingTail, 0, remainder);
-        _pendingLength = remainder;
+        Array.Copy(click, toCopy, session.PendingTail, 0, remainder);
+        session.PendingLength = remainder;
     }
 
     /// <summary>
@@ -221,24 +220,34 @@ public sealed class AudioTrackMetronomePlayer : IMetronomePlayer
             buffer[offsetInBuffer + i] = (short)Math.Clamp(buffer[offsetInBuffer + i] + source[i], short.MinValue, short.MaxValue);
     }
 
-    private short[] RenderClick(int frequencyHz)
+    private static short[] RenderClick(int sampleRate, int frequencyHz)
     {
-        var sampleCount = MetronomeClick.SampleCount(MetronomeClick.DURATION_MS, _sampleRate);
+        var sampleCount = MetronomeClick.SampleCount(MetronomeClick.DURATION_MS, sampleRate);
         var click = new short[sampleCount];
 
-        MetronomeClick.Render(click, 0, sampleCount, _sampleRate, frequencyHz, 0.008);
+        MetronomeClick.Render(click, 0, sampleCount, sampleRate, frequencyHz, 0.008);
 
         return click;
     }
 
-    private AudioTrack CreateTrack()
+    private AudioTrack GetOrCreateTrack(int sampleRate, int bufferFrames)
+    {
+        if (_track is not null && _track.State == AudioTrackState.Initialized)
+            return _track;
+
+        _track?.Dispose();
+        _track = CreateTrack(sampleRate, bufferFrames);
+        return _track;
+    }
+
+    private static AudioTrack CreateTrack(int sampleRate, int bufferFrames)
     {
         var track = new AudioTrack(
             AudioStream.Music,
-            _sampleRate,
+            sampleRate,
             ChannelOut.Mono,
             Encoding.Pcm16bit,
-            _bufferFrames * BytesPerSample,
+            bufferFrames * BytesPerSample,
             AudioTrackMode.Stream);
 
         if (track.State != AudioTrackState.Initialized)
@@ -268,6 +277,33 @@ public sealed class AudioTrackMetronomePlayer : IMetronomePlayer
         {
             return FallbackSampleRate;
         }
+    }
+
+    /// <summary>
+    /// Estado privado de una sesión de reproducción. El hilo de render solo lee y escribe su propia
+    /// sesión; el único objeto compartido con el resto de la clase es <see cref="Clock"/> (cambio en
+    /// caliente de tempo/compás), protegido por <c>_clockLock</c>.
+    /// </summary>
+    private sealed class Session
+    {
+        public Session(AudioTrack track, MetronomeSampleClock clock, int bufferFrames, short[] accentClick, short[] normalClick)
+        {
+            Track = track;
+            Clock = clock;
+            Buffer = new short[bufferFrames];
+            AccentClick = accentClick;
+            NormalClick = normalClick;
+            PendingTail = new short[accentClick.Length];
+        }
+
+        public AudioTrack Track { get; }
+        public MetronomeSampleClock Clock { get; }
+        public short[] Buffer { get; }
+        public short[] AccentClick { get; }
+        public short[] NormalClick { get; }
+        public short[] PendingTail { get; }
+        public int PendingLength { get; set; }
+        public long WritePosition { get; set; }
     }
 }
 #endif

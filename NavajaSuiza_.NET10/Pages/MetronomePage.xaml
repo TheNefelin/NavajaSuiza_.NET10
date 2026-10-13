@@ -132,6 +132,9 @@
                 StrokeThickness="2"
                 Stroke="{StaticResource MyAccentBlue}"
                 StrokeShape="RoundRectangle 20">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnBpmTapped" />
+                </Border.GestureRecognizers>
                 
                 <VerticalStackLayout Spacing="10" HorizontalOptions="Center">
                     <Label 

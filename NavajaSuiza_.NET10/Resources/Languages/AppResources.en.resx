@@ -378,6 +378,12 @@
   <data name="MetronomeSpeedText" xml:space="preserve">
     <value>Speed</value>
   </data>
+  <data name="MetronomeBpmPromptTitleText" xml:space="preserve">
+    <value>Set BPM</value>
+  </data>
+  <data name="MetronomeBpmPromptMessageText" xml:space="preserve">
+    <value>Enter a value between 50 and 350.</value>
+  </data>
   <data name="FramingUploadImageText" xml:space="preserve">
     <value>Upload Image</value>
   </data>

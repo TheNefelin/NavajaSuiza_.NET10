@@ -2,6 +2,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
 using NavajaSuiza.Core.Interfaces;
+using NavajaSuiza.Core.Services;
 
 namespace NavajaSuiza.Core.ViewModels;
 
@@ -34,6 +35,11 @@ public partial class MetronomeViewModel : BaseViewModel
     public void RegisterMediaElement(object accentMediaElement, object normalMediaElement)
     {
         _metronomeService.SetMediaElement(accentMediaElement, normalMediaElement);
+    }
+
+    public void SetBpm(int bpm)
+    {
+        CurrentBPM = MetronomeTempo.Clamp(bpm);
     }
 
     partial void OnCurrentBPMChanged(int value)

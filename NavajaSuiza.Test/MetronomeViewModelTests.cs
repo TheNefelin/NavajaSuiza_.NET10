@@ -67,6 +67,33 @@ public class MetronomeViewModelTests
     }
 
     [Fact]
+    public void SetBpm_WithinRange_SetsValueAndNotifiesService()
+    {
+        var vm = CreateSut();
+        vm.SetBpm(135);
+        Assert.Equal(135, vm.CurrentBPM);
+        _metronomeServiceMock.Verify(s => s.SetTempo(135), Times.Once);
+    }
+
+    [Fact]
+    public void SetBpm_AboveMaximum_ClampsToMaximum()
+    {
+        var vm = CreateSut();
+        vm.SetBpm(400);
+        Assert.Equal(350, vm.CurrentBPM);
+        _metronomeServiceMock.Verify(s => s.SetTempo(350), Times.Once);
+    }
+
+    [Fact]
+    public void SetBpm_BelowMinimum_ClampsToMinimum()
+    {
+        var vm = CreateSut();
+        vm.SetBpm(10);
+        Assert.Equal(50, vm.CurrentBPM);
+        _metronomeServiceMock.Verify(s => s.SetTempo(50), Times.Once);
+    }
+
+    [Fact]
     public void PlayMetronome_DoesNotNotifyServiceSetTempo()
     {
         var vm = CreateSut();

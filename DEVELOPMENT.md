@@ -217,10 +217,10 @@ NavajaSuiza_.NET10/                   # Solution
 │   └── MauiProgram.cs
 │
 └── NavajaSuiza.Test/                # Proyecto de tests (net10.0 puro)
-    └── *Tests.cs                     # xUnit + Moq, 375 tests
+    └── *Tests.cs                     # xUnit + Moq, 378 tests
 ```
 
-El conteo de 375 se obtiene de 312 `[Fact]` más 63 `[InlineData]` (repartidos en 15 `[Theory]`). Las cifras 229 / 230 / 232 que aparecieron en corridas locales **no eran una diferencia real de tests**: el bloqueo de Smart App Control hacía fallar los constructores de las clases y alteraba el conteo del runner (§15.2).
+El conteo de 378 se obtiene de 315 `[Fact]` más 63 `[InlineData]` (repartidos en 15 `[Theory]`). Las cifras 229 / 230 / 232 que aparecieron en corridas locales **no eran una diferencia real de tests**: el bloqueo de Smart App Control hacía fallar los constructores de las clases y alteraba el conteo del runner (§15.2).
 
 #### Regla de separación Core vs MAUI
 
@@ -373,6 +373,7 @@ Todos los servicios están registrados en `MauiProgram.cs` e inyectados por DI.
 
 ### 6.4 Metrónomo (`MetronomePage`)
 - BPM ajustable (50-350), con cambio en caliente durante la reproducción.
+- BPM preciso: tocar la tarjeta de BPM abre un diálogo numérico (`DisplayPromptAsync`, teclado numérico, valor inicial = BPM actual). Una entrada no numérica se ignora y una fuera de rango se ajusta con `MetronomeTempo.Clamp` (50-350).
 - Firma de tiempos: 2/2, 3/4, 4/4, 5/4, 6/8, 7/8, con cambio en caliente.
 - Fila de compases en `ScrollView` horizontal: centrada cuando los seis botones entran en el ancho de la pantalla y desplazable cuando no.
 - Sonido de acento (1er tiempo) y normal (tiempos restantes).
@@ -916,7 +917,7 @@ Restaurar:
 Build (Android Debug):
   dotnet build NavajaSuiza_.NET10/NavajaSuiza_.NET10.csproj -f net10.0-android -c Debug
 
-Suite de tests (esperado: 375 superados / 0 fallos):
+Suite de tests (esperado: 378 superados / 0 fallos):
   dotnet run --project NavajaSuiza.Test/NavajaSuiza.Test.csproj
 La suite usa xUnit.net v3 (4.0.1) con runner **in-process**: el proyecto de tests es un
 ejecutable y no requiere `dotnet test`. `dotnet test` ya no es compatible: el SDK de .NET 10
