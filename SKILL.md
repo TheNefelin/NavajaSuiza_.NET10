@@ -466,6 +466,33 @@ Las mismas reglas de C# y seguridad aplican al frontend MAUI. Anti-patrones que 
 | `async void OnNavigatedTo` con `await` de sensores | Crash al navegar fuera durante el `await` | `OnNavigatedTo` síncrono + fire-and-forget seguro con try/catch |
 | Suscripciones duplicadas a eventos de sensores Singleton | Event handlers apuntando a VMs destruidas → crash | Unsubscribe antes de Subscribe + antes de Stop() en cleanup |
 
+**Guard de re-entrancy: dos variantes según dónde viva el handler.**
+
+- **Comando en el ViewModel** (variante preferida, §11.2): el guard vive en el VM y el botón lo refleja por binding. `[RelayCommand]` + `IsBusy`, con `IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}"`. Es la que usan páginas con lógica en el VM.
+- **Handler `async void` en code-behind**: para botones que disparan APIs **solo-MAUI** (`Share`, `FileSaver`, pickers) que no deben subir al VM de **Core** (§11.6). Se usa un guard booleano local marcado al entrar y liberado en `finally`; como el handler corre en el hilo de UI, un `bool` simple basta y no requiere converter. Evita que el mismo botón (o uno hermano) reentre mientras la primera acción sigue en vuelo.
+
+```csharp
+private bool _isBusy;
+
+private async void OnActionClicked(object? sender, EventArgs e)
+{
+    if (_isBusy)
+        return;
+
+    _isBusy = true;
+    try
+    {
+        await DoWorkAsync();
+    }
+    finally
+    {
+        _isBusy = false;
+    }
+}
+```
+
+**Regla**: todo handler de acción debe tener guard de re-entrancy, sea por comando (variante VM) o por code-behind (variante `async void`). Un guard compartido entre botones hermanos de una misma sección impide además que se solapen entre sí.
+
 ### Reglas MAUI senior
 - **MVVM**: ViewModel por página, `partial properties` con `[ObservableProperty]` (requiere `<LangVersion>preview</LangVersion>` en csproj), `[RelayCommand]`.
 - **Inyección de dependencias** (DI nativa de MAUI): servicios en `MauiProgram`, páginas/VM resueltas por DI.

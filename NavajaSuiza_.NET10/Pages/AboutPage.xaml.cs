@@ -12,6 +12,7 @@ public partial class AboutPage : ContentPage
     private const string DiagnosticsMimeType = "text/plain";
 
     private readonly IServiceProvider _serviceProvider;
+    private bool _isBusy;
 
     public AboutPage(IServiceProvider serviceProvider)
     {
@@ -22,57 +23,90 @@ public partial class AboutPage : ContentPage
 
     private async void OnViewDiagnosticsClicked(object? sender, EventArgs e)
     {
-        var path = DiagnosticsPaths.LogFilePath;
-        if (!await EnsureLogExistsAsync(path))
+        if (_isBusy)
             return;
 
-        await _serviceProvider.GetRequiredService<INavigationService>().PushAsync("TextReaderPage", path);
+        _isBusy = true;
+        try
+        {
+            var path = DiagnosticsPaths.LogFilePath;
+            if (!await EnsureLogExistsAsync(path))
+                return;
+
+            await _serviceProvider.GetRequiredService<INavigationService>().PushAsync("TextReaderPage", path);
+        }
+        finally
+        {
+            _isBusy = false;
+        }
     }
 
     private async void OnShareDiagnosticsClicked(object? sender, EventArgs e)
     {
-        var path = DiagnosticsPaths.LogFilePath;
-        if (!await EnsureLogExistsAsync(path))
+        if (_isBusy)
             return;
 
+        _isBusy = true;
         try
         {
-            await Share.Default.RequestAsync(new ShareFileRequest
+            var path = DiagnosticsPaths.LogFilePath;
+            if (!await EnsureLogExistsAsync(path))
+                return;
+
+            try
             {
-                Title = LocalizationResourceManager.Instance["AboutShareDiagnosticsText"]?.ToString() ?? string.Empty,
-                File = new ShareFile(path, DiagnosticsMimeType)
-            });
+                await Share.Default.RequestAsync(new ShareFileRequest
+                {
+                    Title = LocalizationResourceManager.Instance["AboutShareDiagnosticsText"]?.ToString() ?? string.Empty,
+                    File = new ShareFile(path, DiagnosticsMimeType)
+                });
+            }
+            catch (Exception)
+            {
+                // Compartir el diagnóstico nunca debe tumbar la aplicación.
+            }
         }
-        catch (Exception)
+        finally
         {
-            // Compartir el diagnóstico nunca debe tumbar la aplicación.
+            _isBusy = false;
         }
     }
 
     private async void OnSaveDiagnosticsClicked(object? sender, EventArgs e)
     {
-        var local = LocalizationResourceManager.Instance;
-
-        var path = DiagnosticsPaths.LogFilePath;
-        if (!await EnsureLogExistsAsync(path))
+        if (_isBusy)
             return;
 
+        _isBusy = true;
         try
         {
-            using var stream = File.OpenRead(path);
-            var result = await FileSaver.Default.SaveAsync(Path.GetFileName(path), stream, CancellationToken.None);
+            var local = LocalizationResourceManager.Instance;
 
-            if (result.IsSuccessful || result.IsCancelled)
+            var path = DiagnosticsPaths.LogFilePath;
+            if (!await EnsureLogExistsAsync(path))
                 return;
 
-            await DisplayAlertAsync(
-                local["DiagnosticsSaveErrorTitleText"]?.ToString() ?? string.Empty,
-                local["DiagnosticsSaveErrorText"]?.ToString() ?? string.Empty,
-                local["CommonOkText"]?.ToString() ?? string.Empty);
+            try
+            {
+                using var stream = File.OpenRead(path);
+                var result = await FileSaver.Default.SaveAsync(Path.GetFileName(path), stream, CancellationToken.None);
+
+                if (result.IsSuccessful || result.IsCancelled)
+                    return;
+
+                await DisplayAlertAsync(
+                    local["DiagnosticsSaveErrorTitleText"]?.ToString() ?? string.Empty,
+                    local["DiagnosticsSaveErrorText"]?.ToString() ?? string.Empty,
+                    local["CommonOkText"]?.ToString() ?? string.Empty);
+            }
+            catch (Exception)
+            {
+                // Guardar el diagnóstico nunca debe tumbar la aplicación.
+            }
         }
-        catch (Exception)
+        finally
         {
-            // Guardar el diagnóstico nunca debe tumbar la aplicación.
+            _isBusy = false;
         }
     }
 
