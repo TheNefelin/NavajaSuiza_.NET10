@@ -116,18 +116,6 @@
 
                     <Button
                         IsVisible="{Binding IsDevelopment}"
-                        Command="{Binding NavigateToFramingCommand}"
-                        Text="{extensions:Translate FramingText}"
-                        ImageSource="icon_camera.png"                    
-                        FontAttributes="Bold"
-                        ContentLayout="Top, 0" 
-                        Margin="8,5"
-                        Padding="25,15"
-                        WidthRequest="130" 
-                        HeightRequest="130" />
-
-                    <Button
-                        IsVisible="{Binding IsDevelopment}"
                         Command="{Binding NavigateToManualCommand}"                    
                         Text="{extensions:Translate ManualText}"
                         ImageSource="icon_manual.png"                    

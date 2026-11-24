@@ -17,8 +17,6 @@ public partial class AboutViewModel : BaseViewModel
 
     public string VersionText => $"v{_appInfoService.Version} (build {_appInfoService.Build})";
 
-    public bool HasDonationUrl => !string.IsNullOrWhiteSpace(AppConstants.About.DonationUrl);
-
     public AboutViewModel(
         IThemeService themeService,
         IAppInfoService appInfoService,
@@ -41,15 +39,6 @@ public partial class AboutViewModel : BaseViewModel
     partial void OnIsDarkModeChanged(bool value)
     {
         _themeService.SaveThemePreference(value);
-    }
-
-    [RelayCommand]
-    private async Task OpenDonationAsync()
-    {
-        if (HasDonationUrl)
-        {
-            await _launcherService.OpenAsync(AppConstants.About.DonationUrl);
-        }
     }
 
     [RelayCommand]

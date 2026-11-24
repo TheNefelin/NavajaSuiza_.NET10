@@ -53,22 +53,6 @@ public class AboutViewModelTests
     }
 
     [Fact]
-    public void HasDonationUrl_IsFalseWhenNotConfigured()
-    {
-        var vm = CreateSut();
-        Assert.False(vm.HasDonationUrl);
-    }
-
-    [Fact]
-    public void OpenDonationCommand_WhenNotConfigured_DoesNotOpen()
-    {
-        var vm = CreateSut();
-        vm.OpenDonationCommand.Execute(null);
-
-        _launcherServiceMock.Verify(s => s.OpenAsync(It.IsAny<string>()), Times.Never);
-    }
-
-    [Fact]
     public void OpenWebsiteCommand_OpensWebsiteUrl()
     {
         var vm = CreateSut();

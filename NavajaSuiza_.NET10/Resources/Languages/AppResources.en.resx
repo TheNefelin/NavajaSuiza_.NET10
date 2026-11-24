@@ -141,6 +141,9 @@
   <data name="AboutShareDiagnosticsText" xml:space="preserve">
     <value>Share diagnostics</value>
   </data>
+  <data name="AboutShareAppText" xml:space="preserve">
+    <value>Share app</value>
+  </data>
   <data name="DiagnosticsNoLogTitleText" xml:space="preserve">
     <value>Navaja Suiza diagnostics</value>
   </data>

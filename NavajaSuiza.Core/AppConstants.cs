@@ -39,8 +39,8 @@ public static class AppConstants
 
     public static class About
     {
-        public const string DonationUrl = "";
         public const string WebsiteUrl = "https://francisco-dev.cl";
-        public const string PrivacyUrl = "https://www.francisco-dev.cl/navaja-suiza/privacy-policy";
+        public const string PrivacyUrl = "https://www.francisco-dev.cl/privacy-policy/navaja-suiza";
+        public const string PlayStoreUrl = "https://play.google.com/store/apps/details?id=com.nefelin.navajasuiza";
     }
 }

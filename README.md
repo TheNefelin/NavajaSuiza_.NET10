@@ -2,6 +2,8 @@
 
 Navaja suiza digital — app multiplataforma (.NET MAUI) con herramientas de uso diario: linterna, luz de pantalla, afinador de instrumentos, metrónomo, brújula, encuadre de imagen y más.
 
+[Navaja Suiza App](https://play.google.com/store/apps/details?id=com.nefelin.navajasuiza)
+
 <!-- MANUAL:INICIO - generado por .github/scripts/sync-manual.py, no editar a mano -->
 
 ## Manual de usuario — Navaja Suiza

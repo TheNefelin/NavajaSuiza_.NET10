@@ -141,6 +141,9 @@
   <data name="AboutShareDiagnosticsText" xml:space="preserve">
     <value>Compartir diagnóstico</value>
   </data>
+  <data name="AboutShareAppText" xml:space="preserve">
+    <value>Compartir aplicación</value>
+  </data>
   <data name="DiagnosticsNoLogTitleText" xml:space="preserve">
     <value>Diagnóstico de Navaja Suiza</value>
   </data>

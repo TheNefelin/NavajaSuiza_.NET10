@@ -1,5 +1,6 @@
 using CommunityToolkit.Maui.Storage;
 using Microsoft.Maui.ApplicationModel.DataTransfer;
+using NavajaSuiza.Core;
 using NavajaSuiza_.NET10.Diagnostics;
 using NavajaSuiza_.NET10.Extensions;
 using NavajaSuiza.Core.Interfaces;
@@ -103,6 +104,31 @@ public partial class AboutPage : ContentPage
             {
                 // Guardar el diagnóstico nunca debe tumbar la aplicación.
             }
+        }
+        finally
+        {
+            _isBusy = false;
+        }
+    }
+
+    private async void OnShareAppClicked(object? sender, EventArgs e)
+    {
+        if (_isBusy)
+            return;
+
+        _isBusy = true;
+        try
+        {
+            var title = LocalizationResourceManager.Instance["AboutShareAppText"]?.ToString() ?? "Navaja Suiza";
+            await Share.Default.RequestAsync(new ShareTextRequest
+            {
+                Title = title,
+                Text = AppConstants.About.PlayStoreUrl
+            });
+        }
+        catch (Exception)
+        {
+            // Compartir la app nunca debe tumbar la aplicación.
         }
         finally
         {
